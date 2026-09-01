@@ -54,8 +54,6 @@ $$
 K_k = \langle X_k, \mathscr{P}_{\mathcal{Y}_{k-1}}^\perp Y_k \rangle \langle \mathscr{P}_{\mathcal{Y}_{k-1}}^\perp Y_k, \mathscr{P}_{\mathcal{Y}_{k-1}}^\perp Y_k \rangle^{-1}
 $$
 
-> 该体系将算子理论、泛函分析与滤波算法无缝结合，全程无非齐次项，完全在正交子模及其补模中完成。
-
 ---
 
 ## 二、Gram-Schmidt 正交化推导全流程（Step 0 – Step 5）
@@ -151,5 +149,3 @@ $$
 $$
 P_k^+ = \langle \mathscr{P}_{\mathcal{Y}_k}^\perp X_k, \mathscr{P}_{\mathcal{Y}_k}^\perp X_k \rangle = (I - K_k H) P_k^-
 $$
-
-全程无非齐次项，完全在正交子空间及其补空间中优雅完成。

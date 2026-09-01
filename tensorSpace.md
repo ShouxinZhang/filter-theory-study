@@ -51,7 +51,7 @@ $$
 
 #### **定义 2.1（张量积算子）**
 
-设线性映射 $f: \mathbb{R}^n \to \mathbb{R}^m$，对偶线性映射 $g: (\mathbb{R}^N)^* \to (\mathbb{R}^M)^*$\text{（即存在 $G \in M_{N,M}(\mathbb{R})$ 使得 $g(\alpha) = \alpha G$）}。
+设线性映射 $f: \mathbb{R}^n \to \mathbb{R}^m$，对偶线性映射 $g: (\mathbb{R}^N)^* \to (\mathbb{R}^M)^*$ 即存在 $G \in M_{N,M}(\mathbb{R})$ 使得 $g(\alpha) = \alpha G$）。
 定义张量积算子 $(f \otimes g): \mathbb{R}^n \otimes (\mathbb{R}^N)^* \to \mathbb{R}^m \otimes (\mathbb{R}^M)^*$ 在初等单张量 $u \otimes \alpha$ 上的作用为：
 
 $$

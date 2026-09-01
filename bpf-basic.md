@@ -76,8 +76,6 @@ $$
 \sum_{i=1}^N w_k^{(i)} \delta_{x_k^{(i)}} \xrightarrow{\text{Weak Convergence}} \frac{1}{N} \sum_{i=1}^N \delta_{x_k^{(i)*}}
 $$
 
-**总结**：BPF 的推导过程，本质上就是 **Dirac 脉冲流在连续贝叶斯算子映射下的演化与投影**。
-
 ---
 
 # 启动迭代例子
