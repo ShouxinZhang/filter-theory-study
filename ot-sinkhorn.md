@@ -28,13 +28,48 @@ $$\begin{aligned}
 = & \sum_{\{i \in 1..m \mid T(x_i) = y_j\}} a_i
 \end{aligned}
 $$
+用此公式可以推导出，对于两个均匀离散分布而言，$T$ 的存在性等价于整除关系 $n \mid m$。具体而言，这是说：
+- 设置矩阵 $\Pi_{i,j} = \mathbb{I}_{\{y_j\}}(T(x_i)) \in \{0, 1\}$，质量守恒给出 $\sum_{i = 1}^m \Pi_{i,j} a_i = b_j \Leftarrow \sum_{i \in 1..m \mid T(x_i) = y_j} a_i = b_j$；
+- 另一方面，$\sum_{j = 1}^n \Pi_{i,j} = 1$，即每个源点 $x_i$ 只能被映射到一个目标点 $y_j$，此严格证明可以考虑
+$$
+\begin{aligned}
+& \mathbb{P}_Y(\{T(x_i)\}) = (T_* \mathbb{P}_X)(\{T(x_i)\}) = \mathbb{P}_X(T^{-1}(\{T(x_i)\})) \geqslant \mathbb{P}_X(\{x_i\}) = a_i > 0 \\
+& \Rightarrow T(x_i) \in \operatorname{supp}(\mathbb{P}_Y) \Rightarrow \\
+& \sum_{j=1}^n \Pi_{i,j} = \sum_{j=1}^n \delta_{T(x_i)}(\{y_j\}) = \delta_{T(x_i)}\!\left(\bigcup_{j=1}^n \{y_j\}\right) = \delta_{T(x_i)}(\operatorname{supp}(\mathbb{P}_Y)) = 1
+\end{aligned}
+$$
+
+另外还可以考虑 
+$$
+\begin{aligned}
+& b_j = \langle \langle \mathbb{I}_{\{y_{j}\}}, \delta_{y_{1..n}} \rangle, b_{1..n}\rangle = \langle\mathbb{I}_{\{y_{j}\}}, \langle \delta_{y_{1..n}}, b_{1..n} \rangle\rangle = \langle\mathbb{I}_{\{y_{j}\}},\mathbb{P}_{Y} \rangle \\
+= & \langle\mathbb{I}_{\{y_{j}\}},T_*\mathbb{P}_{X} \rangle = \langle T^* \mathbb{I}_{\{y_{j}\}},\mathbb{P}_{X} \rangle = \langle T^* \mathbb{I}_{\{y_{j}\}}, \langle \delta_{x_{1..m}} , a_{1..n}\rangle\rangle \\
+= & \langle \langle \mathbb{I}_{\{y_{j}\}}, \delta_{T\circ x_{1..m}}\rangle,a_{1..m}\rangle = \langle \Pi_{1..m,j},a_{1..m}\rangle
+\end{aligned}
+$$
+
+按照方程 $\langle b_{1..n}| =  \langle \Pi_{1..m,1..n}|a_{1..m}\rangle$，带入 $a_{1..m} = \bm{1}_m/m,b_{1..n} = \bm{1}_n/n$，就容易看出 $n \mid m$ 是方程有解 $\Pi$ 的充要条件。其中充分性考虑构造 $\Pi = \bm{I}_n \otimes_k \bm{1}_{m/n} \in \{0,1\}^{m \times n}$。此时直接计算验证有 
+$$
+\begin{aligned}
+& \Pi \bm{1}_{n} = (\bm{I}_n \otimes_k \mathbf{1}_{m/n})(\mathbf{1}_n \otimes_k 1) = (\bm{I}_n \mathbf{1}_n) \otimes_k (\mathbf{1}_{m/n} \cdot 1) = \mathbf{1}_m \\
+& \Pi^{\mathrm{T}}\bm{1}_m/m = (\bm{I}_n \otimes_k \mathbf{1}_{m/n}^{\mathrm{T}})(\mathbf{1}_n \otimes_k \mathbf{1}_{m/n})/m = (\bm{I}_n \mathbf{1}_n) \otimes_k (\mathbf{1}_{m/n}^{\mathrm{T}} \cdot \mathbf{1}_{m/n})/m = \bm{1}_{n}/n
+\end{aligned}
+$$
+
+---
+设
+$$
+\mathbb{P}_{(X,Y)} = \sum_{i,j} \Pi_{ij} \, \delta_{x_i} \otimes_t \delta_{y_j}.
+$$
+
+"Hmm... Let $\mathbb{P}_{(X,Y)} = \sum_{i,j} \Pi_{ij} \delta_{x_i} \otimes_t \delta_{y_j}$. Then the marginal pushforwards yield $(\pi_1)_* \mathbb{P}_{(X,Y)} = (\mathrm{id} \otimes_t \varepsilon_Y) \mathbb{P}_{(X,Y)} = \sum_i \left(\sum_j \Pi_{ij}\right) \delta_{x_i}$ and $(\pi_2)_* \mathbb{P}_{(X,Y)} = (\varepsilon_X \otimes_t \mathrm{id}) \mathbb{P}_{(X,Y)} = \sum_j \left(\sum_i \Pi_{ij}\right) \delta_{y_j}$. Hence the pure tensor/index representation simply reads $a_i = \sum_j \Pi_{ij}$ and $b_j = \sum_i \Pi_{ij}$. It is merely in column-vector matrix notation that this turns into $\Pi \mathbf{1}_n = a$ and $\Pi^\mathrm{T} \mathbf{1}_m = b$. Thus, the transpose $(\cdot)^\mathrm{T}$ arises purely from the conventional ordering of indices in matrix algebra, rather than $(\pi_2)_*$ acting as an adjoint on $\Pi$."
 
 ---
 乘积测度 $\mathbb{P}_X \otimes \mathbb{P}_Y$ 仅代表独立的联合分布（在离散代数下对应秩一矩阵 $r c^\mathrm{T}$），它仅是集合 $U(r,c)$ 内部的一个特异单点元素。
 
 多面体 $U(r,c)$ 本质上是满足边际推前约束的全部耦合测度族 $\Pi(\mathbb{P}_X, \mathbb{P}_Y)$：
 $$
-\Pi(\mathbb{P}_X, \mathbb{P}_Y) = \{ \mathbb{P}_{(X,Y)} \in \mathcal{M}(\mathcal{X} \times \mathcal{Y}) \mid (\pi_1)_* \mathbb{P}_{(X,Y)} = \mathbb{P}_X, \, (\pi_2)_* \mathbb{P}_{(X,Y)} = \mathbb{P}_Y \}
+\Pi(\mathbb{P}_X, \mathbb{P}_Y) = \{ \mathbb{P}_{(X,Y)} \in \mathcal{M}_{+}^{1}(\mathcal{X} \times \mathcal{Y}) \mid (\pi_1)_* \mathbb{P}_{(X,Y)} = \mathbb{P}_X, \, (\pi_2)_* \mathbb{P}_{(X,Y)} = \mathbb{P}_Y \}
 $$
 集合中的任意联合测度元素并非简单的乘积，而是依赖转移核生成的半直积测度 $\mathbb{P}_{(X,Y)} = \mathbb{P}_X \ltimes \mathbb{P}_{Y \mid X}$。
 
