@@ -1,3 +1,4 @@
+# section 1
 输运设定 $Y = T(X) \Rightarrow T_* \mathbb{P}_X = T_*X_*\mathbb{P} = \mathbb{P}_Y$。
 
 此时 Monge 的传输代价函数自然就是这对确定性绑定变量的数学期望：
@@ -29,8 +30,8 @@ $$\begin{aligned}
 \end{aligned}
 $$
 用此公式可以推导出，对于两个均匀离散分布而言，$T$ 的存在性等价于整除关系 $n \mid m$。具体而言，这是说：
-- 设置矩阵 $\Pi_{i,j} = \mathbb{I}_{\{y_j\}}(T(x_i)) \in \{0, 1\}$，质量守恒给出 $\sum_{i = 1}^m \Pi_{i,j} a_i = b_j \Leftarrow \sum_{i \in 1..m \mid T(x_i) = y_j} a_i = b_j$；
-- 另一方面，$\sum_{j = 1}^n \Pi_{i,j} = 1$，即每个源点 $x_i$ 只能被映射到一个目标点 $y_j$，此严格证明可以考虑
+- 设置矩阵 $P_{i,j} := \mathbb{P}_{Y \mid X=x_i}(\{y_j\}) = \mathbb{I}_{\{y_j\}}(T(x_i)) = \delta_{T(x_i)}(\{y_j\}) \in \{0, 1\}$，质量守恒给出 $\sum_{i = 1}^m P_{i,j} a_i = b_j \Leftarrow \sum_{i \in 1..m \mid T(x_i) = y_j} a_i = b_j$；
+- 另一方面，$\sum_{j = 1}^n P_{i,j} = 1$，即每个源点 $x_i$ 只能被映射到一个目标点 $y_j$，此严格证明可以考虑
 $$
 \begin{aligned}
 & \mathbb{P}_Y(\{T(x_i)\}) = (T_* \mathbb{P}_X)(\{T(x_i)\}) = \mathbb{P}_X(T^{-1}(\{T(x_i)\})) \geqslant \mathbb{P}_X(\{x_i\}) = a_i > 0 \\
@@ -43,16 +44,16 @@ $$
 $$
 \begin{aligned}
 & b_j = \langle \langle \mathbb{I}_{\{y_{j}\}}, \delta_{y_{1..n}} \rangle, b_{1..n}\rangle = \langle\mathbb{I}_{\{y_{j}\}}, \langle \delta_{y_{1..n}}, b_{1..n} \rangle\rangle = \langle\mathbb{I}_{\{y_{j}\}},\mathbb{P}_{Y} \rangle \\
-= & \langle\mathbb{I}_{\{y_{j}\}},T_*\mathbb{P}_{X} \rangle = \langle T^* \mathbb{I}_{\{y_{j}\}},\mathbb{P}_{X} \rangle = \langle T^* \mathbb{I}_{\{y_{j}\}}, \langle \delta_{x_{1..m}} , a_{1..n}\rangle\rangle \\
-= & \langle \langle \mathbb{I}_{\{y_{j}\}}, \delta_{T\circ x_{1..m}}\rangle,a_{1..m}\rangle = \langle \Pi_{1..m,j},a_{1..m}\rangle
+= & \langle\mathbb{I}_{\{y_{j}\}},T_*\mathbb{P}_{X} \rangle = \langle T^* \mathbb{I}_{\{y_{j}\}},\mathbb{P}_{X} \rangle = \langle T^* \mathbb{I}_{\{y_{j}\}}, \langle \delta_{x_{1..m}} , a_{1..m}\rangle\rangle \\
+= & \langle \langle \mathbb{I}_{\{y_{j}\}}, \delta_{T\circ x_{1..m}}\rangle,a_{1..m}\rangle = \langle P_{1..m,j},a_{1..m}\rangle
 \end{aligned}
 $$
 
 按照方程 $\langle b_{1..n}| =  \langle \Pi_{1..m,1..n}|a_{1..m}\rangle$，带入 $a_{1..m} = \bm{1}_m/m,b_{1..n} = \bm{1}_n/n$，就容易看出 $n \mid m$ 是方程有解 $\Pi$ 的充要条件。其中充分性考虑构造 $\Pi = \bm{I}_n \otimes_k \bm{1}_{m/n} \in \{0,1\}^{m \times n}$。此时直接计算验证有 
 $$
 \begin{aligned}
-& \Pi \bm{1}_{n} = (\bm{I}_n \otimes_k \mathbf{1}_{m/n})(\mathbf{1}_n \otimes_k 1) = (\bm{I}_n \mathbf{1}_n) \otimes_k (\mathbf{1}_{m/n} \cdot 1) = \mathbf{1}_m \\
-& \Pi^{\mathrm{T}}\bm{1}_m/m = (\bm{I}_n \otimes_k \mathbf{1}_{m/n}^{\mathrm{T}})(\mathbf{1}_n \otimes_k \mathbf{1}_{m/n})/m = (\bm{I}_n \mathbf{1}_n) \otimes_k (\mathbf{1}_{m/n}^{\mathrm{T}} \cdot \mathbf{1}_{m/n})/m = \bm{1}_{n}/n
+& P \bm{1}_{n} = (\bm{I}_n \otimes_k \mathbf{1}_{m/n})(\mathbf{1}_n \otimes_k 1) = (\bm{I}_n \mathbf{1}_n) \otimes_k (\mathbf{1}_{m/n} \cdot 1) = \mathbf{1}_m \\
+& P^{\mathrm{T}}\bm{1}_m/m = (\bm{I}_n \otimes_k \mathbf{1}_{m/n}^{\mathrm{T}})(\mathbf{1}_n \otimes_k \mathbf{1}_{m/n})/m = (\bm{I}_n \mathbf{1}_n) \otimes_k (\mathbf{1}_{m/n}^{\mathrm{T}} \cdot \mathbf{1}_{m/n})/m = \bm{1}_{n}/n
 \end{aligned}
 $$
 
@@ -62,9 +63,10 @@ $$
 \mathbb{P}_{(X,Y)} = \sum_{i,j} \Pi_{ij} \, \delta_{x_i} \otimes_t \delta_{y_j}.
 $$
 
-"Hmm... Let $\mathbb{P}_{(X,Y)} = \sum_{i,j} \Pi_{ij} \delta_{x_i} \otimes_t \delta_{y_j}$. Then the marginal pushforwards yield $(\pi_1)_* \mathbb{P}_{(X,Y)} = (\mathrm{id} \otimes_t \varepsilon_Y) \mathbb{P}_{(X,Y)} = \sum_i \left(\sum_j \Pi_{ij}\right) \delta_{x_i}$ and $(\pi_2)_* \mathbb{P}_{(X,Y)} = (\varepsilon_X \otimes_t \mathrm{id}) \mathbb{P}_{(X,Y)} = \sum_j \left(\sum_i \Pi_{ij}\right) \delta_{y_j}$. Hence the pure tensor/index representation simply reads $a_i = \sum_j \Pi_{ij}$ and $b_j = \sum_i \Pi_{ij}$. It is merely in column-vector matrix notation that this turns into $\Pi \mathbf{1}_n = a$ and $\Pi^\mathrm{T} \mathbf{1}_m = b$. Thus, the transpose $(\cdot)^\mathrm{T}$ arises purely from the conventional ordering of indices in matrix algebra, rather than $(\pi_2)_*$ acting as an adjoint on $\Pi$."
+为了以一种和谐的方式来导出边缘条件，首先我希望研究说明投影式 $(\pi_{1..N})_*\mathbb{P}_{X_{1..N}} = (\mathbb{P}_{X_i})_{i = 1..N}$
 
 ---
+# section 2
 乘积测度 $\mathbb{P}_X \otimes \mathbb{P}_Y$ 仅代表独立的联合分布（在离散代数下对应秩一矩阵 $r c^\mathrm{T}$），它仅是集合 $U(r,c)$ 内部的一个特异单点元素。
 
 多面体 $U(r,c)$ 本质上是满足边际推前约束的全部耦合测度族 $\Pi(\mathbb{P}_X, \mathbb{P}_Y)$：
@@ -74,28 +76,13 @@ $$
 集合中的任意联合测度元素并非简单的乘积，而是依赖转移核生成的半直积测度 $\mathbb{P}_{(X,Y)} = \mathbb{P}_X \ltimes \mathbb{P}_{Y \mid X}$。
 
 ---
-离散矩阵内积 $\langle P, C \rangle = \sum_{i,j} P_{ij} C_{ij}$ 本质上是代价函数 $c(x,y)$ 关于经验联合测度 $\mathbb{P}_{(X,Y)} = \sum_{i,j} P_{ij} \delta_{(x_i, y_j)}$ 的勒贝格积分期望：
+目标函数为
 $$
-\langle P, C \rangle = \int_{\mathcal{X} \times \mathcal{Y}} c(x, y) \, \mathrm{d}\mathbb{P}_{(X,Y)}(x, y) = \mathbb{E}_{(X,Y) \sim \mathbb{P}_{(X,Y)}}[c(X,Y)]
-$$
-在连续概率空间中，该离散和瞬时泛化为连续代价核与联合概率密度的重积分对偶配对 $\langle c, \mathbb{P}_{(X,Y)} \rangle = \iint_{\mathcal{X} \times \mathcal{Y}} c(x, y) p(x, y) \, \mathrm{d}v(x) \mathrm{d}v(y)$。
-
----
-在测度与信息论视域下，目标泛函等价于在耦合流形上最小化传输能量与互信息的加权和：
-$$
-\mathbb{P}_{(X,Y)}^\varepsilon = \operatorname*{argmin}_{\mathbb{P}_{(X,Y)} \in \Pi(\mathbb{P}_X, \mathbb{P}_Y)} \left( \mathbb{E}[c(X,Y)] + \varepsilon D_{\mathrm{KL}}(\mathbb{P}_{(X,Y)} \| \mathbb{P}_X \otimes \mathbb{P}_Y) \right)
+\mathbb{P}_{(X,Y)}^\varepsilon = \operatorname*{argmin}_{\mathbb{P}_{(X,Y)} \in \Pi(\mathbb{P}_X, \mathbb{P}_Y)} \left( \mathbb{E}_{(X,Y) \sim \mathbb{P}_{(X,Y)}}[c(X,Y)] + \varepsilon D_{\mathrm{KL}}(\mathbb{P}_{(X,Y)} \| \mathbb{P}_X \otimes \mathbb{P}_Y) \right)
 $$
 在离散矩阵空间 $U(r,c)$ 下引入边际推前约束的对偶乘子 $\alpha, \beta \in \mathbb{R}^d$，构造拉格朗日函数：
 $$
 \mathcal{L}(P, \alpha, \beta) = \langle P, M \rangle + \varepsilon \sum_{i,j} p_{ij} \log p_{ij} + \alpha^\mathrm{T}(P\mathbf{1}_d - r) + \beta^\mathrm{T}(P^\mathrm{T}\mathbf{1}_d - c)
-$$
-负熵的严格凸性确保全局极值唯一，令一阶变分导数归零 $\frac{\partial \mathcal{L}}{\partial p_{ij}} = m_{ij} + \varepsilon(1 + \log p_{ij}) + \alpha_i + \beta_j = 0$，解得 Gibbs 测度形式：
-$$
-p_{ij} = \exp\left(-\frac{\alpha_i + \varepsilon/2}{\varepsilon}\right) \exp\left(-\frac{m_{ij}}{\varepsilon}\right) \exp\left(-\frac{\beta_j + \varepsilon/2}{\varepsilon}\right)
-$$
-定义 Gibbs 积分核 $K := \exp(-M/\varepsilon)$ 与对偶缩放向量 $u := e^{-(\alpha + \varepsilon/2)/\varepsilon}, \, v := e^{-(\beta + \varepsilon/2)/\varepsilon}$，最优耦合瞬时塌缩为矩阵对角缩放：
-$$
-P^\varepsilon = \operatorname{diag}(u) K \operatorname{diag}(v), \quad \text{其中 } u \odot (K v) = r, \; v \odot (K^\mathrm{T} u) = c
 $$
 
 # 附录
