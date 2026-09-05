@@ -1,20 +1,15 @@
 ### 从经验测度到离散期望积分
 
-设状态样本集合为 $x_{1..N} = (x_1, \dots, x_N)$，其中每个粒子 $x_j \in V = \mathbb{R}^n$。粒子群构成集合张量对应的表示矩阵 $\bm{X} = (x_1, \dots, x_N) \in M_{n,N}(\mathbb{R})$。
+设状态样本集合为 $x_{1..N} = (x_1, \dots, x_N)$，其中每个粒子 $x_j \in V = \mathbb{R}^n$。粒子群表示矩阵 $\bm{X} = (x_1, \dots, x_N) \in M_{n,N}(\mathbb{R})$。
 
 在状态空间 $V$ 上，经验测度 $\mathbb{P}_N$ 由各样本点的 Dirac 测度等权叠加给出：
 $$
-\mathbb{P}_N = \frac{1}{N} \sum_{j=1}^N \delta_{x_j}
+\hat{\mathbb{P}}_{N;x_{1..N}} = \frac{1}{N} \sum_{j=1}^N \delta_{x_j}
 $$
 
 对任意可测映射 $f: \mathbb{R}^n \to \mathbb{R}^m$，其关于经验测度的期望积分退化为样本点上的离散求和：
 $$
-\mathbb{E}_{X \sim \mathbb{P}_N}[f(X)] = \int_{\mathbb{R}^n} f(x) \, \mathrm{d}\mathbb{P}_N(x) = \frac{1}{N} \sum_{j=1}^N f(x_j)
-$$
-
-特别地，当 $f(x) = x$ 时，经验均值向量 $\bar{x} \in \mathbb{R}^n$ 表现为对矩阵样本列的代数压缩：
-$$
-\bar{x} = \mathbb{E}_{X \sim \mathbb{P}_N}[X] = \frac{1}{N} \sum_{j=1}^N x_j = \frac{1}{N} \bm{X} \mathbf{1}_N
+\mathbb{E}_{X \sim \hat{\mathbb{P}}_{N;x_{1..N}} }[f(X)] = \int_{\mathbb{R}^n} f \, \mathrm{d}\hat{\mathbb{P}}_{N;x_{1..N}}  = \frac{1}{N} \sum_{j=1}^N f(x_j)
 $$
 
 ---
@@ -38,7 +33,6 @@ $$
 $$
 \bm{A}_X := \bm{X} \bm{P}_{\mathbf{1}_N}^\perp = (x_1 - \bar{x}, \dots, x_N - \bar{x}) \in M_{n,N}(\mathbb{R})
 $$
-扰动矩阵天然满足行和归零约束 $\bm{A}_X \mathbf{1}_N = \bm{0}$，实现了粒子群宏观统计均值与微观涨落扰动在样本几何上的完全正交解耦。
 
 ---
 
@@ -120,7 +114,7 @@ $$
 ## $\mathbb{P}$ 投影的一些计算
 坐标投影的边缘测度满足 $(\pi_i)_\#\mathbb P^{\otimes N}=\mathbb P$. 
 
-在有界可测函数空间 $B_b(\Omega)$ 与带号测度空间 $\mathcal{M}(\Omega)$ 的对偶偶对下，测度完全由对偶配对 $\langle f, \mu \rangle = \int_\Omega f \, \mathrm{d}\mu$ 唯一刻画。
+在有界可测函数空间 $B_b(\Omega)$ 与测度空间 $\mathcal{M}(\Omega)$ 的对偶配对下，测度完全由对偶配对 $\langle f, \mu \rangle = \int_\Omega f \, \mathrm{d}\mu$ 唯一刻画。
 对任意测试函数 $f \in B_b(\Omega)$，作用于随机经验测度 $\mathbb{P}_N = \frac{1}{N}\sum_{j=1}^N \delta_{\omega_j}$：
 $$
 \langle f, \mathbb{P}_N \rangle = \frac{1}{N}\sum_{j=1}^N f(\omega_j)
@@ -137,5 +131,4 @@ $$
 $$
 \int_{\Omega^N} f(\omega_j) \, \mathrm{d}\mathbb{P}^{\otimes N}(\bm{\omega}) = \int_\Omega f(\omega_j) \, \mathrm{d}\mathbb{P}(\omega_j) \cdot \prod_{k \neq j} \int_\Omega 1 \, \mathrm{d}\mathbb{P}(\omega_k) = \int_\Omega f \, \mathrm{d}\mathbb{P} = \langle f, \mathbb{P} \rangle
 $$
-由 Pettis 弱积分定理与泛函线性交换律，恒有 $\langle f, \mathbb{E}_{\mathbb{P}^{\otimes N}}[\mathbb{P}_N] \rangle = \mathbb{E}_{\mathbb{P}^{\otimes N}}[\langle f, \mathbb{P}_N \rangle] = \langle f, \mathbb{P} \rangle$。
-由测试函数的充分分离性，即证在测度弱拓扑空间中严格成立 $\mathbb{E}_{\mathbb{P}^{\otimes N}}[\mathbb{P}_N] = \mathbb{P}$。
+于是有 $\langle f, \mathbb{E}_{\mathbb{P}^{\otimes N}}[\mathbb{P}_N] \rangle = \mathbb{E}_{\mathbb{P}^{\otimes N}}[\langle f, \mathbb{P}_N \rangle] = \langle f, \mathbb{P} \rangle$，进而 $\mathbb{E}_{\mathbb{P}^{\otimes N}}[\mathbb{P}_N] = \mathbb{P}$。
