@@ -45,9 +45,11 @@ $$
 另外还可以考虑 
 $$
 \begin{aligned}
-& b_j = \langle \langle \mathbb{I}_{\{y_{j}\}}, \delta_{y_{1..n}} \rangle, b_{1..n}\rangle = \langle\mathbb{I}_{\{y_{j}\}}, \langle \delta_{y_{1..n}}, b_{1..n} \rangle\rangle = \langle\mathbb{I}_{\{y_{j}\}},\mathbb{P}_{Y} \rangle \\
-= & \langle\mathbb{I}_{\{y_{j}\}},T_*\mathbb{P}_{X} \rangle = \langle T^* \mathbb{I}_{\{y_{j}\}},\mathbb{P}_{X} \rangle = \langle T^* \mathbb{I}_{\{y_{j}\}}, \langle \delta_{x_{1..m}} , a_{1..m}\rangle\rangle \\
-= & \langle \langle \mathbb{I}_{\{y_{j}\}}, \delta_{T\circ x_{1..m}}\rangle,a_{1..m}\rangle = \sum_{i=1}^m P_{Y\mid X;i,j}a_i
+& b_j=\langle\langle\mathbb I_{\{y_j\}},\delta_{y_{1..n}}\rangle_{\mathcal Y},b_{1..n}\rangle_{\mathbb R^n}\\
+= &\langle\mathbb I_{\{y_j\}},\langle\delta_{y_{1..n}},b_{1..n}\rangle\rangle_{\mathcal Y}=\langle\mathbb I_{\{y_j\}},\mathbb P_Y\rangle_{\mathcal Y}\\
+= &\langle\mathbb I_{\{y_j\}},T_*\mathbb P_X\rangle_{\mathcal Y}=\langle T^*\mathbb I_{\{y_j\}},\mathbb P_X\rangle_{\mathcal X}\\
+= &\langle T^*\mathbb I_{\{y_j\}},\langle\delta_{x_{1..m}},a_{1..m}\rangle\rangle_{\mathcal X}\\
+= &\langle\langle\mathbb I_{\{y_j\}},\delta_{T\circ x_{1..m}}\rangle_{\mathcal Y},a_{1..m}\rangle_{\mathbb R^m}=\sum_{i=1}^m P_{Y\mid X;i,j}a_i.
 \end{aligned}
 $$
 
@@ -84,12 +86,15 @@ $$
 $$
 在离散矩阵空间 $U(\bm a,\bm b)$ 下引入边际推前约束的对偶乘子 $\bm\alpha\in\mathbb R^m,\bm\beta\in\mathbb R^n$，构造松弛函数：
 $$
-\mathcal{L}(\bm\Pi,\bm\alpha,\bm\beta)=\langle\bm\Pi,\bm M\rangle_F+\varepsilon\sum_{i,j}\Pi_{ij}\log\Pi_{ij}+\bm\alpha^{\mathrm T}(\bm\Pi\mathbf1_n-\bm a)+\bm\beta^{\mathrm T}(\bm\Pi^{\mathrm T}\mathbf1_m-\bm b)
+\mathcal{L}(\bm\Pi,\bm\alpha,\bm\beta)=\langle\bm\Pi,\bm C\rangle_F+\varepsilon\sum_{i,j}\Pi_{ij}\log\Pi_{ij}+\bm\alpha^{\mathrm T}(\bm\Pi\mathbf1_n-\bm a)+\bm\beta^{\mathrm T}(\bm\Pi^{\mathrm T}\mathbf1_m-\bm b)
 $$
 
 # 附录
 ## 各类杂项收集
 对任意概率测度与任意随机变量（离散、连续乃至奇异），由测度前推与函数拉回的对偶性，恒有：
 $$
-\langle \mathbb{I}_A \otimes \mathbf{1}_{\mathcal{Y}}, \mathbb{P}_{(X,Y)} \rangle = \langle \pi_1^* \mathbb{I}_A, \mathbb{P}_{(X,Y)} \rangle = \langle \mathbb{I}_A, (\pi_1)_* \mathbb{P}_{(X,Y)} \rangle = \langle \mathbb{I}_A, \mathbb{P}_X \rangle
+\begin{aligned}
+&\langle\mathbb I_A\otimes\mathbf1_{\mathcal Y},\mathbb P_{(X,Y)}\rangle_{\mathcal X\times\mathcal Y}=\langle\pi_1^*\mathbb I_A,\mathbb P_{(X,Y)}\rangle_{\mathcal X\times\mathcal Y}\\
+= &\langle\mathbb I_A,(\pi_1)_*\mathbb P_{(X,Y)}\rangle_{\mathcal X}=\langle\mathbb I_A,\mathbb P_X\rangle_{\mathcal X}.
+\end{aligned}
 $$
