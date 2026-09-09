@@ -91,7 +91,7 @@ $$
 
 # 附录
 ## 各类杂项收集
-对任意概率测度与任意随机变量（离散、连续乃至奇异），由测度前推与函数拉回的对偶性，恒有：
+对任意概率测度与任意随机变量（离散、连续乃至奇异），由测度推前与函数拉回的对偶性，恒有：
 $$
 \begin{aligned}
 &\langle\mathbb I_A\otimes\mathbf1_{\mathcal Y},\mathbb P_{(X,Y)}\rangle_{\mathcal X\times\mathcal Y}=\langle\pi_1^*\mathbb I_A,\mathbb P_{(X,Y)}\rangle_{\mathcal X\times\mathcal Y}\\
