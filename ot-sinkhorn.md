@@ -89,6 +89,22 @@ $$
 \mathcal{L}(\bm\Pi,\bm\alpha,\bm\beta)=\langle\bm\Pi,\bm C\rangle_F+\varepsilon\sum_{i,j}\Pi_{ij}\log\Pi_{ij}+\bm\alpha^{\mathrm T}(\bm\Pi\mathbf1_n-\bm a)+\bm\beta^{\mathrm T}(\bm\Pi^{\mathrm T}\mathbf1_m-\bm b)
 $$
 
+---
+一阶极值条件 $\partial_{\Pi_{ij}}\mathcal{L} = C_{ij} + \varepsilon \log \Pi_{ij} + \alpha_i + \beta_j = 0$ 给出指数核分解：
+$$
+\begin{aligned}
+\partial_{\Pi_{ij}} \mathcal{L} = 0 &\implies \Pi_{ij} = \exp\left(-\frac{\alpha_i + C_{ij} + \beta_j}{\varepsilon}\right) = \exp\left(-\frac{\alpha_i}{\varepsilon}\right) \exp\left(-\frac{C_{ij}}{\varepsilon}\right) \exp\left(-\frac{\beta_j}{\varepsilon}\right) \\
+&\implies \Pi_{ij} = u_i K_{ij} v_j \iff \bm\Pi = \operatorname{diag}(\bm u) \bm K \operatorname{diag}(\bm v)
+\end{aligned}
+$$
+其中 $K_{ij} = \exp(-C_{ij}/\varepsilon), u_i = \exp(-\alpha_i/\varepsilon), v_j = \exp(-\beta_j/\varepsilon)$。代入边际推前约束：
+$$
+\begin{aligned}
+\bm\Pi \mathbf 1_n &= \operatorname{diag}(\bm u) \bm K \operatorname{diag}(\bm v) \mathbf 1_n = \bm u \odot (\bm K \bm v) = \bm a \implies \bm u \leftarrow \bm a \oslash (\bm K \bm v) \\
+\bm\Pi^{\mathrm T} \mathbf 1_m &= \operatorname{diag}(\bm v) \bm K^{\mathrm T} \operatorname{diag}(\bm u) \mathbf 1_m = \bm v \odot (\bm K^{\mathrm T} \bm u) = \bm b \implies \bm v \leftarrow \bm b \oslash (\bm K^{\mathrm T} \bm u)
+\end{aligned}
+$$
+
 # 附录
 ## 各类杂项收集
 对任意概率测度与任意随机变量（离散、连续乃至奇异），由测度推前与函数拉回的对偶性，恒有：
