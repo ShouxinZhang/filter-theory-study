@@ -13,6 +13,11 @@ Monge 模型的局限在于其刚性绑定 $Y = T(X)$：在给定 $X=x$ 时，$Y
 $$
 (\pi_1)_* \mathbb{P}_{(X,Y)} = \mathbb{P}_X, (\pi_2)_* \mathbb{P}_{(X,Y)} = \mathbb{P}_Y
 $$
+或者说，这是一种概率分流的方法:
+$$
+\mathbb P_{Y\mid X=x_i} = \sum_{j=1}^n \bm{P}_{Y\mid X;i,j} \delta_{y_j}
+$$
+
 由此，刚性（所谓刚性，反面是自由·流变·松弛·弹性）函数期望 $\mathbb{E}[c(X, T(X))]$ 瞬间拓展为在满足边际约束的联合分布测度上的全期望积分：
 $$
 \min_{\mathbb{P}_{(X,Y)} \in \Pi(\mathbb{P}_X, \mathbb{P}_Y)} \mathbb{E}_{(X,Y) \sim \mathbb{P}_{(X,Y)}}[c(X, Y)] = \min_{\mathbb{P}_{(X,Y)} \in \Pi(\mathbb{P}_X, \mathbb{P}_Y)} \int_{\mathcal{X} \times \mathcal{Y}} c(x, y) \, \mathrm{d}\mathbb{P}_{(X,Y)}(x, y)
