@@ -1,0 +1,10 @@
+2026-09-14 最终验收
+Release: GCC 13.3, CMake 3.28.3, C++20, 无编译警告。
+ctest --test-dir build --output-on-failure: 2/2 通过, 0.21 秒。
+Debug + AddressSanitizer + UndefinedBehaviorSanitizer: 2/2 通过, 12.03 秒。
+一维 500 粒子, 两算法各 50 步: 成功。
+四维 4000 粒子, 两算法各 24 步: 成功。
+一维数值参考及额外误差评估: 成功。
+16 篇 Markdown 行数与本地链接: 通过。
+POT 固定提交头文件 SHA-256: 通过。
+已清理本次创建的 228 MB sanitizer 构建缓存, 保留 Release 可执行文件与验收样例。
