@@ -1,5 +1,7 @@
 # filter-theory-study
 
+A personal repository for collecting and organizing research drafts, study notes, and learning materials on filtering theory.
+
 ## License
 
-本仓库的原创内容采用 [MIT License](LICENSE)。第三方代码和资料遵循各自的许可证及版权声明。
+Original content in this repository is licensed under the [MIT License](LICENSE). Third-party code and materials remain subject to their respective licenses and copyright notices.
