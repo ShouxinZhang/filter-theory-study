@@ -1,5 +1,6 @@
 #pragma once
 #include "pf/io.hpp"
+#include "pf/noise.hpp"
 
 namespace pf {
 struct Observations { int id=0; std::vector<double> values; };
@@ -16,5 +17,5 @@ void save_dataset(const fs::path& directory,PublicDataset& data,const TruthDatas
 PublicDataset load_observations(const fs::path& directory);
 TruthDataset load_truth(const fs::path& directory);
 void generate_dataset(const fs::path& directory,const std::string& environment,
-                      const std::string& variant,int trajectories,std::uint64_t seed);
+                      const std::string& variant,int trajectories,std::uint64_t seed,const EnvironmentNoise& noise={});
 } // namespace pf

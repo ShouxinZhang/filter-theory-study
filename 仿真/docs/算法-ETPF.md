@@ -1,6 +1,6 @@
 # ETPF: Ensemble Transform Particle Filter
 
-依据 [Reich 2013](https://arxiv.org/abs/1210.0375), 矩阵符号与方向沿用 [OTPF](../../otpf-basic.md), 本基线使用无熵正则的原始输运目标。
+依据 [Reich 2013](https://arxiv.org/abs/1210.0375), 矩阵符号与方向沿用 [OTPF](../../粒子滤波/otpf-basic.md), 本基线使用无熵正则的原始输运目标。
 完整输入输出遵守 [公共接口](接口-在线滤波.md); 额外输入输运求解器配置, 返回 `FilterStep` 与求解状态, 边际残差和目标值。
 初始化, 传播和似然加权与 BPF 相同; 每次加权后通过确定性重心变换得到等权集合。
 给定预测粒子与 $\bm w_k^+$, 第 $i$ 行对应加权源粒子, 第 $j$ 列对应等权预测参考位置:

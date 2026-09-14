@@ -11,8 +11,11 @@ static pf::fs::path required(const Options& o,const std::string& key) {
 }
 int commands(const Options& o) {
   if(o.command=="generate") {
-    o.allow({"env","out","trajectories","seed","variant"});
-    pf::generate_dataset(required(o,"out"),o.get("env","gordon"),o.get("variant","fixed"),o.integer("trajectories",100),o.seed("seed",1993));
+    o.allow({"env","out","trajectories","seed","variant",
+      "process-noise","process-dim","process-mean","process-std","process-lower","process-upper",
+      "observation-noise","observation-dim","observation-mean","observation-std","observation-lower","observation-upper"});
+    const auto name=o.get("env","gordon");
+    pf::generate_dataset(required(o,"out"),name,o.get("variant","fixed"),o.integer("trajectories",100),o.seed("seed",1993),noise_options(o,name));
     std::cout<<"数据集已冻结: "<<o.get("out")<<'\n';return 0;
   }
   if(o.command=="reference") {

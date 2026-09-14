@@ -38,6 +38,9 @@ pf::fs::path trajectory_path(const pf::fs::path& directory,int id) { return dire
 void help() {
   std::cout<<"C++ 滤波基准\n"
     <<"generate --env gordon|tracking --out 目录 [--trajectories 100 --seed 1993 --variant fixed|matched-prior]\n"
+    <<"    [--process-noise normal|uniform --process-dim d --process-mean 0 --process-std 1]\n"
+    <<"    [--process-lower -1 --process-upper 1], 观测噪声使用相同参数并将 process 换成 observation\n"
+    <<"    参数支持单值广播或逗号分隔的逐维列表; std 是标准差, run 自动读取冻结配置\n"
     <<"run --data 数据目录 --out 结果目录 --algorithm bpf|etpf [--particles N --seed 20260914 --threads 1 --resume]\n"
     <<"    [--ot-tolerance 1e-9 --ot-max-iterations 2000000]\n"
     <<"reference --data 一维数据目录 --out 参考目录 [--spacing 0.125 --bound 64 --tolerance 1e-5 --resume]\n"

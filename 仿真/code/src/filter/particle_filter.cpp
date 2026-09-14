@@ -21,8 +21,13 @@ FilterStep ParticleFilter::step(int k, double y) {
     result.k=k;
     result.predicted.resize(model_.dimension(),config_.particles);
     if (k==1 && model_.initial_time()==1) result.predicted=posterior_;
-    else for (int i=0;i<config_.particles;++i)
-      model_.propagate(k,posterior_.col(i),result.predicted.col(i),propagation_);
+    else {
+      Vector noise(model_.process_noise().dimension()); // 每步复用缓冲区, 不在每个粒子中分配。
+      for(int i=0;i<config_.particles;++i) {
+        model_.process_noise().sample(noise,propagation_);
+        model_.transition(k,posterior_.col(i),noise,result.predicted.col(i));
+      }
+    }
     require(result.predicted.allFinite(),"传播粒子出现非有限值");
     Vector log_weights(config_.particles);
     for (int i=0;i<config_.particles;++i) log_weights[i]=model_.log_likelihood(y,result.predicted.col(i));

@@ -13,6 +13,14 @@ void integration() {
   pf::generate_dataset(temp/"b","gordon","fixed",2,197);
   const auto data=pf::load_observations(temp/"a");const auto truth=pf::load_truth(temp/"a");
   check(data.hash==pf::load_observations(temp/"b").hash,"数据冻结可复现");near(truth.trajectories[0].initial[0],0.1,0,"固定真实初值");
+  // 与拆分前的物理采样公式逐位比较, 默认环境不能因接口重构而换数据。
+  pf::Random legacy_process(pf::seed_for(197,0,1)),legacy_observation(pf::seed_for(197,0,2));
+  double legacy_state=0.1;
+  for(int k=1;k<=50;++k) {
+    legacy_state=pf::gordon_drift(k,legacy_state)+std::sqrt(10.0)*legacy_process.normal();
+    near(truth.trajectories[0].states(0,k-1),legacy_state,0,"默认真实状态兼容");
+    near(data.trajectories[0].values[k-1],legacy_state*legacy_state/20+legacy_observation.normal(),0,"默认观测兼容");
+  }
   auto model=pf::make_environment(data.environment);pf::FilterConfig c;c.particles=100;c.algorithm="bpf";
   pf::ParticleFilter bpf(*model,c,0),prefix(*model,c,0);c.algorithm="etpf";pf::ParticleFilter etpf(*model,c,0);
   pf::RunRecord run;run.environment=data.environment;run.variant=data.variant;run.data_hash=data.hash;run.config=c;

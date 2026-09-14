@@ -16,4 +16,5 @@ void models();
 void transport();
 void integration();
 void reference();
+void noise();
 } // namespace test

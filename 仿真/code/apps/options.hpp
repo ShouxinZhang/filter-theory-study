@@ -21,5 +21,6 @@ class Options {
 void help();
 int commands(const Options& options);
 int run(const Options& options);
+pf::EnvironmentNoise noise_options(const Options& options,const std::string& environment);
 pf::fs::path trajectory_path(const pf::fs::path& directory,int id);
 } // namespace app

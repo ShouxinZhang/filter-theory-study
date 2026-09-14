@@ -30,8 +30,8 @@ static bool same(const pf::RunRecord& r,const pf::PublicDataset& data,const pf::
 int run(const Options& o) {
   o.allow({"data","out","algorithm","particles","seed","threads","resume","ot-tolerance","ot-max-iterations"});
   pf::require(!o.get("data").empty()&&!o.get("out").empty(),"run 需要 --data 与 --out");
-  const auto data=pf::load_observations(o.get("data"));auto model=pf::make_environment(data.environment);
-  pf::require(data.parameters==model->parameters(),"冻结数据模型参数与当前实现不匹配");
+  const auto data=pf::load_observations(o.get("data"));
+  auto model=pf::environment_from_parameters(data.environment,data.parameters);
   for(const auto& t:data.trajectories)pf::require(static_cast<int>(t.values.size())==model->steps(),"观测步数与环境不匹配");
   pf::FilterConfig config;config.algorithm=o.get("algorithm","bpf");config.particles=o.integer("particles",model->dimension()==1?500:4000);
   config.seed=o.seed("seed",20260914);config.transport.tolerance=o.real("ot-tolerance",1e-9);config.transport.max_iterations=o.seed("ot-max-iterations",2000000);
@@ -40,7 +40,13 @@ int run(const Options& o) {
   const pf::fs::path out=o.get("out");pf::require(!pf::fs::exists(out)||o.flag("resume"),"输出目录已存在, 续跑请使用 --resume");
   pf::fs::create_directories(out);DirectoryLock lock(out);
   // 独立预热实例, 不消耗正式运行的随机流, 也不写出结果。
-  { auto warm_config=config;warm_config.particles=std::min(config.particles,64);pf::ParticleFilter warm(*model,warm_config,0);warm.step(1,data.trajectories[0].values[0]); }
+  {
+    auto warm_config=config;warm_config.particles=std::min(config.particles,64);
+    pf::ParticleFilter warm(*model,warm_config,0);
+    // 有限支持似然下, 小集合预热失败不代表正式 N 粒子运行必然失败。
+    try { warm.step(1,data.trajectories[0].values[0]); }
+    catch(const std::exception& e) { std::cout<<"预热未完成, 正式运行单独评估: "<<e.what()<<'\n'; }
+  }
   const auto info_path=out/("运行信息-"+std::to_string(std::chrono::system_clock::now().time_since_epoch().count())+".txt");
   std::ofstream info(info_path);info<<"编译器="<<__VERSION__<<"\n构建类型="<<FILTER_BUILD_TYPE<<"\nCPU并发="<<std::thread::hardware_concurrency()
     <<"\n编译选项="<<FILTER_BUILD_FLAGS<<"\n轨迹线程="<<threads<<"\n内核线程=1\n求解器=POT-85113e9/network-simplex;monotone-v1\n随机数=mt19937_64/Box-Muller-v1\n观测SHA256="<<data.hash
