@@ -25,17 +25,17 @@ $$
 $$
 这里 $i,j=1,\dots,N$, 第 $i$ 行对应后验权重为 $w_k^{+,(i)}$ 的预测粒子, 第 $j$ 列对应等权的目标参考位置 $x_k^{-,(j)}$。源边际为加权后验经验测度, 目标边际为等权预测经验测度。将 $\bm a,\bm b,\bm C_k$ 代入 [ot-sinkhorn.md](ot-sinkhorn.md) 的熵正则化目标, 用 Sinkhorn 求解 $\bm\Pi_k$；正则化参数 $\varepsilon$ 保留在求解目标中。
 
-位置变换矩阵 $\bm T_k\in\mathbb R^{N\times N}$ 为
+位置变换采用按列排列的粒子矩阵 $X_k:=x_k^{(1..N)}=[x_k^{(1)},\dots,x_k^{(N)}]\in\mathbb R^{n_x\times N}$, 预测与后验阶段相应记为 $X_k^\pm:=x_k^{\pm,(1..N)}$。位置变换矩阵 $\bm T_k\in\mathbb R^{N\times N}$ 的第 $i$ 行对应源粒子, 第 $j$ 列对应目标粒子, 定义为
 $$
 \begin{aligned}
-&(\bm T_k)_{ji}:=N(\bm\Pi_k)_{ij},\;\bm T_k=N\bm\Pi_k^{\mathrm T},\\
-&\bm T_k\mathbf1_N=\mathbf1_N,\;\bm T_k^{\mathrm T}\mathbf1_N=N\bm w_k^+.
+&(\bm T_k)_{ij}:=N(\bm\Pi_k)_{ij},\;\bm T_k=N\bm\Pi_k,\\
+&\bm T_k^{\mathrm T}\mathbf1_N=\mathbf1_N,\;\bm T_k\mathbf1_N=N\bm w_k^+.
 \end{aligned}
 $$
-每行的变换系数非负且和为 $1$, 据此取源粒子的加权平均, 得到新粒子：
+每列的变换系数非负且和为 $1$, $(\bm T_k)_{ij}$ 表示源粒子 $i$ 对目标粒子 $j$ 的贡献系数, 据此取源粒子的加权平均, 得到新粒子：
 $$
 \begin{aligned}
-&x_k^{+,(j)}:=\sum_{i=1}^N(\bm T_k)_{ji}x_k^{-,(i)}=N\sum_{i=1}^N(\bm\Pi_k)_{ij}x_k^{-,(i)},\\
-&\bm X_k^+=\bm X_k^-\bm T_k^{\mathrm T}=N\bm X_k^-\bm\Pi_k.
+&x_k^{+,(j)}:=\sum_{i=1}^N(\bm T_k)_{ij}x_k^{-,(i)}=N\sum_{i=1}^N(\bm\Pi_k)_{ij}x_k^{-,(i)},\\
+&X_k^+=X_k^-\bm T_k=NX_k^-\bm\Pi_k.
 \end{aligned}
 $$
