@@ -1,0 +1,13 @@
+{
+  "name": "academic-talk-filtering",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node ../../scripts/talk.mjs dev filtering",
+    "build": "node ../../scripts/talk.mjs build filtering",
+    "dev:starter": "node ../../scripts/talk.mjs dev starter --port 3031",
+    "build:starter": "node ../../scripts/talk.mjs build starter",
+    "export:pdf": "node ../../scripts/talk.mjs pdf filtering",
+    "export:pptx": "node ../../scripts/talk.mjs pptx filtering"
+  }
+}

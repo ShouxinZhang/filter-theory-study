@@ -1,0 +1,9 @@
+{
+  "name": "slidev-addon-drawio-editor",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "keywords": ["slidev-addon", "slidev"],
+  "engines": { "slidev": "52.19.1" },
+  "dependencies": { "@xmldom/xmldom": "0.9.12" }
+}

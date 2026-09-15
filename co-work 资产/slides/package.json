@@ -1,0 +1,33 @@
+{
+  "name": "slidev-academic-workspace",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "new": "node scripts/new-talk.mjs",
+    "dev": "node scripts/talk.mjs dev",
+    "build": "node scripts/talk.mjs build",
+    "export:pdf": "node scripts/talk.mjs pdf",
+    "export:pptx": "node scripts/talk.mjs pptx",
+    "dev:starter": "node scripts/talk.mjs dev starter --port 3031",
+    "build:starter": "node scripts/talk.mjs build starter",
+    "postinstall": "node scripts/patch-slidev-editor.mjs",
+    "check:drawio": "node --test packages/addon-drawio/tests/*.test.mjs",
+    "check:workspace": "node --test tests/*.test.mjs",
+    "check:sorter": "node --test packages/addon-slide-sorter/tests/*.test.mjs",
+    "check:images": "node --test packages/addon-image-paste/tests/*.test.mjs"
+  },
+  "engines": {
+    "node": ">=20.12.0"
+  },
+  "devDependencies": {
+    "@slidev/cli": "52.19.1",
+    "@slidev/theme-default": "0.25.0",
+    "@xmldom/xmldom": "0.9.12",
+    "playwright-chromium": "1.63.0"
+  },
+  "version": "0.1.0",
+  "workspaces": [
+    "packages/*",
+    "talks/*"
+  ]
+}

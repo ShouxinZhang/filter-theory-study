@@ -1,0 +1,404 @@
+<mxfile host="embed.diagrams.net" agent="Codex">
+  <diagram id="bpf" name="BPF 流程图">
+    <mxGraphModel dx="1602" dy="1145" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1210" background="#FFFFFF" math="1" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="canvas" parent="1" style="rounded=1;absoluteArcSize=1;arcSize=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=none;strokeWidth=1.5;locked=1;connectable=0;" value="" vertex="1">
+          <mxGeometry height="1210" width="1600" as="geometry" />
+        </mxCell>
+        <mxCell id="title" parent="1" style="text;html=1;whiteSpace=wrap;overflow=visible;align=center;verticalAlign=middle;spacing=0;fontFamily=Noto Serif CJK SC;fontSize=46;fontColor=#081225;fontStyle=1;fontFamily=Noto Serif CJK SC;" value="BPF: 预测、似然加权与独立重采样" vertex="1">
+          <mxGeometry height="70" width="870" x="365" y="42" as="geometry" />
+        </mxCell>
+        <mxCell id="loop" parent="1" style="rounded=1;absoluteArcSize=1;arcSize=20;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#7C90A3;strokeWidth=1.5;dashed=1;dashPattern=5 3;strokeWidth=2;" value="" vertex="1">
+          <mxGeometry height="785" width="649" x="500" y="173" as="geometry" />
+        </mxCell>
+        <mxCell id="loop-header" parent="1" style="rounded=1;absoluteArcSize=1;arcSize=14;whiteSpace=wrap;html=1;fillColor=#E6ECF4;strokeColor=none;strokeWidth=1.5;" value="" vertex="1">
+          <mxGeometry height="50" width="608" x="521" y="188" as="geometry" />
+        </mxCell>
+        <mxCell id="loop-title" parent="1" style="text;html=1;whiteSpace=wrap;overflow=visible;align=center;verticalAlign=middle;spacing=0;fontFamily=Noto Serif CJK SC;fontSize=31;fontColor=#081225;fontStyle=1;" value="迭代：\(k=1,\ldots,T\)" vertex="1">
+          <mxGeometry height="47" width="490" x="580" y="189" as="geometry" />
+        </mxCell>
+        <mxCell id="input-to-init" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#475766;strokeWidth=3;endArrow=block;endFill=1;endSize=12;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="221" y="570" as="sourcePoint" />
+            <mxPoint x="264" y="570" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="input" parent="1" style="group;" value="" vertex="1">
+          <mxGeometry height="736" width="206" x="15" y="182" as="geometry" />
+        </mxCell>
+        <mxCell id="input-body" parent="input" style="rounded=1;absoluteArcSize=1;arcSize=16;whiteSpace=wrap;html=1;fillColor=#F7FAFE;strokeColor=#68ACFF;strokeWidth=1.5;" value="" vertex="1">
+          <mxGeometry height="736" width="206" as="geometry" />
+        </mxCell>
+        <mxCell id="input-header" parent="input" style="rounded=1;absoluteArcSize=1;arcSize=15;whiteSpace=wrap;html=1;fillColor=#DBEAFE;strokeColor=none;strokeWidth=1.5;" value="" vertex="1">
+          <mxGeometry height="76" width="204" x="1" y="1" as="geometry" />
+        </mxCell>
+        <mxCell id="input-header-square" parent="input" style="fillColor=#DBEAFE;strokeColor=none;" value="" vertex="1">
+          <mxGeometry height="15" width="204" x="1" y="61" as="geometry" />
+        </mxCell>
+        <mxCell id="input-title" parent="input" style="text;html=1;whiteSpace=wrap;overflow=visible;align=center;verticalAlign=middle;spacing=0;fontFamily=Noto Serif CJK SC;fontSize=28;fontColor=#053362;fontStyle=1;" value="输入" vertex="1">
+          <mxGeometry height="72" width="206" y="2" as="geometry" />
+        </mxCell>
+        <mxCell id="input-prior" parent="input" style="rounded=1;absoluteArcSize=1;arcSize=16;whiteSpace=wrap;html=1;fillColor=#F3F6FA;strokeColor=#A0BFE7;strokeWidth=1.5;" value="" vertex="1">
+          <mxGeometry height="87" width="176" x="15" y="94" as="geometry" />
+        </mxCell>
+        <mxCell id="input-prior-label" parent="input" style="text;html=1;whiteSpace=wrap;overflow=visible;align=center;verticalAlign=middle;spacing=0;fontFamily=Noto Serif CJK SC;fontSize=23;fontColor=#081225;fontStyle=0;" value="初始密度" vertex="1">
+          <mxGeometry height="35" width="172" x="17" y="101" as="geometry" />
+        </mxCell>
+        <mxCell id="input-prior-math" parent="input" style="text;html=1;whiteSpace=wrap;overflow=visible;align=center;verticalAlign=middle;spacing=0;fontFamily=Noto Serif CJK SC;fontSize=25;fontColor=#081225;fontStyle=0;" value="\(p(x_0)\)" vertex="1">
+          <mxGeometry height="39" width="170" x="18" y="136" as="geometry" />
+        </mxCell>
+        <mxCell id="input-count" parent="input" style="rounded=1;absoluteArcSize=1;arcSize=16;whiteSpace=wrap;html=1;fillColor=#F3F6FA;strokeColor=#A0BFE7;strokeWidth=1.5;" value="" vertex="1">
+          <mxGeometry height="88" width="176" x="15" y="195" as="geometry" />
+        </mxCell>
+        <mxCell id="input-count-label" parent="input" style="text;html=1;whiteSpace=wrap;overflow=visible;align=center;verticalAlign=middle;spacing=0;fontFamily=Noto Serif CJK SC;fontSize=23;fontColor=#081225;fontStyle=0;" value="粒子数" vertex="1">
+          <mxGeometry height="35" width="172" x="17" y="202" as="geometry" />
+        </mxCell>
+        <mxCell id="input-count-math" parent="input" style="text;html=1;whiteSpace=wrap;overflow=visible;align=center;verticalAlign=middle;spacing=0;fontFamily=Noto Serif CJK SC;fontSize=25;fontColor=#081225;fontStyle=0;" value="\(N\)" vertex="1">
+          <mxGeometry height="39" width="170" x="18" y="237" as="geometry" />
+        </mxCell>
+        <mxCell id="input-model" parent="input" style="rounded=1;absoluteArcSize=1;arcSize=16;whiteSpace=wrap;html=1;fillColor=#F3F6FA;strokeColor=#A0BFE7;strokeWidth=1.5;" value="" vertex="1">
+          <mxGeometry height="92" width="176" x="15" y="296" as="geometry" />
+        </mxCell>
+        <mxCell id="input-model-label" parent="input" style="text;html=1;whiteSpace=wrap;overflow=visible;align=center;verticalAlign=middle;spacing=0;fontFamily=Noto Serif CJK SC;fontSize=23;fontColor=#081225;fontStyle=0;" value="模型" vertex="1">
+          <mxGeometry height="35" width="172" x="17" y="303" as="geometry" />
+        </mxCell>
+        <mxCell id="input-model-math" parent="input" style="text;html=1;whiteSpace=wrap;overflow=visible;align=center;verticalAlign=middle;spacing=0;fontFamily=Noto Serif CJK SC;fontSize=25;fontColor=#081225;fontStyle=0;" value="\(f,h\)" vertex="1">
+          <mxGeometry height="39" width="170" x="18" y="338" as="geometry" />
+        </mxCell>
+        <mxCell id="input-noise" parent="input" style="rounded=1;absoluteArcSize=1;arcSize=16;whiteSpace=wrap;html=1;fillColor=#F3F6FA;strokeColor=#A0BFE7;strokeWidth=1.5;" value="" vertex="1">
+          <mxGeometry height="93" width="176" x="15" y="401" as="geometry" />
+        </mxCell>
+        <mxCell id="input-noise-label" parent="input" style="text;html=1;whiteSpace=wrap;overflow=visible;align=center;verticalAlign=middle;spacing=0;fontFamily=Noto Serif CJK SC;fontSize=23;fontColor=#081225;fontStyle=0;" value="噪声分布" vertex="1">
+          <mxGeometry height="35" width="172" x="17" y="408" as="geometry" />
+        </mxCell>
+        <mxCell id="input-noise-math" parent="input" style="text;html=1;whiteSpace=wrap;overflow=visible;align=center;verticalAlign=middle;spacing=0;fontFamily=Noto Serif CJK SC;fontSize=25;fontColor=#081225;fontStyle=0;" value="\(\mathbb{P}_{N_x}，\mathbb{P}_{N_y}\)" vertex="1">
+          <mxGeometry height="39" width="170" x="18" y="443" as="geometry" />
+        </mxCell>
+        <mxCell id="input-obs-density" parent="input" style="rounded=1;absoluteArcSize=1;arcSize=16;whiteSpace=wrap;html=1;fillColor=#F3F6FA;strokeColor=#A0BFE7;strokeWidth=1.5;" value="" vertex="1">
+          <mxGeometry height="100" width="176" x="15" y="509" as="geometry" />
+        </mxCell>
+        <mxCell id="input-obs-density-label" parent="input" style="text;html=1;whiteSpace=wrap;overflow=visible;align=center;verticalAlign=middle;spacing=0;fontFamily=Noto Serif CJK SC;fontSize=23;fontColor=#081225;fontStyle=0;" value="观测条件密度" vertex="1">
+          <mxGeometry height="35" width="172" x="17" y="516" as="geometry" />
+        </mxCell>
+        <mxCell id="input-obs-density-math" parent="input" style="text;html=1;whiteSpace=wrap;overflow=visible;align=center;verticalAlign=middle;spacing=0;fontFamily=Noto Serif CJK SC;fontSize=22;fontColor=#081225;fontStyle=0;" value="\(p_{Y_k\mid X_k}(y_k\mid x_k)\)" vertex="1">
+          <mxGeometry height="39" width="170" x="18" y="551" as="geometry" />
+        </mxCell>
+        <mxCell id="input-observations" parent="input" style="rounded=1;absoluteArcSize=1;arcSize=16;whiteSpace=wrap;html=1;fillColor=#F3F6FA;strokeColor=#A0BFE7;strokeWidth=1.5;" value="" vertex="1">
+          <mxGeometry height="88" width="176" x="15" y="626" as="geometry" />
+        </mxCell>
+        <mxCell id="input-observations-label" parent="input" style="text;html=1;whiteSpace=wrap;overflow=visible;align=center;verticalAlign=middle;spacing=0;fontFamily=Noto Serif CJK SC;fontSize=23;fontColor=#081225;fontStyle=0;" value="观测序列" vertex="1">
+          <mxGeometry height="35" width="172" x="17" y="633" as="geometry" />
+        </mxCell>
+        <mxCell id="input-observations-math" parent="input" style="text;html=1;whiteSpace=wrap;overflow=visible;align=center;verticalAlign=middle;spacing=0;fontFamily=Noto Serif CJK SC;fontSize=25;fontColor=#081225;fontStyle=0;" value="\(y_{1:T}\)" vertex="1">
+          <mxGeometry height="39" width="170" x="18" y="668" as="geometry" />
+        </mxCell>
+        <mxCell id="init" parent="1" style="group;" value="" vertex="1">
+          <mxGeometry height="274" width="201" x="264" y="465" as="geometry" />
+        </mxCell>
+        <mxCell id="init-body" parent="init" style="rounded=1;absoluteArcSize=1;arcSize=16;whiteSpace=wrap;html=1;fillColor=#FAF8FF;strokeColor=#A88AFF;strokeWidth=1.5;" value="" vertex="1">
+          <mxGeometry height="274" width="201" as="geometry" />
+        </mxCell>
+        <mxCell id="init-header" parent="init" style="rounded=1;absoluteArcSize=1;arcSize=15;whiteSpace=wrap;html=1;fillColor=#E7DDFB;strokeColor=none;strokeWidth=1.5;" value="" vertex="1">
+          <mxGeometry height="60" width="199" x="1" y="1" as="geometry" />
+        </mxCell>
+        <mxCell id="init-header-square" parent="init" style="fillColor=#E7DDFB;strokeColor=none;" value="" vertex="1">
+          <mxGeometry height="15" width="199" x="1" y="45" as="geometry" />
+        </mxCell>
+        <mxCell id="init-title" parent="init" style="text;html=1;whiteSpace=wrap;overflow=visible;align=center;verticalAlign=middle;spacing=0;fontFamily=Noto Serif CJK SC;fontSize=28;fontColor=#261364;fontStyle=1;" value="初始化" vertex="1">
+          <mxGeometry height="56" width="201" y="2" as="geometry" />
+        </mxCell>
+        <mxCell id="init-sampling" parent="init" style="text;html=1;whiteSpace=wrap;overflow=visible;align=center;verticalAlign=middle;spacing=0;fontFamily=Noto Serif CJK SC;fontSize=24;fontColor=#081225;fontStyle=0;" value="独立采样" vertex="1">
+          <mxGeometry height="35" width="185" x="8" y="72" as="geometry" />
+        </mxCell>
+        <mxCell id="init-formula" parent="init" style="text;html=1;whiteSpace=wrap;overflow=visible;align=center;verticalAlign=middle;spacing=0;fontFamily=Noto Serif CJK SC;fontSize=26;fontColor=#081225;fontStyle=0;" value="\(x_0^{+,(i)}\sim p(x_0)\,;\)" vertex="1">
+          <mxGeometry height="40" width="191" x="5" y="112" as="geometry" />
+        </mxCell>
+        <mxCell id="init-weight" parent="init" style="text;html=1;whiteSpace=wrap;overflow=visible;align=center;verticalAlign=middle;spacing=0;fontFamily=Noto Serif CJK SC;fontSize=24;fontColor=#081225;fontStyle=0;" value="权重均为 \(1/N\)" vertex="1">
+          <mxGeometry height="35" width="191" x="5" y="156" as="geometry" />
+        </mxCell>
+        <mxCell id="init-index" parent="init" style="text;html=1;whiteSpace=wrap;overflow=visible;align=center;verticalAlign=middle;spacing=0;fontFamily=Noto Serif CJK SC;fontSize=23;fontColor=#081225;fontStyle=0;" value="\((i=1,\ldots,N)\)" vertex="1">
+          <mxGeometry height="34" width="191" x="5" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="init-k" parent="init" style="text;html=1;whiteSpace=wrap;overflow=visible;align=center;verticalAlign=middle;spacing=0;fontFamily=Noto Serif CJK SC;fontSize=22;fontStyle=0;fontColor=#081225;" value="\(k\leftarrow 1\)" vertex="1">
+          <mxGeometry height="29" width="191" x="5" y="239" as="geometry" />
+        </mxCell>
+        <mxCell id="predict" parent="1" style="group;" value="" vertex="1">
+          <mxGeometry height="198" width="281" x="524" y="258" as="geometry" />
+        </mxCell>
+        <mxCell id="predict-body" parent="predict" style="rounded=1;absoluteArcSize=1;arcSize=16;whiteSpace=wrap;html=1;fillColor=#F7FAFE;strokeColor=#68ACFF;strokeWidth=1.5;" value="" vertex="1">
+          <mxGeometry height="198" width="281" as="geometry" />
+        </mxCell>
+        <mxCell id="predict-header" parent="predict" style="rounded=1;absoluteArcSize=1;arcSize=15;whiteSpace=wrap;html=1;fillColor=#DBEAFE;strokeColor=none;strokeWidth=1.5;" value="" vertex="1">
+          <mxGeometry height="50" width="279" x="1" y="1" as="geometry" />
+        </mxCell>
+        <mxCell id="predict-header-square" parent="predict" style="fillColor=#DBEAFE;strokeColor=none;" value="" vertex="1">
+          <mxGeometry height="15" width="279" x="1" y="35" as="geometry" />
+        </mxCell>
+        <mxCell id="predict-title" parent="predict" style="text;html=1;whiteSpace=wrap;overflow=visible;align=center;verticalAlign=middle;spacing=0;fontFamily=Noto Serif CJK SC;fontSize=25;fontColor=#053362;fontStyle=1;" value="预测" vertex="1">
+          <mxGeometry height="46" width="205" x="60" y="2" as="geometry" />
+        </mxCell>
+        <mxCell id="predict-number" parent="predict" style="ellipse;html=1;aspect=fixed;fillColor=#5195CD;gradientColor=#68ACFF;gradientDirection=east;strokeColor=#FFFFFF;strokeWidth=1.5;fontColor=#FFFFFF;fontFamily=Georgia;fontSize=32;fontStyle=1;" value="1" vertex="1">
+          <mxGeometry height="54" width="54" x="4" y="-8" as="geometry" />
+        </mxCell>
+        <mxCell id="predict-sampling" parent="predict" style="text;html=1;whiteSpace=wrap;overflow=visible;align=center;verticalAlign=middle;spacing=0;fontFamily=Noto Serif CJK SC;fontSize=24;fontColor=#081225;fontStyle=0;" value="采样 \(n_{x,k}^{(i)}\sim\mathbb{P}_{N_x}\,;\)" vertex="1">
+          <mxGeometry height="42" width="265" x="8" y="61" as="geometry" />
+        </mxCell>
+        <mxCell id="predict-equation" parent="predict" style="text;html=1;whiteSpace=wrap;overflow=visible;align=center;verticalAlign=middle;spacing=0;fontFamily=Noto Serif CJK SC;fontSize=24;fontColor=#081225;fontStyle=0;" value="\(x_k^{-,(i)}=f\bigl(x_{k-1}^{+,(i)},n_{x,k}^{(i)}\bigr)\)" vertex="1">
+          <mxGeometry height="42" width="271" x="5" y="108" as="geometry" />
+        </mxCell>
+        <mxCell id="predict-index" parent="predict" style="text;html=1;whiteSpace=wrap;overflow=visible;align=center;verticalAlign=middle;spacing=0;fontFamily=Noto Serif CJK SC;fontSize=22;fontColor=#081225;fontStyle=0;" value="\((i=1,\ldots,N)\)" vertex="1">
+          <mxGeometry height="30" width="261" x="10" y="159" as="geometry" />
+        </mxCell>
+        <mxCell id="likelihood" parent="1" style="group;" value="" vertex="1">
+          <mxGeometry height="198" width="281" x="846" y="258" as="geometry" />
+        </mxCell>
+        <mxCell id="likelihood-body" parent="likelihood" style="rounded=1;absoluteArcSize=1;arcSize=16;whiteSpace=wrap;html=1;fillColor=#FAF8FF;strokeColor=#A88AFF;strokeWidth=1.5;" value="" vertex="1">
+          <mxGeometry height="198" width="281" as="geometry" />
+        </mxCell>
+        <mxCell id="likelihood-header" parent="likelihood" style="rounded=1;absoluteArcSize=1;arcSize=15;whiteSpace=wrap;html=1;fillColor=#E7DDFB;strokeColor=none;strokeWidth=1.5;" value="" vertex="1">
+          <mxGeometry height="50" width="279" x="1" y="1" as="geometry" />
+        </mxCell>
+        <mxCell id="likelihood-header-square" parent="likelihood" style="fillColor=#E7DDFB;strokeColor=none;" value="" vertex="1">
+          <mxGeometry height="15" width="279" x="1" y="35" as="geometry" />
+        </mxCell>
+        <mxCell id="likelihood-title" parent="likelihood" style="text;html=1;whiteSpace=wrap;overflow=visible;align=center;verticalAlign=middle;spacing=0;fontFamily=Noto Serif CJK SC;fontSize=25;fontColor=#261364;fontStyle=1;" value="似然计算" vertex="1">
+          <mxGeometry height="46" width="205" x="60" y="2" as="geometry" />
+        </mxCell>
+        <mxCell id="likelihood-number" parent="likelihood" style="ellipse;html=1;aspect=fixed;fillColor=#8868BF;gradientColor=#A88AFF;gradientDirection=east;strokeColor=#FFFFFF;strokeWidth=1.5;fontColor=#FFFFFF;fontFamily=Georgia;fontSize=32;fontStyle=1;" value="2" vertex="1">
+          <mxGeometry height="54" width="54" x="4" y="-8" as="geometry" />
+        </mxCell>
+        <mxCell id="likelihood-g" parent="likelihood" style="text;html=1;whiteSpace=wrap;overflow=visible;align=center;verticalAlign=middle;spacing=0;fontFamily=Noto Serif CJK SC;fontSize=25;fontColor=#081225;fontStyle=0;" value="\(g_k(x_k^{-,(i)})=\)" vertex="1">
+          <mxGeometry height="41" width="265" x="8" y="61" as="geometry" />
+        </mxCell>
+        <mxCell id="likelihood-equation" parent="likelihood" style="text;html=1;whiteSpace=wrap;overflow=visible;align=center;verticalAlign=middle;spacing=0;fontFamily=Noto Serif CJK SC;fontSize=25;fontColor=#081225;fontStyle=0;" value="\(p_{Y_k\mid X_k}\bigl(y_k\mid x_k^{-,(i)}\bigr)\)" vertex="1">
+          <mxGeometry height="43" width="269" x="6" y="108" as="geometry" />
+        </mxCell>
+        <mxCell id="likelihood-index" parent="likelihood" style="text;html=1;whiteSpace=wrap;overflow=visible;align=center;verticalAlign=middle;spacing=0;fontFamily=Noto Serif CJK SC;fontSize=22;fontColor=#081225;fontStyle=0;" value="\((i=1,\ldots,N)\)" vertex="1">
+          <mxGeometry height="30" width="261" x="10" y="159" as="geometry" />
+        </mxCell>
+        <mxCell id="weight" parent="1" style="group;" value="" vertex="1">
+          <mxGeometry height="190" width="281" x="846" y="512" as="geometry" />
+        </mxCell>
+        <mxCell id="weight-body" parent="weight" style="rounded=1;absoluteArcSize=1;arcSize=16;whiteSpace=wrap;html=1;fillColor=#F5FBFC;strokeColor=#43B5BE;strokeWidth=1.5;" value="" vertex="1">
+          <mxGeometry height="190" width="281" as="geometry" />
+        </mxCell>
+        <mxCell id="weight-header" parent="weight" style="rounded=1;absoluteArcSize=1;arcSize=15;whiteSpace=wrap;html=1;fillColor=#D6EFF0;strokeColor=none;strokeWidth=1.5;" value="" vertex="1">
+          <mxGeometry height="50" width="279" x="1" y="1" as="geometry" />
+        </mxCell>
+        <mxCell id="weight-header-square" parent="weight" style="fillColor=#D6EFF0;strokeColor=none;" value="" vertex="1">
+          <mxGeometry height="15" width="279" x="1" y="35" as="geometry" />
+        </mxCell>
+        <mxCell id="weight-title" parent="weight" style="text;html=1;whiteSpace=wrap;overflow=visible;align=center;verticalAlign=middle;spacing=0;fontFamily=Noto Serif CJK SC;fontSize=25;fontColor=#004455;fontStyle=1;" value="归一化权重" vertex="1">
+          <mxGeometry height="46" width="205" x="60" y="2" as="geometry" />
+        </mxCell>
+        <mxCell id="weight-number" parent="weight" style="ellipse;html=1;aspect=fixed;fillColor=#3D9FA8;gradientColor=#43B5BE;gradientDirection=east;strokeColor=#FFFFFF;strokeWidth=1.5;fontColor=#FFFFFF;fontFamily=Georgia;fontSize=32;fontStyle=1;" value="3" vertex="1">
+          <mxGeometry height="54" width="54" x="4" y="-8" as="geometry" />
+        </mxCell>
+        <mxCell id="weight-equation" parent="weight" style="text;html=1;whiteSpace=wrap;overflow=visible;align=center;verticalAlign=middle;spacing=0;fontFamily=Noto Serif CJK SC;fontSize=21;fontColor=#081225;fontStyle=0;" value="\(w_k^{+,(i)}=\displaystyle\frac{g_k(x_k^{-,(i)})}{\sum_{r=1}^{N}g_k(x_k^{-,(r)})}\)" vertex="1">
+          <mxGeometry height="87" width="267" x="7" y="64" as="geometry" />
+        </mxCell>
+        <mxCell id="weight-index" parent="weight" style="text;html=1;whiteSpace=wrap;overflow=visible;align=center;verticalAlign=middle;spacing=0;fontFamily=Noto Serif CJK SC;fontSize=22;fontColor=#081225;fontStyle=0;" value="\((i=1,\ldots,N)\)" vertex="1">
+          <mxGeometry height="31" width="261" x="10" y="153" as="geometry" />
+        </mxCell>
+        <mxCell id="mean" parent="1" style="group;" value="" vertex="1">
+          <mxGeometry height="190" width="281" x="524" y="512" as="geometry" />
+        </mxCell>
+        <mxCell id="mean-body" parent="mean" style="rounded=1;absoluteArcSize=1;arcSize=16;whiteSpace=wrap;html=1;fillColor=#FAF8FF;strokeColor=#A88AFF;strokeWidth=1.5;" value="" vertex="1">
+          <mxGeometry height="190" width="281" as="geometry" />
+        </mxCell>
+        <mxCell id="mean-header" parent="mean" style="rounded=1;absoluteArcSize=1;arcSize=15;whiteSpace=wrap;html=1;fillColor=#E7DDFB;strokeColor=none;strokeWidth=1.5;" value="" vertex="1">
+          <mxGeometry height="50" width="279" x="1" y="1" as="geometry" />
+        </mxCell>
+        <mxCell id="mean-header-square" parent="mean" style="fillColor=#E7DDFB;strokeColor=none;" value="" vertex="1">
+          <mxGeometry height="15" width="279" x="1" y="35" as="geometry" />
+        </mxCell>
+        <mxCell id="mean-title" parent="mean" style="text;html=1;whiteSpace=wrap;overflow=visible;align=center;verticalAlign=middle;spacing=0;fontFamily=Noto Serif CJK SC;fontSize=25;fontColor=#261364;fontStyle=1;" value="后验均值" vertex="1">
+          <mxGeometry height="46" width="205" x="60" y="2" as="geometry" />
+        </mxCell>
+        <mxCell id="mean-number" parent="mean" style="ellipse;html=1;aspect=fixed;fillColor=#8868BF;gradientColor=#A88AFF;gradientDirection=east;strokeColor=#FFFFFF;strokeWidth=1.5;fontColor=#FFFFFF;fontFamily=Georgia;fontSize=32;fontStyle=1;" value="4" vertex="1">
+          <mxGeometry height="54" width="54" x="4" y="-8" as="geometry" />
+        </mxCell>
+        <mxCell id="mean-equation" parent="mean" style="text;html=1;whiteSpace=wrap;overflow=visible;align=center;verticalAlign=middle;spacing=0;fontFamily=Noto Serif CJK SC;fontSize=26;fontColor=#081225;fontStyle=0;" value="\(\hat{x}_k=\displaystyle\sum_{i=1}^{N}w_k^{+,(i)}x_k^{-,(i)}\)" vertex="1">
+          <mxGeometry height="103" width="265" x="8" y="64" as="geometry" />
+        </mxCell>
+        <mxCell id="resample" parent="1" style="group;" value="" vertex="1">
+          <mxGeometry height="182" width="281" x="524" y="750" as="geometry" />
+        </mxCell>
+        <mxCell id="resample-body" parent="resample" style="rounded=1;absoluteArcSize=1;arcSize=16;whiteSpace=wrap;html=1;fillColor=#F7FAFE;strokeColor=#68ACFF;strokeWidth=1.5;" value="" vertex="1">
+          <mxGeometry height="182" width="281" as="geometry" />
+        </mxCell>
+        <mxCell id="resample-header" parent="resample" style="rounded=1;absoluteArcSize=1;arcSize=15;whiteSpace=wrap;html=1;fillColor=#DBEAFE;strokeColor=none;strokeWidth=1.5;" value="" vertex="1">
+          <mxGeometry height="50" width="279" x="1" y="1" as="geometry" />
+        </mxCell>
+        <mxCell id="resample-header-square" parent="resample" style="fillColor=#DBEAFE;strokeColor=none;" value="" vertex="1">
+          <mxGeometry height="15" width="279" x="1" y="35" as="geometry" />
+        </mxCell>
+        <mxCell id="resample-title" parent="resample" style="text;html=1;whiteSpace=wrap;overflow=visible;align=center;verticalAlign=middle;spacing=0;fontFamily=Noto Serif CJK SC;fontSize=25;fontColor=#053362;fontStyle=1;" value="独立重采样" vertex="1">
+          <mxGeometry height="46" width="205" x="60" y="2" as="geometry" />
+        </mxCell>
+        <mxCell id="resample-number" parent="resample" style="ellipse;html=1;aspect=fixed;fillColor=#5195CD;gradientColor=#68ACFF;gradientDirection=east;strokeColor=#FFFFFF;strokeWidth=1.5;fontColor=#FFFFFF;fontFamily=Georgia;fontSize=32;fontStyle=1;" value="5" vertex="1">
+          <mxGeometry height="54" width="54" x="4" y="-8" as="geometry" />
+        </mxCell>
+        <mxCell id="resample-equation" parent="resample" style="text;html=1;whiteSpace=wrap;overflow=visible;align=center;verticalAlign=middle;spacing=0;fontFamily=Noto Serif CJK SC;fontSize=22;fontColor=#081225;fontStyle=0;" value="\(\mathbb{P}(A_j=i\mid w_k^+)=w_k^{+,(i)}\)" vertex="1">
+          <mxGeometry height="52" width="267" x="7" y="66" as="geometry" />
+        </mxCell>
+        <mxCell id="resample-index" parent="resample" style="text;html=1;whiteSpace=wrap;overflow=visible;align=center;verticalAlign=middle;spacing=0;fontFamily=Noto Serif CJK SC;fontSize=22;fontColor=#081225;fontStyle=0;" value="\((j=1,\ldots,N)\)" vertex="1">
+          <mxGeometry height="34" width="261" x="10" y="133" as="geometry" />
+        </mxCell>
+        <mxCell id="update" parent="1" style="group;" value="" vertex="1">
+          <mxGeometry height="182" width="281" x="846" y="750" as="geometry" />
+        </mxCell>
+        <mxCell id="update-body" parent="update" style="rounded=1;absoluteArcSize=1;arcSize=16;whiteSpace=wrap;html=1;fillColor=#FAF8FF;strokeColor=#A88AFF;strokeWidth=1.5;" value="" vertex="1">
+          <mxGeometry height="182" width="281" as="geometry" />
+        </mxCell>
+        <mxCell id="update-header" parent="update" style="rounded=1;absoluteArcSize=1;arcSize=15;whiteSpace=wrap;html=1;fillColor=#E7DDFB;strokeColor=none;strokeWidth=1.5;" value="" vertex="1">
+          <mxGeometry height="50" width="279" x="1" y="1" as="geometry" />
+        </mxCell>
+        <mxCell id="update-header-square" parent="update" style="fillColor=#E7DDFB;strokeColor=none;" value="" vertex="1">
+          <mxGeometry height="15" width="279" x="1" y="35" as="geometry" />
+        </mxCell>
+        <mxCell id="update-title" parent="update" style="text;html=1;whiteSpace=wrap;overflow=visible;align=center;verticalAlign=middle;spacing=0;fontFamily=Noto Serif CJK SC;fontSize=25;fontColor=#261364;fontStyle=1;" value="粒子更新" vertex="1">
+          <mxGeometry height="46" width="205" x="60" y="2" as="geometry" />
+        </mxCell>
+        <mxCell id="update-number" parent="update" style="ellipse;html=1;aspect=fixed;fillColor=#8868BF;gradientColor=#A88AFF;gradientDirection=east;strokeColor=#FFFFFF;strokeWidth=1.5;fontColor=#FFFFFF;fontFamily=Georgia;fontSize=32;fontStyle=1;" value="6" vertex="1">
+          <mxGeometry height="54" width="54" x="4" y="-8" as="geometry" />
+        </mxCell>
+        <mxCell id="update-equation" parent="update" style="text;html=1;whiteSpace=wrap;overflow=visible;align=center;verticalAlign=middle;spacing=0;fontFamily=Noto Serif CJK SC;fontSize=26;fontColor=#081225;fontStyle=0;" value="\(x_k^{+,(j)}\leftarrow x_k^{-,(A_j)}\,;\)" vertex="1">
+          <mxGeometry height="43" width="267" x="7" y="57" as="geometry" />
+        </mxCell>
+        <mxCell id="update-weights" parent="update" style="text;html=1;whiteSpace=wrap;overflow=visible;align=center;verticalAlign=middle;spacing=0;fontFamily=Noto Serif CJK SC;fontSize=24;fontColor=#081225;fontStyle=0;" value="新权重 \(=1/N\)" vertex="1">
+          <mxGeometry height="35" width="261" x="10" y="104" as="geometry" />
+        </mxCell>
+        <mxCell id="update-index" parent="update" style="text;html=1;whiteSpace=wrap;overflow=visible;align=center;verticalAlign=middle;spacing=0;fontFamily=Noto Serif CJK SC;fontSize=22;fontColor=#081225;fontStyle=0;" value="\((j=1,\ldots,N)\)" vertex="1">
+          <mxGeometry height="30" width="261" x="10" y="142" as="geometry" />
+        </mxCell>
+        <mxCell id="output" parent="1" style="group;" value="" vertex="1">
+          <mxGeometry height="966" width="320" x="1240" y="182" as="geometry" />
+        </mxCell>
+        <mxCell id="output-body" parent="output" style="rounded=1;absoluteArcSize=1;arcSize=16;whiteSpace=wrap;html=1;fillColor=#F5FBFC;strokeColor=#43B5BE;strokeWidth=1.5;" value="" vertex="1">
+          <mxGeometry height="966" width="320" as="geometry" />
+        </mxCell>
+        <mxCell id="output-header" parent="output" style="rounded=1;absoluteArcSize=1;arcSize=15;whiteSpace=wrap;html=1;fillColor=#D6EFF0;strokeColor=none;strokeWidth=1.5;" value="" vertex="1">
+          <mxGeometry height="77" width="318" x="1" y="1" as="geometry" />
+        </mxCell>
+        <mxCell id="output-header-square" parent="output" style="fillColor=#D6EFF0;strokeColor=none;" value="" vertex="1">
+          <mxGeometry height="15" width="318" x="1" y="62" as="geometry" />
+        </mxCell>
+        <mxCell id="output-title" parent="output" style="text;html=1;whiteSpace=wrap;overflow=visible;align=center;verticalAlign=middle;spacing=0;fontFamily=Noto Serif CJK SC;fontSize=28;fontColor=#004455;fontStyle=1;" value="输出与保存" vertex="1">
+          <mxGeometry height="73" width="320" y="2" as="geometry" />
+        </mxCell>
+        <mxCell id="output-current" parent="output" style="rounded=1;absoluteArcSize=1;arcSize=16;html=1;fillColor=#F0F9FA;strokeColor=#43B5BE;strokeWidth=1.5;" value="" vertex="1">
+          <mxGeometry height="160" width="290" x="15" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="output-current-title" parent="output" style="text;html=1;whiteSpace=wrap;overflow=visible;align=center;verticalAlign=middle;spacing=0;fontFamily=Noto Serif CJK SC;fontSize=25;fontStyle=1;fontColor=#081225;" value="当前后验均值估计" vertex="1">
+          <mxGeometry height="38" width="276" x="22" y="328" as="geometry" />
+        </mxCell>
+        <mxCell id="output-current-math" parent="output" style="text;html=1;whiteSpace=wrap;overflow=visible;align=center;verticalAlign=middle;spacing=0;fontFamily=Noto Serif CJK SC;fontSize=34;fontStyle=0;fontColor=#081225;" value="\(\hat{x}_k\)" vertex="1">
+          <mxGeometry height="50" width="276" x="22" y="368" as="geometry" />
+        </mxCell>
+        <mxCell id="output-current-caption" parent="output" style="text;html=1;whiteSpace=wrap;overflow=visible;align=center;verticalAlign=middle;spacing=0;fontFamily=Noto Serif CJK SC;fontSize=21;fontStyle=0;fontColor=#081225;" value="每步保存为序列第 \(k\) 项" vertex="1">
+          <mxGeometry height="40" width="276" x="22" y="423" as="geometry" />
+        </mxCell>
+        <mxCell id="output-particles" parent="output" style="rounded=1;absoluteArcSize=1;arcSize=16;html=1;fillColor=#F0F9FA;strokeColor=#43B5BE;strokeWidth=1.5;" value="" vertex="1">
+          <mxGeometry height="166" width="290" x="15" y="588" as="geometry" />
+        </mxCell>
+        <mxCell id="output-particles-title" parent="output" style="text;html=1;whiteSpace=wrap;overflow=visible;align=center;verticalAlign=middle;spacing=0;fontFamily=Noto Serif CJK SC;fontSize=25;fontStyle=1;fontColor=#081225;" value="当前等权粒子" vertex="1">
+          <mxGeometry height="38" width="276" x="22" y="598" as="geometry" />
+        </mxCell>
+        <mxCell id="output-particles-math" parent="output" style="text;html=1;whiteSpace=wrap;overflow=visible;align=center;verticalAlign=middle;spacing=0;fontFamily=Noto Serif CJK SC;fontSize=29;fontStyle=0;fontColor=#081225;" value="\(\{x_k^{+,(j)}\}_{j=1}^{N}\)" vertex="1">
+          <mxGeometry height="62" width="276" x="22" y="642" as="geometry" />
+        </mxCell>
+        <mxCell id="output-particles-caption" parent="output" style="text;html=1;whiteSpace=wrap;overflow=visible;align=center;verticalAlign=middle;spacing=0;fontFamily=Noto Serif CJK SC;fontSize=21;fontStyle=0;fontColor=#081225;" value="用于后续分析" vertex="1">
+          <mxGeometry height="35" width="276" x="22" y="707" as="geometry" />
+        </mxCell>
+        <mxCell id="output-final" parent="output" style="rounded=1;absoluteArcSize=1;arcSize=16;html=1;fillColor=#E8F5F5;strokeColor=#43B5BE;strokeWidth=1.5;" value="" vertex="1">
+          <mxGeometry height="134" width="290" x="15" y="812" as="geometry" />
+        </mxCell>
+        <mxCell id="output-final-title" parent="output" style="text;html=1;whiteSpace=wrap;overflow=visible;align=center;verticalAlign=middle;spacing=0;fontFamily=Noto Serif CJK SC;fontSize=26;fontStyle=1;fontColor=#081225;" value="结束" vertex="1">
+          <mxGeometry height="37" width="276" x="22" y="819" as="geometry" />
+        </mxCell>
+        <mxCell id="output-final-math" parent="output" style="text;html=1;whiteSpace=wrap;overflow=visible;align=center;verticalAlign=middle;spacing=0;fontFamily=Noto Serif CJK SC;fontSize=29;fontStyle=0;fontColor=#081225;" value="输出 \(\hat{x}_{1:T}\)" vertex="1">
+          <mxGeometry height="48" width="276" x="22" y="859" as="geometry" />
+        </mxCell>
+        <mxCell id="output-final-caption" parent="output" style="text;html=1;whiteSpace=wrap;overflow=visible;align=center;verticalAlign=middle;spacing=0;fontFamily=Noto Serif CJK SC;fontSize=20;fontStyle=0;fontColor=#081225;" value="累计保存的后验估计序列" vertex="1">
+          <mxGeometry height="30" width="276" x="22" y="908" as="geometry" />
+        </mxCell>
+        <mxCell id="output-note" parent="output" style="text;html=1;whiteSpace=wrap;overflow=visible;align=center;verticalAlign=middle;spacing=0;fontFamily=Noto Serif CJK SC;fontSize=22;fontStyle=0;fontColor=#081225;" value="④ 保存估计&lt;br&gt;⑥ 输出等权粒子&lt;br&gt;终止后输出完整序列" vertex="1">
+          <mxGeometry height="88" width="280" x="20" y="102" as="geometry" />
+        </mxCell>
+        <mxCell id="continue-check" parent="1" style="rhombus;html=1;whiteSpace=wrap;fillColor=#E6ECF4;strokeColor=#7C90A3;strokeWidth=2;fontSize=25;fontColor=#081225;" value="\(k&amp;lt;T\) ?" vertex="1">
+          <mxGeometry height="110" width="170" x="902" y="1000" as="geometry" />
+        </mxCell>
+        <mxCell id="increment" parent="1" style="rounded=1;absoluteArcSize=1;arcSize=16;html=1;fillColor=#E0E6ED;strokeColor=#7C90A3;strokeWidth=1.5;" value="" vertex="1">
+          <mxGeometry height="54" width="240" x="610" y="1028" as="geometry" />
+        </mxCell>
+        <mxCell id="increment-math" parent="1" style="text;html=1;whiteSpace=wrap;overflow=visible;align=center;verticalAlign=middle;spacing=0;fontFamily=Noto Serif CJK SC;fontSize=27;fontStyle=0;fontColor=#081225;" value="\(k\leftarrow k+1\)" vertex="1">
+          <mxGeometry height="50" width="232" x="614" y="1030" as="geometry" />
+        </mxCell>
+        <mxCell id="continue-yes" parent="1" style="text;html=1;whiteSpace=wrap;overflow=visible;align=center;verticalAlign=middle;spacing=0;fontFamily=Noto Serif CJK SC;fontSize=20;fontStyle=0;fontColor=#081225;" value="是" vertex="1">
+          <mxGeometry height="33" width="50" x="851" y="1012" as="geometry" />
+        </mxCell>
+        <mxCell id="terminate-label" parent="1" style="text;html=1;whiteSpace=wrap;overflow=visible;align=center;verticalAlign=middle;spacing=0;fontFamily=Noto Serif CJK SC;fontSize=23;fontStyle=0;fontColor=#081225;" value="\(k=T\)" vertex="1">
+          <mxGeometry height="32" width="135" x="1095" y="1018" as="geometry" />
+        </mxCell>
+        <mxCell id="init-to-predict" edge="1" parent="1" source="init" style="edgeStyle=none;rounded=1;html=1;strokeColor=#475766;strokeWidth=2.5;endArrow=block;endFill=1;endSize=10;exitX=1;exitY=0.5;exitPerimeter=0;entryX=0;entryY=0.4898989898989899;entryPerimeter=0;" target="predict" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="480" y="602" />
+              <mxPoint x="480" y="355" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="mean-to-current" edge="1" parent="1" source="mean" style="edgeStyle=none;rounded=1;html=1;strokeColor=#269AA5;strokeWidth=2.5;endArrow=block;endFill=1;endSize=10;exitX=0.8398576512455516;exitY=1;exitPerimeter=0;entryX=0;entryY=0.5;entryPerimeter=0;" target="output-current" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="760" y="727" />
+              <mxPoint x="1195" y="727" />
+              <mxPoint x="1195" y="582" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="update-to-particles" edge="1" parent="1" source="update" style="edgeStyle=none;rounded=1;html=1;strokeColor=#269AA5;strokeWidth=2.5;endArrow=block;endFill=1;endSize=10;exitX=1;exitY=0.5659340659340659;exitPerimeter=0;entryX=0;entryY=0.5;entryPerimeter=0;" target="output-particles" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="update-to-check" edge="1" parent="1" source="update" style="edgeStyle=none;rounded=1;html=1;strokeColor=#475766;strokeWidth=2.5;endArrow=block;endFill=1;endSize=10;exitX=0.5;exitY=1;exitPerimeter=0;entryX=0.5;entryY=0;entryPerimeter=0;" target="continue-check" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="continue-to-increment" edge="1" parent="1" source="continue-check" style="edgeStyle=none;rounded=1;html=1;strokeColor=#475766;strokeWidth=2.5;endArrow=block;endFill=1;endSize=10;exitX=0;exitY=0.5;exitPerimeter=0;entryX=1;entryY=0.5;entryPerimeter=0;dashed=1;dashPattern=5 3;" target="increment" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="increment-to-predict" edge="1" parent="1" source="increment" style="edgeStyle=none;rounded=1;html=1;strokeColor=#475766;strokeWidth=2.5;endArrow=block;endFill=1;endSize=10;exitX=0;exitY=0.5;exitPerimeter=0;entryX=0;entryY=0.4898989898989899;entryPerimeter=0;dashed=1;dashPattern=5 3;" target="predict" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="480" y="1055" />
+              <mxPoint x="480" y="355" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="terminate-to-sequence" edge="1" parent="1" source="continue-check" style="edgeStyle=none;rounded=1;html=1;strokeColor=#475766;strokeWidth=2.5;endArrow=block;endFill=1;endSize=10;exitX=1;exitY=0.5;exitPerimeter=0;entryX=0;entryY=0.4552238805970149;entryPerimeter=0;" target="output-final" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="iteration-inlet" parent="1" style="ellipse;fillColor=#475766;strokeColor=none;" value="" vertex="1">
+          <mxGeometry height="8" width="8" x="476" y="598" as="geometry" />
+        </mxCell>
+        <mxCell id="predict-to-likelihood" edge="1" parent="1" source="predict" style="edgeStyle=none;rounded=1;html=1;strokeColor=#475766;strokeWidth=2.5;endArrow=block;endFill=1;endSize=10;exitX=1;exitY=0.4898989898989899;exitPerimeter=0;entryX=0;entryY=0.4898989898989899;entryPerimeter=0;" target="likelihood" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="likelihood-to-weight" edge="1" parent="1" source="likelihood" style="edgeStyle=none;rounded=1;html=1;strokeColor=#475766;strokeWidth=2.5;endArrow=block;endFill=1;endSize=10;exitX=0.5;exitY=1;exitPerimeter=0;entryX=0.5;entryY=0;entryPerimeter=0;" target="weight" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="weight-to-mean" edge="1" parent="1" source="weight" style="edgeStyle=none;rounded=1;html=1;strokeColor=#475766;strokeWidth=2.5;endArrow=block;endFill=1;endSize=10;exitX=0;exitY=0.4631578947368421;exitPerimeter=0;entryX=1;entryY=0.4631578947368421;entryPerimeter=0;" target="mean" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="mean-to-resample" edge="1" parent="1" source="mean" style="edgeStyle=none;rounded=1;html=1;strokeColor=#475766;strokeWidth=2.5;endArrow=block;endFill=1;endSize=10;exitX=0.5;exitY=1;exitPerimeter=0;entryX=0.5;entryY=0;entryPerimeter=0;" target="resample" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="resample-to-update" edge="1" parent="1" source="resample" style="edgeStyle=none;rounded=1;html=1;strokeColor=#475766;strokeWidth=2.5;endArrow=block;endFill=1;endSize=10;exitX=1;exitY=0.46153846153846156;exitPerimeter=0;entryX=0;entryY=0.46153846153846156;entryPerimeter=0;" target="update" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,12 @@
+@echo off
+setlocal
+cd /d "%~dp0"
+where node >nul 2>nul
+if errorlevel 1 (
+  echo Node.js is required for editing. Install Node.js 24 and try again.
+  pause
+  exit /b 1
+)
+for %%I in ("%~dp0.") do set "TALK_NAME=%%~nxI"
+node "..\..\scripts\windows-start.mjs" "%TALK_NAME%" %*
+if errorlevel 1 pause

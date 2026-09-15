@@ -1,0 +1,24 @@
+{
+  "origin_run": "quick-eb95c99ee644",
+  "selection": {
+    "rmse": {
+      "EKF": "ekf_n0_e0_m1",
+      "BPF": "bpf_n500_e0_m1",
+      "EnKF": "enkf_n500_e0_m1",
+      "ETPF": "etpf_n500_e1_m1"
+    },
+    "density_step": 11,
+    "density_trial": 0,
+    "truth": 13.226074608932812
+  },
+  "inputs": {
+    "/home/wudizhe001/Documents/GitHub/filter-theory-HIT/.agents/.tmp/task/tex-build0906/simulation_assets/data/time_series.csv": "9ab039275ecee5029c94e2a0081560da24272bba6c45d4853e9711a039c155a9",
+    "/home/wudizhe001/Documents/GitHub/filter-theory-HIT/.agents/.tmp/task/tex-build0906/simulation_assets/data/accuracy.csv": "70bc4f9d4d3c3e0c258a4077d24480a3e3e5bcf0a65351cca8ed6302d9c31eaa",
+    "/home/wudizhe001/Documents/GitHub/filter-theory-HIT/.agents/.tmp/task/tex-build0906/simulation_assets/data/runtime.csv": "dfcdc2950005c8bf7d47331f6fecf42bd011fc9a99555a9bc69417457df14a5c",
+    "/home/wudizhe001/Documents/GitHub/filter-theory-HIT/.agents/.tmp/task/tex-build0906/simulation_assets/data/config.json": "0eb2b338f22c64d302d3d4bb064a9eae36b850092cfb10362b51b35af29287e7",
+    "/home/wudizhe001/Documents/GitHub/filter-theory-HIT/.agents/.tmp/task/tex-build0906/simulation_assets/data/kde/provenance.json": "cc14198de82025f6cc407f49c9a4d99bc8270cef15d39709721930d4cb75ae22",
+    "/home/wudizhe001/Documents/GitHub/filter-theory-HIT/.agents/.tmp/task/tex-build0906/simulation_assets/data/kde/k11/bpf/density.csv": "5f5d703dd7b1d6117cd250ab307e7be795453f2bce0f30565fe29b5f3657145a",
+    "/home/wudizhe001/Documents/GitHub/filter-theory-HIT/.agents/.tmp/task/tex-build0906/simulation_assets/data/kde/k11/enkf/density.csv": "a7d7d7a6de4d0a0dda7440967db11ea159884e9c01347ed449607e2747f7e2fb",
+    "/home/wudizhe001/Documents/GitHub/filter-theory-HIT/.agents/.tmp/task/tex-build0906/simulation_assets/data/kde/k11/etpf/density.csv": "779444c3a19d2b40fde4c0e557d1a40a5c71b6989bf2740dfb1ac9c9c06ae5c0"
+  }
+}

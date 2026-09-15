@@ -1,0 +1,9 @@
+{
+  "name": "slidev-addon-image-paste",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "keywords": ["slidev-addon", "slidev"],
+  "engines": { "slidev": "52.19.1" },
+  "dependencies": { "@slidev/parser": "52.19.1", "image-size": "1.2.1" }
+}

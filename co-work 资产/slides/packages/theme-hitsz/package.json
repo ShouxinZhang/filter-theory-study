@@ -1,0 +1,26 @@
+{
+  "name": "slidev-theme-hitsz-academic",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "keywords": ["slidev-theme", "slidev"],
+  "engines": { "slidev": "52.19.1" },
+  "dependencies": { "@slidev/theme-default": "0.25.0" },
+  "slidev": {
+    "colorSchema": "light",
+    "defaults": {
+      "info": false,
+      "aspectRatio": "16/9",
+      "canvasWidth": 980,
+      "transition": "none",
+      "fonts": {
+        "sans": "Noto Sans CJK SC, Microsoft YaHei, Arial",
+        "serif": "Noto Serif CJK SC, SimSun",
+        "mono": "DejaVu Sans Mono",
+        "local": "Noto Sans CJK SC, Microsoft YaHei, Arial, Noto Serif CJK SC, SimSun, DejaVu Sans Mono"
+      },
+      "defaults": { "layout": "academic" },
+      "htmlAttrs": { "lang": "zh-CN" }
+    }
+  }
+}

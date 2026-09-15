@@ -1,0 +1,8 @@
+node_modules/
+**/dist/
+**/output/
+**/.slidev/
+**/.drawio-history/
+**/dist-starter/
+**/.slide-order-history/
+**/.image-paste-history/

@@ -1,0 +1,17 @@
+[
+  {
+    "source": "/home/wudizhe001/Documents/GitHub/HITSZ-final-paper-draft/ppt/public/hitsz-logo-genimage-hd.svg",
+    "destination": ".agents/.tmp/task/2026-09-09_slidev-academic/template/public/hitsz-logo-genimage-hd.svg",
+    "sha256": "ca149ad84e07ac2831d1cc0e482dcaba602ea2131ca8d74536c7bbddc2c001fc"
+  },
+  {
+    "source": "/home/wudizhe001/Documents/GitHub/HITSZ-final-paper-draft/ppt/public/hitsz-logo-genimage-hd.png",
+    "destination": ".agents/.tmp/task/2026-09-09_slidev-academic/template/public/hitsz-logo-genimage-hd.png",
+    "sha256": "ca0bd0c88dc50e0149d7fbbb7a9937fd0f584e9ac5c305e700e210b22d91a73b"
+  },
+  {
+    "source": "/home/wudizhe001/Documents/GitHub/HITSZ-final-paper-draft/ppt/public/hitsz-logo-on-white.png",
+    "destination": ".agents/.tmp/task/2026-09-09_slidev-academic/template/public/hitsz-logo-on-white.png",
+    "sha256": "64e0cd89450765444d6917418473996ebca4023dd30d3b5dc4ccc8a4af06e4af"
+  }
+]
