@@ -21,4 +21,12 @@
 python scripts/package-release.py
 ```
 
-打包脚本会检查网页、PDF、PPTX 均已生成，将完整工作区和作者播放文件写入 `releases/filtering-win11-日期_时间.zip`。它不会重新构建或自动获取原工作区的新改动。
+打包脚本会检查网页、PDF、PPTX 均已生成，将完整工作区和作者播放文件写入 `releases/filtering-win11-offline-日期_时间.zip`。它不会重新构建或自动获取原工作区的新改动。
+
+## 离线一键启动补充
+
+新包 `filtering-win11-offline-*.zip` 内置 Windows x64/ARM64 Node.exe，下载文件已与官方 SHA-256 比对，随附许可证和来源记录。`启动汇报.cmd` 只执行包内运行环境，不查询 PATH、不运行 npm、不下载软件。播放服务绑定本机回环地址并自动分配空闲端口，Edge 全屏启动使用独立临时配置。
+
+新增 `node --test tests/presentation.test.mjs` 验证中文/空格目录、自动端口选择、端口冲突回退、网页路由及图片加载。Node Windows x64 可执行文件的导入表只使用 Windows 系统 DLL。Windows 二进制与 CMD/Edge 的实机执行仍未在当前 Linux 环境验证。
+
+旧包 `filtering-win11-2026-09-15_020011.zip` 没有内置运行环境，不再用于现场一键启动。请使用带 **offline** 的新包。

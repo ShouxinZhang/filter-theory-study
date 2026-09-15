@@ -1,16 +1,13 @@
 @echo off
 setlocal
 cd /d "%~dp0"
-where node >nul 2>nul
-if errorlevel 1 (
-  echo Node.js was not found. Opening the offline PDF instead.
-  if exist "talks\filtering\output\academic.pdf" (
-    start "" "talks\filtering\output\academic.pdf"
-  ) else (
-    echo Build or export the presentation first. See WINDOWS.md.
-    pause
-  )
-  exit /b 0
+set "SLIDEV_NODE_ARCH=win-x64"
+if /I "%PROCESSOR_ARCHITECTURE%"=="ARM64" set "SLIDEV_NODE_ARCH=win-arm64"
+if /I "%PROCESSOR_ARCHITEW6432%"=="ARM64" set "SLIDEV_NODE_ARCH=win-arm64"
+if not exist "%~dp0runtime\%SLIDEV_NODE_ARCH%\node.exe" (
+  echo The portable runtime is missing. Please extract the COMPLETE ZIP first.
+  pause
+  exit /b 1
 )
-node "scripts\present.mjs" %*
+"%~dp0runtime\%SLIDEV_NODE_ARCH%\node.exe" "%~dp0scripts\present.mjs"
 if errorlevel 1 pause

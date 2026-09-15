@@ -10,7 +10,7 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
 EXCLUDE = {"node_modules", ".git", ".slidev", ".drawio-history", ".slide-order-history", ".image-paste-history", "__pycache__", "validation", "releases"}
-for relative in ["talks/filtering/dist/index.html", "talks/filtering/output/academic.pdf", "talks/filtering/output/academic.pptx"]:
+for relative in ["talks/filtering/dist/index.html", "talks/filtering/output/academic.pdf", "talks/filtering/output/academic.pptx", "runtime/win-x64/node.exe", "runtime/win-arm64/node.exe", "启动汇报.cmd"]:
     if not (ROOT / relative).is_file():
         raise SystemExit(f"Missing {relative}; build and export the talk first.")
 files = []
@@ -28,15 +28,15 @@ for path in ROOT.rglob("*"):
 release = ROOT / "releases"
 release.mkdir(exist_ok=True)
 now = datetime.now().astimezone()
-archive = release / f"filtering-win11-{now:%Y-%m-%d_%H%M%S}.zip"
-manifest = {"created": now.isoformat(), "format": "complete editable workspace + prebuilt filtering talk", "files": {}}
+archive = release / f"filtering-win11-offline-{now:%Y-%m-%d_%H%M%S}.zip"
+manifest = {"created": now.isoformat(), "format": "one-click offline Windows presentation + bundled x64/ARM64 runtime + editable source", "files": {}}
 with zipfile.ZipFile(archive, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=6) as z:
     for path, relative in sorted(files, key=lambda item: item[1]):
         data = path.read_bytes()
         manifest["files"][relative] = hashlib.sha256(data).hexdigest()
-        info = zipfile.ZipInfo.from_file(path, arcname="filtering-win11/" + relative)
+        info = zipfile.ZipInfo.from_file(path, arcname="filtering-win11-offline/" + relative)
         z.writestr(info, data, compress_type=zipfile.ZIP_DEFLATED)
-    z.writestr("filtering-win11/BUNDLE-MANIFEST.json", json.dumps(manifest, ensure_ascii=False, indent=2) + "\n")
+    z.writestr("filtering-win11-offline/BUNDLE-MANIFEST.json", json.dumps(manifest, ensure_ascii=False, indent=2) + "\n")
 with zipfile.ZipFile(archive) as z:
     if z.testzip() is not None:
         raise SystemExit("Archive verification failed")

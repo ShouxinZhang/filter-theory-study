@@ -10,7 +10,7 @@
 cd "co-work 资产/slides"
 ```
 
-首次安装依赖：`npm ci`。需要 Node.js 20.12 或以上。Windows 使用说明见 [WINDOWS.md](WINDOWS.md)，每个 talk 另有 `start.cmd`。整个工作区只安装一次依赖，后续新建汇报不需要重新安装。
+首次安装依赖：`npm ci`。需要 Node.js 20.12 或以上。离线汇报只需完整解压 ZIP 后双击 `启动汇报.cmd`，运行环境已内置。开发者的 Windows 使用说明见 [WINDOWS.md](WINDOWS.md)，每个 talk 另有 `start.cmd`。整个工作区只安装一次依赖，后续新建汇报不需要重新安装。
 
 ```bash
 # 当前汇报：http://localhost:3030
@@ -129,7 +129,7 @@ npm run export:pptx -- seminar-2026
 
 BPF 现以 `talks/filtering/public/diagrams/bpf.drawio` 为该汇报的源文件，保存只更新本汇报的 XML/SVG。此前的 `2026-09-10_drawio-replicas/bpf/` 保留为原始来源，不再随幻灯片编辑自动改写。
 
-工作区锁定 Slidev 52.19.1，并保留工具栏图标修复与拖拽后侧栏改字的兼容修补。启动和导出必须经过 npm scripts 或 `scripts/slidev.mjs`。开发迁移时复制整个工作区并排除 `node_modules`，然后执行 `npm ci`；现场汇报 ZIP 已额外包含预构建网页、PDF 和图片式 PPTX。只复制 `talks/` 不会携带共享代码。
+工作区锁定 Slidev 52.19.1，并保留工具栏图标修复与拖拽后侧栏改字的兼容修补。启动和导出必须经过 npm scripts 或 `scripts/slidev.mjs`。开发迁移时复制整个工作区并排除 `node_modules`，然后执行 `npm ci`；现场汇报 ZIP 已包含 Windows x64/ARM64 运行环境、预构建网页、PDF 和图片式 PPTX，双击 `启动汇报.cmd` 即可离线启动。只复制 `talks/` 不会携带共享代码。
 
 共享包当前是本地 npm workspace 包，并未发布。历史汇报若需长期固定外观，应归档对应共享包与锁文件。
 
