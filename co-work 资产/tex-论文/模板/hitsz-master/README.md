@@ -22,7 +22,7 @@ bash build.sh
 - `preamble/fonts.tex`：Fandol 中文由入口启用，保留 TeX Gyre Termes X 正文、Heros 无衬线、Cursor 等宽字体和 Latin Modern 求和符号；数学使用 newtxmath。
 - `preamble/algorithms.tex`：中期算法样式，中文输入输出、五号、横线、行号、块竖线、隐藏分号；已改为按章编号。不要重复加载 algorithm2e 或 algpseudocode。
 - `preamble/bibliography.tex`：参考文献孤行保护与条目间距补丁。
-- `hithesis.bst`：实际启用的中期定制文献样式，保留姓名大小写、半角标点、会议和 DOI 规则；`hitszthesis.bst` 为导入模板原版，保留供对照。
+- `hithesis.bst`：实际启用的中期定制文献样式，英文姓名统一大写（含姓氏前缀及后缀），保留半角标点、会议和 DOI 规则；`hitszthesis.bst` 为导入模板原版，保留供对照。
 - `references/examples.bib`：三个著录测试条目，写作时替换为实际引用。
 - `hitszthesis.cls`、`hitszthesis.cfg`：原样保留；页边距、章节、题注、页眉页脚采用该学位论文类的设置。
 

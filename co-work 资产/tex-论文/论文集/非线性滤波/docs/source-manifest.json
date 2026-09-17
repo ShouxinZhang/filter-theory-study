@@ -85,19 +85,25 @@
     "heading_transform": "same"
   },
   "sections/03_future_plan.tex": {
-    "destination": "sections/03_future_plan.tex",
     "source_sha256": "4baac7964f7ac5179e6286e803f35179cab6d9bc8335fc9c8e5d85a1dfba5eb7",
-    "heading_transform": "same"
+    "heading_transform": "same",
+    "original_destination": "sections/03_future_plan.tex",
+    "status": "removed_at_user_request",
+    "reason": "删除第 5 章后续研究安排与可行性分析"
   },
   "sections/04_issues_and_solutions.tex": {
-    "destination": "sections/04_issues_and_solutions.tex",
     "source_sha256": "8e3bb7344ec366d645b978c9048a9ead731af67a0cb9a4b71df59ae683ce0814",
-    "heading_transform": "same"
+    "heading_transform": "same",
+    "original_destination": "sections/04_issues_and_solutions.tex",
+    "status": "removed_at_user_request",
+    "reason": "删除第 5 章后续研究安排与可行性分析"
   },
   "sections/05_completion_feasibility.tex": {
-    "destination": "sections/05_completion_feasibility.tex",
     "source_sha256": "939f3abfd96508aad9d75e46cb526439db3ec1b7651e8f45adc46a750c64fbc2",
-    "heading_transform": "same"
+    "heading_transform": "same",
+    "original_destination": "sections/05_completion_feasibility.tex",
+    "status": "removed_at_user_request",
+    "reason": "删除第 5 章后续研究安排与可行性分析"
   },
   "figs/completed_work/ablation_runtime.pdf": {
     "destination": "figs/completed_work/ablation_runtime.pdf",

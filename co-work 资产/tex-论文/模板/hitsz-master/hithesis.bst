@@ -597,6 +597,12 @@ INTEGERS { nameindex namecount }                  % static int nameindex, nameco
 STRINGS  { namelist nameformat }                  % static String namelist, nameformat;
 STRINGS  { firstname lastname jrname vonname}     % static String firstname, lastname, jrname, vonname;
                                                   %
+% 本地毕业论文定制：英文姓名的前缀、姓、名字缩写及后缀统一大写。
+% 在姓名组件层转换，保留 et al、中文姓名、题名和 DOI 的原格式。
+FUNCTION {uppercase.english.name} {
+  is.in.chinese 'skip$ { "u" change.case$ } if$
+}
+
 FUNCTION {format.names} {                         % String Entry::format_names(String names) {
   'namelist :=                                    %   namelist = names;
   namelist num.names$ 'namecount :=               %   namecount = num_names(namelist);
@@ -608,14 +614,14 @@ FUNCTION {format.names} {                         % String Entry::format_names(S
       cap.comma *                                 %       result = result + cap_comma;
     } 'skip$ if$                                  %     }
     namelist nameindex "{vv}" format.name$        %     String tmp = format_name(namelist, nameindex, "{vv}");
-   'vonname :=                                    %     vonname = tmp;
+    uppercase.english.name 'vonname :=                                    %     vonname = tmp;
     namelist nameindex "{jj}" format.name$        %     tmp = format_name(namelist, nameindex, "{jj}");
-    remove.dots 'jrname :=                        %     jrname = remove_dots(tmp);
+    remove.dots uppercase.english.name 'jrname :=                        %     jrname = remove_dots(tmp);
     namelist nameindex "{f}" format.name$         %     tmp = format_name(namelist, nameindex, "{f}");
     remove.dots                                   %     tmp = remove_dots(tmp);
-    'firstname :=                                 %     firstname = change_case(tmp, "u");
+    uppercase.english.name 'firstname :=                                 %     firstname = change_case(tmp, "u");
     namelist nameindex "{ll}" format.name$        %     tmp = format_name(namelist, nameindex, "{ll}");
-    'lastname :=                                  %     lastname = change_case(tmp, "u");
+    uppercase.english.name 'lastname :=                                  %     lastname = change_case(tmp, "u");
     jrname empty$ not {                           %     if (! empty(jrname)) {
       jrname * " " *                              %       result = result + jrname + " "
     } 'skip$ if$                                  %     }

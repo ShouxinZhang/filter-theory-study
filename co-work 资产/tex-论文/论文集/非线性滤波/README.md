@@ -4,7 +4,7 @@
 
 ## 阅读与编译
 
-- [毕业论文 PDF](output/main.pdf)：当前 42 页。
+- [毕业论文 PDF](output/main.pdf)：当前 39 页。
 - [迁移记录](docs/MIGRATION.md)：来源、章节映射和待补内容。
 - [验收记录](docs/VALIDATION.md)：内容完整性与编译检查。
 
@@ -17,7 +17,6 @@
 - `body/chapter01.tex`：研究背景与阶段进展。
 - `body/chapter02.tex` 与 `sections/completed_work/01` 至 `04`：理论基础。
 - `sections/completed_work/05_algorithms.tex`：算法分析；`06_simulation.tex`：仿真实验。
-- `body/chapter05.tex` 与 `sections/03` 至 `05`：原中期后续工作、困难及可行性分析。
 - `sections/completed_work/07_supporting_proofs.tex`：正式附录 A，包含符号说明和证明。
 - `figs/completed_work/`：原报告实际引用的五幅 PDF 图；`references/`：原始两份文献库。
 - `back/ai_statement.tex`：原报告的实际 AI 使用说明，按毕业论文配置放在结论之后、参考文献之前。

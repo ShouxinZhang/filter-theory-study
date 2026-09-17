@@ -2,7 +2,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%   1   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{研究背景与阶段进展}[Research Background and Progress]
 \section{课题主要研究内容}
-1993年，Gordon、Salmond和Smith提出Bootstrap粒子滤波，在不依赖线性化或高斯假设的条件下实现了递推贝叶斯状态估计\cite{gordon1993novel}。1994年，Kong和Liu围绕序贯重要性采样框架讨论了权重退化、粒子耗尽及有效粒子数等问题\cite{kong1994sequential}。1996年，Kitagawa在重采样步骤中引入分层采样思想\cite{kitagawa1996monte}。  
+1993年，Gordon、Salmond和Smith提出了Bootstrap粒子滤波，在不依赖线性化或高斯假设的条件下实现了递推贝叶斯状态估计\cite{gordon1993novel}。1994年，Kong和Liu围绕序贯重要性采样框架讨论了权重退化、粒子耗尽及有效粒子数等问题\cite{kong1994sequential}。1996年，Kitagawa在重采样步骤中引入了分层采样思想\cite{kitagawa1996monte}。  
 
 1998年，Isard和Blake提出Condensation算法，将粒子滤波用于视觉目标轮廓的实时跟踪\cite{isard1998condensation}。同年，Liu和Chen提出SIR（Sequential Importance Re-sampling）框架\cite{liu1998sequential}用以解决粒子退化问题。1999年，Pitt和Shephard引入辅助粒子滤波（APF）\cite{pitt1999filtering}。APF通过在采样时引入辅助变量，根据当前观测对粒子进行预筛选，从而使用更接近后验的重要性分布，有效缓解了观测值突变时权重高度不平衡的问题。
 2000年，Rudolph van der Merwe等人提出了无迹粒子滤波（Unscented PF）\cite{van2000unscented}，UPF结合了无迹卡尔曼滤波（UKF）\cite{julier1997new}的思想，在重要性采样阶段使用一组无迹变换生成的sigma点来近似状态分布，从而构造出利用当前观测信息的重要性提议分布。Doucet等主编的文集\inlinecite{doucet2001sequential}系统总结了粒子滤波及其变体，其中包括Rao-Blackwellized粒子滤波（RBPF）。RBPF对部分变量进行粒子采样，利用其余变量的条件可解析结构实施边缘化，例如对条件线性高斯部分采用Kalman滤波，对有限状态部分采用HMM递推，以减少采样维度和方差。这类分解也用于SLAM等复杂问题\cite{montemerlo2002fastslam}。

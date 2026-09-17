@@ -8,8 +8,10 @@
 - 字体：PDF 嵌入 Fandol、TeX Gyre Termes X、NewTX 与 Latin Modern 求和字体。
 - 编号：正文公式、算法、图表为 2-1，附录公式为 A-1。
 - 文献：期刊测试条目保留 [J] 与短 DOI，在线条目保留 [EB/OL] 与访问日期，会议条目保持中期样式。
-- 源码一致性：学位论文 cls/cfg/bst/License 与导入源逐字节一致；实际启用的 hithesis.bst 与中期资产逐字节一致。
+- 源码一致性：学位论文 cls/cfg/bst/License 与导入源逐字节一致；实际启用的 hithesis.bst 在中期样式上增加英文姓名大写规则。
 - 视觉检查：审阅全部页面概览，并复核目录、算法与双语图表、参考文献、AI 声明页面，无明显裁切或重叠。
 - 最终日志：无未定义引用、Overfull、缺字或编译错误；仅保留 Fandol 的 CJK Script 元数据提示。
 
 本验收覆盖模板样例，不替代填入长篇正文后的分页检查，也未核验学校当前提交规范。
+
+英文姓名大写复验：重新编译通过，比较前后 BBL，除作者/编者/译者姓名字段外的内容一致；确认 VAN DER MERWE、DOUCET、DE FREITAS 均大写，et al 保持原样。

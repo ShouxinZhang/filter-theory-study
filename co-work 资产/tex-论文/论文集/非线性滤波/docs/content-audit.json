@@ -1,5 +1,5 @@
 {
-  "tex_modules": 20,
+  "tex_modules": 17,
   "equation": 56,
   "equation*": 9,
   "algorithm": 3,
@@ -9,5 +9,11 @@
   "lemma": 1,
   "figure_files": 5,
   "cited_references": 39,
-  "original_cross_reference_labels": 91
+  "original_cross_reference_labels": 91,
+  "initial_migration_tex_modules": 20,
+  "removed_modules": [
+    "sections/03_future_plan.tex",
+    "sections/04_issues_and_solutions.tex",
+    "sections/05_completion_feasibility.tex"
+  ]
 }
