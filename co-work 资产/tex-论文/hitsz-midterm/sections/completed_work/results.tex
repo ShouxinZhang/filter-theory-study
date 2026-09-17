@@ -1,0 +1,26 @@
+% !TeX root = ../../midterm-report.tex
+\subsection{实验结果与讨论}
+表~\ref{tab:example} 展示三线表，图~\ref{fig:example} 展示双图横排占位。请用真实结果替换，不将占位内容当成数据。
+\begin{table}[htbp]
+\centering\wuhao
+\caption{结果表格占位示例}\label{tab:example}
+\begin{tabular}{lll}
+\toprule[1.5pt]
+方法 & 指标一 & 指标二\\
+\midrule[1pt]
+基线方法 & 待填写 & 待填写\\
+待比较方法 & 待填写 & 待填写\\
+\bottomrule[1.5pt]
+\end{tabular}
+\end{table}
+表格后说明比较条件与结论来源；必要时报告重复次数、统计口径及不确定性，不单独贴表。
+
+\begin{figure}[htbp]
+\centering
+% 自包含占位框，无需迁入原报告图片；替换时用 0.45\linewidth 左右的图片。
+\subfigure[子图一]{\fbox{\parbox[c][1.5cm][c]{0.40\linewidth}{\centering 图像占位}}}
+\hfill
+\subfigure[子图二]{\fbox{\parbox[c][1.5cm][c]{0.40\linewidth}{\centering 图像占位}}}
+\caption{横排子图占位示例}\label{fig:example}
+\end{figure}
+图中仅提供版式位置。真实图表应有必要的前文引入与后文解释；优先横排、裁除无效边距或拆分过大的综合图，不滥用强制浮动和换页。

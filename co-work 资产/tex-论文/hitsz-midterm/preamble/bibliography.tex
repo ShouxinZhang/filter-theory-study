@@ -1,0 +1,12 @@
+% 仅对本报告的参考文献启用孤行保护，不修改学校类文件。
+\makeatletter
+% 在环境初始化之后设置，避免被类文件内部的零惩罚值覆盖。
+\apptocmd{\thebibliography}{%
+  \clubpenalty=10000
+  \@clubpenalty=10000
+  \widowpenalty=10000
+  \interlinepenalty=0
+  % 只收紧条目间的附加空隙，保留模板字号和行距。
+  \addtolength{\itemsep}{-2pt}
+}{}{\PackageError{report-layout}{Bibliography layout patch failed}{}}
+\makeatother

@@ -1,0 +1,5 @@
+# 构建中间产物与本地视觉检查，不提交生成缓存。
+/build/
+/output/debug/
+/logs/*.log
+*.synctex.gz

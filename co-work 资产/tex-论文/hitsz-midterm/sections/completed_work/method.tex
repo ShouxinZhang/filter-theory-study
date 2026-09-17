@@ -1,0 +1,16 @@
+% !TeX root = ../../midterm-report.tex
+\subsection{算法与实现}
+算法~\ref{alg:mean} 展示中文输入与输出、行号及循环块样式。算法正文保持五号，不通过缩小整个章节来压缩页面。
+
+\begin{algorithm}[htbp]
+\caption{样本均值计算示例}\label{alg:mean}
+\KwIn{样本 $x_1,\ldots,x_N$，样本数 $N\ge1$}
+\KwOut{样本均值 $\bar x$}
+$s\gets0$\;
+\For{$i=1,\ldots,N$}{
+  $s\gets s+x_i$\;
+}
+$\bar x\gets s/N$\;
+\end{algorithm}
+
+本例仅检验样式。实际算法应明确输入、输出、初始化与终止条件，并解释关键步骤；过长算法应按功能拆分，不强制挤在一页内。

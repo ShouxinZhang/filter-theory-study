@@ -1,0 +1,20 @@
+% !TeX program = xelatex
+% !LW recipe = HITSZ build
+% 主入口只组织配置和章节；不要把正文堆到这里。
+\documentclass[fontset=fandol,toc=true,type=master,stage=midterm,campus=shenzhen]{hithesisart}
+\input{preamble/packages}
+\input{preamble/typography}
+\input{preamble/algorithms}
+\input{preamble/bibliography}
+\input{config/options}
+\begin{document}
+\setlength{\parindent}{2em}
+\input{config/cover}
+\makecover
+\setcounter{page}{1}
+\input{sections/01_research_content_progress}
+\input{sections/02_completed_work_results}
+\input{sections/03_to_05_progress}
+\bibliographystyle{hithesis}
+\bibliography{references/examples}
+\end{document}

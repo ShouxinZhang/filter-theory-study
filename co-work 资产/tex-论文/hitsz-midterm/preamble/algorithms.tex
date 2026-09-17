@@ -1,0 +1,22 @@
+% 复用模板已有 algorithm2e；算法配置集中在此，不修改学校类文件。
+\usepackage{needspace}
+\usepackage[linesnumbered,ruled,lined]{algorithm2e}
+\renewcommand{\algorithmcfname}{算法}
+\counterwithin{algocf}{section}
+\renewcommand{\thealgocf}{\arabic{section}-\arabic{algocf}}
+% 输入、输出中文；正文和标题使用模板规定的五号字。
+\SetKwInput{KwIn}{输入}
+\SetKwInput{KwOut}{输出}
+\SetAlFnt{\wuhao}
+\SetAlCapFnt{\wuhao}
+\SetAlCapNameFnt{\wuhao}
+\SetAlCapSty{textnormal}
+\SetAlCapNameSty{textnormal}
+\SetAlgoCaptionSeparator{\enspace}
+\SetAlCapHSkip{0.5\algomargin}
+\setlength{\interspacetitleruled}{3pt}
+% 保留竖向块线与 end；行号无冒号，语句末不显示分号。
+\SetNlSty{textnormal}{}{}
+\SetKwFor{For}{for}{do}{end}
+\SetKwIF{If}{ElseIf}{Else}{if}{then}{else if}{else}{end}
+\DontPrintSemicolon

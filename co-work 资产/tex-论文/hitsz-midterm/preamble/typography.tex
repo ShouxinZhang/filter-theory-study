@@ -1,0 +1,23 @@
+% 沿用学校字号；只集中管理编号、图题及浮动参数。
+\renewcommand{\thesection}{\arabic{section}}
+\renewcommand{\thesubsection}{\thesection.\arabic{subsection}}
+\renewcommand{\thesubsubsection}{\thesubsection.\arabic{subsubsection}}
+\counterwithin{equation}{section}
+\counterwithin{figure}{section}
+\counterwithin{table}{section}
+\renewcommand{\theequation}{\thesection-\arabic{equation}}
+\renewcommand{\thefigure}{\thesection-\arabic{figure}}
+\renewcommand{\thetable}{\thesection-\arabic{table}}
+\DeclareCaptionFont{hitwuhao}{\wuhao}
+\captionsetup{labelformat=default,labelsep=space,font=hitwuhao}
+\renewcommand{\subcapsize}{\wuhao}
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\bottomfraction}{0.8}
+\renewcommand{\textfraction}{0.1}
+\setcounter{topnumber}{3}
+\setcounter{bottomnumber}{3}
+\setcounter{totalnumber}{5}
+% 保留当前报告的求和符号字体兼容设置。
+\DeclareSymbolFont{LMlargesymbols}{OMX}{lmex}{m}{n}
+\DeclareMathSymbol{\LMsum}{\mathop}{LMlargesymbols}{"50}
+\renewcommand{\sum}{\LMsum}
