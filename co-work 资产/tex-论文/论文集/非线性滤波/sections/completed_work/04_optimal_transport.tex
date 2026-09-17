@@ -1,0 +1,203 @@
+% !TeX root = ../../main.tex
+\section{最优输运与重采样}\label{cw:sec:ot}
+
+经典重采样通过随机复制选择耦合矩阵，其源边缘为实际复制比例，只有对重采样随机性取平均后才恢复后验权重：
+\begin{equation}\label{cw:eq:ot-random-marginal}
+\bm\Pi_k\mathbf1_N=\frac{\bm n_k}{N},\qquad
+\bm\Pi_k^{\mathrm T}\mathbf1_N=\frac1N\mathbf1_N,\qquad
+\mathbb E_{\bm n_k\sim\mathbb P_{\bm n_k\mid\bm w_k^+}}
+\!\left[\frac{\bm n_k}{N}\right]=\bm w_k^+.
+\end{equation}
+另一种选择是直接约束源边缘为 $\bm w_k^+$，并按粒子间的移动代价选择耦合。为此，先从输运映射出发，建立联合分布、条件概率与离散耦合矩阵之间的关系。
+
+\subsection{从 Monge 映射到 Kantorovich 耦合}\label{cw:sec:monge}
+
+本节采用最优输运的标准映射与耦合表述\cite{villani2009optimal,peyre2019computational}；其基本理论、离散模型与正则化方法亦可参见马丽涛、边伟的中文综述\cite{ma2019optimaltransportzh}。
+
+本节暂用 $X,Y$ 表示一般输运问题的源、目标随机变量，$Y$ 不特指滤波观测。给定边缘分布 $\mathbb P_X,\mathbb P_Y$ 与非负代价函数 $c$，Monge 问题寻找可测映射 $T$，使
+\begin{equation}\label{cw:eq:monge}
+\begin{aligned}
+&Y=T(X),\qquad T_*\mathbb P_X=T_*X_*\mathbb P=\mathbb P_Y,\\
+&\inf_{T:\,T_*\mathbb P_X=\mathbb P_Y}
+\int_{\mathcal X}c(x,T(x))\,\mathrm d\mathbb P_X(x)
+=\inf_{T:\,T_*\mathbb P_X=\mathbb P_Y}
+\mathbb E_{X\sim\mathbb P_X}[c(X,T(X))].
+\end{aligned}
+\end{equation}
+确定性绑定 $Y=T(X)$ 使条件分布退化为 $\mathbb P_{Y\mid X=x}=\delta_{T(x)}$：一个源点的质量只能整体送往一个目标点，不能拆分。离散边缘因而可能不存在这样的映射；均匀离散分布的整除条件见第~\ref{cw:app:monge}~节。
+
+\textbf{耦合松弛：}解除函数绑定，允许任意满足两个边缘约束的联合分布。记坐标投影 $\pi_1(x,y)=x$、$\pi_2(x,y)=y$，定义
+\begin{equation}\label{cw:eq:coupling-family}
+\Pi(\mathbb P_X,\mathbb P_Y)
+:=\left\{\mu\in\mathcal M_+^1(\mathcal X\times\mathcal Y):
+(\pi_1)_*\mu=\mathbb P_X,\ (\pi_2)_*\mu=\mathbb P_Y\right\}.
+\end{equation}
+输运目标于是成为联合分布上的期望最小化：
+\begin{equation}\label{cw:eq:kantorovich}
+\inf_{\mu\in\Pi(\mathbb P_X,\mathbb P_Y)}
+\int_{\mathcal X\times\mathcal Y}c(x,y)\,\mathrm d\mu(x,y)
+=\inf_{\mathbb P_{(X,Y)}\in\Pi(\mathbb P_X,\mathbb P_Y)}
+\mathbb E_{(X,Y)\sim\mathbb P_{(X,Y)}}[c(X,Y)].
+\end{equation}
+在这里的欧氏状态空间上，联合分布可通过条件转移核写成半直积
+$\mathbb P_{(X,Y)}=\mathbb P_X\ltimes\mathbb P_{Y\mid X}$；独立乘积
+$\mathbb P_X\otimes\mathbb P_Y$ 是其中一个特例。
+
+% Use a comma only in the PDF outline: U+3001 changes Pango fallback metrics in Evince.
+\subsection{\texorpdfstring{离散耦合、条件概率与边缘约束}{离散耦合，条件概率与边缘约束}}\label{cw:sec:discrete-ot}
+
+设两组支撑点各自互异，$\bm a\in\Delta^{m-1}$、$\bm b\in\Delta^{n-1}$，且暂取 $a_i,b_j>0$；符号定义见第~\ref{cw:app:notation}~节。记
+\begin{equation}\label{cw:eq:discrete-coupling}
+\begin{aligned}
+&\mathbb P_X=\langle\bm a,\delta_{x_{1..m}}\rangle,\qquad
+\mathbb P_Y=\langle\bm b,\delta_{y_{1..n}}\rangle,\\
+&\Pi_{ij}:=\mathbb P_{(X,Y)}(\{(x_i,y_j)\}),\qquad
+\mathbb P_{(X,Y)}=\sum_{i=1}^m\sum_{j=1}^n\Pi_{ij}\,
+\delta_{x_i}\otimes\delta_{y_j}.
+\end{aligned}
+\end{equation}
+这里 $\otimes$ 表示测度的乘积。对点质量作坐标推前，就得到边缘的行和、列和：
+\begin{equation}\label{cw:eq:discrete-marginals}
+\begin{aligned}
+&(\pi_1)_*(\delta_{x_i}\otimes\delta_{y_j})=\delta_{x_i},\qquad
+(\pi_2)_*(\delta_{x_i}\otimes\delta_{y_j})=\delta_{y_j},\\
+&(\pi_1)_*\mathbb P_{(X,Y)}=\sum_{i=1}^m\left(\sum_{j=1}^n\Pi_{ij}\right)\delta_{x_i}=\mathbb P_X,\\
+&(\pi_2)_*\mathbb P_{(X,Y)}=\sum_{j=1}^n\left(\sum_{i=1}^m\Pi_{ij}\right)\delta_{y_j}=\mathbb P_Y.
+\end{aligned}
+\end{equation}
+函数与测度的对偶配对记为 $\langle f,\mu\rangle_{\mathcal S}:=\int_{\mathcal S}f(s)\,\mathrm d\mu(s)$，下标标明测度所在空间。
+对于一般情况（假使需要讨论连续而非离散），等价地，用推前与拉回对偶，对任意 Borel 集合 $A\subseteq\mathcal X$ 有
+\begin{equation}\label{cw:eq:marginal-duality}
+\begin{aligned}
+\langle\mathbb I_A\otimes\mathbf1_{\mathcal Y},\mathbb P_{(X,Y)}\rangle_{\mathcal X\times\mathcal Y}
+&=\langle\pi_1^*\mathbb I_A,\mathbb P_{(X,Y)}\rangle_{\mathcal X\times\mathcal Y}\\
+&=\langle\mathbb I_A,(\pi_1)_*\mathbb P_{(X,Y)}\rangle_{\mathcal X}
+=\langle\mathbb I_A,\mathbb P_X\rangle_{\mathcal X}.
+\end{aligned}
+\end{equation}
+\begingroup\raggedright
+更一般地，每个坐标分别满足 $(\pi_i)_*\mathbb P_{X_{1..N}}=\mathbb P_{X_i}$；全部边缘组成的族应写为
+$((\pi_i)_*\mathbb P_{X_{1..N}})_{i=1}^N=(\mathbb P_{X_i})_{i=1}^N$。\par
+\endgroup
+
+\textbf{条件概率：}条件概率矩阵标明条件方向，联合概率矩阵统一记为 $\bm\Pi$：
+\begin{equation}\label{cw:eq:conditional-matrices}
+\begin{aligned}
+&P_{Y\mid X;i,j}:=\mathbb P_{Y\mid X=x_i}(\{y_j\})=\frac{\Pi_{ij}}{a_i},\qquad
+P_{X\mid Y;j,i}:=\mathbb P_{X\mid Y=y_j}(\{x_i\})=\frac{\Pi_{ij}}{b_j},\\
+&\bm\Pi=\operatorname{diag}(\bm a)\bm P_{Y\mid X}
+=\bm P_{X\mid Y}^{\mathrm T}\operatorname{diag}(\bm b),\\
+&\bm P_{Y\mid X}\mathbf1_n=\mathbf1_m,\qquad
+\bm P_{Y\mid X}^{\mathrm T}\bm a=\bm b.
+\end{aligned}
+\end{equation}
+条件矩阵以条件变量的取值编号为行、被条件化变量的取值编号为列。
+
+\textbf{离散输运：}令 $C_{ij}=c(x_i,y_j)$，连续耦合约束化为输运多面体，目标化为有限求和：
+\begin{equation}\label{cw:eq:transport-polytope}
+\begin{aligned}
+&U(\bm a,\bm b):=\{\bm\Pi\in\mathbb R_+^{m\times n}:
+\bm\Pi\mathbf1_n=\bm a,\ \bm\Pi^{\mathrm T}\mathbf1_m=\bm b\},\\
+&\min_{\bm\Pi\in U(\bm a,\bm b)}\langle\bm\Pi,\bm C\rangle_F,
+\qquad\langle\bm\Pi,\bm C\rangle_F:=\sum_{i=1}^m\sum_{j=1}^n\Pi_{ij}C_{ij}.
+\end{aligned}
+\end{equation}
+独立联合分布对应 $\bm\Pi=\bm a\bm b^{\mathrm T}\in U(\bm a,\bm b)$。
+
+\subsection{熵正则化与 Sinkhorn 迭代}\label{cw:sec:sinkhorn}
+
+采用 Cuturi 的熵正则化离散输运方案\cite{cuturi2013sinkhorn}，推导及数值实现参考文献\cite{peyre2019computational}。
+
+\textbf{正则化：}给定 $\varepsilon>0$，以独立联合分布为参考测度，考虑
+\begin{equation}\label{cw:eq:regularized-measure}
+\mathbb P_{(X,Y)}^\varepsilon
+=\operatorname*{argmin}_{\mu\in\Pi(\mathbb P_X,\mathbb P_Y)}
+\left\{\int c(x,y)\,\mathrm d\mu(x,y)
++\varepsilon D_{\mathrm{KL}}(\mu\|\mathbb P_X\otimes\mathbb P_Y)\right\}.
+\end{equation}
+在离散边缘固定时，KL 项与负熵仅相差一个常数；以下采用 $0\log0=0$：
+\begin{equation}\label{cw:eq:kl-entropy}
+\begin{aligned}
+D_{\mathrm{KL}}(\bm\Pi\|\bm a\bm b^{\mathrm T})
+&=\sum_{i=1}^m\sum_{j=1}^n\Pi_{ij}\log\frac{\Pi_{ij}}{a_i b_j}\\
+&=\sum_{i=1}^m\sum_{j=1}^n\Pi_{ij}\log\Pi_{ij}
+-\sum_{i=1}^m a_i\log a_i-\sum_{j=1}^n b_j\log b_j.
+\end{aligned}
+\end{equation}
+因此，所求矩阵等价地满足
+\begin{equation}\label{cw:eq:regularized-matrix}
+\bm\Pi^\varepsilon
+=\operatorname*{argmin}_{\bm\Pi\in U(\bm a,\bm b)}
+\left\{\langle\bm\Pi,\bm C\rangle_F
++\varepsilon\sum_{i=1}^m\sum_{j=1}^n\Pi_{ij}(\log\Pi_{ij}-1)\right\}.
+\end{equation}
+这里额外减去 $\varepsilon\sum_{i,j}\Pi_{ij}=\varepsilon$ 也是常数，使求导后的表达更简洁。
+
+\textbf{对偶条件：}取 $\bm\alpha\in\mathbb R^m$、$\bm\beta\in\mathbb R^n$，构造拉格朗日函数：
+\begin{equation}\label{cw:eq:sinkhorn-lagrangian}
+\begin{aligned}
+\mathcal L(\bm\Pi,\bm\alpha,\bm\beta)
+={}&\langle\bm\Pi,\bm C\rangle_F
++\varepsilon\sum_{i=1}^m\sum_{j=1}^n\Pi_{ij}(\log\Pi_{ij}-1)\\
+&+\bm\alpha^{\mathrm T}(\bm\Pi\mathbf1_n-\bm a)
++\bm\beta^{\mathrm T}(\bm\Pi^{\mathrm T}\mathbf1_m-\bm b).
+\end{aligned}
+\end{equation}
+有限代价与严格正边缘下，最优矩阵各元素严格为正；一阶条件给出
+\begin{equation}\label{cw:eq:sinkhorn-scaling}
+\begin{aligned}
+&\frac{\partial\mathcal L}{\partial\Pi_{ij}}
+=C_{ij}+\varepsilon\log\Pi_{ij}+\alpha_i+\beta_j=0,\\
+&K_{ij}:=\exp(-C_{ij}/\varepsilon),\qquad
+u_i:=\exp(-\alpha_i/\varepsilon),\quad v_j:=\exp(-\beta_j/\varepsilon),\\
+&\Pi_{ij}^\varepsilon=u_iK_{ij}v_j,\qquad
+\bm\Pi^\varepsilon=\operatorname{diag}(\bm u)\bm K\operatorname{diag}(\bm v).
+\end{aligned}
+\end{equation}
+
+\textbf{交替缩放：}将矩阵分解代回边缘约束，得到
+\begin{equation}\label{cw:eq:sinkhorn-iteration}
+\begin{aligned}
+&\bm u\odot(\bm K\bm v)=\bm a,\qquad
+\bm v\odot(\bm K^{\mathrm T}\bm u)=\bm b,\\
+&\bm v^{(0)}=\mathbf1_n,\qquad
+\bm u^{(\ell+1)}=\bm a\oslash(\bm K\bm v^{(\ell)}),\\
+&\bm v^{(\ell+1)}=\bm b\oslash(\bm K^{\mathrm T}\bm u^{(\ell+1)}),\\
+&\bm\Pi^{(\ell+1)}
+=\operatorname{diag}(\bm u^{(\ell+1)})\bm K\operatorname{diag}(\bm v^{(\ell+1)}).
+\end{aligned}
+\end{equation}
+其中 $\odot,\oslash$ 分别表示逐元素乘、除。每次先校正行边缘，再校正列边缘；以两侧边缘残差共同判断停止：
+\begin{equation}\label{cw:eq:sinkhorn-stop}
+\max\!\left\{\|\bm\Pi^{(\ell)}\mathbf1_n-\bm a\|_1,
+\|(\bm\Pi^{(\ell)})^{\mathrm T}\mathbf1_m-\bm b\|_1\right\}\le\tau.
+\end{equation}
+严格正核下，迭代趋向唯一的正则化最优耦合。
+
+\subsection{回到粒子重采样：条件均值与位置变换}\label{cw:sec:ot-resampling}
+
+该构造沿用 Reich 的集合变换方法\cite{reich2013nonparametric}，并用熵正则化耦合近似未正则化的输运解。
+
+沿用离散输运中的边际记号 $\bm a,\bm b$, 当前时刻的代价矩阵记为 $\bm C_k\in\mathbb R^{N\times N}$, 令
+\begin{equation}\label{cw:eq:particle-ot-input}
+\begin{aligned}
+&\bm a=\bm w_k^+,\;\bm b=\frac1N\mathbf1_N,\;(\bm C_k)_{ij}:=\|x_k^{-,(i)}-x_k^{-,(j)}\|^2,\\
+&\bm\Pi_k\in U(\bm a,\bm b),\;\bm\Pi_k\mathbf1_N=\bm w_k^+,\;\bm\Pi_k^{\mathrm T}\mathbf1_N=\frac1N\mathbf1_N.
+\end{aligned}
+\end{equation}
+这里 $i,j=1,\dots,N$, 第 $i$ 行对应后验权重为 $w_k^{+,(i)}$ 的预测粒子, 第 $j$ 列对应等权的目标参考位置 $x_k^{-,(j)}$。源边际为加权后验经验测度, 目标边际为等权预测经验测度。将 $\bm a,\bm b,\bm C_k$ 代入 式~\eqref{cw:eq:regularized-matrix} 的熵正则化目标, 用 Sinkhorn 求解 $\bm\Pi_k$；正则化参数 $\varepsilon$ 保留在求解目标中。
+
+位置变换矩阵 $\bm T_k\in\mathbb R^{N\times N}$ 按行对应源粒子 $i$，按列对应目标粒子 $j$，定义为
+\begin{equation}\label{cw:eq:particle-ot-conditional}
+\begin{aligned}
+&(\bm T_k)_{ij}:=N(\bm\Pi_k)_{ij},\;\bm T_k=N\bm\Pi_k,\\
+&\bm T_k^{\mathrm T}\mathbf1_N=\mathbf1_N,\;\bm T_k\mathbf1_N=N\bm w_k^+.
+\end{aligned}
+\end{equation}
+每列的变换系数非负且和为 $1$, 据此取源粒子的加权平均, 得到新粒子：
+\begin{equation}\label{cw:eq:particle-ot-transform}
+\begin{aligned}
+&x_k^{+,(j)}:=\sum_{i=1}^N(\bm T_k)_{ij}x_k^{-,(i)}=N\sum_{i=1}^N(\bm\Pi_k)_{ij}x_k^{-,(i)},\\
+&X_k^+=X_k^-\bm T_k=NX_k^-\bm\Pi_k.
+\end{aligned}
+\end{equation}

@@ -1,0 +1,127 @@
+{
+  "sections/01_research_content_progress.tex": {
+    "destination": "body/chapter01.tex",
+    "source_sha256": "96824c8dc341cb301868cce7ed00754e6eb03258b0a98c73c97129a41fccba64",
+    "heading_transform": "intro"
+  },
+  "sections/completed_work/01_problem.tex": {
+    "destination": "sections/completed_work/01_problem.tex",
+    "source_sha256": "5abcc77915a9cf423f46dbee424e307fb954fc81559e5fddb0b33106a9c42ea8",
+    "heading_transform": "theory"
+  },
+  "sections/completed_work/02_bayes.tex": {
+    "destination": "sections/completed_work/02_bayes.tex",
+    "source_sha256": "2582fbb1981ea22870811cf4eea7815fb8cad759db2f15c1b2ee1a8d1fad131c",
+    "heading_transform": "theory"
+  },
+  "sections/completed_work/03_particle.tex": {
+    "destination": "sections/completed_work/03_particle.tex",
+    "source_sha256": "740ce18d1b39cee3ebc747d303c2f9e181c3aa9e7847319d6fb2be74711d1655",
+    "heading_transform": "theory"
+  },
+  "sections/completed_work/04_optimal_transport.tex": {
+    "destination": "sections/completed_work/04_optimal_transport.tex",
+    "source_sha256": "4155c026c4d3fef5403a9b1dff9b67f912f0a890434085cfabf54a3851ec5e1c",
+    "heading_transform": "theory"
+  },
+  "sections/completed_work/05_algorithms.tex": {
+    "destination": "sections/completed_work/05_algorithms.tex",
+    "source_sha256": "0a9b270dd26d1a7678a3cacdff2a980999f4649eb80a74082b30e6d99c75a28a",
+    "heading_transform": "algorithm"
+  },
+  "sections/completed_work/06_simulation.tex": {
+    "destination": "sections/completed_work/06_simulation.tex",
+    "source_sha256": "3a1190a0845881ff516833f59806735859bc5952828ff52440da928b13b606b0",
+    "heading_transform": "simulation"
+  },
+  "sections/completed_work/07_supporting_proofs.tex": {
+    "destination": "sections/completed_work/07_supporting_proofs.tex",
+    "source_sha256": "89d16b668cdf7bd6287249b0f1e6c3997de3ee9780b370de236374910a030f68",
+    "heading_transform": "appendix"
+  },
+  "sections/completed_work/algorithms/bpf.tex": {
+    "destination": "sections/completed_work/algorithms/bpf.tex",
+    "source_sha256": "3aff20bdfb01913d0997572a180a90c79e131bf9b4249e496c5ccc86ddeeeb06",
+    "heading_transform": "same"
+  },
+  "sections/completed_work/algorithms/error_analysis.tex": {
+    "destination": "sections/completed_work/algorithms/error_analysis.tex",
+    "source_sha256": "85fe7dfc817bbe0c0757f838828b1ad50155dcf94a2f453b355f52f6b658b156",
+    "heading_transform": "child"
+  },
+  "sections/completed_work/algorithms/etpf.tex": {
+    "destination": "sections/completed_work/algorithms/etpf.tex",
+    "source_sha256": "5d4384e076fd07392592b13c209ccac91e66f486628202bce84ea700f9cafecc",
+    "heading_transform": "same"
+  },
+  "sections/completed_work/algorithms/sinkhorn.tex": {
+    "destination": "sections/completed_work/algorithms/sinkhorn.tex",
+    "source_sha256": "eeafc3d53e6dce8129edeae4263fcf4a32f4e7f76be066053ff282e78330d1ae",
+    "heading_transform": "same"
+  },
+  "sections/completed_work/proofs/markov.tex": {
+    "destination": "sections/completed_work/proofs/markov.tex",
+    "source_sha256": "aa8c0fa621939fb3d2fa2fa8d74794023197874b1f0cf2165cce03d11ee59d9b",
+    "heading_transform": "child"
+  },
+  "sections/completed_work/simulation/logistic.tex": {
+    "destination": "sections/completed_work/simulation/logistic.tex",
+    "source_sha256": "d422e67a8149ddcbd73422d5326ad8638c8986892f270577010382e514ea62f7",
+    "heading_transform": "child"
+  },
+  "sections/completed_work/tables/accuracy_table.tex": {
+    "destination": "sections/completed_work/tables/accuracy_table.tex",
+    "source_sha256": "8a92ca5b260b77abf24ff469ffea821c453d59ce69d3eaa491c91034b3935c6e",
+    "heading_transform": "same"
+  },
+  "sections/completed_work/tables/logistic_error_table.tex": {
+    "destination": "sections/completed_work/tables/logistic_error_table.tex",
+    "source_sha256": "a9ad44def926e39a8c6cabe6f05500d6cb2e1a70a5b6f1e271f36c3063773692",
+    "heading_transform": "same"
+  },
+  "sections/completed_work/tables/runtime_table.tex": {
+    "destination": "sections/completed_work/tables/runtime_table.tex",
+    "source_sha256": "602a5d2ecc52368cdd2e66542c3eab40bb9948a80d422973138575ebe0a6a511",
+    "heading_transform": "same"
+  },
+  "sections/03_future_plan.tex": {
+    "destination": "sections/03_future_plan.tex",
+    "source_sha256": "4baac7964f7ac5179e6286e803f35179cab6d9bc8335fc9c8e5d85a1dfba5eb7",
+    "heading_transform": "same"
+  },
+  "sections/04_issues_and_solutions.tex": {
+    "destination": "sections/04_issues_and_solutions.tex",
+    "source_sha256": "8e3bb7344ec366d645b978c9048a9ead731af67a0cb9a4b71df59ae683ce0814",
+    "heading_transform": "same"
+  },
+  "sections/05_completion_feasibility.tex": {
+    "destination": "sections/05_completion_feasibility.tex",
+    "source_sha256": "939f3abfd96508aad9d75e46cb526439db3ec1b7651e8f45adc46a750c64fbc2",
+    "heading_transform": "same"
+  },
+  "figs/completed_work/ablation_runtime.pdf": {
+    "destination": "figs/completed_work/ablation_runtime.pdf",
+    "source_sha256": "c89ca5e250c0626b97ef1c65d0cc7bdab18a66ff5c6b66fb391816d4252408a2"
+  },
+  "figs/completed_work/logistic_robustness.pdf": {
+    "destination": "figs/completed_work/logistic_robustness.pdf",
+    "source_sha256": "663f1a524d8e3ead7a59178e0a4a9404320e00ad4c7641948f6c9b4bd2b9b467"
+  },
+  "figs/completed_work/posterior_density.pdf": {
+    "destination": "figs/completed_work/posterior_density.pdf",
+    "source_sha256": "826d61c37f2a0d1294827bc6a2ff37843ff8954fc1195f50c39b62bcd7f6ea65"
+  },
+  "figs/completed_work/rmse_time.pdf": {
+    "destination": "figs/completed_work/rmse_time.pdf",
+    "source_sha256": "7f727a43feeb00f7434dd9f9950b3c4a36ae83389a862e3b8e95386385dd646b"
+  },
+  "figs/completed_work/trajectory.pdf": {
+    "destination": "figs/completed_work/trajectory.pdf",
+    "source_sha256": "7a865cee9a841b17111f3d94074588bbfbe337dffa2fa051e7f67b768fa4a9fb"
+  },
+  "source_pdf": {
+    "path": "/home/wudizhe001/Documents/GitHub/HITSZ-final-paper-draft/.agents/sandbox/2026-08/2026-08-27/2026-08-27_16-08-51+midterm-report-rebuild/output/midterm-report.pdf",
+    "sha256": "0a4428f1d0e773488436e5fd47e0cc8cff59d83059720d23c4e9561ac1572991",
+    "pages": 31
+  }
+}

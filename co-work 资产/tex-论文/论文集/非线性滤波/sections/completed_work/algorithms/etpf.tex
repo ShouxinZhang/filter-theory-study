@@ -1,0 +1,17 @@
+% !TeX root = ../../../main.tex
+% 模板原生算法样式；计算步骤与迁入源稿一致。
+\begin{algorithm}[H]
+\caption{ETPF：最优输运与重心变换}\label{cw:alg:etpf}
+\KwIn{与算法~\ref{cw:alg:bpf} 相同的输入}
+\KwOut{后验均值估计 $\hat x_{1:T}$；每轮变换后的等权粒子 $\{x_k^{+,(j)}\}_{j=1}^N$}
+独立采样 $x_0^{+,(i)}\sim p(x_0)$, 权重均为 $1/N$, $i=1,\dots,N$\;
+\For{$k=1,\dots,T$}{
+    独立采样 $n_{x,k}^{(i)}\sim\mathbb P_{N_x}$, 令 $x_k^{-,(i)}=f(x_{k-1}^{+,(i)},n_{x,k}^{(i)})$\;
+    读取 $y_k$, 计算 $g_k(x_k^{-,(i)})=p_{Y_k\mid X_k}(y_k\mid x_k^{-,(i)})$\;
+    $\displaystyle w_k^{+,(i)}=\frac{g_k(x_k^{-,(i)})}{\sum_{r=1}^N g_k(x_k^{-,(r)})}$, $i=1,\dots,N$\;
+    输出后验均值估计 $\hat x_k=\sum_{i=1}^Nw_k^{+,(i)}x_k^{-,(i)}$\;
+    $\bm a\gets\bm w_k^+$, $\bm b\gets\mathbf1_N/N$, $C_{ij}\gets\|x_k^{-,(i)}-x_k^{-,(j)}\|^2$\;
+    求解式~\eqref{cw:eq:algorithm-etpf-original}, 得到最优耦合 $\bm\Pi_k$\;
+    $x_k^{+,(j)}\gets N\sum_{i=1}^N\Pi_{k;ij}x_k^{-,(i)}$, 权重均置为 $1/N$, $j=1,\dots,N$\;
+}
+\end{algorithm}

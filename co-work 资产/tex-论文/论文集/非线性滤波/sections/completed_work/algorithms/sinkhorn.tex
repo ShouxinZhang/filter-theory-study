@@ -1,0 +1,16 @@
+% !TeX root = ../../../main.tex
+% 模板原生算法样式；计算步骤与迁入源稿一致。
+\begin{algorithm}[H]
+\caption{基本 Sinkhorn 迭代：求解正则化耦合}\label{cw:alg:sinkhorn-basic}
+\KwIn{边际 $\bm a,\bm b$, 代价矩阵 $\bm C$, $\varepsilon>0$, 容差 $\tau>0$, 最大迭代次数 $L_{\max}\geq1$}
+\KwOut{近似耦合 $\bm\Pi$、边际残差 $r$ 及收敛标志 $r\leq\tau$}
+$K_{ij}\gets\exp(-C_{ij}/\varepsilon)$, $\bm v\gets\mathbf1_N$\;
+\For{$\ell=1,\dots,L_{\max}$}{
+    $\bm u\gets\bm a\oslash(\bm K\bm v)$\;
+    $\bm v\gets\bm b\oslash(\bm K^{\mathrm T}\bm u)$\;
+    $\bm\Pi\gets\operatorname{diag}(\bm u)\bm K\operatorname{diag}(\bm v)$\;
+    $r\gets\max\{\|\bm\Pi\mathbf1_N-\bm a\|_1,\|\bm\Pi^{\mathrm T}\mathbf1_N-\bm b\|_1\}$\;
+    \If{$r\leq\tau$}{退出迭代\;}
+}
+返回 $\bm\Pi$, 残差 $r$ 与是否满足 $r\leq\tau$\;
+\end{algorithm}

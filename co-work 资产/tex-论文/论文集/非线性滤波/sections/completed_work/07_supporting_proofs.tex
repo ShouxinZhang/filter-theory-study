@@ -1,0 +1,195 @@
+% !TeX root = ../../main.tex
+\chapter{补充理论与证明}[Supplementary Theory and Proofs]\label{cw:app:appendix}
+\section{符号定义与说明}\label{cw:app:notation}
+
+\textbf{概率单纯形与全一向量：}对正整数 $n$，$\mathbb R_+=[0,\infty)$，定义
+\begin{equation*}
+\Delta^{n-1}:=\left\{\bm w\in\mathbb R_+^n:\sum_{i=1}^n w_i=1\right\},\qquad
+\mathbf1_n:=(1,\dots,1)^{\mathrm T}.
+\end{equation*}
+$\Delta^{n-1}$ 是 $n$ 个概率权重组成的集合，上标表示其维数；允许零权重，严格正权重需另行说明。
+
+\textbf{Dirac 测度与示性函数：}对 $x\in\mathcal S$ 和可测集合 $A\subseteq\mathcal S$，
+\begin{equation*}
+\delta_x(A):=\mathbb I_A(x)=
+\begin{cases}1,&x\in A,\\0,&x\notin A,\end{cases}
+\qquad \int_{\mathcal S}f(s)\,\mathrm d\delta_x(s)=f(x).
+\end{equation*}
+$\delta_x$ 是集中于 $x$ 的概率测度，与表示概率单纯形的大写 $\Delta$ 不同。
+
+\textbf{概率测度与经验测度：}$\mathcal B(\mathcal S)$ 表示 Borel 集合族，$\mathcal M(\mathcal S)$ 表示其上的全体测度；概率测度全体记为 $\mathcal M_+^1(\mathcal S):=\{\mu\in\mathcal M(\mathcal S):\mu\ge0,\ \mu(\mathcal S)=1\}$。对 $\bm w\in\Delta^{N-1}$，
+\begin{equation*}
+\langle\bm w,\delta_{x_{1..N}}\rangle:=\sum_{i=1}^Nw_i\delta_{x_i},\qquad
+\hat{\mathbb P}_{N,\bm w;X}:=\sum_{i=1}^Nw_i\delta_{x_i},\qquad
+\hat{\mathbb P}_{N;X}:=\frac1N\sum_{i=1}^N\delta_{x_i}.
+\end{equation*}
+这里 $x_i$ 是样本实现值；权重与测度族的尖括号表示线性组合，其结果仍为测度。
+
+\textbf{样本排列与滤波阶段：}$X_i\in\mathbb R^{d\times1}$ 为样本列向量，
+\begin{equation*}
+X_{1..N}:=(X_1,\dots,X_N)\in\mathbb R^{d\times N},\qquad
+\mathbb P_{X_{1..N}}\text{ 为该样本族的联合分布}.
+\end{equation*}
+上标 $-$、$+$ 分别表示预测、后验阶段。位置变换中的 $X_k$ 表示按列拼接的粒子矩阵，每列是一个 $n_x$ 维粒子：
+\begin{equation*}
+\begin{aligned}
+&X_k:=x_k^{(1..N)}:=[x_k^{(1)},\dots,x_k^{(N)}]\in\mathbb R^{n_x\times N},\\
+&X_k^\pm:=x_k^{\pm,(1..N)}\in\mathbb R^{n_x\times N}.
+\end{aligned}
+\end{equation*}
+$(\bm T_k)_{ij}$ 表示源粒子 $i$ 对目标粒子 $j$ 的贡献系数，故 $X_k^+=X_k^-\bm T_k$，$\bm T_k=N\bm\Pi_k$。概率分布下标中的 $X_k$ 仍表示状态随机变量，由上下文区分。
+
+\textbf{推前、拉回与对偶配对：}对可测映射 $T:\mathcal X\to\mathcal Y$，
+\begin{equation*}
+\begin{aligned}
+&(T_*\mu)(B):=\mu(T^{-1}(B)),\qquad T^*f:=f\circ T,\\
+&\langle f,\mu\rangle_{\mathcal S}:=\int_{\mathcal S}f(s)\,\mathrm d\mu(s),\qquad
+\langle f,T_*\mu\rangle_{\mathcal Y}=\langle T^*f,\mu\rangle_{\mathcal X}.
+\end{aligned}
+\end{equation*}
+其中 $B\in\mathcal B(\mathcal Y)$，积分对有界可测或相应可积函数使用。$\pi_i$ 表示取第 $i$ 个分量的坐标投影，$\mathbb P_X=X_*\mathbb P$。
+
+\textbf{联合概率矩阵与条件概率矩阵：}在正质量离散支撑上，记
+\begin{equation*}
+\begin{aligned}
+&a_i:=\mathbb P_X(\{x_i\}),\qquad b_j:=\mathbb P_Y(\{y_j\}),\qquad
+\Pi_{ij}:=\mathbb P_{(X,Y)}(\{(x_i,y_j)\}),\\
+&P_{Y\mid X;i,j}:=\mathbb P_{Y\mid X=x_i}(\{y_j\})=\Pi_{ij}/a_i,\qquad
+P_{X\mid Y;j,i}:=\mathbb P_{X\mid Y=y_j}(\{x_i\})=\Pi_{ij}/b_j.
+\end{aligned}
+\end{equation*}
+条件矩阵的行标识条件变量，列标识被条件化变量；$\bm\Pi$ 是联合概率矩阵。$\Pi(\mathbb P_X,\mathbb P_Y)$ 表示具有指定边缘的耦合测度集合，$U(\bm a,\bm b)$ 为其离散矩阵表示，见式~\eqref{cw:eq:coupling-family}、\eqref{cw:eq:transport-polytope}。
+
+\textbf{代价矩阵与矩阵运算：}$C_{ij}:=c(x_i,y_j)$，$\bm C=(C_{ij})$；$\langle\bm A,\bm B\rangle_F:=\sum_{i,j}A_{ij}B_{ij}$ 为实矩阵的 Frobenius 内积。$\operatorname{diag}(\bm u)$ 将向量放在矩阵对角线上，$\odot$、$\oslash$ 表示逐元素乘、除，$\|\bm z\|_1:=\sum_i|z_i|$，$\|\bm z\|$ 表示欧氏范数。
+
+\textbf{乘积与正则化：}$\mu\otimes\nu$ 表示乘积测度，$\mu\ltimes K$ 表示由边缘测度与条件转移核构成的半直积测度，$\otimes_k$ 表示矩阵 Kronecker 积。$D_{\mathrm{KL}}(\mu\|\nu):=\int\log(\mathrm d\mu/\mathrm d\nu)\,\mathrm d\mu$（$\mu\ll\nu$ 时），否则为 $+\infty$；$\varepsilon>0$ 为熵正则化参数，$\tau>0$ 为边缘残差容差。
+
+
+
+% 新证明单独维护，保持附录主干简洁。
+\input{sections/completed_work/proofs/markov}
+
+\section{Bayes 更新公式的证明}\label{cw:app:proofs}
+
+\begin{theorem}[Bayes 更新公式]\label{cw:thm:bayes}
+
+在本文约定与模型条件下，对 $k\geq1$，给定历史观测 $y_{1:k-1}$ 并收到当前观测 $y_k$ 后，状态后验密度满足
+\begin{equation}\label{cw:eq:15}
+\begin{aligned}
+&p_{X_k\mid Y_{1:k}}(x_k\mid y_{1:k})\\
+= &\frac{p_{Y_k\mid X_k}(y_k\mid x_k)p_{X_k\mid Y_{1:k-1}}(x_k\mid y_{1:k-1})}
+{\displaystyle\int_{\mathcal{X}}p_{Y_k\mid X_k}(y_k\mid x)p_{X_k\mid Y_{1:k-1}}(x\mid y_{1:k-1})\,\mathrm{d}v_X(x)}.
+\end{aligned}
+\end{equation}
+
+\end{theorem}
+
+\begin{proof}
+
+先固定历史观测 $y_{1:k-1}$。收到 $y_k$ 后，要求的是在这些历史观测的基础上，再给定 $Y_k=y_k$ 时的状态密度。按条件密度公式，将条件联合密度除以新观测的条件边缘密度：
+\begin{equation}\label{cw:eq:16}
+\begin{aligned}
+&p_{X_k\mid Y_{1:k}}(x_k\mid y_{1:k})\\
+= &\frac{p_{(X_k,Y_k)\mid Y_{1:k-1}}(x_k,y_k\mid y_{1:k-1})}
+{p_{Y_k\mid Y_{1:k-1}}(y_k\mid y_{1:k-1})}.
+\end{aligned}
+\end{equation}
+
+对分子使用密度的乘法公式，按“先取状态，再给定状态取观测”的顺序分解。两个因子都保留历史观测条件，其中状态因子正是预测步骤已求得的密度：
+\begin{equation}\label{cw:eq:17}
+\begin{aligned}
+&p_{(X_k,Y_k)\mid Y_{1:k-1}}(x_k,y_k\mid y_{1:k-1})\\
+= &p_{Y_k\mid X_k,Y_{1:k-1}}(y_k\mid x_k,y_{1:k-1})
+p_{X_k\mid Y_{1:k-1}}(x_k\mid y_{1:k-1}).
+\end{aligned}
+\end{equation}
+将这一分解代入上一式，就是以历史观测为条件的 Bayes 公式。
+
+接着应用无记忆性引理中的观测条件独立性。给定当前状态 $X_k$ 后，历史观测不再影响 $Y_k$ 的条件分布，因此观测因子可以直接使用模型给出的似然：
+\begin{equation}\label{cw:eq:18}
+p_{Y_k\mid X_k,Y_{1:k-1}}(y_k\mid x_k,y_{1:k-1})
+=p_{Y_k\mid X_k}(y_k\mid x_k).
+\end{equation}
+这里仅消去了观测因子中的历史条件，预测密度仍依赖历史观测。
+
+分母由条件联合密度对状态变量积分得到，这是条件全概率公式。再代入上面的乘法分解与条件独立关系，就将观测的预测密度写成似然关于状态预测分布的平均：
+\begin{equation}\label{cw:eq:19}
+\begin{aligned}
+&p_{Y_k\mid Y_{1:k-1}}(y_k\mid y_{1:k-1})\\
+= &\int_{\mathcal{X}}p_{(X_k,Y_k)\mid Y_{1:k-1}}(x,y_k\mid y_{1:k-1})\,\mathrm{d}v_X(x)\\
+= &\int_{\mathcal{X}}p_{Y_k\mid X_k}(y_k\mid x)
+p_{X_k\mid Y_{1:k-1}}(x\mid y_{1:k-1})\,\mathrm{d}v_X(x).
+\end{aligned}
+\end{equation}
+其中 $x$ 是积分变量，覆盖整个状态空间。按前述条件，这个分母有限且严格为正，可以用于归一化。
+
+最后，将得到的分子与分母代回最初的条件密度公式，即得定理中的更新式。分母是似然加权后预测密度的总积分，因此相除后得到积分为 $1$ 的后验密度。
+\end{proof}
+
+
+\section{离散 Monge 映射的存在条件}\label{cw:app:monge}
+
+\textbf{原子质量守恒：}设 $x_1,\dots,x_m$ 各自互异，$y_1,\dots,y_n$ 各自互异，$a_i,b_j>0$。若 $T_*\mathbb P_X=\mathbb P_Y$，则
+\begin{equation}\label{cw:eq:monge-atom-mass}
+\begin{aligned}
+b_j&=\mathbb E_{Y\sim\mathbb P_Y}[\mathbb I_{\{y_j\}}(Y)]
+=\mathbb E_{X\sim\mathbb P_X}[\mathbb I_{\{y_j\}}(T(X))]\\
+&=\int_{\mathcal X}\mathbb I_{\{y_j\}}(T(x))\,
+\mathrm d\!\left(\sum_{i=1}^m a_i\delta_{x_i}\right)(x)
+=\sum_{\{i:\,T(x_i)=y_j\}}a_i.
+\end{aligned}
+\end{equation}
+每个正质量源点必然映入目标支撑，因为
+\begin{equation}\label{cw:eq:monge-support}
+\mathbb P_Y(\{T(x_i)\})
+=\mathbb P_X(T^{-1}(\{T(x_i)\}))\ge a_i>0.
+\end{equation}
+因此其条件概率矩阵为逐行单点选择，联合概率矩阵则带有源权重：
+\begin{equation}\label{cw:eq:monge-conditional}
+\begin{aligned}
+&P_{Y\mid X;i,j}=\mathbb I_{\{y_j\}}(T(x_i))\in\{0,1\},\qquad
+\sum_{j=1}^n P_{Y\mid X;i,j}
+=\delta_{T(x_i)}\!\left(\bigcup_{j=1}^n\{y_j\}\right)=1,\\
+&\bm P_{Y\mid X}\mathbf1_n=\mathbf1_m,\qquad
+\bm P_{Y\mid X}^{\mathrm T}\bm a=\bm b,\qquad
+\bm\Pi=\operatorname{diag}(\bm a)\bm P_{Y\mid X}.
+\end{aligned}
+\end{equation}
+同一质量关系也可以完全用推前与拉回对偶表达：
+\begin{equation}\label{cw:eq:monge-duality}
+\begin{aligned}
+b_j&=\langle\mathbb I_{\{y_j\}},\mathbb P_Y\rangle_{\mathcal Y}
+=\langle\mathbb I_{\{y_j\}},T_*\mathbb P_X\rangle_{\mathcal Y}
+=\langle T^*\mathbb I_{\{y_j\}},\mathbb P_X\rangle_{\mathcal X}\\
+&=\left\langle T^*\mathbb I_{\{y_j\}},
+\langle\bm a,\delta_{x_{1..m}}\rangle\right\rangle_{\mathcal X}
+=\sum_{i=1}^m a_iP_{Y\mid X;i,j}.
+\end{aligned}
+\end{equation}
+
+% 保留定理陈述的最小空间，证明可自然跨页，不预留半页。
+\Needspace{5\baselineskip}
+\begin{theorem}[均匀离散分布的整除条件]\label{cw:thm:monge-divisibility}
+设源、目标分布分别均匀分布于 $m$ 个与 $n$ 个互异支撑点。存在可测映射 $T$ 满足 $T_*\mathbb P_X=\mathbb P_Y$，当且仅当 $n\mid m$。
+\end{theorem}
+\begin{proof}
+必要性：由式~\eqref{cw:eq:monge-atom-mass}，每个目标点的原像必须含有 $m/n$ 个源点：
+\begin{equation}\label{cw:eq:monge-divisibility}
+\frac1n=\frac1m\#\{i:T(x_i)=y_j\}
+\quad\Longrightarrow\quad\frac mn\in\mathbb N.
+\end{equation}
+充分性：若 $m=nq$，将每 $q$ 个源点分配给一个目标点。用 Kronecker 积写为
+\begin{equation}\label{cw:eq:monge-construction}
+\begin{aligned}
+&\bm P_{Y\mid X}=\bm I_n\otimes_k\mathbf1_q\in\{0,1\}^{m\times n},
+\qquad\bm\Pi=\frac1m\bm P_{Y\mid X},\\
+&\bm P_{Y\mid X}\mathbf1_n
+=(\bm I_n\otimes_k\mathbf1_q)(\mathbf1_n\otimes_k1)
+=\mathbf1_n\otimes_k\mathbf1_q=\mathbf1_m,\\
+&\bm P_{Y\mid X}^{\mathrm T}\frac{\mathbf1_m}{m}
+=\frac{(\bm I_n\otimes_k\mathbf1_q^{\mathrm T})(\mathbf1_n\otimes_k\mathbf1_q)}m
+=\frac q m\mathbf1_n=\frac1n\mathbf1_n.
+\end{aligned}
+\end{equation}
+以矩阵每行的唯一非零元素确定 $T(x_i)$，并在有限源支撑之外任取常值延拓，即得到所需可测映射。
+\end{proof}

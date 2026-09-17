@@ -1,0 +1,52 @@
+% !TeX root = ../../../main.tex
+\section{均方误差的四项分解}\label{cw:sec:algorithm-errors}
+令 $\mathcal H=L^2(\Omega,\mathcal F,\mathbb P;\mathbb R^{n_x})$，概率空间包含真实系统与算法随机性。
+记 $\mathcal Y_k\subseteq\mathcal H$ 为所有关于 $\sigma(Y_{1:k})$ 可测的随机变量构成的闭子空间，
+$\mathcal P_{\mathcal Y_k}X_k$ 是利用全部历史观测的最优均方估计。
+本节记 $\hat X_k=X_k^+\mathbf1_N/N$ 为重采样后均值；算法~\ref{cw:alg:bpf} 与~\ref{cw:alg:etpf} 的在线输出 $X_k^-\bm w_k^+$ 是重采样前的加权均值。
+
+\begin{theorem}[四项误差分解]\label{cw:thm:four-errors}
+假设所涉及随机变量平方可积，算法随机源与真实系统独立。
+对每步使用新的随机数进行多项重采样的 BPF，或满足精确边际约束的 ETPF，有
+\begin{equation}\label{cw:eq:four-errors}
+\begin{aligned}
+&\|X_k-\hat X_k\|_{\mathcal H}^2\\
+= &\underbrace{\|\mathcal P_{\mathcal Y_k}^{\perp}X_k\|_{\mathcal H}^2}_{\text{不可约 Bayes 误差}}
++\underbrace{\|\mathcal P_{\mathcal Y_k}(X_k-X_k^-\bm w_k^+)\|_{\mathcal H}^2}_{\text{算法偏差平方}}\\
+&+\underbrace{\|\mathcal P_{\mathcal Y_k}^{\perp}(X_k^-\bm w_k^+)\|_{\mathcal H}^2}_{\text{算法随机波动}}
++\underbrace{\|X_k^-\bm w_k^+-\hat X_k\|_{\mathcal H}^2}_{\text{当前重采样扰动}}.
+\end{aligned}
+\end{equation}
+\end{theorem}
+\begin{proof}
+令 $\mathcal Z_k$ 为截至当前的观测 $Y_{1:k}$ 与本步重采样前全部算法随机源生成的 $L^2$ 子空间；加权均值 $X_k^-\bm w_k^+$ 对相应的 $\sigma$ 代数可测，属于该子空间。
+随机源独立性给出 $\mathcal P_{\mathcal Z_k}X_k=\mathcal P_{\mathcal Y_k}X_k$；
+重采样的条件无偏性给出 $\mathcal P_{\mathcal Z_k}\hat X_k=X_k^-\bm w_k^+$，ETPF 则逐次精确相等。
+当前重采样使用新的独立随机数，故其扰动与 $X_k$ 及 $\mathcal Z_k$ 正交。
+\end{proof}
+
+多项重采样 BPF 的最后一项可以直接计算：
+\begin{equation}\label{cw:eq:bpf-resampling-error}
+\|X_k^-\bm w_k^+-\hat X_k\|_{\mathcal H}^2
+=\frac1N\sum_{i=1}^N\left\|\sqrt{w_k^{+,(i)}}\bigl(x_k^{-,(i)}-X_k^-\bm w_k^+\bigr)\right\|_{\mathcal H}^2.
+\end{equation}
+ETPF 由 $\bm\Pi_k\mathbf1_N=\bm w_k^+$ 得到
+$X_k^+\mathbf1_N/N=X_k^-\bm\Pi_k\mathbf1_N=X_k^-\bm w_k^+$，因此最后一项为零。
+
+不过，质心守恒并不能消除算法偏差与随机波动；有限次 Sinkhorn 迭代的边际残差也可能破坏精确守恒。因而实际数值结果会与理想计算有所不同。
+
+\begin{theorem}[零过程噪声下的粒子贫化]\label{cw:thm:bpf-impoverishment}
+固定 $N\ge2$，预测为确定性映射，每步权重有效且使用新的随机数进行多项重采样。
+固定合法观测记录，记 $D_k:=\#\{x_k^{+,(i)}:i=1..N\}$，则
+\begin{equation}\label{cw:eq:particle-count-decay}
+1\le\mathbb E[D_k]\le1+(N-1)(1-N^{1-N})^k,\qquad
+\lim_{k\to\infty}\mathbb E[D_k]=1.
+\end{equation}
+\end{theorem}
+\begin{proof}
+确定性预测与复制使 $D_k$ 不增，单点状态为吸收态。
+每次全部选中同一祖先的条件概率为 $\sum_i(w_k^{+,(i)})^N\ge N^{1-N}$。
+因此 $\mathbb P(D_k>1)\le(1-N^{1-N})^k$，再由 $D_k-1\le(N-1)\mathbb I_{\{D_k>1\}}$ 得证。
+\end{proof}
+更多关于粒子谱系合并的相关结果见
+Jacob、Murray 与 Rubenthaler 的研究\cite{jacob2015path}；式~\eqref{cw:eq:particle-count-decay} 是上面的直接估计。

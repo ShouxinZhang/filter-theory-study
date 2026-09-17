@@ -1,0 +1,25 @@
+% !TeX root = ../../main.tex
+\section{非线性滤波问题}\label{cw:sec:model}
+
+本文从状态空间模型与 Bayes 递推出发，梳理粒子滤波及最优输运重采样的数学关系，并给出算法实现与仿真比较。经典滤波框架与序贯蒙特卡罗方法分别参考文献\cite{bar2001estimation,doucet2001sequential}。
+
+本文约定：凡使用密度公式时，均假设相应密度存在，以相应空间的体积测度为参考测度，密度等式按几乎处处理解。状态空间的体积测度记为 $v_X$。第~\ref{cw:sec:sim-logistic} 节的零过程噪声模型使用 Dirac 转移核，预测按测度推前理解。
+
+设概率空间为 $(\Omega,\mathcal{F},\mathbb{P})$，状态空间为 $(\mathcal{X},\mathcal{B}(\mathcal{X}))$，观测空间为 $(\mathcal{Y},\mathcal{B}(\mathcal{Y}))$，其中 $\mathcal{X}=\mathbb{R}^{n_x}$，$\mathcal{Y}=\mathbb{R}^{n_y}$，$\mathcal{B}$ 表示 Borel 集合族。状态与观测满足
+\begin{equation}\label{cw:eq:1}
+\begin{aligned}
+&X_k=f(X_{k-1},N_{x,k}),\\
+&Y_k=h(X_k,N_{y,k}),\;k\geq1.
+\end{aligned}
+\end{equation}
+其中 $X_k:\Omega\to\mathcal{X}$，$Y_k:\Omega\to\mathcal{Y}$ 为可测映射，$f,h$ 为已知可测函数。$\mathbb{P}$ 定义在 $\Omega$ 上，状态分布 $\mathbb{P}_{X_k}=(X_k)_*\mathbb{P}$ 与滤波后验分布定义在 $\mathcal{X}$ 上。
+
+条件：
+\begin{itemize}
+\item 所有时刻的过程噪声与观测噪声彼此独立，并与 $X_0$ 独立，亦即 $X_0, N_{x,k}, N_{y,k}$ 作为随机变量独立.
+\item 观测条件密度 $p_{Y_k\mid X_k}(y \mid x)$ 可计算，对实际观测，Bayes 更新的归一化常数有限且严格为正。
+\end{itemize}
+
+输入：模型 $f,h$，初始分布 $\mathbb{P}_{X_0}$，噪声分布 $\mathbb{P}_{N_x},\mathbb{P}_{N_y}$，依次到达的观测值 $y_1,y_2,\dots$。
+
+输出：逐个收到观测 $y_k$，递推求解当前状态的后验概率密度函数 $p_{X_k\mid Y_{1:k}}(x_k \mid y_{1:k})$。

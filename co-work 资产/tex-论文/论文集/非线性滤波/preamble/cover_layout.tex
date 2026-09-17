@@ -1,0 +1,13 @@
+% !TeX root = ../main.tex
+% 仅适配本论文四行英文题目，不修改学校类文件。
+% 标题区增高 0.7 cm，作者区相应减少 0.7 cm，保持校名及日期位置。
+\makeatletter
+\patchcmd{\hitsz@first@titlepage@other}
+  {\parbox[t][7.7cm][t]}
+  {\parbox[t][8.4cm][t]}
+  {}{\PackageError{thesis-cover}{Title spacing patch failed}{}}
+\patchcmd{\hitsz@first@titlepage@other}
+  {\parbox[t][5cm][t]}
+  {\parbox[t][4.3cm][t]}
+  {}{\PackageError{thesis-cover}{Author spacing patch failed}{}}
+\makeatother

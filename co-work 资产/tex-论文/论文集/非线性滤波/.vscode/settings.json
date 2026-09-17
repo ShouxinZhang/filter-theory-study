@@ -1,0 +1,23 @@
+{
+  "latex-workshop.latex.outDir": "%DIR%/build",
+  "latex-workshop.latex.autoBuild.run": "onFileChange",
+  "latex-workshop.latex.recipe.default": "first",
+  "latex-workshop.latex.tools": [
+    {
+      "name": "hitsz-build",
+      "command": "bash",
+      "args": [
+        "%DIR%/build.sh"
+      ]
+    }
+  ],
+  "latex-workshop.latex.recipes": [
+    {
+      "name": "HITSZ build",
+      "tools": [
+        "hitsz-build"
+      ]
+    }
+  ],
+  "latex-workshop.view.pdf.viewer": "tab"
+}

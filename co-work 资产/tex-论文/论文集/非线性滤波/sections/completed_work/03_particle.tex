@@ -1,0 +1,95 @@
+% !TeX root = ../../main.tex
+\section{粒子滤波：经验测度近似}\label{cw:sec:particle}
+
+以下以 Gordon 等提出的自举粒子滤波为基础\cite{gordon1993novel}，采用序贯蒙特卡罗的经验测度表示\cite{doucet2001sequential}。粒子滤波的理论框架、主要算法与多目标跟踪应用已有系统的中文综述\cite{li2015particlezh}。
+
+固定观测记录，用 $-$ 与 $+$ 分别表示预测与后验，记
+\begin{equation}\label{cw:eq:5}
+\begin{aligned}
+&\mathbb{P}_{X_k}^-:=\mathbb{P}_{X_k\mid Y_{1:k-1}}(y_{1:k-1},\cdot),\\
+&\mathbb{P}_{X_k}^+:=\mathbb{P}_{X_k\mid Y_{1:k}}(y_{1:k},\cdot),\\
+&\mathbb{P}_{X_0}^+:=\mathbb{P}_{X_0}.
+\end{aligned}
+\end{equation}
+
+从预测公式出发，以下使用条件密度的简写 $p(x_k\mid y_{1:k-1})=p_{X_k\mid Y_{1:k-1}}(x_k\mid y_{1:k-1})$，其他条件密度同理：
+\begin{equation}\label{cw:eq:6}
+\begin{aligned}
+&p(x_k\mid y_{1:k-1})\\
+= &\int_{\mathcal{X}}p(x_k\mid x_{k-1})p(x_{k-1}\mid y_{1:k-1})\,\mathrm{d}v_X(x_{k-1}).
+\end{aligned}
+\end{equation}
+
+固定 $x_k$，这个积分就是函数 $x_{k-1}\mapsto p(x_k\mid x_{k-1})$ 关于上一时刻后验分布的平均。因此，先假设能够从 $p(x_{k-1}\mid y_{1:k-1})$ 独立抽取 $N$ 个样本，记实现值为 $x_{k-1}^{+,(1)},\dots,x_{k-1}^{+,(N)}$，其中 $+$ 表示这些样本来自后验分布。
+
+由简单抽样得到等权经验测度，每个样本占 $1/N$ 的质量：
+\begin{equation}\label{cw:eq:7}
+\hat{\mathbb{P}}_{N;X_{k-1}}^+
+:=\frac1N\sum_{i=1}^N\delta_{x_{k-1}^{+,(i)}}.
+\end{equation}
+用这一经验测度替换预测积分中的后验测度 $p(x_{k-1}\mid y_{1:k-1})\,\mathrm{d}v_X(x_{k-1})$，得到
+\begin{equation}\label{cw:eq:8}
+\begin{aligned}
+&p(x_k\mid y_{1:k-1})\\
+\approx &\int_{\mathcal{X}}p(x_k\mid x_{k-1})\,\mathrm{d}\hat{\mathbb{P}}_{N;X_{k-1}}^+(x_{k-1})\\
+= &\frac1N\sum_{i=1}^N\int_{\mathcal{X}}p(x_k\mid x_{k-1})\,\mathrm{d}\delta_{x_{k-1}^{+,(i)}}(x_{k-1}).
+\end{aligned}
+\end{equation}
+最后使用 Dirac 测度的积分性质 $\int\varphi(x)\,\mathrm{d}\delta_a(x)=\varphi(a)$，每个积分都变成在对应样本处的函数值：
+\begin{equation}\label{cw:eq:9}
+p(x_k\mid y_{1:k-1})\approx\frac1N\sum_{i=1}^N p(x_k\mid x_{k-1}^{+,(i)}).
+\end{equation}
+这样，后验分布下的积分被样本平均近似，预测密度成为 $N$ 个转移密度的等权混合。
+
+\textbf{提议分布：}在生成新粒子时，需要指定实际用于抽样的分布，其密度称为提议密度，记为 $q$。它可以依赖旧粒子与当前观测，抽样操作写作
+\begin{equation}\label{cw:eq:10}
+x_k^{-,(i)}\sim q(\cdot\mid x_{k-1}^{+,(i)},y_k).
+\end{equation}
+当前要对上面的预测混合分布进行采样，我们选择每个成分本身的转移密度作为提议密度：
+\begin{equation}\label{cw:eq:11}
+q(x_k\mid x_{k-1}^{+,(i)},y_k)=p(x_k\mid x_{k-1}^{+,(i)}).
+\end{equation}
+这一选择在生成粒子时不使用当前观测 $y_k$，正是自举滤波采用的转移先验提议。
+
+\textbf{分层采样：}以混合成分的编号 $i$ 作为分层依据，第 $i$ 层对应密度 $p(x_k\mid x_{k-1}^{+,(i)})$，在混合分布中占 $1/N$ 的质量。因此每层分配一个样本，给定上一时刻的粒子后，各层独立抽取预测粒子：
+\begin{equation}\label{cw:eq:12}
+x_k^{-,(i)}\sim p(\cdot\mid x_{k-1}^{+,(i)}),\;i=1,\dots,N.
+\end{equation}
+这里 $\sim$ 表示抽样操作，$x_k^{-,(i)}$ 记抽得的实现值。由状态方程，这一操作可以通过独立抽取过程噪声实现值 $n_{x,k}^{(i)}$ 完成：
+\begin{equation}\label{cw:eq:13}
+x_k^{-,(i)}=f\bigl(x_{k-1}^{+,(i)},n_{x,k}^{(i)}\bigr).
+\end{equation}
+
+在上述转移先验提议下，每个样本代表所在层的 $1/N$ 质量，因此将这些预测粒子合并，得到预测分布的等权经验测度：
+\begin{equation}\label{cw:eq:14}
+\hat{\mathbb{P}}_{N;X_k}^-:=\frac1N\sum_{i=1}^N\delta_{x_k^{-,(i)}}
+\approx\mathbb{P}_{X_k}^-.
+\end{equation}
+这一步用有限个点质量进一步近似前面得到的混合分布。给定旧粒子后，各层样本独立，但各自服从对应的转移分布。
+
+\textbf{更新：}$-$ 与 $+$ 分别表示使用当前观测前后的预测与后验阶段，此处只更新权重.
+对任意可测集合 $A$，将 Bayes 公式中的预测测度替换为等权经验测度，再用 Dirac 积分性质展开；假设样本似然总和有限且严格为正，约去 $1/N$ 后得到后验近似：
+\begin{equation}\label{cw:eq:particle-update}
+\begin{aligned}
+&\mathbb{P}_{X_k}^+(A)\\
+={}&\int_A\frac{p(y_k\mid x)p(x\mid y_{1:k-1})}{\displaystyle\int_{\mathcal{X}}p(y_k\mid z)p(z\mid y_{1:k-1})\,\mathrm{d}v_X(z)}\,\mathrm{d}v_X(x)\\
+={}&\frac{\displaystyle\int_A p(y_k\mid x)\,\mathrm{d}\mathbb{P}_{X_k}^-(x)}{\displaystyle\int_{\mathcal{X}}p(y_k\mid x)\,\mathrm{d}\mathbb{P}_{X_k}^-(x)},\\
+\Rightarrow\quad &\hat{\mathbb{P}}_{N;X_k}^+(A):=\frac{\displaystyle\int_A p(y_k\mid x)\,\mathrm{d}\hat{\mathbb{P}}_{N;X_k}^-(x)}{\displaystyle\int_{\mathcal{X}}p(y_k\mid x)\,\mathrm{d}\hat{\mathbb{P}}_{N;X_k}^-(x)}\\
+={}&\sum_{i=1}^N w_k^{+,(i)}\delta_{x_k^{-,(i)}}(A),\\
+&w_k^{+,(i)}:=\frac{p(y_k\mid x_k^{-,(i)})}{\displaystyle\sum_{j=1}^N p(y_k\mid x_k^{-,(j)})},\;i=1..N.
+\end{aligned}
+\end{equation}
+
+\textbf{重采样：}
+粗略地说，重采样是对粒子位置的更新。因此，和上一步的概率测度更新应该联为一体，同属于预测 $\to $ 更新的大步骤。
+粒子矩阵按列排列为 $X_k^\pm:=x_k^{\pm,(1..N)}\in\mathbb R^{n_x\times N}$。用 $\bm\Pi_k$ 表示联合概率矩阵，$\bm T_k$ 表示位置变换矩阵，$\bm n_k$ 表示各粒子的复制次数，$(\bm T_k)_{ij}$ 表示源粒子 $i$ 对目标粒子 $j$ 的贡献系数。经典重采样中该系数为 $\mathbb I_{\{A_j=i\}}$，其中 $A_j$ 是目标粒子 $j$ 抽取的源索引：
+\begin{equation}\label{cw:eq:resampling}
+\begin{aligned}
+&X_k^+=X_k^-\bm T_k=NX_k^-\bm\Pi_k,\;\bm T_k=N\bm\Pi_k\geq0,\\
+&\bm T_k^{\mathrm T}\mathbf1_N=\mathbf1_N,\;\bm T_k\mathbf1_N=\bm n_k,\;\mathbb E[\bm n_k\mid\bm w_k^+]=N\bm w_k^+.
+\end{aligned}
+\end{equation}
+重采样就是按后验权重，从已有预测粒子中有放回地抽取 $N$ 次。先把各粒子的权重依次累加，将 $[0,1)$ 划成 $N$ 段，每段长度就是对应粒子的权重。
+每次独立抽一个均匀随机数，落在哪一段，就复制哪一个粒子；重复 $N$ 次，得到后验粒子。因而，权重越大的粒子越容易被多次保留，权重小的粒子可能一次也选不到。
+将新粒子的权重统一设为 $1/N$，原来由权重表达的质量差异，就改由复制次数表达。
+这样，$\bm T_k$ 的第 $j$ 列记录新粒子 $j$ 复制了谁，$\bm n_k$ 记录每个旧粒子被复制了几次。单次重采样会产生随机误差；固定原粒子与权重后，对重采样随机性取平均，所得经验测度等于原加权测度。

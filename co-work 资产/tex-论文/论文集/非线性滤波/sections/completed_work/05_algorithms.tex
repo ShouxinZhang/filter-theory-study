@@ -1,0 +1,49 @@
+% !TeX root = ../../main.tex
+\chapter{算法分析}[Algorithm Analysis]\label{cw:sec:algorithms}
+本节先给出每个时刻都有观测的基本算法。输入观测序列 $y_{1:T}=(y_1,\dots,y_T)$, 其中 $y_k$ 是时刻 $k$ 实际获得的观测值, $T$ 是总时间步数。已知状态转移模型 $f$, 过程噪声分布 $\mathbb P_{N_x}$ 与观测条件密度 $p_{Y_k\mid X_k}(y\mid x)$；收到 $y_k$ 后定义似然函数
+\begin{equation}
+ g_k(x):=p_{Y_k\mid X_k}(y_k\mid x).
+\end{equation}
+两种算法都从初始密度 $p(x_0)$ 采样, 每轮依次预测粒子, 用当前观测更新权重, 再生成供下一轮使用的等权粒子。假设每轮的粒子似然总和有限且严格为正。
+
+\textbf{初始化与第一次迭代}\enspace 第一次观测到达时, 精确的预测与更新为
+\begin{equation}\label{cw:eq:algorithm-first-bayes}
+\begin{aligned}
+&p(x_1)=\int p(x_1\mid x_0)p(x_0)\,\mathrm d x_0,\\
+&p(x_1\mid y_1)=\frac{g_1(x_1)p(x_1)}{\int g_1(z)p(z)\,\mathrm d z}.
+\end{aligned}
+\end{equation}
+对应的粒子近似是
+\begin{equation}\label{cw:eq:algorithm-first-particles}
+\begin{aligned}
+&x_0^{+,(i)}\sim p(x_0),\;n_{x,1}^{(i)}\sim\mathbb P_{N_x},\;x_1^{-,(i)}=f(x_0^{+,(i)},n_{x,1}^{(i)}),\\
+&w_1^{+,(i)}=\frac{g_1(x_1^{-,(i)})}{\sum_jg_1(x_1^{-,(j)})},\;
+\hat{\mathbb P}_{N;X_1}^+=\sum_iw_1^{+,(i)}\delta_{x_1^{-,(i)}}\approx\mathbb P_{X_1\mid Y_1=y_1}.
+\end{aligned}
+\end{equation}
+随后 BPF 按权重随机复制粒子, ETPF 通过最优输运取重心, 所得 $x_1^{+,(i)}$ 均作为第二轮预测的输入。
+
+\section{自举粒子滤波}\label{cw:sec:alg-bpf}
+基本 BPF 采用转移先验提议与独立重采样, 即 Gordon 等\cite{gordon1993novel}的预测与抽样更新。给定权重后, 每个新粒子独立选取一个旧粒子, 第 $i$ 个旧粒子被选中的概率为 $w_k^{+,(i)}$；复制次数因此服从多项分布。
+
+算法~\ref{cw:alg:bpf} 的权重更新由 Bayes 公式得到；重采样只改变粒子的位置及复制次数；每轮总是从等权粒子开始（亦即，总是暴力重采样而不考虑有效粒子数）。
+
+\textbf{间隔观测}\enspace 若只在 $\mathcal O\subseteq\{1,\dots,T\}$ 提供观测, 输入改为带时刻的观测记录 $\{(k,y_k):k\in\mathcal O\}$。在 $k\notin\mathcal O$ 时, 两种算法均只执行预测, 令 $x_k^{+,(i)}=x_k^{-,(i)}$, 输出 $\hat x_k=N^{-1}\sum_i x_k^{-,(i)}$, 然后进入下一时刻。每隔 $m$ 步观测对应 $\mathcal O=\{m,2m,\dots\}\cap\{1,\dots,T\}$。
+% 先完成文字说明，再放置完整伪代码；避免不可拆分算法框提前截断正文页。
+\input{sections/completed_work/algorithms/bpf}
+
+\section{集合输运粒子滤波}\label{cw:sec:alg-etpf}
+Reich 的原始 ETPF\cite{reich2013nonparametric}共享 BPF 的预测与权重更新, 通过离散最优输运替换随机重采样。令 $\bm a=\bm w_k^+$, $\bm b=\mathbf1_N/N$, $C_{ij}=\|x_k^{-,(i)}-x_k^{-,(j)}\|^2$, 求解线性规划
+\begin{equation}\label{cw:eq:algorithm-etpf-original}
+\bm\Pi_k\in\operatorname*{argmin}_{\bm\Pi\in U(\bm a,\bm b)}\langle\bm\Pi,\bm C\rangle_F.
+\end{equation}
+目标槽位 $j$ 的参考位置为 $x_k^{-,(j)}$。由于列和为 $1/N$, $N\Pi_{k;ij}$ 是该槽位对应的条件权重, 新粒子取其加权平均。
+
+\input{sections/completed_work/algorithms/etpf}
+
+\textbf{熵正则化版本与基本 Sinkhorn 迭代}\enspace 使用式~\eqref{cw:eq:regularized-matrix} 的熵正则化问题\cite{cuturi2013sinkhorn}近似上述线性规划, 将算法~\ref{cw:alg:etpf} 中的耦合求解替换为算法~\ref{cw:alg:sinkhorn-basic}, 再执行相同的重心变换。固定 $\varepsilon>0$ 时得到的是正则化 ETPF, 与原始 ETPF 的输运目标有所不同。达到迭代上限时仍可返回近似耦合, 其边际误差由 $r$ 表示。
+
+\input{sections/completed_work/algorithms/sinkhorn}
+
+% 保持算法所属小节与误差分析的阅读顺序。
+\input{sections/completed_work/algorithms/error_analysis}

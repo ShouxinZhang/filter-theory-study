@@ -1,0 +1,28 @@
+% !TeX root = ../main.tex
+% 保留中期字体组合；中文 Fandol 与数学 newtxmath 在入口指定。
+\setmainfont{TeXGyreTermesX}[
+  UprightFont = *-Regular ,
+  BoldFont = *-Bold ,
+  ItalicFont = *-Italic ,
+  BoldItalicFont = *-BoldItalic ,
+  Extension = .otf ,
+  ]
+\setsansfont{texgyreheros}[
+  UprightFont = *-regular ,
+  BoldFont = *-bold ,
+  ItalicFont = *-italic ,
+  BoldItalicFont = *-bolditalic ,
+  Extension = .otf ,
+  ]
+\setmonofont{texgyrecursor}[
+  UprightFont = *-regular ,
+  BoldFont = *-bold ,
+  ItalicFont = *-italic ,
+  BoldItalicFont = *-bolditalic ,
+  Extension = .otf ,
+]
+
+% 保留求和符号兼容补丁；正文和题注字号沿用学位论文类。
+\DeclareSymbolFont{LMlargesymbols}{OMX}{lmex}{m}{n}
+\DeclareMathSymbol{\LMsum}{\mathop}{LMlargesymbols}{"50}
+\renewcommand{\sum}{\LMsum}

@@ -1,0 +1,16 @@
+% !TeX root = ../../../main.tex
+% 模板原生算法样式；计算步骤与迁入源稿一致。
+\begin{algorithm}[H]
+\caption{BPF：预测、似然加权与独立重采样}\label{cw:alg:bpf}
+\KwIn{初始密度 $p(x_0)$, 粒子数 $N$, 模型 $f$, 噪声分布 $\mathbb P_{N_x}$, 观测条件密度, 观测序列 $y_{1:T}$}
+\KwOut{后验均值估计 $\hat x_{1:T}$；每轮更新后的等权粒子 $\{x_k^{+,(j)}\}_{j=1}^N$}
+独立采样 $x_0^{+,(i)}\sim p(x_0)$, 权重均为 $1/N$, $i=1,\dots,N$\;
+\For{$k=1,\dots,T$}{
+    独立采样 $n_{x,k}^{(i)}\sim\mathbb P_{N_x}$, 令 $x_k^{-,(i)}=f(x_{k-1}^{+,(i)},n_{x,k}^{(i)})$\;
+    读取 $y_k$, 计算 $g_k(x_k^{-,(i)})=p_{Y_k\mid X_k}(y_k\mid x_k^{-,(i)})$\;
+    $\displaystyle w_k^{+,(i)}=\frac{g_k(x_k^{-,(i)})}{\sum_{r=1}^N g_k(x_k^{-,(r)})}$, $i=1,\dots,N$\;
+    输出后验均值估计 $\hat x_k=\sum_{i=1}^Nw_k^{+,(i)}x_k^{-,(i)}$\;
+    给定 $\bm w_k^+$, 独立抽取 $A_1,\dots,A_N$, 其中 $\mathbb P(A_j=i\mid\bm w_k^+)=w_k^{+,(i)}$\;
+    $x_k^{+,(j)}\gets x_k^{-,(A_j)}$, 新粒子权重均置为 $1/N$, $j=1,\dots,N$\;
+}
+\end{algorithm}

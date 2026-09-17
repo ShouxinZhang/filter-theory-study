@@ -1,0 +1,32 @@
+% !TeX root = ../../../main.tex
+\section{无记忆性引理的离散情形证明}\label{cw:app:markov-proof}
+
+\begin{proof}[引理~\ref{cw:lem:markov} 的证明（离散情形）]
+沿用引理~\ref{cw:lem:markov} 的模型与独立性条件，设 $X_0$ 和各噪声取有限或可数个值，$p$ 表示相对于计数测度的概率质量函数。
+以下仅考虑概率为正的条件取值，求和遍历相应噪声的所有可能取值。
+
+由递推关系，$(X_{0:k-1},Y_{1:k-1})$ 是 $(X_0,N_{x,1:k-1},N_{y,1:k-1})$ 的函数，因此与 $N_{x,k}$ 独立。
+固定历史取值后，$X_{k-1}=x_{k-1}$，先按噪声取值分解，再依次使用 $X_k=f(X_{k-1},N_{x,k})$ 与噪声独立性：
+\begin{equation*}
+\begin{aligned}
+&p_{X_k\mid X_{0:k-1},Y_{1:k-1}}(x_k\mid x_{0:k-1},y_{1:k-1})\\
+= &\sum_n p_{(X_k,N_{x,k})\mid X_{0:k-1},Y_{1:k-1}}(x_k,n\mid x_{0:k-1},y_{1:k-1})\\
+= &\sum_n\mathbb I_{\{f(x_{k-1},n)=x_k\}}p_{N_{x,k}\mid X_{0:k-1},Y_{1:k-1}}(n\mid x_{0:k-1},y_{1:k-1})\\
+= &\sum_n\mathbb I_{\{f(x_{k-1},n)=x_k\}}p_{N_{x,k}}(n)\\
+= &p_{X_k\mid X_{k-1}}(x_k\mid x_{k-1}).
+\end{aligned}
+\end{equation*}
+最后一步同样利用 $N_{x,k}$ 与 $X_{k-1}$ 独立，故只给定 $X_{k-1}$ 时得到相同的求和式。
+
+同理，$(X_{0:k},Y_{1:k-1})$ 是 $(X_0,N_{x,1:k},N_{y,1:k-1})$ 的函数，因此与 $N_{y,k}$ 独立。由 $Y_k=h(X_k,N_{y,k})$ 得
+\begin{equation*}
+\begin{aligned}
+&p_{Y_k\mid X_{0:k},Y_{1:k-1}}(y_k\mid x_{0:k},y_{1:k-1})\\
+= &\sum_n\mathbb I_{\{h(x_k,n)=y_k\}}p_{N_{y,k}}(n)\\
+= &p_{Y_k\mid X_k}(y_k\mid x_k).
+\end{aligned}
+\end{equation*}
+这里最后一步利用 $N_{y,k}$ 与 $X_k$ 独立。$k=1$ 时将历史观测视为空，即得引理的两个等式。
+
+一般情形对任意 Borel 集合写条件概率，将上述求和替换为对噪声分布的积分，即得相同的条件分布等式；在正文的密度存在假设下，进一步得到几乎处处成立的密度等式。
+\end{proof}

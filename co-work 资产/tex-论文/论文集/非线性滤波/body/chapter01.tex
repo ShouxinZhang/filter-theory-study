@@ -1,0 +1,32 @@
+% !TeX root = ../main.tex
+%%%%%%%%%%%%%%%%%%%%%%%%%%   1   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{研究背景与阶段进展}[Research Background and Progress]
+\section{课题主要研究内容}
+1993年，Gordon、Salmond和Smith提出Bootstrap粒子滤波，在不依赖线性化或高斯假设的条件下实现了递推贝叶斯状态估计\cite{gordon1993novel}。1994年，Kong和Liu围绕序贯重要性采样框架讨论了权重退化、粒子耗尽及有效粒子数等问题\cite{kong1994sequential}。1996年，Kitagawa在重采样步骤中引入分层采样思想\cite{kitagawa1996monte}。  
+
+1998年，Isard和Blake提出Condensation算法，将粒子滤波用于视觉目标轮廓的实时跟踪\cite{isard1998condensation}。同年，Liu和Chen提出SIR（Sequential Importance Re-sampling）框架\cite{liu1998sequential}用以解决粒子退化问题。1999年，Pitt和Shephard引入辅助粒子滤波（APF）\cite{pitt1999filtering}。APF通过在采样时引入辅助变量，根据当前观测对粒子进行预筛选，从而使用更接近后验的重要性分布，有效缓解了观测值突变时权重高度不平衡的问题。
+2000年，Rudolph van der Merwe等人提出了无迹粒子滤波（Unscented PF）\cite{van2000unscented}，UPF结合了无迹卡尔曼滤波（UKF）\cite{julier1997new}的思想，在重要性采样阶段使用一组无迹变换生成的sigma点来近似状态分布，从而构造出利用当前观测信息的重要性提议分布。Doucet等主编的文集\inlinecite{doucet2001sequential}系统总结了粒子滤波及其变体，其中包括Rao-Blackwellized粒子滤波（RBPF）。RBPF对部分变量进行粒子采样，利用其余变量的条件可解析结构实施边缘化，例如对条件线性高斯部分采用Kalman滤波，对有限状态部分采用HMM递推，以减少采样维度和方差。这类分解也用于SLAM等复杂问题\cite{montemerlo2002fastslam}。
+
+Gilks和Berzuini提出重采样-移动（Resample-Move）算法，在重采样后通过Markov链Monte Carlo（MCMC）更新粒子位置，以增加粒子多样性、缓解粒子贫化\cite{gilks2001following}。2006年, Doucet等人提出区块采样（block sampling）方法，每隔$L$步对最近$L$个时刻的粒子状态进行联合MCMC更新，从而降低单步退化对整段轨迹的影响\cite{doucet2006efficient}。上述融合MCMC的策略有效缓解了退化，但计算代价较高\cite{li2017particle}。另一类方法通过核密度平滑构造重采样分布。Musso等研究的正则化粒子滤波（RPF）先对粒子集合进行核密度估计，再从所得连续分布中重新采样\cite{musso2001improving}。2005年，Chang和Ansari提出的核均值漂移粒子滤波（KPF）进一步借助mean-shift迭代，将粒子向后验密度的高峰方向移动，相当于在滤波过程中执行聚类和梯度上升，使粒子更集中于高概率区域\cite{chang2005kernel}。但是这些方法仅仅适用于低维单峰平滑问题，因而具有很大的局限性。
+
+Moselhy等研究了基于最优输运的贝叶斯推断，通过构造从先验分布到后验分布的确定性映射，将先验样本变换为后验样本，为贝叶斯采样提供了不同于MCMC链式采样的实现思路\cite{el2012bayesian}。2013年，Reich基于最优传输理论提出了一种新的非参数集合同化变换方法（Ensemble Transform, ET），弥补了EnKF\cite{evensen2003ensemble}在一致性上的不足。2021年，在 Reich 的 OT 粒子滤波思想基础上，Corenflos结合 Cuturi 的熵正则化 OT\cite{peyre2019computational}，提出了首个 完全可微的粒子滤波方法（DPF）\cite{corenflos2021differentiable}，解决了长期困扰 PF 的 不可微重采样问题。Al-Jarrah等将Bayes更新表述为从预测分布到后验分布的条件最优输运问题，并利用神经网络近似观测条件下的Brenier映射，为非线性滤波的后验更新提供了基于输运映射的实现途径\cite{aljarrah2024brenier}。
+
+自2015年以来，深度学习与卡尔曼滤波相结合的研究引起了广泛关注。2015年，Krishnan 等人提出了Deep Kalman Filter (DKF)\cite{krishnan2015deep}，用神经网络参数化状态转移和观测分布，突破了线性假设。同年Shixiang Gu等人提出了“Neural Adaptive Sequential Monte Carlo”方法，提出训练一个关于提议分布和真实分布KL散度最优的RNN模型\cite{gu2015neural}，进而用于改进传统算法的粒子贫化。Karl等提出深度变分贝叶斯滤波（DVBF），通过贯穿状态演化过程的反向传播学习潜在马尔可夫状态空间模型，从高维观测中提取用于描述系统动态的隐空间表示\cite{karl2016deep}。2017年，Krishnan等人提出面向非线性状态空间模型的结构化推断网络，以神经网络参数化转移和观测分布，并通过结构化变分近似联合学习生成模型与推断网络\cite{krishnan2017structured}。Hafner等结合循环神经网络与变分推断构建非线性状态空间模型，并将其用于基于像素观测的模型式强化学习\cite{hafner2019learning}。2021年，Revach等人提出KalmanNet框架\cite{revach2022kalmannet}，保留经典滤波递推结构，以神经网络学习Kalman增益，并在所测试的非线性与模型失配场景中提高估计精度。2023年，Greenberg等人针对过往神经网络优化的非线性滤波器，对KF做出了新的优化基线OKF，并指出在优化KF的超参数 $Q, R$ 后，神经网络反而未必优于传统KF算法\cite{greenberg2023optimization}。
+
+Liu等人提出LLM-Filter，将带噪观测嵌入为文本原型，并通过System-as-Prompt引导冻结大语言模型完成状态估计，强调学习型滤波器在未见系统上的上下文泛化能力\cite{liu2025onefilterall}。Xiao等人提出LD-EnSF，将集合评分滤波与潜空间动力学结合，使同化过程在紧凑潜空间中演化，从而减少高维稀疏观测场景中的全空间数值模拟开销\cite{xiao2026ldensf}。与滤波问题相邻，St{\"o}ckl等人的local prediction-learning研究表明，局部下一观测预测可以在高维表示空间中形成可用于规划的认知地图\cite{stockl2024localprediction}。
+
+本课题围绕非线性系统的状态估计问题，研究如何根据含噪观测递推估计系统状态，以最优输运方法在粒子滤波后验更新中的应用为重点。当前阶段的工作主要包括：梳理贝叶斯滤波、粒子近似与最优输运之间的数学联系，整理输运式粒子更新的算法步骤与误差分析，并通过仿真实验比较其与自举粒子滤波等方法的估计精度、粒子多样性及计算成本。在此基础上，后续拟进一步分析输运式粒子更新的适用条件与计算开销，探索相应的算法改进，进行对照实验。最终形成可复用的理论资料、算法实现与可复现实验结果，明确所研究方法的优势、局限及适用条件。
+
+\section{核心工作进度介绍}
+
+目前已完成不包含神经网络部分的理论梳理、算法实现与基线实验，具体进展如下：
+% 仅对本节采用紧凑列表；保持模板正文字号和行距。
+\begin{enumerate}[label=(\arabic*),leftmargin=2.5em,topsep=3pt,itemsep=2pt,parsep=0pt]
+  \item \textbf{理论整理：}统一 Bayes 递推、粒子近似与输运重采样的表述，整理四项均方误差分解及零过程噪声下的贫化证明。
+  \item \textbf{算法实现：}完成 BPF、原始与熵正则化 ETPF，并与扩展 Kalman 滤波、集合 Kalman 滤波对照。
+  \item \textbf{实验评估：}Gordon 基准上两类粒子滤波精度接近，但输运成本较高；零过程噪声 Logistic 实验中，ETPF 缓解了所测试运行中的单点贫化。
+\end{enumerate}
+
+神经网络相关研究尚未开展，后续拟通过文献学习评估其与输运滤波结合的可行性，具体方案尚待确定。
+
+

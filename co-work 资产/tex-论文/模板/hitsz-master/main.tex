@@ -1,0 +1,32 @@
+% !TeX program = xelatex
+% !LW recipe = HITSZ build
+\documentclass[type=master,fontset=fandol,mathfont=newtxmath]{hitszthesis}
+\input{preamble/packages}
+\input{preamble/fonts}
+\input{preamble/algorithms}
+\input{preamble/bibliography}
+\input{config/options}
+\begin{document}
+\frontmatter
+\input{config/cover}
+\makecover
+\tableofcontents
+\mainmatter
+\input{body/chapter01}
+\input{body/chapter02}
+\backmatter
+\input{back/conclusion}
+\ifIncludeAIStatement
+  \input{back/ai_statement}
+\fi
+% 使用保留中期定制的本地 BST；原版 hitszthesis.bst 另行保留供对照。
+\bibliographystyle{hithesis}
+\bibliography{references/examples}
+\begin{appendix}
+  \input{back/appendixA}
+\end{appendix}
+\input{back/publications}
+\authorization
+\input{back/acknowledgements}
+\input{back/resume}
+\end{document}

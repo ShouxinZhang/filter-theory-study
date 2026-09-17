@@ -1,0 +1,38 @@
+% !TeX root = ../main.tex
+\chapter{方法与排版示例}[Methods and Typesetting Examples]
+\section{数学公式}[Equations]
+公式~\ref{eq:mean} 用于检验求和字体与按章编号。
+\begin{equation}
+  \bar x = \frac{1}{N}\sum_{i=1}^{N}x_i .
+  \label{eq:mean}
+\end{equation}
+\section{算法}[Algorithm]
+算法~\ref{alg:mean} 保留中期模板的中文输入输出、五号字、行号与块竖线。
+\begin{algorithm}[htbp]
+\caption{样本均值计算示例}\label{alg:mean}
+\KwIn{样本 $x_1,\ldots,x_N$，样本数 $N\ge1$}
+\KwOut{样本均值 $\bar x$}
+$s\gets0$\;
+\For{$i=1,\ldots,N$}{
+  $s\gets s+x_i$\;
+}
+$\bar x\gets s/N$\;
+\end{algorithm}
+\section{图与表}[Figures and Tables]
+图~\ref{fig:placeholder} 和表~\ref{tab:example} 仅为排版示例，提交前应替换。
+\begin{figure}[htbp]
+\centering
+\fbox{\parbox[c][20mm][c]{0.65\textwidth}{\centering 替换为研究图片}}
+\bicaption[fig:placeholder]{}{图片占位示例}{Fig.}{Figure placeholder}
+\end{figure}
+\begin{table}[htbp]
+\centering
+\bicaption[tab:example]{}{三线表示例}{Table}{Example table}
+\begin{tabular}{lc}
+\toprule
+项目 & 示例值 \\
+\midrule
+样本数 & 100 \\
+\bottomrule
+\end{tabular}
+\end{table}
