@@ -5,7 +5,6 @@ A personal repository for collecting and organizing research drafts, study notes
 ## Reusable assets
 
 - [Slidev academic template and complete example talk](<co-work 资产/slides/README.md>)
-- [Windows presentation instructions](<co-work 资产/slides/WINDOWS.md>)
 
 - [HITSZ TeX thesis templates](<co-work 资产/tex-论文/README.md>)
 
