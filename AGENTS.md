@@ -5,3 +5,4 @@
 - md的公示排版参考`.agents/prompts/公式排版.md`. Tex自由考虑
 - 用户在末尾部分输入< 20或者< 10时，指的是< n行.
 - .tmp的内容，请不要在chat context里二次重复，浪费上下文记忆.
+- 所有新增报告（含 .tmp Markdown）须在开头声明 `agent name: <model slug>`，使用 `get-model-name` 获取；无法核实时写 `unknown`，不得猜测。

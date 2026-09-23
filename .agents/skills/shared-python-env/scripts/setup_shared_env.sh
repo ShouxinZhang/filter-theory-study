@@ -2,8 +2,8 @@
 set -euo pipefail
 
 SHARED_ROOT="${SHARED_ROOT:-$HOME/Documents/GitHub/.shared-python-envs}"
-SHARED_ENV_NAME="${SHARED_ENV_NAME:-py314-torch-cu130}"
-PYTHON_BIN="${PYTHON_BIN:-python3.14}"
+SHARED_ENV_NAME="${SHARED_ENV_NAME:-py312-torch-cu130}"
+PYTHON_BIN="${PYTHON_BIN:-python3.12}"
 TORCH_INDEX_URL="${TORCH_INDEX_URL:-https://download.pytorch.org/whl/cu130}"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -137,9 +137,9 @@ write_host_profile_snapshot() {
 
 ## Shared Env Recommendation
 
-- Preferred stack: Python 3.14 + PyTorch stable + CUDA 13.0 wheels (\`cu130\`)
+- Preferred stack: Python 3.12 + PyTorch stable + CUDA 13.0 wheels (\`cu130\`)
 - Shared root: \`~/Documents/GitHub/.shared-python-envs\`
-- Default env name: \`py314-torch-cu130\`
+- Default env name: \`py312-torch-cu130\`
 EOF
 
   echo "[OK] Host snapshot updated: $HOST_PROFILE_PATH"
@@ -227,14 +227,14 @@ cmd_attach() {
   shared_sp="$(shared_site_packages)"
 
   local project_sp
-  project_sp="$($project_venv/bin/python -c 'import site; print(next(p for p in site.getsitepackages() if p.endswith("site-packages")))')"
+  project_sp="$("$project_venv/bin/python" -c 'import site; print(next(p for p in site.getsitepackages() if p.endswith("site-packages")))')"
 
   echo "$shared_sp" >"$project_sp/_shared_heavy_packages.pth"
 
   echo "[OK] Attached shared site-packages"
   echo "[INFO] Shared site-packages: $shared_sp"
   echo "[INFO] Project site-packages: $project_sp"
-  echo "[INFO] Activate with: source $project_venv/bin/activate"
+  printf '[INFO] Activate with: source %q\n' "$project_venv/bin/activate"
 }
 
 usage() {

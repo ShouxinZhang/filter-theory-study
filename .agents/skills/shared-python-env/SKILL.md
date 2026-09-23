@@ -14,7 +14,7 @@ description: '为多仓库复用重型 Python 依赖（如 PyTorch）提供公�
 ## 目录约定
 
 - 公共根目录：`~/Documents/GitHub/.shared-python-envs`
-- 公共环境目录（默认）：`~/Documents/GitHub/.shared-python-envs/py314-torch-cu130`
+- 公共环境目录（默认）：`~/Documents/GitHub/.shared-python-envs/py312-torch-cu130`
 - 主机报告目录：`~/Documents/GitHub/.shared-python-envs/reports`
 
 ## 本机配置快照
@@ -41,7 +41,7 @@ bash .agents/skills/shared-python-env/scripts/setup_shared_env.sh init
 默认会：
 
 1. 采集并保存主机信息（CPU/内存/GPU/驱动）
-2. 使用 `python3.14` 创建共享环境
+2. 使用 `python3.12` 创建共享环境
 3. 安装最新稳定组合（默认 `torch torchvision torchaudio` + `cu130` index）
 
 ### 2) 仅采集主机信息并更新快照（不安装包）
@@ -77,12 +77,11 @@ bash .agents/skills/shared-python-env/scripts/setup_shared_env.sh attach /abs/pa
 ## 可选环境变量
 
 - `SHARED_ROOT`: 共享根目录（默认 `~/Documents/GitHub/.shared-python-envs`）
-- `SHARED_ENV_NAME`: 共享环境名（默认 `py314-torch-cu130`）
-- `PYTHON_BIN`: Python 可执行路径（默认 `python3.14`）
+- `SHARED_ENV_NAME`: 共享环境名（默认 `py312-torch-cu130`）
+- `PYTHON_BIN`: Python 可执行路径（默认 `python3.12`）
 - `TORCH_INDEX_URL`: PyTorch 轮子源（默认 `https://download.pytorch.org/whl/cu130`）
 
 ## 注意事项
 
 1. 若 GPU 驱动不满足 CUDA 13，请切到 `cu128` 或 `cu126`。
-2. `torch.jit` 在 Python 3.14 上不建议作为新项目路径，优先 `torch.compile`。
-3. `.pth` 共享方案适合“统一重包版本”；若项目版本冲突明显，建议单独环境。
+2. `.pth` 共享方案适合“统一重包版本”；若项目版本冲突明显，建议单独环境。
