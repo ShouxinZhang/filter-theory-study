@@ -1,0 +1,26 @@
+% 来源：sec-smc.tex；原 PDF 第 3 页。
+\paragraph{序贯蒙特卡洛}\label{sec:smc}
+SMC 是一种采样方法，用来近似分布序列 $p(x_{1:t}\given y_{1:t})$，其中 $t=1,\ldots,T$，尤其关注后验 $p(x_{1:T}\given y_{1:T})$。关于 SMC 的详细介绍，参见 \citet{doucet2009tutorial,doucet2001introduction,schonldwnsd2015}。
+
+SMC 用带权样本近似 $p(x_{1:t}\given y_{1:t})$：
+\begin{align}
+p(x_{1:t}\given y_{1:t})\approx\widehat p(x_{1:t}\given y_{1:t})\triangleq\sum_{i=1}^N\frac{w_t^i}{\sum_\ell w_t^\ell}\delta_{x_{1:t}^i},\label{eq:smcapprox}
+\end{align}
+其中 $\delta_X$ 是位于 $X$ 的 Dirac 测度。
+
+我们按 $t=1,\ldots,T$ 依次构造带权粒子集合。在 $t=1$ 时使用标准重要性采样 $x_1^i\sim r(x_1)$。对于 $t>1$，每一步先以与重要性权重 $w_{t-1}^j$ 成正比的概率，对辅助的\emph{祖先变量} $a_{t-1}^i\in\{1,\ldots,N\}$ 进行\emph{重采样}；再从提议分布抽取新值，将它接在轨迹末端，最后重新赋权：
+\begin{align*}
+\text{重采样：}\quad&a_{t-1}^i\sim\operatorname{Categorical}\left(\frac{w_{t-1}^j}{\sum_\ell w_{t-1}^\ell}\right),\\
+\text{提议：}\quad&x_t^i\sim r(x_t\given x_{t-1}^{a_{t-1}^i}),\\
+\text{拼接：}\quad&x_{1:t}^i=(x_{1:t-1}^{a_{t-1}^i},x_t^i),\\
+\text{重新赋权：}\quad&w_t^i=\frac{f(x_t^i\given x_{t-1}^{a_{t-1}^i})\,g(y_t\given x_t^i)}{r(x_t^i\given x_{t-1}^{a_{t-1}^i})}.
+\end{align*}
+我们将最终的粒子（样本）$x_{1:T}^i$ 称为\emph{轨迹}。图~\ref{fig:fig1} 的（a）、（b）展示了带权轨迹集合。点的大小表示权重 $w_t^i$，箭头表示祖先 $a_{t-1}^i$。重要性采样省略重采样步骤，因此每个粒子的祖先就是前一时刻与它对应的粒子。
+
+轨迹 $x_{1:T}^i$ 与权重 $w_T^i$ 确定了后验的 SMC 近似。关键在于：随着粒子数增加，后验近似可以变得任意精确。SMC 还给出边缘似然的无偏估计：
+\begin{align}
+\widehat p(y_{1:T})&=\prod_{t=1}^T\frac1N\sum_{i=1}^N w_t^i.\label{eq:smc_margll}
+\end{align}
+这个估计将在 VSMC 的目标中发挥重要作用。
+
+提议分布 $r(x_t\given x_{t-1})$ 是关键的设计选择。一种常用选择是模型先验 $f$，对应的方法称为自助粒子滤波器（BPF）\citep{GordonSS:1993}。不过，粒子数较少时，直接从先验提议往往产生较差的近似，尤其在 $x_t$ 为高维变量时。变分 SMC 针对这一缺点，学习参数化的提议分布，以实现高效推断。

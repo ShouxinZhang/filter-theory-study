@@ -1,0 +1,24 @@
+% 来源：sec-introduction.tex；原 PDF 第 1–2 页。
+\section{引言}\label{sec:intro}
+自然图像、文本和医疗记录等复杂数据需要精细的模型与算法。近年来，这些具有挑战性的领域中的进展依赖于变分推断（VI）\citep{Kingma2014,Hoffman2013,ranganath2016deep}。变分推断擅长快速近似模型的后验，但近似只有足够准确才有用。挑战在于兼顾忠实的后验近似与快速优化。
+
+我们提出一种新的近似分布族，称为变分序贯蒙特卡洛（VSMC）。VSMC 融合 VI 与序贯蒙特卡洛（SMC）\citep{stewart1992,GordonSS:1993,kitagawa1996monte}，为实践者提供灵活、准确且强大的近似贝叶斯推断算法。VSMC 是一种高效算法，能够任意精确地逼近后验。
+
+标准 SMC 用从提议分布中迭代抽取的 $N$ 个带权粒子近似隐变量的后验分布。\emph{变分} SMC 的思路是：用提议分布的参数索引隐变量上的一个分布族。该变分族中的每个分布都对应某个特定的提议分布；要从中采样，先运行 SMC 生成一组粒子，再按与其权重成正比的概率随机选取一个。与典型的变分族不同，VSMC 族可以在后验近似精度与计算复杂度之间作权衡：粒子数 $N$ 越大，精度越高，计算代价也越大。
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\linewidth]{newfig1.pdf}
+\caption{\emph{VSMC 与 IWAE 的比较。}（a）VSMC 用 SMC 构造一组带权粒子轨迹，再根据最终权重抽取一条。点的大小与权重 $w_t^i$ 成正比；灰色箭头表示祖先 $a_{t-1}^i$；蓝色箭头表示选中的路径 $b_{1:T}$。（b）重要性加权自编码器（IWAE）采取同样的步骤，但不进行重采样。这会随时间增长导致粒子退化：到时刻 $T$，只有一个粒子的权重不可忽略。（c）证据下界（ELBO）受这种退化影响：$T$ 较小时各方法相近；随着时间增长，IWAE 相较标准变分贝叶斯（VB）的改进很小，而 VSMC 仍能达到接近真实对数边缘似然的值。}
+\label{fig:fig1}
+\end{figure}
+
+我们构造 VSMC 近似分布族，推导相应的变分下界，并设计随机梯度上升算法来优化其参数。我们将 VSMC 与重要性加权自编码器（IWAE）\citep{Burda2016} 联系起来，说明 IWAE 下界是 VSMC 下界的特例。作为说明，考虑近似下述关于隐变量 $x_{1:T}$ 与观测 $y_{1:T}$ 的后验：
+\begin{align*}
+p(x_{1:T}\mid y_{1:T})=\prod_{t=1}^T\mathcal{N}(x_t\g0,1)\,\mathcal{N}(y_t\g x_t^2,1)/p(y_{1:T}).
+\end{align*}
+这是一个简单的高斯状态空间模型（SSM），每个时刻的观测值依赖于隐状态的平方。图~\ref{fig:fig1}c 展示了 VSMC、IWAE 与标准 VB 的近似能力。随着序列长度 $T$ 增长，朴素重要性采样实际上退化为只使用一个粒子。相比之下，VSMC 维持了粒子集合的多样性，从而得到显著更紧的对数边缘似然 $\log p(y_{1:T})$ 下界。
+
+本文着重讨论状态空间模型与时间序列模型中的推断，但强调 VSMC 与标准 SMC 一样，适用于任意概率模型序列\citep{del2006sequential,doucet2009tutorial,Naesseth2014}。
+
+第~\ref{sec:expts} 节用模拟数据与真实数据展示 VSMC 的优势。首先，我们在模拟的线性高斯 SSM 数据上说明，VSMC 可以优于（局部）最优提议分布\citep{doucet2001introduction,doucet2009tutorial}。随后，我们在金融市场汇率的随机波动率模型上比较 VSMC 与 IWAE，发现 VSMC 得到更好的后验推断，并学得更高效的提议分布。最后，我们用基于循环神经网络的概率模型研究猕猴神经元记录。VSMC 达到与 IWAE 相同的精度，但所需计算更少。

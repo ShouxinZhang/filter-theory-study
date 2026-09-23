@@ -1,0 +1,14 @@
+{
+  "pass": true,
+  "model": "二态、T=2、N=2，全枚举",
+  "joint_probability_sum": 0.9999999999999999,
+  "marginal_likelihood_unbiased_error": 1.1102230246251565e-16,
+  "conditional_path_labels_uniform": true,
+  "marginal_identity_max_error": 1.6653345369377348e-16,
+  "log_p": -1.3854946809493265,
+  "elbo": -1.598917385448684,
+  "surrogate_elbo": -1.6805181608189406,
+  "correct_control_variate_mean": 1.1102230246251565e-16,
+  "original_missing_N_mean": -0.7999999999999999,
+  "limitation": "有限实例核验配合书末代数依据；不是一般收敛定理或实验复现。"
+}

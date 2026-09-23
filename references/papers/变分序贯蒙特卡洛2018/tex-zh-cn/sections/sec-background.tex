@@ -1,0 +1,9 @@
+% 来源：sec-background.tex；原 PDF 第 2–3 页。
+\section{背景}
+先介绍 VSMC 的基础。令 $p(x_{1:t},y_{1:t})$ 表示关于隐变量（未观测变量）$x_{1:t}$ 和数据 $y_{1:t}$ 的概率模型序列，其中 $t=1,\ldots,T$。在贝叶斯推断中，我们关注后验分布 $p(x_{1:T}\given y_{1:T})$ 的计算。时间序列文献中的两个具体例子是隐马尔可夫模型和状态空间模型\citep{cappe2005inference}。两者的联合密度都可分解为
+\begin{align*}
+p(x_{1:T},y_{1:T})=f(x_1)\prod_{t=2}^T f(x_t\given x_{t-1})\prod_{t=1}^T g(y_t\given x_t),
+\end{align*}
+其中 $f$ 是 $x$ 的先验，$g$ 是观测（数据）分布。对大多数模型，后验 $p(x_{1:T}\given y_{1:T})$ 的计算不可行，需要 VI、SMC 等近似方法。本文构造将这两种思路结合起来的后验近似。
+
+接下来，我们回顾变分推断和序贯蒙特卡洛，基于 SMC 生成的样本构造变分近似，并建立一个可计算的目标来提升这种 SMC 变分近似的质量。为便于具体说明，我们聚焦于上述状态空间模型。但要强调，VSMC 与标准 SMC 一样，适用于任意概率模型序列\citep{del2006sequential,doucet2009tutorial,Naesseth2014}。

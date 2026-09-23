@@ -1,0 +1,41 @@
+% 来源：sec-talking.tex；原 PDF 第 5–6 页。
+\section{理解变分 SMC 的几个视角}\label{sec:talking}
+我们从几个角度考察 VSMC。先考虑 $N=1$ 和 $T=1$ 这两个特例。$N=1$ 时，VSMC 退化为结构化变分近似：没有重采样，变分分布恰好就是提议分布。$T=1$ 时，VSMC 给出一个我们称为变分重要性采样（VIS）的特例，并为 IWAE\citep{Burda2016} 提供新的解释；本节前半部分将进一步讨论这一点。
+
+随后，我们将 VSMC 采样看成从经过充分优化的 SMC 近似中采样。这意味着过去 25 年发展出的许多 SMC 理论结果都可以应用到 VSMC。本节后半部分将讨论其中一些例子。
+
+\paragraph{变分重要性采样（VIS）}
+$T=1$ 对应不进行任何重采样的 SMC，也就是重要性采样。VSMC 的相应特例是 VIS。VIS 的代理 ELBO 与 IWAE 下界\citep{Burda2016} 完全相同。
+
+这一等价关系为理解 IWAE 对隐变量的变分近似提供了新的直觉。如果希望使用通过 IWAE 下界学得的近似 $q(x_{1:T}\g\lambda^\star)$，就应该用算法~\ref{alg:vsmc}，即 VIS，来生成隐变量样本。
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=.52\linewidth]{vis.pdf}
+\caption{VIS 用高斯提议分布 $r(x\g\lambda)$ 得到 $q(x\g\lambda)$，以近似多峰分布 $p(x\mid y)$ 的例子。图中 Density 表示概率密度。}\label{fig:vis}
+\end{figure}
+对 VIS，可以证明其代理 ELBO 总是不松于标准 VB 得到的下界（标准 VB 等价于 $N=1$ 的 VIS）\citep{Burda2016}。这一结果不能直接推广到 VSMC：存在一些情形，重采样反而使下界比标准 VB 或 VIS 更松。不过，在实际应用中，VSMC 下界往往优于 VIS 下界。
+
+图~\ref{fig:vis} 给出 VIS 的一个简单例子。目标多峰分布为 $p(x\given y)\propto\mathcal N(x\g0,1)\,\mathcal N(y\g x^2/2,e^{x/2})$，采用正态提议分布 $r(x\g\lambda)=\mathcal N(x\g\mu,\sigma^2)$，并对相应的变分近似 $q(x\g\lambda)$ 作核密度估计。粒子数为 $N=10$。采用高斯近似的标准 VB 只能捕获两个峰中的一个，具体是哪一个取决于初始化。由此可见，即使简单的提议分布，也能带来非常灵活的后验近似。更一般的 $T>1$ 情形，即 VSMC，同样具备这一性质。
+
+\paragraph{理论性质}
+SMC 采样器对归一化常数的估计 $\widehat p(y_{1:T})$ 是无偏的\citep{DelMoral2004,Pitt2012,Naesseth2014}。结合 Jensen 不等式可知，代理 ELBO $\E[\log\widehat p(y_{1:T})]$ 是 $\log p(y_{1:T})$ 的下界。在 SMC 一致性所需条件下，若 $\log\widehat p(y_{1:T})$ 一致可积，则当 $N\to\infty$ 时\citep{DelMoral2004}，
+\begin{align*}
+\widetilde{\mathcal L}(\lambda)\longrightarrow\log p(y_{1:T}),\qquad
+\mathcal L(\lambda)\longrightarrow\log p(y_{1:T}).
+\end{align*}
+这意味着定理~\ref{thm:lb} 中的间隙消失，VSMC 返回的轨迹分布趋于真实目标分布 $p(x_{1:T}\given y_{1:T})$。在所引用结果的正则性条件下，KL 散度满足如下速率界：
+\begin{align*}
+\operatorname{KL}\left(q(x_{1:T}\g\lambda)\,\Big\|\,p(x_{1:T}\given y_{1:T})\right)\leq\frac{c(\lambda)}N,
+\end{align*}
+其中 $c(\lambda)<\infty$ 为某个常数。这是 \citet[定理 8.3.2]{DelMoral2004} 中“混沌传播”结果的一个特例。
+
+考察式~\eqref{eq:var-dist}，也能非严格地理解这一结果：随着粒子数增加，边缘似然估计收敛到真实边缘似然，变分后验也收敛到真实后验。\citet{Huggins2017} 进一步给出了 SMC 与目标分布之间多种散度和度量的界。
+
+\paragraph{VSMC 与 $T$}
+与 SMC 一样，变分序贯蒙特卡洛对 $T$ 具有良好的扩展性。\citet{berard2014} 在 $N=bT$、$b>0$ 且 $T\to\infty$ 时，为 SMC 近似误差 $\log\widehat p(y_{1:T})-\log p(y_{1:T})$ 建立了中心极限定理。在该文相同的条件下，并假设这些中心化对数似然比一致可积，可以得到
+\begin{align*}
+&\operatorname{KL}\left(q(x_{1:T}\g\lambda)\,\Big\|\,p(x_{1:T}\given y_{1:T})\right)
+\leq-\E\left[\log\frac{\widehat p(y_{1:T})}{p(y_{1:T})}\right]\\
+&\hspace{5em}\xrightarrow[T\to\infty]{}\frac{\sigma^2(\lambda)}{2b},\qquad0<\sigma^2(\lambda)<\infty.
+\end{align*}
+这一结论对 VSMC 意义重大。对任意给定精度，可以选择足够大的比例常数 $b$，令 $N=bT$，从而即使 $T\to\infty$，变分近似的渐近 KL 上界也能任意小；固定 $b$ 并不意味着该上界随 $T$ 自动趋于零。补充材料用图~\ref{fig:fig1} 的简单例子展示了实际效果，参见~\ref{sec:supp:independent} 节。我们强调，标准 VB 和 IWAE（VIS）都不具备上述扩展性质。

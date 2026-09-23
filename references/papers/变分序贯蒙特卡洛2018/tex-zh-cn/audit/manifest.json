@@ -1,0 +1,2747 @@
+{
+  "schema_version": 1,
+  "source": {
+    "kind": "official-tex",
+    "version": "arXiv:1705.11140v2，2018-02-21",
+    "path": "src/source/tex-original/main_vsmc.tex"
+  },
+  "layout": {
+    "input": "mixed",
+    "output": "single"
+  },
+  "coverage_confirmed": true,
+  "objects": [
+    {
+      "id": "obj-0001",
+      "type": "paragraph",
+      "source_locator": "main_vsmc.tex；原 PDF 1、8 页；译稿段块 1",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/abstract.tex",
+      "status": "verified",
+      "audit_excerpt": "\\begin{abstract}\n近期大规模概率推断中的许多进展都依赖变分方法。变分方法的成功取决于两点：（i）构造灵活的参数化分布族；（ii）优化参数，从该分布族中找到最接近精确后验的成员。本文提出一个新的近似分布族——变分序贯蒙特卡洛（"
+    },
+    {
+      "id": "obj-0002",
+      "type": "paragraph",
+      "source_locator": "main_vsmc.tex；原 PDF 1、8 页；译稿段块 1",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/conclusion.tex",
+      "status": "verified",
+      "audit_excerpt": "% 来源：main_vsmc.tex；原 PDF 第 8 页。\n\\section{结论}\n我们提出了 VSMC 族这一新的变分近似族，为实践者提供灵活、准确且强大的近似贝叶斯推断算法。VSMC 融合 VI 与 SMC，得到一种可以在后验近似"
+    },
+    {
+      "id": "obj-0003",
+      "type": "paragraph",
+      "source_locator": "main_vsmc.tex；原 PDF 1、8 页；译稿段块 2",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/conclusion.tex",
+      "status": "verified",
+      "audit_excerpt": "\\section*{致谢}\n\\phantomsection\\addcontentsline{toc}{section}{致谢}\nChristian A. Naesseth 获得瑞典研究理事会（VR）资助的 Linnaeus 中心 CADIC"
+    },
+    {
+      "id": "obj-0004",
+      "type": "paragraph",
+      "source_locator": "sec-background.tex；源页映射见 page-ledger.md；译稿段块 1",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-background.tex",
+      "status": "verified",
+      "audit_excerpt": "% 来源：sec-background.tex；原 PDF 第 2–3 页。\n\\section{背景}\n先介绍 VSMC 的基础。令 $p(x_{1:t},y_{1:t})$ 表示关于隐变量（未观测变量）$x_{1:t}$ 和数据 $y_{"
+    },
+    {
+      "id": "obj-0005",
+      "type": "paragraph",
+      "source_locator": "sec-background.tex；源页映射见 page-ledger.md；译稿段块 2",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-background.tex",
+      "status": "verified",
+      "audit_excerpt": "接下来，我们回顾变分推断和序贯蒙特卡洛，基于 SMC 生成的样本构造变分近似，并建立一个可计算的目标来提升这种 SMC 变分近似的质量。为便于具体说明，我们聚焦于上述状态空间模型。但要强调，VSMC 与标准 SMC 一样，适用于任意概率模型"
+    },
+    {
+      "id": "obj-0006",
+      "type": "equation",
+      "source_locator": "sec-background.tex；源页映射见 page-ledger.md",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-background.tex",
+      "status": "verified",
+      "audit_excerpt": "\np(x_{1:T},y_{1:T})=f(x_1)\\prod_{t=2}^T f(x_t\\given x_{t-1})\\prod_{t=1}^T g(y_t\\given x_t),\n"
+    },
+    {
+      "id": "obj-0007",
+      "type": "paragraph",
+      "source_locator": "sec-experiments.tex；源页映射见 page-ledger.md；译稿段块 2",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-experiments.tex",
+      "status": "verified",
+      "audit_excerpt": "\\section{实验研究}\\label{sec:expts}\n\\paragraph{线性高斯状态空间模型}\n线性高斯状态空间模型是时间序列数据中广泛使用的模型，具有高效计算精确后验的算法。我们用它研究 VSMC 的收敛性质及有偏梯度的影响"
+    },
+    {
+      "id": "obj-0008",
+      "type": "paragraph",
+      "source_locator": "sec-experiments.tex；源页映射见 page-ledger.md；译稿段块 3",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-experiments.tex",
+      "status": "verified",
+      "audit_excerpt": "\\begin{figure}[htbp]\n\\centering\n\\begin{minipage}{.48\\linewidth}\\centering\n\\includegraphics[width=.49\\linewidth]{gradient"
+    },
+    {
+      "id": "obj-0009",
+      "type": "paragraph",
+      "source_locator": "sec-experiments.tex；源页映射见 page-ledger.md；译稿段块 4",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-experiments.tex",
+      "status": "verified",
+      "audit_excerpt": "模型为"
+    },
+    {
+      "id": "obj-0010",
+      "type": "paragraph",
+      "source_locator": "sec-experiments.tex；源页映射见 page-ledger.md；译稿段块 5",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-experiments.tex",
+      "status": "verified",
+      "audit_excerpt": "\\begin{align*}\nx_t &= A x_{t-1} +v_t, \\\\\ny_t &= C x_t+e_t,\n\\end{align*}\n其中 $v_t\\sim\\mathcal N(0,Q)$、$e_t\\sim\\mathcal N(0"
+    },
+    {
+      "id": "obj-0011",
+      "type": "paragraph",
+      "source_locator": "sec-experiments.tex；源页映射见 page-ledger.md；译稿段块 6",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-experiments.tex",
+      "status": "verified",
+      "audit_excerpt": "我们研究用有偏梯度~\\eqref{eq:proxgrad} 优化代理 ELBO~\\eqref{eq:lb} 的影响。先考虑一个简单标量模型，令 $A=0.5$、$Q=1$、$C=1$、$R=1$、$T=2$。提议分布采用 $r(x_t\\gi"
+    },
+    {
+      "id": "obj-0012",
+      "type": "paragraph",
+      "source_locator": "sec-experiments.tex；源页映射见 page-ledger.md；译稿段块 7",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-experiments.tex",
+      "status": "verified",
+      "audit_excerpt": "当两个均值之和为零时，得到最优 $\\lambda$。忽略得分函数项 $g_{\\text{score}}$（式~\\eqref{eq:rb}）会使最优 $\\lambda$ 发生偏移。然而，即使对这样简单的模型，尽管采用了第~\\ref{sec:v"
+    },
+    {
+      "id": "obj-0013",
+      "type": "paragraph",
+      "source_locator": "sec-experiments.tex；源页映射见 page-ledger.md；译稿段块 8",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-experiments.tex",
+      "status": "verified",
+      "audit_excerpt": "接下来，我们考察偏移的大小及其对代理 ELBO 的影响。生成数据时设 $T=10$、$(A)_{ij}=\\alpha^{|i-j|+1}$、$\\alpha=0.42$、$Q=I$、$R=I$。我们考察了 $d_x=\\dim(x_t)$、$d"
+    },
+    {
+      "id": "obj-0014",
+      "type": "paragraph",
+      "source_locator": "sec-experiments.tex；源页映射见 page-ledger.md；译稿段块 9",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-experiments.tex",
+      "status": "verified",
+      "audit_excerpt": "\\begin{align*}\nr(x_t\\mid x_{t-1}\\g\\lambda) &= \\mathcal{N}\\left(x_t\\mid \\mu_t + \n\\operatorname{diag}(\\beta_t) A x_{t-1}, "
+    },
+    {
+      "id": "obj-0015",
+      "type": "paragraph",
+      "source_locator": "sec-experiments.tex；源页映射见 page-ledger.md；译稿段块 10",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-experiments.tex",
+      "status": "verified",
+      "audit_excerpt": "随后，我们比较 VSMC 学习到的提议分布与 SMC 文献中的标准提议分布。最常用的是从先验 $f$ 采样的 BPF。我们还考虑所谓的最优提议分布 $r\\propto f\\cdot g$，它最小化增量重要性权重的条件方差\\citep{dou"
+    },
+    {
+      "id": "obj-0016",
+      "type": "paragraph",
+      "source_locator": "sec-experiments.tex；源页映射见 page-ledger.md；译稿段块 11",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-experiments.tex",
+      "status": "verified",
+      "audit_excerpt": "\\begin{table}[tb]\n\\centering\n\\caption{BPF、使用（局部）最优提议分布的 SMC，以及 VSMC 的 ELBO。真实对数边缘似然为 $\\log p(y_{1:T})=-236.9$。}"
+    },
+    {
+      "id": "obj-0017",
+      "type": "paragraph",
+      "source_locator": "sec-experiments.tex；源页映射见 page-ledger.md；译稿段块 12",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-experiments.tex",
+      "status": "verified",
+      "audit_excerpt": "\\label{tab:vsmcVSopt}\n\\begin{tabular}{cccc}\n& BPF & 最优提议 SMC & VSMC \\\\\nELBO & $-6701.4$ & $-253.4$ & $\\bm{-237.8}$\n\\end{"
+    },
+    {
+      "id": "obj-0018",
+      "type": "paragraph",
+      "source_locator": "sec-experiments.tex；源页映射见 page-ledger.md；译稿段块 13",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-experiments.tex",
+      "status": "verified",
+      "audit_excerpt": "\\paragraph{随机波动率}\n金融计量经济学中常用的一类模型是（多元）随机波动率模型\\citep{Chib2009}。模型为"
+    },
+    {
+      "id": "obj-0019",
+      "type": "paragraph",
+      "source_locator": "sec-experiments.tex；源页映射见 page-ledger.md；译稿段块 14",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-experiments.tex",
+      "status": "verified",
+      "audit_excerpt": "\\begin{align*}\nx_t &= \\mu +\\phi(x_{t-1}-\\mu)+v_t, \\\\\ny_t &= \\beta\\exp{\\left(\\frac{x_t}{2}\\right)}e_t,\n\\end{align*}\n其中 $v"
+    },
+    {
+      "id": "obj-0020",
+      "type": "paragraph",
+      "source_locator": "sec-experiments.tex；源页映射见 page-ledger.md；译稿段块 15",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-experiments.tex",
+      "status": "verified",
+      "audit_excerpt": "\\begin{align*}\nr(x_t \\given x_{t-1}\\g\\lambda,\\theta) \\propto f(x_t\\given \nx_{t-1}\\g\\theta) \\, \\mathcal{N}(x_t\\g \\mu_t, \\"
+    },
+    {
+      "id": "obj-0021",
+      "type": "paragraph",
+      "source_locator": "sec-experiments.tex；源页映射见 page-ledger.md；译稿段块 16",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-experiments.tex",
+      "status": "verified",
+      "audit_excerpt": "我们研究 22 种国际货币兑美元汇率在 10 年间（2007 年 9 月至 2017 年 8 月）的月收益率，数据来自美国联邦储备系统。表~\\ref{tab:sv} 报告了粒子／样本数 $N\\in\\{4,8,16\\}$ 下优化后的 ELBO"
+    },
+    {
+      "id": "obj-0022",
+      "type": "paragraph",
+      "source_locator": "sec-experiments.tex；源页映射见 page-ledger.md；译稿段块 17",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-experiments.tex",
+      "status": "verified",
+      "audit_excerpt": "\\begin{table}[tb]\n\\centering\n\\caption{汇率数据上 $T=119$ 的随机波动率模型的 ELBO。比较 VSMC（本文）、IWAE 与结构化 VI。}"
+    },
+    {
+      "id": "obj-0023",
+      "type": "paragraph",
+      "source_locator": "sec-experiments.tex；源页映射见 page-ledger.md；译稿段块 18",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-experiments.tex",
+      "status": "verified",
+      "audit_excerpt": "\\label{tab:sv}\n\\begin{tabular}{ccc}\n&方法 & ELBO \\\\\n\\rule{0pt}{3ex}\n& 结构化 VI & $6905.1$ \\\\\n\\hline\n\\multirow{2}{*}{$N=4$} &"
+    },
+    {
+      "id": "obj-0024",
+      "type": "paragraph",
+      "source_locator": "sec-experiments.tex；源页映射见 page-ledger.md；译稿段块 19",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-experiments.tex",
+      "status": "verified",
+      "audit_excerpt": "理论上，增加样本数 $N$ 可以改善 IWAE 和 VSMC 的下界。这意味着，为了提高计算效率，可以先用较少粒子学习提议分布，再在测试时按需增加 $N$ 以提升精度。我们固定用 $N=16$ 优化得到的 $\\theta^\\star$ 和 "
+    },
+    {
+      "id": "obj-0025",
+      "type": "paragraph",
+      "source_locator": "sec-experiments.tex；源页映射见 page-ledger.md；译稿段块 21",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-experiments.tex",
+      "status": "verified",
+      "audit_excerpt": "  \\caption{固定 $\\theta^\\star,\\lambda^\\star$ 后，VSMC（本文）与 IWAE 的 ELBO 估计及置信带随粒子数 $N$ 的变化。}\\label{fig:sv}"
+    },
+    {
+      "id": "obj-0026",
+      "type": "paragraph",
+      "source_locator": "sec-experiments.tex；源页映射见 page-ledger.md；译稿段块 23",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-experiments.tex",
+      "status": "verified",
+      "audit_excerpt": "\\paragraph{深度马尔可夫模型}"
+    },
+    {
+      "id": "obj-0027",
+      "type": "paragraph",
+      "source_locator": "sec-experiments.tex；源页映射见 page-ledger.md；译稿段块 24",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-experiments.tex",
+      "status": "verified",
+      "audit_excerpt": "理解神经回路的动态是神经科学中的一个重要问题。我们研究猕猴完成伸手动作时，同步记录到的 105 个运动皮层神经元\\citep[参见][]{Gao2016}。每次试验中，猕猴伸手朝向 14 个目标之一；每次试验长 $T=21$ 个时间步。训练"
+    },
+    {
+      "id": "obj-0028",
+      "type": "paragraph",
+      "source_locator": "sec-experiments.tex；源页映射见 page-ledger.md；译稿段块 25",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-experiments.tex",
+      "status": "verified",
+      "audit_excerpt": "我们使用循环神经网络同时建模动态与观测。模型为"
+    },
+    {
+      "id": "obj-0029",
+      "type": "paragraph",
+      "source_locator": "sec-experiments.tex；源页映射见 page-ledger.md；译稿段块 26",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-experiments.tex",
+      "status": "verified",
+      "audit_excerpt": "\\begin{align*}\nx_t &= \\mu_\\theta(x_{t-1})+\\exp\\left(\\sigma_\\theta (x_{t-1})/2\\right) v_t, \\\\\ny_t &\\sim \\operatorname{Poi"
+    },
+    {
+      "id": "obj-0030",
+      "type": "paragraph",
+      "source_locator": "sec-experiments.tex；源页映射见 page-ledger.md；译稿段块 27",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-experiments.tex",
+      "status": "verified",
+      "audit_excerpt": "在推断中，VSMC 与 IWAE 都使用以下提议分布："
+    },
+    {
+      "id": "obj-0031",
+      "type": "paragraph",
+      "source_locator": "sec-experiments.tex；源页映射见 page-ledger.md；译稿段块 28",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-experiments.tex",
+      "status": "verified",
+      "audit_excerpt": "\\begin{align*}\nr(x_t\\given x_{t-1}, y_t\\g\\lambda) &\\propto \n\\mathcal{N}\\left(x_t\\g \n\\mu_\\lambda^x(x_{t-1}),\\exp\\left(\\si"
+    },
+    {
+      "id": "obj-0032",
+      "type": "paragraph",
+      "source_locator": "sec-experiments.tex；源页映射见 page-ledger.md；译稿段块 29",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-experiments.tex",
+      "status": "verified",
+      "audit_excerpt": "\\begin{figure}[tb]\n\\centering\n\\includegraphics[width=.65\\linewidth]{neural_test_T21.pdf}\n\\caption{神经元群体测试数据上，VSMC（本文）与 I"
+    },
+    {
+      "id": "obj-0033",
+      "type": "paragraph",
+      "source_locator": "sec-experiments.tex；源页映射见 page-ledger.md；译稿段块 30",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-experiments.tex",
+      "status": "verified",
+      "audit_excerpt": "\\end{figure}\n图~\\ref{fig:neural} 展示了 $d_x\\in\\{3,5,10\\}$、$N=8$ 时的结果。VSMC 更快达到相同的 ELBO。"
+    },
+    {
+      "id": "obj-0034",
+      "type": "figure",
+      "source_locator": "sec-experiments.tex；源页映射见 page-ledger.md",
+      "original_number": "3",
+      "label": "fig:bVSu",
+      "target": "tex-zh-cn/sections/sec-experiments.tex",
+      "status": "verified",
+      "audit_excerpt": "[htbp]\n\\centering\n\\begin{minipage}{.48\\linewidth}\\centering\n\\includegraphics[width=.49\\linewidth]{gradient_terms_N2_seed"
+    },
+    {
+      "id": "obj-0035",
+      "type": "equation",
+      "source_locator": "sec-experiments.tex；源页映射见 page-ledger.md",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-experiments.tex",
+      "status": "verified",
+      "audit_excerpt": "\nx_t &= A x_{t-1} +v_t, \\\\\ny_t &= C x_t+e_t,\n"
+    },
+    {
+      "id": "obj-0036",
+      "type": "equation",
+      "source_locator": "sec-experiments.tex；源页映射见 page-ledger.md",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-experiments.tex",
+      "status": "verified",
+      "audit_excerpt": "\nr(x_t\\mid x_{t-1}\\g\\lambda) &= \\mathcal{N}\\left(x_t\\mid \\mu_t + \n\\operatorname{diag}(\\beta_t) A x_{t-1}, \n\\operatorname"
+    },
+    {
+      "id": "obj-0037",
+      "type": "table",
+      "source_locator": "sec-experiments.tex；源页映射见 page-ledger.md",
+      "original_number": "1",
+      "label": "tab:vsmcVSopt",
+      "target": "tex-zh-cn/sections/sec-experiments.tex",
+      "status": "verified",
+      "audit_excerpt": "[tb]\n\\centering\n\\caption{BPF、使用（局部）最优提议分布的 SMC，以及 VSMC 的 ELBO。真实对数边缘似然为 $\\log p(y_{1:T})=-236.9$。}\n\n\\label{tab:vsmcVSopt"
+    },
+    {
+      "id": "obj-0038",
+      "type": "equation",
+      "source_locator": "sec-experiments.tex；源页映射见 page-ledger.md",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-experiments.tex",
+      "status": "verified",
+      "audit_excerpt": "\nx_t &= \\mu +\\phi(x_{t-1}-\\mu)+v_t, \\\\\ny_t &= \\beta\\exp{\\left(\\frac{x_t}{2}\\right)}e_t,\n"
+    },
+    {
+      "id": "obj-0039",
+      "type": "equation",
+      "source_locator": "sec-experiments.tex；源页映射见 page-ledger.md",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-experiments.tex",
+      "status": "verified",
+      "audit_excerpt": "\nr(x_t \\given x_{t-1}\\g\\lambda,\\theta) \\propto f(x_t\\given \nx_{t-1}\\g\\theta) \\, \\mathcal{N}(x_t\\g \\mu_t, \\Sigma_t),\n"
+    },
+    {
+      "id": "obj-0040",
+      "type": "table",
+      "source_locator": "sec-experiments.tex；源页映射见 page-ledger.md",
+      "original_number": "2",
+      "label": "tab:sv",
+      "target": "tex-zh-cn/sections/sec-experiments.tex",
+      "status": "verified",
+      "audit_excerpt": "[tb]\n\\centering\n\\caption{汇率数据上 $T=119$ 的随机波动率模型的 ELBO。比较 VSMC（本文）、IWAE 与结构化 VI。}\n\n\\label{tab:sv}\n\\begin{tabular}{ccc}\n&方"
+    },
+    {
+      "id": "obj-0041",
+      "type": "figure",
+      "source_locator": "sec-experiments.tex；源页映射见 page-ledger.md",
+      "original_number": "4",
+      "label": "fig:sv",
+      "target": "tex-zh-cn/sections/sec-experiments.tex",
+      "status": "verified",
+      "audit_excerpt": "[htbp]\n  \\centering\n  \\includegraphics[width=2.5in]{sv_elbo_vs_N_T119_plot.pdf}\n  \n  \\caption{固定 $\\theta^\\star,\\lambda^\\"
+    },
+    {
+      "id": "obj-0042",
+      "type": "equation",
+      "source_locator": "sec-experiments.tex；源页映射见 page-ledger.md",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-experiments.tex",
+      "status": "verified",
+      "audit_excerpt": "\nx_t &= \\mu_\\theta(x_{t-1})+\\exp\\left(\\sigma_\\theta (x_{t-1})/2\\right) v_t, \\\\\ny_t &\\sim \\operatorname{Poisson}\\left(\\ex"
+    },
+    {
+      "id": "obj-0043",
+      "type": "equation",
+      "source_locator": "sec-experiments.tex；源页映射见 page-ledger.md",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-experiments.tex",
+      "status": "verified",
+      "audit_excerpt": "\nr(x_t\\given x_{t-1}, y_t\\g\\lambda) &\\propto \n\\mathcal{N}\\left(x_t\\g \n\\mu_\\lambda^x(x_{t-1}),\\exp\\left(\\sigma_\\lambda^x("
+    },
+    {
+      "id": "obj-0044",
+      "type": "figure",
+      "source_locator": "sec-experiments.tex；源页映射见 page-ledger.md",
+      "original_number": "5",
+      "label": "fig:neural",
+      "target": "tex-zh-cn/sections/sec-experiments.tex",
+      "status": "verified",
+      "audit_excerpt": "[tb]\n\\centering\n\\includegraphics[width=.65\\linewidth]{neural_test_T21.pdf}\n\\caption{神经元群体测试数据上，VSMC（本文）与 IWAE 的 ELBO 估计随"
+    },
+    {
+      "id": "obj-0045",
+      "type": "paragraph",
+      "source_locator": "sec-experiments.tex；源页映射见 page-ledger.md",
+      "original_number": "5",
+      "label": "sec:expts",
+      "target": "tex-zh-cn/sections/sec-experiments.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0046",
+      "type": "paragraph",
+      "source_locator": "sec-introduction.tex；源页映射见 page-ledger.md；译稿段块 1",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-introduction.tex",
+      "status": "verified",
+      "audit_excerpt": "% 来源：sec-introduction.tex；原 PDF 第 1–2 页。\n\\section{引言}\\label{sec:intro}\n自然图像、文本和医疗记录等复杂数据需要精细的模型与算法。近年来，这些具有挑战性的领域中的进展依赖于"
+    },
+    {
+      "id": "obj-0047",
+      "type": "paragraph",
+      "source_locator": "sec-introduction.tex；源页映射见 page-ledger.md；译稿段块 2",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-introduction.tex",
+      "status": "verified",
+      "audit_excerpt": "我们提出一种新的近似分布族，称为变分序贯蒙特卡洛（VSMC）。VSMC 融合 VI 与序贯蒙特卡洛（SMC）\\citep{stewart1992,GordonSS:1993,kitagawa1996monte}，为实践者提供灵活、准确且强大"
+    },
+    {
+      "id": "obj-0048",
+      "type": "paragraph",
+      "source_locator": "sec-introduction.tex；源页映射见 page-ledger.md；译稿段块 3",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-introduction.tex",
+      "status": "verified",
+      "audit_excerpt": "标准 SMC 用从提议分布中迭代抽取的 $N$ 个带权粒子近似隐变量的后验分布。\\emph{变分} SMC 的思路是：用提议分布的参数索引隐变量上的一个分布族。该变分族中的每个分布都对应某个特定的提议分布；要从中采样，先运行 SMC 生成一"
+    },
+    {
+      "id": "obj-0049",
+      "type": "paragraph",
+      "source_locator": "sec-introduction.tex；源页映射见 page-ledger.md；译稿段块 4",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-introduction.tex",
+      "status": "verified",
+      "audit_excerpt": "\\begin{figure}[tbp]\n\\centering\n\\includegraphics[width=\\linewidth]{newfig1.pdf}\n\\caption{\\emph{VSMC 与 IWAE 的比较。}（a）VSMC 用"
+    },
+    {
+      "id": "obj-0050",
+      "type": "paragraph",
+      "source_locator": "sec-introduction.tex；源页映射见 page-ledger.md；译稿段块 5",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-introduction.tex",
+      "status": "verified",
+      "audit_excerpt": "我们构造 VSMC 近似分布族，推导相应的变分下界，并设计随机梯度上升算法来优化其参数。我们将 VSMC 与重要性加权自编码器（IWAE）\\citep{Burda2016} 联系起来，说明 IWAE 下界是 VSMC 下界的特例。作为说明，"
+    },
+    {
+      "id": "obj-0051",
+      "type": "paragraph",
+      "source_locator": "sec-introduction.tex；源页映射见 page-ledger.md；译稿段块 6",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-introduction.tex",
+      "status": "verified",
+      "audit_excerpt": "本文着重讨论状态空间模型与时间序列模型中的推断，但强调 VSMC 与标准 SMC 一样，适用于任意概率模型序列\\citep{del2006sequential,doucet2009tutorial,Naesseth2014}。"
+    },
+    {
+      "id": "obj-0052",
+      "type": "paragraph",
+      "source_locator": "sec-introduction.tex；源页映射见 page-ledger.md；译稿段块 7",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-introduction.tex",
+      "status": "verified",
+      "audit_excerpt": "第~\\ref{sec:expts} 节用模拟数据与真实数据展示 VSMC 的优势。首先，我们在模拟的线性高斯 SSM 数据上说明，VSMC 可以优于（局部）最优提议分布\\citep{doucet2001introduction,doucet"
+    },
+    {
+      "id": "obj-0053",
+      "type": "figure",
+      "source_locator": "sec-introduction.tex；源页映射见 page-ledger.md",
+      "original_number": "1",
+      "label": "fig:fig1",
+      "target": "tex-zh-cn/sections/sec-introduction.tex",
+      "status": "verified",
+      "audit_excerpt": "[tbp]\n\\centering\n\\includegraphics[width=\\linewidth]{newfig1.pdf}\n\\caption{\\emph{VSMC 与 IWAE 的比较。}（a）VSMC 用 SMC 构造一组带权粒子轨"
+    },
+    {
+      "id": "obj-0054",
+      "type": "equation",
+      "source_locator": "sec-introduction.tex；源页映射见 page-ledger.md",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-introduction.tex",
+      "status": "verified",
+      "audit_excerpt": "\np(x_{1:T}\\mid y_{1:T})=\\prod_{t=1}^T\\mathcal{N}(x_t\\g0,1)\\,\\mathcal{N}(y_t\\g x_t^2,1)/p(y_{1:T}).\n"
+    },
+    {
+      "id": "obj-0055",
+      "type": "paragraph",
+      "source_locator": "sec-introduction.tex；源页映射见 page-ledger.md",
+      "original_number": "1",
+      "label": "sec:intro",
+      "target": "tex-zh-cn/sections/sec-introduction.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0056",
+      "type": "paragraph",
+      "source_locator": "sec-relatedwork.tex；源页映射见 page-ledger.md；译稿段块 1",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-relatedwork.tex",
+      "status": "verified",
+      "audit_excerpt": "% 来源：sec-relatedwork.tex；原 PDF 第 2 页。\n\\paragraph{相关工作}\n已有大量工作致力于为 SMC 学习良好的提议分布\\citep{Cornebise2009}。\\citet{Guarniero201"
+    },
+    {
+      "id": "obj-0057",
+      "type": "paragraph",
+      "source_locator": "sec-relatedwork.tex；源页映射见 page-ledger.md；译稿段块 2",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-relatedwork.tex",
+      "status": "verified",
+      "audit_excerpt": "VSMC 在后验近似中使用辅助变量。这与 VI 中的相关工作有关，例如哈密顿变分推断\\citep{Salimans2015}、变分高斯过程\\citep{Tran2016}、层次变分模型\\citep{Ranganath2016} 和深度辅助变"
+    },
+    {
+      "id": "obj-0058",
+      "type": "paragraph",
+      "source_locator": "sec-relatedwork.tex；源页映射见 page-ledger.md；译稿段块 3",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-relatedwork.tex",
+      "status": "verified",
+      "audit_excerpt": "\\citet{Archer2015,Johnson2016} 为具有共轭动态结构的状态空间模型发展了变分推断；\\citet{Krishnan2017} 则为具有非线性动态和加性高斯噪声的模型构造了变分近似。相比之下，VSMC 不依赖于动态和"
+    },
+    {
+      "id": "obj-0059",
+      "type": "paragraph",
+      "source_locator": "sec-relatedwork.tex；源页映射见 page-ledger.md；译稿段块 4",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-relatedwork.tex",
+      "status": "verified",
+      "audit_excerpt": "重要性加权自编码器\\citep{Burda2016} 得到的下界与变分重要性采样（VIS）相同，后者是 VSMC 的一个特例。不过，VIS 提供了一种新的解释，使我们能够得到更准确的变分近似；这与 \\citet{Cremer2017,Bac"
+    },
+    {
+      "id": "obj-0060",
+      "type": "paragraph",
+      "source_locator": "sec-relatedwork.tex；源页映射见 page-ledger.md；译稿段块 5",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-relatedwork.tex",
+      "status": "verified",
+      "audit_excerpt": "最后，对数边缘似然的下界~\\eqref{eq:lb} 也由 \\citet{Maddison2017} 和 \\citet{Le2017aesmc} 同期独立提出。他们的工作与本文的区别在于下界的推导方式，以及所探讨的推论。\\citet{Mad"
+    },
+    {
+      "id": "obj-0061",
+      "type": "paragraph",
+      "source_locator": "sec-smc.tex；源页映射见 page-ledger.md；译稿段块 1",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-smc.tex",
+      "status": "verified",
+      "audit_excerpt": "% 来源：sec-smc.tex；原 PDF 第 3 页。\n\\paragraph{序贯蒙特卡洛}\\label{sec:smc}\nSMC 是一种采样方法，用来近似分布序列 $p(x_{1:t}\\given y_{1:t})$，其中 $t=1,"
+    },
+    {
+      "id": "obj-0062",
+      "type": "paragraph",
+      "source_locator": "sec-smc.tex；源页映射见 page-ledger.md；译稿段块 2",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-smc.tex",
+      "status": "verified",
+      "audit_excerpt": "SMC 用带权样本近似 $p(x_{1:t}\\given y_{1:t})$：\n\\begin{align}\np(x_{1:t}\\given y_{1:t})\\approx\\widehat p(x_{1:t}\\given y_{1:t})\\t"
+    },
+    {
+      "id": "obj-0063",
+      "type": "paragraph",
+      "source_locator": "sec-smc.tex；源页映射见 page-ledger.md；译稿段块 3",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-smc.tex",
+      "status": "verified",
+      "audit_excerpt": "我们按 $t=1,\\ldots,T$ 依次构造带权粒子集合。在 $t=1$ 时使用标准重要性采样 $x_1^i\\sim r(x_1)$。对于 $t>1$，每一步先以与重要性权重 $w_{t-1}^j$ 成正比的概率，对辅助的\\emph{祖先"
+    },
+    {
+      "id": "obj-0064",
+      "type": "paragraph",
+      "source_locator": "sec-smc.tex；源页映射见 page-ledger.md；译稿段块 4",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-smc.tex",
+      "status": "verified",
+      "audit_excerpt": "轨迹 $x_{1:T}^i$ 与权重 $w_T^i$ 确定了后验的 SMC 近似。关键在于：随着粒子数增加，后验近似可以变得任意精确。SMC 还给出边缘似然的无偏估计：\n\\begin{align}\n\\widehat p(y_{1:T})&="
+    },
+    {
+      "id": "obj-0065",
+      "type": "paragraph",
+      "source_locator": "sec-smc.tex；源页映射见 page-ledger.md；译稿段块 5",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-smc.tex",
+      "status": "verified",
+      "audit_excerpt": "提议分布 $r(x_t\\given x_{t-1})$ 是关键的设计选择。一种常用选择是模型先验 $f$，对应的方法称为自助粒子滤波器（BPF）\\citep{GordonSS:1993}。不过，粒子数较少时，直接从先验提议往往产生较差的近似"
+    },
+    {
+      "id": "obj-0066",
+      "type": "equation",
+      "source_locator": "sec-smc.tex；源页映射见 page-ledger.md",
+      "original_number": "2",
+      "label": "eq:smcapprox",
+      "target": "tex-zh-cn/sections/sec-smc.tex",
+      "status": "verified",
+      "audit_excerpt": "\np(x_{1:t}\\given y_{1:t})\\approx\\widehat p(x_{1:t}\\given y_{1:t})\\triangleq\\sum_{i=1}^N\\frac{w_t^i}{\\sum_\\ell w_t^\\ell}\\"
+    },
+    {
+      "id": "obj-0067",
+      "type": "equation",
+      "source_locator": "sec-smc.tex；源页映射见 page-ledger.md",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-smc.tex",
+      "status": "verified",
+      "audit_excerpt": "\n\\text{重采样：}\\quad&a_{t-1}^i\\sim\\operatorname{Categorical}\\left(\\frac{w_{t-1}^j}{\\sum_\\ell w_{t-1}^\\ell}\\right),\\\\\n\\text{"
+    },
+    {
+      "id": "obj-0068",
+      "type": "equation",
+      "source_locator": "sec-smc.tex；源页映射见 page-ledger.md",
+      "original_number": "3",
+      "label": "eq:smc_margll",
+      "target": "tex-zh-cn/sections/sec-smc.tex",
+      "status": "verified",
+      "audit_excerpt": "\n\\widehat p(y_{1:T})&=\\prod_{t=1}^T\\frac1N\\sum_{i=1}^N w_t^i.\\label{eq:smc_margll}\n"
+    },
+    {
+      "id": "obj-0069",
+      "type": "paragraph",
+      "source_locator": "sec-smc.tex；源页映射见 page-ledger.md",
+      "original_number": "2",
+      "label": "sec:smc",
+      "target": "tex-zh-cn/sections/sec-smc.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0070",
+      "type": "paragraph",
+      "source_locator": "sec-supplementary.tex；源页映射见 page-ledger.md；译稿段块 2",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-supplementary.tex",
+      "status": "verified",
+      "audit_excerpt": "\\section{变分序贯蒙特卡洛——补充材料}\n\\input{sections/supplement/01-proposition}\n\\input{sections/supplement/02-bound}\n\\input{sections"
+    },
+    {
+      "id": "obj-0071",
+      "type": "paragraph",
+      "source_locator": "sec-talking.tex；源页映射见 page-ledger.md；译稿段块 1",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-talking.tex",
+      "status": "verified",
+      "audit_excerpt": "% 来源：sec-talking.tex；原 PDF 第 5–6 页。\n\\section{理解变分 SMC 的几个视角}\\label{sec:talking}\n我们从几个角度考察 VSMC。先考虑 $N=1$ 和 $T=1$ 这两个特例。$"
+    },
+    {
+      "id": "obj-0072",
+      "type": "paragraph",
+      "source_locator": "sec-talking.tex；源页映射见 page-ledger.md；译稿段块 2",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-talking.tex",
+      "status": "verified",
+      "audit_excerpt": "随后，我们将 VSMC 采样看成从经过充分优化的 SMC 近似中采样。这意味着过去 25 年发展出的许多 SMC 理论结果都可以应用到 VSMC。本节后半部分将讨论其中一些例子。"
+    },
+    {
+      "id": "obj-0073",
+      "type": "paragraph",
+      "source_locator": "sec-talking.tex；源页映射见 page-ledger.md；译稿段块 3",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-talking.tex",
+      "status": "verified",
+      "audit_excerpt": "\\paragraph{变分重要性采样（VIS）}\n$T=1$ 对应不进行任何重采样的 SMC，也就是重要性采样。VSMC 的相应特例是 VIS。VIS 的代理 ELBO 与 IWAE 下界\\citep{Burda2016} 完全相同。"
+    },
+    {
+      "id": "obj-0074",
+      "type": "paragraph",
+      "source_locator": "sec-talking.tex；源页映射见 page-ledger.md；译稿段块 4",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-talking.tex",
+      "status": "verified",
+      "audit_excerpt": "这一等价关系为理解 IWAE 对隐变量的变分近似提供了新的直觉。如果希望使用通过 IWAE 下界学得的近似 $q(x_{1:T}\\g\\lambda^\\star)$，就应该用算法~\\ref{alg:vsmc}，即 VIS，来生成隐变量样本。\n"
+    },
+    {
+      "id": "obj-0075",
+      "type": "paragraph",
+      "source_locator": "sec-talking.tex；源页映射见 page-ledger.md；译稿段块 5",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-talking.tex",
+      "status": "verified",
+      "audit_excerpt": "图~\\ref{fig:vis} 给出 VIS 的一个简单例子。目标多峰分布为 $p(x\\given y)\\propto\\mathcal N(x\\g0,1)\\,\\mathcal N(y\\g x^2/2,e^{x/2})$，采用正态提议分布 $"
+    },
+    {
+      "id": "obj-0076",
+      "type": "paragraph",
+      "source_locator": "sec-talking.tex；源页映射见 page-ledger.md；译稿段块 6",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-talking.tex",
+      "status": "verified",
+      "audit_excerpt": "\\paragraph{理论性质}\nSMC 采样器对归一化常数的估计 $\\widehat p(y_{1:T})$ 是无偏的\\citep{DelMoral2004,Pitt2012,Naesseth2014}。结合 Jensen 不等式可知，代"
+    },
+    {
+      "id": "obj-0077",
+      "type": "paragraph",
+      "source_locator": "sec-talking.tex；源页映射见 page-ledger.md；译稿段块 7",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-talking.tex",
+      "status": "verified",
+      "audit_excerpt": "考察式~\\eqref{eq:var-dist}，也能非严格地理解这一结果：随着粒子数增加，边缘似然估计收敛到真实边缘似然，变分后验也收敛到真实后验。\\citet{Huggins2017} 进一步给出了 SMC 与目标分布之间多种散度和度量的"
+    },
+    {
+      "id": "obj-0078",
+      "type": "paragraph",
+      "source_locator": "sec-talking.tex；源页映射见 page-ledger.md；译稿段块 8",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-talking.tex",
+      "status": "verified",
+      "audit_excerpt": "\\paragraph{VSMC 与 $T$}\n与 SMC 一样，变分序贯蒙特卡洛对 $T$ 具有良好的扩展性。\\citet{berard2014} 在 $N=bT$、$b>0$ 且 $T\\to\\infty$ 时，为 SMC 近似误差 $\\l"
+    },
+    {
+      "id": "obj-0079",
+      "type": "figure",
+      "source_locator": "sec-talking.tex；源页映射见 page-ledger.md",
+      "original_number": "2",
+      "label": "fig:vis",
+      "target": "tex-zh-cn/sections/sec-talking.tex",
+      "status": "verified",
+      "audit_excerpt": "[tbp]\n\\centering\n\\includegraphics[width=.52\\linewidth]{vis.pdf}\n\\caption{VIS 用高斯提议分布 $r(x\\g\\lambda)$ 得到 $q(x\\g\\lambda)$，"
+    },
+    {
+      "id": "obj-0080",
+      "type": "equation",
+      "source_locator": "sec-talking.tex；源页映射见 page-ledger.md",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-talking.tex",
+      "status": "verified",
+      "audit_excerpt": "\n\\widetilde{\\mathcal L}(\\lambda)\\longrightarrow\\log p(y_{1:T}),\\qquad\n\\mathcal L(\\lambda)\\longrightarrow\\log p(y_{1:T})."
+    },
+    {
+      "id": "obj-0081",
+      "type": "equation",
+      "source_locator": "sec-talking.tex；源页映射见 page-ledger.md",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-talking.tex",
+      "status": "verified",
+      "audit_excerpt": "\n\\operatorname{KL}\\left(q(x_{1:T}\\g\\lambda)\\,\\Big\\|\\,p(x_{1:T}\\given y_{1:T})\\right)\\leq\\frac{c(\\lambda)}N,\n"
+    },
+    {
+      "id": "obj-0082",
+      "type": "equation",
+      "source_locator": "sec-talking.tex；源页映射见 page-ledger.md",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-talking.tex",
+      "status": "verified",
+      "audit_excerpt": "\n&\\operatorname{KL}\\left(q(x_{1:T}\\g\\lambda)\\,\\Big\\|\\,p(x_{1:T}\\given y_{1:T})\\right)\n\\leq-\\E\\left[\\log\\frac{\\widehat p("
+    },
+    {
+      "id": "obj-0083",
+      "type": "paragraph",
+      "source_locator": "sec-talking.tex；源页映射见 page-ledger.md",
+      "original_number": "4",
+      "label": "sec:talking",
+      "target": "tex-zh-cn/sections/sec-talking.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0084",
+      "type": "paragraph",
+      "source_locator": "sec-vi.tex；源页映射见 page-ledger.md；译稿段块 1",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-vi.tex",
+      "status": "verified",
+      "audit_excerpt": "% 来源：sec-vi.tex；原 PDF 第 3 页。\n\\paragraph{变分推断}\\label{sec:vi}\n在变分推断中，我们假定一个具有变分参数 $\\lambda$ 的近似分布族 $q(x_{1:T};\\lambda)$，再最"
+    },
+    {
+      "id": "obj-0085",
+      "type": "equation",
+      "source_locator": "sec-vi.tex；源页映射见 page-ledger.md",
+      "original_number": "1",
+      "label": "eq:elbo",
+      "target": "tex-zh-cn/sections/sec-vi.tex",
+      "status": "verified",
+      "audit_excerpt": "\n\\Ls(\\lambda)&=\\E_{q(x_{1:T};\\lambda)}\\left[\\log p(x_{1:T},y_{1:T})-\\log q(x_{1:T};\\lambda)\\right].\\label{eq:elbo}\n"
+    },
+    {
+      "id": "obj-0086",
+      "type": "paragraph",
+      "source_locator": "sec-vi.tex；源页映射见 page-ledger.md",
+      "original_number": "2",
+      "label": "sec:vi",
+      "target": "tex-zh-cn/sections/sec-vi.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0087",
+      "type": "paragraph",
+      "source_locator": "sec-vsmc.tex；源页映射见 page-ledger.md；译稿段块 2",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-vsmc.tex",
+      "status": "verified",
+      "audit_excerpt": "\\section{变分序贯蒙特卡洛}\\label{sec:vsmc}"
+    },
+    {
+      "id": "obj-0088",
+      "type": "paragraph",
+      "source_locator": "sec-vsmc.tex；源页映射见 page-ledger.md；译稿段块 3",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-vsmc.tex",
+      "status": "verified",
+      "audit_excerpt": "我们提出 VSMC：一类基于 SMC 的新变分近似。先定义如何从 VSMC 族采样，再推导其分布。虽然生成样本很直接，但密度难以计算。因此，我们推导一个可计算的目标——ELBO 的新下界，使其适于随机优化。随后给出拟合变分参数的算法，最后探"
+    },
+    {
+      "id": "obj-0089",
+      "type": "paragraph",
+      "source_locator": "sec-vsmc.tex；源页映射见 page-ledger.md；译稿段块 4",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-vsmc.tex",
+      "status": "verified",
+      "audit_excerpt": "要从 VSMC 族中采样，先运行 SMC（提议分布由变分参数 $\\lambda$ 参数化），再从后验的经验近似~\\eqref{eq:smcapprox} 中抽取一个样本。由于提议分布 $r(x_t\\mid x_{t-1}\\g\\lambda)"
+    },
+    {
+      "id": "obj-0090",
+      "type": "paragraph",
+      "source_locator": "sec-vsmc.tex；源页映射见 page-ledger.md；译稿段块 5",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-vsmc.tex",
+      "status": "verified",
+      "audit_excerpt": "\\begin{algorithm}[htbp]\n\\caption{变分序贯蒙特卡洛}\\label{alg:vsmc}\n\\begin{algorithmic}[1]\n\\REQUIRE 目标 $p(x_{1:t},y_{1:t})$, 提议分布"
+    },
+    {
+      "id": "obj-0091",
+      "type": "paragraph",
+      "source_locator": "sec-vsmc.tex；源页映射见 page-ledger.md；译稿段块 6",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-vsmc.tex",
+      "status": "verified",
+      "audit_excerpt": "\\begin{align}\n  &\\widetilde\\phi(x_{1:T}^{1:N},a_{1:T-1}^{1:N},b_T \\g \\lambda) =\n    \\underbrace{\\bigg[\\prod_{i=1}^N r(x_"
+    },
+    {
+      "id": "obj-0092",
+      "type": "paragraph",
+      "source_locator": "sec-vsmc.tex；源页映射见 page-ledger.md；译稿段块 7",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-vsmc.tex",
+      "status": "verified",
+      "audit_excerpt": "令 $b_t\\triangleq a_t^{b_{t+1}}$（$t\\leq T-1$）表示算法~\\ref{alg:vsmc} 返回的轨迹 $x_{1:T}$ 的祖先索引。令 $\\neg b_{1:T}$ 表示各时刻不在 $(b_1,\\ld"
+    },
+    {
+      "id": "obj-0093",
+      "type": "paragraph",
+      "source_locator": "sec-vsmc.tex；源页映射见 page-ledger.md；译稿段块 8",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-vsmc.tex",
+      "status": "verified",
+      "audit_excerpt": "\\begin{prop}\\label{prop:dist}\nVSMC 在 $x_{1:T}$ 上的近似分布为"
+    },
+    {
+      "id": "obj-0094",
+      "type": "paragraph",
+      "source_locator": "sec-vsmc.tex；源页映射见 page-ledger.md；译稿段块 11",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-vsmc.tex",
+      "status": "verified",
+      "audit_excerpt": "参见补充材料~\\ref{sec:pf:dist} 节。\n\\end{proof}\n这一形式很直观：变分后验的密度，等于精确联合密度乘以归一化常数估计倒数的期望（参见式~\\eqref{eq:smc_margll}）。虽然能用蒙特卡洛方法估计这个"
+    },
+    {
+      "id": "obj-0095",
+      "type": "paragraph",
+      "source_locator": "sec-vsmc.tex；源页映射见 page-ledger.md；译稿段块 12",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-vsmc.tex",
+      "status": "verified",
+      "audit_excerpt": "\\paragraph{代理 ELBO}为了得到可计算的目标，我们构造一个同时适于随机优化的 ELBO 下界："
+    },
+    {
+      "id": "obj-0096",
+      "type": "paragraph",
+      "source_locator": "sec-vsmc.tex；源页映射见 page-ledger.md；译稿段块 13",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-vsmc.tex",
+      "status": "verified",
+      "audit_excerpt": "\\begin{align}\n\\widetilde{\\mathcal{L}}(\\lambda) &\\triangleq \\sum_{t=1}^T\\E_{\\widetilde\\phi(x_{1:t}^{1:N},a_{1:t-1}^{1:N}\\"
+    },
+    {
+      "id": "obj-0097",
+      "type": "paragraph",
+      "source_locator": "sec-vsmc.tex；源页映射见 page-ledger.md；译稿段块 14",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-vsmc.tex",
+      "status": "verified",
+      "audit_excerpt": "\\begin{theorem}[代理 ELBO]\n当 $q$ 由式~\\eqref{eq:var-dist} 定义时，代理 ELBO~\\eqref{eq:lb} 是 ELBO~\\eqref{eq:elbo} 的下界，即"
+    },
+    {
+      "id": "obj-0098",
+      "type": "paragraph",
+      "source_locator": "sec-vsmc.tex；源页映射见 page-ledger.md；译稿段块 16",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-vsmc.tex",
+      "status": "verified",
+      "audit_excerpt": "参见补充材料~\\ref{sec:pf:lb} 节。\n\\end{proof}\n代理 ELBO 是 SMC 对数边缘似然估计的期望。从 VSMC 变分近似中采样（算法~\\ref{alg:vsmc}）时，可以顺便得到它的无偏估计。我们运行该算法，"
+    },
+    {
+      "id": "obj-0099",
+      "type": "paragraph",
+      "source_locator": "sec-vsmc.tex；源页映射见 page-ledger.md；译稿段块 17",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-vsmc.tex",
+      "status": "verified",
+      "audit_excerpt": "\\paragraph{随机优化}\n虽然代理 ELBO 中的期望仍无闭式表达，但可以用蒙特卡洛方法估计它及其梯度。这就得到一种随机优化算法，用于寻找 VSMC 族的最优变分参数。"
+    },
+    {
+      "id": "obj-0100",
+      "type": "paragraph",
+      "source_locator": "sec-vsmc.tex；源页映射见 page-ledger.md；译稿段块 18",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-vsmc.tex",
+      "status": "verified",
+      "audit_excerpt": "假设提议分布 $r(x_t\\given x_{t-1};\\lambda)$ 可以重参数化，即对某个不依赖 $\\lambda$ 的分布 $s$，可以通过设置 $x_t=h(x_{t-1},\\varepsilon_t\\g\\lambda)$、$\\"
+    },
+    {
+      "id": "obj-0101",
+      "type": "paragraph",
+      "source_locator": "sec-vsmc.tex；源页映射见 page-ledger.md；译稿段块 19",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-vsmc.tex",
+      "status": "verified",
+      "audit_excerpt": "\\begin{align}\n\\nabla \\widetilde\\Ls(\\lambda) &= g_{\\text{rep}}+ g_{\\text{score}}\\label{eq:rep-grad}\\\\\ng_{\\text{rep}} &= \\"
+    },
+    {
+      "id": "obj-0102",
+      "type": "paragraph",
+      "source_locator": "sec-vsmc.tex；源页映射见 page-ledger.md；译稿段块 20",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-vsmc.tex",
+      "status": "verified",
+      "audit_excerpt": "第~\\ref{sec:expts} 节将通过实验评估优化时忽略 $g_{\\text{score}}$ 的影响。我们在一个小型状态空间模型中，比较保留与忽略得分函数项的优化；对这个模型，下述标准方差缩减技术已经足够。注意到祖先变量 $a_{t"
+    },
+    {
+      "id": "obj-0103",
+      "type": "paragraph",
+      "source_locator": "sec-vsmc.tex；源页映射见 page-ledger.md；译稿段块 21",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-vsmc.tex",
+      "status": "verified",
+      "audit_excerpt": "\\begin{align}\n&g_{\\text{score}} = \n\\nonumber\\\\\n& \\sum_{t=2}^{T}\n\\E\n\\left[  \n\\log \\frac{\\widehat{p}(y_{1:T})}{\\widehat{p}"
+    },
+    {
+      "id": "obj-0104",
+      "type": "paragraph",
+      "source_locator": "sec-vsmc.tex；源页映射见 page-ledger.md；译稿段块 22",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-vsmc.tex",
+      "status": "verified",
+      "audit_excerpt": "我们发现，忽略祖先变量带来的得分函数项 $g_{\\text{score}}$（式~\\eqref{eq:rb}）会使收敛更快，而最终 ELBO 的差别很小。这相当于用下式近似 $\\widetilde\\Ls$ 的梯度："
+    },
+    {
+      "id": "obj-0105",
+      "type": "paragraph",
+      "source_locator": "sec-vsmc.tex；源页映射见 page-ledger.md；译稿段块 23",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-vsmc.tex",
+      "status": "verified",
+      "audit_excerpt": "\\begin{align}\n\\nabla \\widetilde\\Ls(\\lambda) &\\approx \\E\n\\left[ \\nabla\\log \\widehat{p}(y_{1:T})  \\right] = g_{\\text{rep}}"
+    },
+    {
+      "id": "obj-0106",
+      "type": "paragraph",
+      "source_locator": "sec-vsmc.tex；源页映射见 page-ledger.md；译稿段块 24",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-vsmc.tex",
+      "status": "verified",
+      "audit_excerpt": "\\paragraph{算法}\n现在说明优化 VSMC 变分近似的完整算法。我们从 $s(\\cdot)\\widetilde\\phi(\\cdot\\given\\cdot\\g\\lambda)$ 中抽取一个样本，以估计式~\\eqref{eq:prox"
+    },
+    {
+      "id": "obj-0107",
+      "type": "paragraph",
+      "source_locator": "sec-vsmc.tex；源页映射见 page-ledger.md；译稿段块 25",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-vsmc.tex",
+      "status": "verified",
+      "audit_excerpt": "\\begin{align}\n    &\\rho^n = \\eta \\cdot n^{-1/2 + \\delta} \\cdot \\left(1 + \n    \\sqrt{s^n}\\right)^{-1}, \\nonumber\\\\\n    &s"
+    },
+    {
+      "id": "obj-0108",
+      "type": "paragraph",
+      "source_locator": "sec-vsmc.tex；源页映射见 page-ledger.md；译稿段块 26",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-vsmc.tex",
+      "status": "verified",
+      "audit_excerpt": "\\begin{algorithm}[htbp]\n\\caption{VSMC 的随机优化}\\label{alg:so}\n\\begin{algorithmic}[1]\n\\REQUIRE 数据 $y_{1:T}$, 模型 $p(x_{1:T},y"
+    },
+    {
+      "id": "obj-0109",
+      "type": "paragraph",
+      "source_locator": "sec-vsmc.tex；源页映射见 page-ledger.md；译稿段块 27",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-vsmc.tex",
+      "status": "verified",
+      "audit_excerpt": "\\paragraph{变分期望最大化}\n假设目标分布 $p(x_{1:T}\\given y_{1:T}\\g\\theta)$ 含有一组未知参数 $\\theta$。可以用变分期望最大化（VEM）\\citep{Beal2003} 拟合这些参数。相"
+    },
+    {
+      "id": "obj-0110",
+      "type": "paragraph",
+      "source_locator": "sec-vsmc.tex；源页映射见 page-ledger.md；译稿段块 28",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/sec-vsmc.tex",
+      "status": "verified",
+      "audit_excerpt": "\\begin{align}\n\\log p(y_{1:T}\\g\\theta) \\geq\n\\tilde{\\mathcal{L}}(\\lambda,\\theta)\\label{eq:lb:vem}\n\\end{align}\n此时归一化常数 $p(y"
+    },
+    {
+      "id": "obj-0111",
+      "type": "algorithm",
+      "source_locator": "sec-vsmc.tex；源页映射见 page-ledger.md",
+      "original_number": "1",
+      "label": "alg:vsmc",
+      "target": "tex-zh-cn/sections/sec-vsmc.tex",
+      "status": "verified",
+      "audit_excerpt": "[htbp]\n\\caption{变分序贯蒙特卡洛}\\label{alg:vsmc}\n\\begin{algorithmic}[1]\n\\REQUIRE 目标 $p(x_{1:t},y_{1:t})$, 提议分布 \n$r(x_t \\given x"
+    },
+    {
+      "id": "obj-0112",
+      "type": "equation",
+      "source_locator": "sec-vsmc.tex；源页映射见 page-ledger.md",
+      "original_number": "4",
+      "label": "eq:vsmc-all",
+      "target": "tex-zh-cn/sections/sec-vsmc.tex",
+      "status": "verified",
+      "audit_excerpt": "\n  &\\widetilde\\phi(x_{1:T}^{1:N},a_{1:T-1}^{1:N},b_T \\g \\lambda) =\n    \\underbrace{\\bigg[\\prod_{i=1}^N r(x_1^i\\g\\lambda)"
+    },
+    {
+      "id": "obj-0113",
+      "type": "theorem",
+      "source_locator": "sec-vsmc.tex；源页映射见 page-ledger.md",
+      "original_number": "1",
+      "label": "prop:dist",
+      "target": "tex-zh-cn/sections/sec-vsmc.tex",
+      "status": "verified",
+      "audit_excerpt": "\\label{prop:dist}\nVSMC 在 $x_{1:T}$ 上的近似分布为\n\n\\begin{align}\n&q(x_{1:T} \\given y_{1:T} \\g\\lambda) \\nonumber \\\\\n&= p(x_{1:T}"
+    },
+    {
+      "id": "obj-0114",
+      "type": "equation",
+      "source_locator": "sec-vsmc.tex；源页映射见 page-ledger.md",
+      "original_number": "6",
+      "label": "eq:lb",
+      "target": "tex-zh-cn/sections/sec-vsmc.tex",
+      "status": "verified",
+      "audit_excerpt": "\n\\widetilde{\\mathcal{L}}(\\lambda) &\\triangleq \\sum_{t=1}^T\\E_{\\widetilde\\phi(x_{1:t}^{1:N},a_{1:t-1}^{1:N}\\g\\lambda)}\\le"
+    },
+    {
+      "id": "obj-0115",
+      "type": "theorem",
+      "source_locator": "sec-vsmc.tex；源页映射见 page-ledger.md",
+      "original_number": "1",
+      "label": "thm:lb",
+      "target": "tex-zh-cn/sections/sec-vsmc.tex",
+      "status": "verified",
+      "audit_excerpt": "[代理 ELBO]\n当 $q$ 由式~\\eqref{eq:var-dist} 定义时，代理 ELBO~\\eqref{eq:lb} 是 ELBO~\\eqref{eq:elbo} 的下界，即\n\n\\begin{align*}\n\\log p(y_{"
+    },
+    {
+      "id": "obj-0116",
+      "type": "equation",
+      "source_locator": "sec-vsmc.tex；源页映射见 page-ledger.md",
+      "original_number": "7",
+      "label": "eq:rep-grad",
+      "target": "tex-zh-cn/sections/sec-vsmc.tex",
+      "status": "verified",
+      "audit_excerpt": "\n\\nabla \\widetilde\\Ls(\\lambda) &= g_{\\text{rep}}+ g_{\\text{score}}\\label{eq:rep-grad}\\\\\ng_{\\text{rep}} &= \\E\n\\left[ \\nab"
+    },
+    {
+      "id": "obj-0117",
+      "type": "equation",
+      "source_locator": "sec-vsmc.tex；源页映射见 page-ledger.md",
+      "original_number": "8",
+      "label": "eq:rb",
+      "target": "tex-zh-cn/sections/sec-vsmc.tex",
+      "status": "verified",
+      "audit_excerpt": "\n&g_{\\text{score}} = \n\\nonumber\\\\\n& \\sum_{t=2}^{T}\n\\E\n\\left[  \n\\log \\frac{\\widehat{p}(y_{1:T})}{\\widehat{p}(y_{1:t-1})}\n"
+    },
+    {
+      "id": "obj-0118",
+      "type": "equation",
+      "source_locator": "sec-vsmc.tex；源页映射见 page-ledger.md",
+      "original_number": "9",
+      "label": "eq:proxgrad",
+      "target": "tex-zh-cn/sections/sec-vsmc.tex",
+      "status": "verified",
+      "audit_excerpt": "\n\\nabla \\widetilde\\Ls(\\lambda) &\\approx \\E\n\\left[ \\nabla\\log \\widehat{p}(y_{1:T})  \\right] = g_{\\text{rep}}.\n\\label{eq:p"
+    },
+    {
+      "id": "obj-0119",
+      "type": "equation",
+      "source_locator": "sec-vsmc.tex；源页映射见 page-ledger.md",
+      "original_number": "10",
+      "label": "eq:stepsize",
+      "target": "tex-zh-cn/sections/sec-vsmc.tex",
+      "status": "verified",
+      "audit_excerpt": "\n    &\\rho^n = \\eta \\cdot n^{-1/2 + \\delta} \\cdot \\left(1 + \n    \\sqrt{s^n}\\right)^{-1}, \\nonumber\\\\\n    &s^n = t \\left("
+    },
+    {
+      "id": "obj-0120",
+      "type": "algorithm",
+      "source_locator": "sec-vsmc.tex；源页映射见 page-ledger.md",
+      "original_number": "2",
+      "label": "alg:so",
+      "target": "tex-zh-cn/sections/sec-vsmc.tex",
+      "status": "verified",
+      "audit_excerpt": "[htbp]\n\\caption{VSMC 的随机优化}\\label{alg:so}\n\\begin{algorithmic}[1]\n\\REQUIRE 数据 $y_{1:T}$, 模型 $p(x_{1:T},y_{1:T})$, 提议分布 \n$"
+    },
+    {
+      "id": "obj-0121",
+      "type": "equation",
+      "source_locator": "sec-vsmc.tex；源页映射见 page-ledger.md",
+      "original_number": "11",
+      "label": "eq:lb:vem",
+      "target": "tex-zh-cn/sections/sec-vsmc.tex",
+      "status": "verified",
+      "audit_excerpt": "\n\\log p(y_{1:T}\\g\\theta) \\geq\n\\tilde{\\mathcal{L}}(\\lambda,\\theta)\\label{eq:lb:vem}\n"
+    },
+    {
+      "id": "obj-0122",
+      "type": "paragraph",
+      "source_locator": "sec-vsmc.tex；源页映射见 page-ledger.md",
+      "original_number": "3",
+      "label": "sec:vsmc",
+      "target": "tex-zh-cn/sections/sec-vsmc.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0123",
+      "type": "paragraph",
+      "source_locator": "sec-vsmc.tex；源页映射见 page-ledger.md",
+      "original_number": "5",
+      "label": "eq:var-dist",
+      "target": "tex-zh-cn/sections/sec-vsmc.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0124",
+      "type": "footnote",
+      "source_locator": "sec-vsmc.tex；源页映射见 page-ledger.md",
+      "original_number": "1",
+      "label": "fn:sec-vsmc:1",
+      "target": "tex-zh-cn/sections/sec-vsmc.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0125",
+      "type": "paragraph",
+      "source_locator": "sec-supplementary.tex；原 PDF 11–13 页；译稿段块 1",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/supplement/01-proposition.tex",
+      "status": "verified",
+      "audit_excerpt": "\\subsection{命题~\\ref{prop:dist} 的证明}\\label{sec:pf:dist}\n先注意，VSMC 算法产生的所有随机变量的分布为"
+    },
+    {
+      "id": "obj-0126",
+      "type": "paragraph",
+      "source_locator": "sec-supplementary.tex；原 PDF 11–13 页；译稿段块 2",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/supplement/01-proposition.tex",
+      "status": "verified",
+      "audit_excerpt": "\\begin{align}\n&\\widetilde\\phi(x_{1:T}^{1:N},a_{1:T-1}^{1:N},b_T \\g\\lambda) = \\frac{w_T^{b_T}}{\\sum_{\\ell}w_T^\\ell} \n\\pro"
+    },
+    {
+      "id": "obj-0127",
+      "type": "paragraph",
+      "source_locator": "sec-supplementary.tex；原 PDF 11–13 页；译稿段块 3",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/supplement/01-proposition.tex",
+      "status": "verified",
+      "audit_excerpt": "\\begin{align}\n&q(x_{1:T}\\g\\lambda) = \n\\frac{\\widetilde\\phi(x_{1:T}^{b_{1:T}},b_{1:T}\\g\\lambda)}{\\widetilde\\phi(b_{1:T}\\m"
+    },
+    {
+      "id": "obj-0128",
+      "type": "equation",
+      "source_locator": "sec-supplementary.tex；原 PDF 11–13 页",
+      "original_number": "12",
+      "label": "eq:supp:vsmc-all",
+      "target": "tex-zh-cn/sections/supplement/01-proposition.tex",
+      "status": "verified",
+      "audit_excerpt": "\n&\\widetilde\\phi(x_{1:T}^{1:N},a_{1:T-1}^{1:N},b_T \\g\\lambda) = \\frac{w_T^{b_T}}{\\sum_{\\ell}w_T^\\ell} \n\\prod_{i=1}^N r(x"
+    },
+    {
+      "id": "obj-0129",
+      "type": "equation",
+      "source_locator": "sec-supplementary.tex；原 PDF 11–13 页",
+      "original_number": "13",
+      "label": "eq:supp:vsmc",
+      "target": "tex-zh-cn/sections/supplement/01-proposition.tex",
+      "status": "verified",
+      "audit_excerpt": "\n&q(x_{1:T}\\g\\lambda) = \n\\frac{\\widetilde\\phi(x_{1:T}^{b_{1:T}},b_{1:T}\\g\\lambda)}{\\widetilde\\phi(b_{1:T}\\mid x_{1:T}\\g\\"
+    },
+    {
+      "id": "obj-0130",
+      "type": "equation",
+      "source_locator": "sec-supplementary.tex；原 PDF 11–13 页",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/supplement/01-proposition.tex",
+      "status": "verified",
+      "audit_excerpt": "\n&\\frac{1}{N^{-T}}  \\widetilde\\phi(x_{1:T}^{b_{1:T}},x_{1:T}^{\\neg b_{1:T}},a_{1:T-1}^{\\neg b_{2:T}} \\g\\lambda) \\\\\n&= N^"
+    },
+    {
+      "id": "obj-0131",
+      "type": "equation",
+      "source_locator": "sec-supplementary.tex；原 PDF 11–13 页",
+      "original_number": "14",
+      "label": "eq:supp:dist",
+      "target": "tex-zh-cn/sections/supplement/01-proposition.tex",
+      "status": "verified",
+      "audit_excerpt": "\\label{eq:supp:dist}\nq(x_{1:T}\\g\\lambda) &= p(x_{1:T}^{b_{1:T}},y_{1:T})\n\\sum_{a_{1:T-1}^{\\neg b_{2:T}}}\\int \\left(\n\\pro"
+    },
+    {
+      "id": "obj-0132",
+      "type": "paragraph",
+      "source_locator": "sec-supplementary.tex；原 PDF 11–13 页",
+      "original_number": "A.1",
+      "label": "sec:pf:dist",
+      "target": "tex-zh-cn/sections/supplement/01-proposition.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0133",
+      "type": "paragraph",
+      "source_locator": "sec-supplementary.tex；原 PDF 11–13 页；译稿段块 1",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/supplement/02-bound.tex",
+      "status": "verified",
+      "audit_excerpt": "\\subsection{定理~\\ref{thm:lb} 的证明}\\label{sec:pf:lb}\n利用上面关于 $q(x_{1:T}\\g\\lambda)$ 分布的结果，ELBO 可写为"
+    },
+    {
+      "id": "obj-0134",
+      "type": "paragraph",
+      "source_locator": "sec-supplementary.tex；原 PDF 11–13 页；译稿段块 2",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/supplement/02-bound.tex",
+      "status": "verified",
+      "audit_excerpt": "\\begin{align}\n\\mathcal{L}(\\lambda) &= \\E_{q(x_{1:T}\\g\\lambda)}\\left[\\log \np(x_{1:T},y_{1:T}) -\\log q(x_{1:T}\\g\\lambda)\\r"
+    },
+    {
+      "id": "obj-0135",
+      "type": "paragraph",
+      "source_locator": "sec-supplementary.tex；原 PDF 11–13 页；译稿段块 3",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/supplement/02-bound.tex",
+      "status": "verified",
+      "audit_excerpt": "\\begin{align*}\n\\mathcal{L}(\\lambda) &\\geq \\int \n\\E_{\\widetilde\\phi(x_{1:T}^{\\neg b_{1:T}},a_{1:T-1}^{\\neg b_{2:T}} \\g\\la"
+    },
+    {
+      "id": "obj-0136",
+      "type": "equation",
+      "source_locator": "sec-supplementary.tex；原 PDF 11–13 页",
+      "original_number": "15",
+      "label": "eq:supp:exact",
+      "target": "tex-zh-cn/sections/supplement/02-bound.tex",
+      "status": "verified",
+      "audit_excerpt": "\n\\mathcal{L}(\\lambda) &= \\E_{q(x_{1:T}\\g\\lambda)}\\left[\\log \np(x_{1:T},y_{1:T}) -\\log q(x_{1:T}\\g\\lambda)\\right] \n\\nonum"
+    },
+    {
+      "id": "obj-0137",
+      "type": "equation",
+      "source_locator": "sec-supplementary.tex；原 PDF 11–13 页",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/supplement/02-bound.tex",
+      "status": "verified",
+      "audit_excerpt": "\n\\mathcal{L}(\\lambda) &\\geq \\int \n\\E_{\\widetilde\\phi(x_{1:T}^{\\neg b_{1:T}},a_{1:T-1}^{\\neg b_{2:T}} \\g\\lambda)}\n\\left[ "
+    },
+    {
+      "id": "obj-0138",
+      "type": "paragraph",
+      "source_locator": "sec-supplementary.tex；原 PDF 11–13 页",
+      "original_number": "A.2",
+      "label": "sec:pf:lb",
+      "target": "tex-zh-cn/sections/supplement/02-bound.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0139",
+      "type": "paragraph",
+      "source_locator": "sec-supplementary.tex；原 PDF 11–13 页；译稿段块 1",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/supplement/03-optimization.tex",
+      "status": "verified",
+      "audit_excerpt": "\\subsection{随机优化}\\label{sec:supp:so}"
+    },
+    {
+      "id": "obj-0140",
+      "type": "paragraph",
+      "source_locator": "sec-supplementary.tex；原 PDF 11–13 页；译稿段块 2",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/supplement/03-optimization.tex",
+      "status": "verified",
+      "audit_excerpt": "控制变量采用\n\\begin{align*}\n\\sum_{t=2}^T c_t \\E_{s(\\cdot)\\widetilde\\phi(\\cdot\\mid\\cdot\\g\\lambda)}\n\\left[\\sum_{i=1}^N \\nabla \\l"
+    },
+    {
+      "id": "obj-0141",
+      "type": "paragraph",
+      "source_locator": "sec-supplementary.tex；原 PDF 11–13 页；译稿段块 3",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/supplement/03-optimization.tex",
+      "status": "verified",
+      "audit_excerpt": "当 $T=2$ 且 $N>1$ 时，可以对祖先变量的得分函数梯度使用留一估计器："
+    },
+    {
+      "id": "obj-0142",
+      "type": "paragraph",
+      "source_locator": "sec-supplementary.tex；原 PDF 11–13 页；译稿段块 5",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/supplement/03-optimization.tex",
+      "status": "verified",
+      "audit_excerpt": "\\paragraph{得分函数梯度}\\label{sec:scfnc}\n下面推导一种适用于很一般情形的类得分函数估计器。不过，我们发现它在实践中的方差往往较高。"
+    },
+    {
+      "id": "obj-0143",
+      "type": "paragraph",
+      "source_locator": "sec-supplementary.tex；原 PDF 11–13 页；译稿段块 6",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/supplement/03-optimization.tex",
+      "status": "verified",
+      "audit_excerpt": "\\begin{align*}\n\\nabla \\widetilde\\Ls(\\lambda) &= \\nabla \n\\E_{\\widetilde\\phi(x_{1:T}^{1:N},a_{1:T-1}^{1:N}\\g\\lambda)}\\left"
+    },
+    {
+      "id": "obj-0144",
+      "type": "equation",
+      "source_locator": "sec-supplementary.tex；原 PDF 11–13 页",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/supplement/03-optimization.tex",
+      "status": "verified",
+      "audit_excerpt": "\n\\sum_{t=2}^T c_t \\E_{s(\\cdot)\\widetilde\\phi(\\cdot\\mid\\cdot\\g\\lambda)}\n\\left[\\sum_{i=1}^N \\nabla \\log w_{t-1}^{a_{t-1}^i"
+    },
+    {
+      "id": "obj-0145",
+      "type": "equation",
+      "source_locator": "sec-supplementary.tex；原 PDF 11–13 页",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/supplement/03-optimization.tex",
+      "status": "verified",
+      "audit_excerpt": "\nc_t = \\E_{s(\\cdot)\\widetilde\\phi(\\cdot\\mid\\cdot\\g\\lambda)}\n\\left[  \\sum_{t'=t}^T \n\\log\\left(\\frac{1}{N}\\sum_{i=1}^N \nw_"
+    },
+    {
+      "id": "obj-0146",
+      "type": "equation",
+      "source_locator": "sec-supplementary.tex；原 PDF 11–13 页",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/supplement/03-optimization.tex",
+      "status": "verified",
+      "audit_excerpt": "\n\\sum_{i=1}^N \\E_{s(\\cdot)\\widetilde\\phi(\\cdot\\mid\\cdot\\g\\lambda)}\n\\left[\\log \\left(\\frac{N-1}{N}\\frac{\\sum_{\\ell=1}^N w"
+    },
+    {
+      "id": "obj-0147",
+      "type": "equation",
+      "source_locator": "sec-supplementary.tex；原 PDF 11–13 页",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/supplement/03-optimization.tex",
+      "status": "verified",
+      "audit_excerpt": "\n\\nabla \\widetilde\\Ls(\\lambda) &= \\nabla \n\\E_{\\widetilde\\phi(x_{1:T}^{1:N},a_{1:T-1}^{1:N}\\g\\lambda)}\\left[\\log \n\\wideha"
+    },
+    {
+      "id": "obj-0148",
+      "type": "equation",
+      "source_locator": "sec-supplementary.tex；原 PDF 11–13 页",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/supplement/03-optimization.tex",
+      "status": "verified",
+      "audit_excerpt": "\n&\\nabla \\log \\widehat{p}(y_{1:T}) = \\nabla \\sum_{t=1}^T  \n\\log\\left(\\frac{1}{N}\\sum_{i=1}^N w_t^i\\right) = \\sum_{t=1}^T"
+    },
+    {
+      "id": "obj-0149",
+      "type": "equation",
+      "source_locator": "sec-supplementary.tex；原 PDF 11–13 页",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/supplement/03-optimization.tex",
+      "status": "verified",
+      "audit_excerpt": "\n&\\nabla \\log \\widetilde\\phi(x_{1:T}^{1:N},a_{1:T-1}^{1:N}\\g\\lambda) \\\\ \n&= \n\\sum_{i=1}^N \\left[\\nabla \\log r(x_1^i\\g\\la"
+    },
+    {
+      "id": "obj-0150",
+      "type": "paragraph",
+      "source_locator": "sec-supplementary.tex；原 PDF 11–13 页",
+      "original_number": "A.3",
+      "label": "sec:supp:so",
+      "target": "tex-zh-cn/sections/supplement/03-optimization.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0151",
+      "type": "paragraph",
+      "source_locator": "sec-supplementary.tex；原 PDF 11–13 页",
+      "original_number": "A.3",
+      "label": "sec:scfnc",
+      "target": "tex-zh-cn/sections/supplement/03-optimization.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0152",
+      "type": "paragraph",
+      "source_locator": "sec-supplementary.tex；原 PDF 11–13 页；译稿段块 1",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/supplement/04-scaling.tex",
+      "status": "verified",
+      "audit_excerpt": "\\subsection{随维数增长的表现}\\label{sec:supp:independent}\n本节在以下简单模型上比较各方法随维数增长的表现："
+    },
+    {
+      "id": "obj-0153",
+      "type": "paragraph",
+      "source_locator": "sec-supplementary.tex；原 PDF 11–13 页；译稿段块 3",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/supplement/04-scaling.tex",
+      "status": "verified",
+      "audit_excerpt": "\\begin{figure}[htbp]\n\\centering\n\\subfloat[$\\lambda_{\\mathrm{IWAE}}=\\lambda_{\\mathrm{VB}}^\\star$\\label{fig:sameVB}]{\\incl"
+    },
+    {
+      "id": "obj-0154",
+      "type": "paragraph",
+      "source_locator": "sec-supplementary.tex；原 PDF 11–13 页；译稿段块 4",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/supplement/04-scaling.tex",
+      "status": "verified",
+      "audit_excerpt": "我们研究数据集 $y_t=3$（对所有 $t$）。图~\\ref{fig:supp:T} 展示了 IWAE（VIS）与 VSMC 的样本数按维数线性增长，即 $N=2T$ 时的结果。$T$ 较小时，IWAE 的最优参数接近 $\\lambda_"
+    },
+    {
+      "id": "obj-0155",
+      "type": "paragraph",
+      "source_locator": "sec-supplementary.tex；原 PDF 11–13 页；译稿段块 5",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/supplement/04-scaling.tex",
+      "status": "verified",
+      "audit_excerpt": "注意，如果趋于无穷的是单个隐状态的维数 $\\operatorname{dim}(x_t)$，而不是时间点数 $T$，则上述结论并不成立。\n"
+    },
+    {
+      "id": "obj-0156",
+      "type": "equation",
+      "source_locator": "sec-supplementary.tex；原 PDF 11–13 页",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/supplement/04-scaling.tex",
+      "status": "verified",
+      "audit_excerpt": "\np(x_{1:T},y_{1:T}) &= \\prod_{t=1}^T \\mathcal{N}(x_t\\g \n0,1)\\mathcal{N}(y_t\\g x_t^2,1).\n"
+    },
+    {
+      "id": "obj-0157",
+      "type": "figure",
+      "source_locator": "sec-supplementary.tex；原 PDF 11–13 页",
+      "original_number": "6a",
+      "label": "fig:sameVB",
+      "target": "tex-zh-cn/sections/supplement/04-scaling.tex",
+      "status": "verified",
+      "audit_excerpt": "[htbp]\n\\centering\n\\subfloat[$\\lambda_{\\mathrm{IWAE}}=\\lambda_{\\mathrm{VB}}^\\star$\\label{fig:sameVB}]{\\includegraphics[wi"
+    },
+    {
+      "id": "obj-0158",
+      "type": "paragraph",
+      "source_locator": "sec-supplementary.tex；原 PDF 11–13 页",
+      "original_number": "A.4",
+      "label": "sec:supp:independent",
+      "target": "tex-zh-cn/sections/supplement/04-scaling.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0159",
+      "type": "paragraph",
+      "source_locator": "sec-supplementary.tex；原 PDF 11–13 页",
+      "original_number": "6b",
+      "label": "fig:sameVSMC",
+      "target": "tex-zh-cn/sections/supplement/04-scaling.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0160",
+      "type": "paragraph",
+      "source_locator": "sec-supplementary.tex；原 PDF 11–13 页",
+      "original_number": "6",
+      "label": "fig:supp:T",
+      "target": "tex-zh-cn/sections/supplement/04-scaling.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0161",
+      "type": "paragraph",
+      "source_locator": "译者新增翻译说明；译稿段块 1",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/translation-notes.tex",
+      "status": "verified",
+      "audit_excerpt": "% 译者新增；不计入原论文对象和页码。\n\\clearpage\n\\section*{翻译说明}\\markboth{翻译说明}{翻译说明}\n\\phantomsection\\label{translation:notes}\\addcontents"
+    },
+    {
+      "id": "obj-0162",
+      "type": "paragraph",
+      "source_locator": "译者新增翻译说明；译稿段块 2",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/translation-notes.tex",
+      "status": "verified",
+      "audit_excerpt": "\\begin{enumerate}\n\\item \\textbf{代理 ELBO 与 KL 上界（原 PDF 第 4 页，第 3 节）。}原文把代理 ELBO 的下界关系直接称为 KL 散度的上界，省略了平移和取负。明确写为 $\\operat"
+    },
+    {
+      "id": "obj-0163",
+      "type": "paragraph",
+      "source_locator": "译者新增翻译说明；译稿段块 3",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/sections/translation-notes.tex",
+      "status": "verified",
+      "audit_excerpt": "\\paragraph{排版约定}\n采用技能蓝色单栏模板。粗体使用 \\verb|\\bm|，迹运算符使用正体小写 $\\operatorname{tr}$，微分符号使用正体 $\\mathrm d$；普通变量 $d_x,d_y$ 保持原义。保留原编"
+    },
+    {
+      "id": "obj-0164",
+      "type": "paragraph",
+      "source_locator": "译者新增翻译说明",
+      "original_number": "A.4",
+      "label": "translation:notes",
+      "target": "tex-zh-cn/sections/translation-notes.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0165",
+      "type": "footnote",
+      "source_locator": "原 PDF 1 页；aistats2018.sty 会议出版与版权说明",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/metadata.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0166",
+      "type": "paragraph",
+      "source_locator": "main_vsmc.tex；原 PDF 1 页标题、作者与单位",
+      "original_number": null,
+      "label": null,
+      "target": "tex-zh-cn/metadata.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0167",
+      "type": "bibliography",
+      "source_locator": "main_vsmc.bbl；原 PDF 9–10 页",
+      "original_number": null,
+      "label": "bib:Archer2015",
+      "target": "tex-zh-cn/bibliography/entries.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0168",
+      "type": "bibliography",
+      "source_locator": "main_vsmc.bbl；原 PDF 9–10 页",
+      "original_number": null,
+      "label": "bib:Bachman2015",
+      "target": "tex-zh-cn/bibliography/entries.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0169",
+      "type": "bibliography",
+      "source_locator": "main_vsmc.bbl；原 PDF 9–10 页",
+      "original_number": null,
+      "label": "bib:Beal2003",
+      "target": "tex-zh-cn/bibliography/entries.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0170",
+      "type": "bibliography",
+      "source_locator": "main_vsmc.bbl；原 PDF 9–10 页",
+      "original_number": null,
+      "label": "bib:Burda2016",
+      "target": "tex-zh-cn/bibliography/entries.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0171",
+      "type": "bibliography",
+      "source_locator": "main_vsmc.bbl；原 PDF 9–10 页",
+      "original_number": null,
+      "label": "bib:berard2014",
+      "target": "tex-zh-cn/bibliography/entries.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0172",
+      "type": "bibliography",
+      "source_locator": "main_vsmc.bbl；原 PDF 9–10 页",
+      "original_number": null,
+      "label": "bib:cappe2005inference",
+      "target": "tex-zh-cn/bibliography/entries.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0173",
+      "type": "bibliography",
+      "source_locator": "main_vsmc.bbl；原 PDF 9–10 页",
+      "original_number": null,
+      "label": "bib:Chib2009",
+      "target": "tex-zh-cn/bibliography/entries.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0174",
+      "type": "bibliography",
+      "source_locator": "main_vsmc.bbl；原 PDF 9–10 页",
+      "original_number": null,
+      "label": "bib:Cornebise2009",
+      "target": "tex-zh-cn/bibliography/entries.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0175",
+      "type": "bibliography",
+      "source_locator": "main_vsmc.bbl；原 PDF 9–10 页",
+      "original_number": null,
+      "label": "bib:Cremer2017",
+      "target": "tex-zh-cn/bibliography/entries.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0176",
+      "type": "bibliography",
+      "source_locator": "main_vsmc.bbl；原 PDF 9–10 页",
+      "original_number": null,
+      "label": "bib:DelMoral2004",
+      "target": "tex-zh-cn/bibliography/entries.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0177",
+      "type": "bibliography",
+      "source_locator": "main_vsmc.bbl；原 PDF 9–10 页",
+      "original_number": null,
+      "label": "bib:del2006sequential",
+      "target": "tex-zh-cn/bibliography/entries.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0178",
+      "type": "bibliography",
+      "source_locator": "main_vsmc.bbl；原 PDF 9–10 页",
+      "original_number": null,
+      "label": "bib:dinh2014nice",
+      "target": "tex-zh-cn/bibliography/entries.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0179",
+      "type": "bibliography",
+      "source_locator": "main_vsmc.bbl；原 PDF 9–10 页",
+      "original_number": null,
+      "label": "bib:doucet2009tutorial",
+      "target": "tex-zh-cn/bibliography/entries.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0180",
+      "type": "bibliography",
+      "source_locator": "main_vsmc.bbl；原 PDF 9–10 页",
+      "original_number": null,
+      "label": "bib:doucet2001introduction",
+      "target": "tex-zh-cn/bibliography/entries.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0181",
+      "type": "bibliography",
+      "source_locator": "main_vsmc.bbl；原 PDF 9–10 页",
+      "original_number": null,
+      "label": "bib:Gao2016",
+      "target": "tex-zh-cn/bibliography/entries.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0182",
+      "type": "bibliography",
+      "source_locator": "main_vsmc.bbl；原 PDF 9–10 页",
+      "original_number": null,
+      "label": "bib:GordonSS:1993",
+      "target": "tex-zh-cn/bibliography/entries.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0183",
+      "type": "bibliography",
+      "source_locator": "main_vsmc.bbl；原 PDF 9–10 页",
+      "original_number": null,
+      "label": "bib:Gu2015",
+      "target": "tex-zh-cn/bibliography/entries.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0184",
+      "type": "bibliography",
+      "source_locator": "main_vsmc.bbl；原 PDF 9–10 页",
+      "original_number": null,
+      "label": "bib:Guarniero2015",
+      "target": "tex-zh-cn/bibliography/entries.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0185",
+      "type": "bibliography",
+      "source_locator": "main_vsmc.bbl；原 PDF 9–10 页",
+      "original_number": null,
+      "label": "bib:Hoffman2013",
+      "target": "tex-zh-cn/bibliography/entries.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0186",
+      "type": "bibliography",
+      "source_locator": "main_vsmc.bbl；原 PDF 9–10 页",
+      "original_number": null,
+      "label": "bib:Huggins2017",
+      "target": "tex-zh-cn/bibliography/entries.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0187",
+      "type": "bibliography",
+      "source_locator": "main_vsmc.bbl；原 PDF 9–10 页",
+      "original_number": null,
+      "label": "bib:Johnson2016",
+      "target": "tex-zh-cn/bibliography/entries.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0188",
+      "type": "bibliography",
+      "source_locator": "main_vsmc.bbl；原 PDF 9–10 页",
+      "original_number": null,
+      "label": "bib:Jordan1999",
+      "target": "tex-zh-cn/bibliography/entries.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0189",
+      "type": "bibliography",
+      "source_locator": "main_vsmc.bbl；原 PDF 9–10 页",
+      "original_number": null,
+      "label": "bib:KingmaB2015",
+      "target": "tex-zh-cn/bibliography/entries.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0190",
+      "type": "bibliography",
+      "source_locator": "main_vsmc.bbl；原 PDF 9–10 页",
+      "original_number": null,
+      "label": "bib:Kingma2014",
+      "target": "tex-zh-cn/bibliography/entries.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0191",
+      "type": "bibliography",
+      "source_locator": "main_vsmc.bbl；原 PDF 9–10 页",
+      "original_number": null,
+      "label": "bib:kitagawa1996monte",
+      "target": "tex-zh-cn/bibliography/entries.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0192",
+      "type": "bibliography",
+      "source_locator": "main_vsmc.bbl；原 PDF 9–10 页",
+      "original_number": null,
+      "label": "bib:Krishnan2017",
+      "target": "tex-zh-cn/bibliography/entries.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0193",
+      "type": "bibliography",
+      "source_locator": "main_vsmc.bbl；原 PDF 9–10 页",
+      "original_number": null,
+      "label": "bib:Kucukelbir2016",
+      "target": "tex-zh-cn/bibliography/entries.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0194",
+      "type": "bibliography",
+      "source_locator": "main_vsmc.bbl；原 PDF 9–10 页",
+      "original_number": null,
+      "label": "bib:Le2017aesmc",
+      "target": "tex-zh-cn/bibliography/entries.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0195",
+      "type": "bibliography",
+      "source_locator": "main_vsmc.bbl；原 PDF 9–10 页",
+      "original_number": null,
+      "label": "bib:Maaloe2016",
+      "target": "tex-zh-cn/bibliography/entries.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0196",
+      "type": "bibliography",
+      "source_locator": "main_vsmc.bbl；原 PDF 9–10 页",
+      "original_number": null,
+      "label": "bib:Maddison2017",
+      "target": "tex-zh-cn/bibliography/entries.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0197",
+      "type": "bibliography",
+      "source_locator": "main_vsmc.bbl；原 PDF 9–10 页",
+      "original_number": null,
+      "label": "bib:Naesseth2014",
+      "target": "tex-zh-cn/bibliography/entries.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0198",
+      "type": "bibliography",
+      "source_locator": "main_vsmc.bbl；原 PDF 9–10 页",
+      "original_number": null,
+      "label": "bib:naessethLS2015nested",
+      "target": "tex-zh-cn/bibliography/entries.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0199",
+      "type": "bibliography",
+      "source_locator": "main_vsmc.bbl；原 PDF 9–10 页",
+      "original_number": null,
+      "label": "bib:Naesseth2017",
+      "target": "tex-zh-cn/bibliography/entries.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0200",
+      "type": "bibliography",
+      "source_locator": "main_vsmc.bbl；原 PDF 9–10 页",
+      "original_number": null,
+      "label": "bib:Paige2016",
+      "target": "tex-zh-cn/bibliography/entries.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0201",
+      "type": "bibliography",
+      "source_locator": "main_vsmc.bbl；原 PDF 9–10 页",
+      "original_number": null,
+      "label": "bib:Pitt2012",
+      "target": "tex-zh-cn/bibliography/entries.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0202",
+      "type": "bibliography",
+      "source_locator": "main_vsmc.bbl；原 PDF 9–10 页",
+      "original_number": null,
+      "label": "bib:Ranganath2014",
+      "target": "tex-zh-cn/bibliography/entries.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0203",
+      "type": "bibliography",
+      "source_locator": "main_vsmc.bbl；原 PDF 9–10 页",
+      "original_number": null,
+      "label": "bib:ranganath2016deep",
+      "target": "tex-zh-cn/bibliography/entries.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0204",
+      "type": "bibliography",
+      "source_locator": "main_vsmc.bbl；原 PDF 9–10 页",
+      "original_number": null,
+      "label": "bib:Ranganath2016",
+      "target": "tex-zh-cn/bibliography/entries.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0205",
+      "type": "bibliography",
+      "source_locator": "main_vsmc.bbl；原 PDF 9–10 页",
+      "original_number": null,
+      "label": "bib:Rezende2015",
+      "target": "tex-zh-cn/bibliography/entries.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0206",
+      "type": "bibliography",
+      "source_locator": "main_vsmc.bbl；原 PDF 9–10 页",
+      "original_number": null,
+      "label": "bib:Rezende2014",
+      "target": "tex-zh-cn/bibliography/entries.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0207",
+      "type": "bibliography",
+      "source_locator": "main_vsmc.bbl；原 PDF 9–10 页",
+      "original_number": null,
+      "label": "bib:Robert2004",
+      "target": "tex-zh-cn/bibliography/entries.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0208",
+      "type": "bibliography",
+      "source_locator": "main_vsmc.bbl；原 PDF 9–10 页",
+      "original_number": null,
+      "label": "bib:Ruiz2016",
+      "target": "tex-zh-cn/bibliography/entries.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0209",
+      "type": "bibliography",
+      "source_locator": "main_vsmc.bbl；原 PDF 9–10 页",
+      "original_number": null,
+      "label": "bib:saeedi2014variational",
+      "target": "tex-zh-cn/bibliography/entries.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0210",
+      "type": "bibliography",
+      "source_locator": "main_vsmc.bbl；原 PDF 9–10 页",
+      "original_number": null,
+      "label": "bib:Salimans2015",
+      "target": "tex-zh-cn/bibliography/entries.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0211",
+      "type": "bibliography",
+      "source_locator": "main_vsmc.bbl；原 PDF 9–10 页",
+      "original_number": null,
+      "label": "bib:schonldwnsd2015",
+      "target": "tex-zh-cn/bibliography/entries.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0212",
+      "type": "bibliography",
+      "source_locator": "main_vsmc.bbl；原 PDF 9–10 页",
+      "original_number": null,
+      "label": "bib:stewart1992",
+      "target": "tex-zh-cn/bibliography/entries.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0213",
+      "type": "bibliography",
+      "source_locator": "main_vsmc.bbl；原 PDF 9–10 页",
+      "original_number": null,
+      "label": "bib:titsias2014doubly",
+      "target": "tex-zh-cn/bibliography/entries.tex",
+      "status": "verified"
+    },
+    {
+      "id": "obj-0214",
+      "type": "bibliography",
+      "source_locator": "main_vsmc.bbl；原 PDF 9–10 页",
+      "original_number": null,
+      "label": "bib:Tran2016",
+      "target": "tex-zh-cn/bibliography/entries.tex",
+      "status": "verified"
+    }
+  ],
+  "references": [
+    {
+      "from": "obj-0004",
+      "to": "bib:cappe2005inference",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0005",
+      "to": "bib:del2006sequential",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0005",
+      "to": "bib:doucet2009tutorial",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0005",
+      "to": "bib:Naesseth2014",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0008",
+      "to": "eq:rb",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0008",
+      "to": "eq:proxgrad",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0011",
+      "to": "eq:proxgrad",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0011",
+      "to": "eq:lb",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0011",
+      "to": "fig:bVSu",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0011",
+      "to": "eq:rb",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0011",
+      "to": "eq:proxgrad",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0012",
+      "to": "eq:rb",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0012",
+      "to": "sec:vsmc",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0013",
+      "to": "fig:bVSu",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0015",
+      "to": "tab:vsmcVSopt",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0015",
+      "to": "bib:doucet2009tutorial",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0018",
+      "to": "bib:Chib2009",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0021",
+      "to": "tab:sv",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0024",
+      "to": "fig:sv",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0027",
+      "to": "bib:Gao2016",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0029",
+      "to": "bib:Krishnan2017",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0033",
+      "to": "fig:neural",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0046",
+      "to": "bib:Kingma2014",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0046",
+      "to": "bib:Hoffman2013",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0046",
+      "to": "bib:ranganath2016deep",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0047",
+      "to": "bib:stewart1992",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0047",
+      "to": "bib:GordonSS:1993",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0047",
+      "to": "bib:kitagawa1996monte",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0050",
+      "to": "fig:fig1",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0050",
+      "to": "bib:Burda2016",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0051",
+      "to": "bib:del2006sequential",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0051",
+      "to": "bib:doucet2009tutorial",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0051",
+      "to": "bib:Naesseth2014",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0052",
+      "to": "sec:expts",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0052",
+      "to": "bib:doucet2001introduction",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0052",
+      "to": "bib:doucet2009tutorial",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0056",
+      "to": "bib:Cornebise2009",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0056",
+      "to": "bib:Guarniero2015",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0056",
+      "to": "bib:naessethLS2015nested",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0056",
+      "to": "bib:doucet2009tutorial",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0056",
+      "to": "bib:Gu2015",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0056",
+      "to": "bib:Paige2016",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0057",
+      "to": "bib:Salimans2015",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0057",
+      "to": "bib:Tran2016",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0057",
+      "to": "bib:Ranganath2016",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0057",
+      "to": "bib:Maaloe2016",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0057",
+      "to": "bib:Rezende2015",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0057",
+      "to": "bib:dinh2014nice",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0058",
+      "to": "bib:Archer2015",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0058",
+      "to": "bib:Johnson2016",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0058",
+      "to": "bib:Krishnan2017",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0059",
+      "to": "bib:Burda2016",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0059",
+      "to": "bib:Cremer2017",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0059",
+      "to": "bib:Bachman2015",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0059",
+      "to": "bib:saeedi2014variational",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0060",
+      "to": "eq:lb",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0060",
+      "to": "eq:lb",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0060",
+      "to": "bib:Maddison2017",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0060",
+      "to": "bib:Le2017aesmc",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0060",
+      "to": "bib:Maddison2017",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0060",
+      "to": "bib:Le2017aesmc",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0061",
+      "to": "bib:doucet2009tutorial",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0061",
+      "to": "bib:doucet2001introduction",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0061",
+      "to": "bib:schonldwnsd2015",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0063",
+      "to": "fig:fig1",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0065",
+      "to": "bib:GordonSS:1993",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0071",
+      "to": "bib:Burda2016",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0073",
+      "to": "bib:Burda2016",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0074",
+      "to": "alg:vsmc",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0074",
+      "to": "bib:Burda2016",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0075",
+      "to": "fig:vis",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0076",
+      "to": "thm:lb",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0076",
+      "to": "bib:DelMoral2004",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0076",
+      "to": "bib:Pitt2012",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0076",
+      "to": "bib:Naesseth2014",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0076",
+      "to": "bib:DelMoral2004",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0076",
+      "to": "bib:DelMoral2004",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0077",
+      "to": "eq:var-dist",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0077",
+      "to": "bib:Huggins2017",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0078",
+      "to": "fig:fig1",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0078",
+      "to": "sec:supp:independent",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0078",
+      "to": "bib:berard2014",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0084",
+      "to": "bib:Jordan1999",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0089",
+      "to": "eq:smcapprox",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0089",
+      "to": "alg:vsmc",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0092",
+      "to": "alg:vsmc",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0094",
+      "to": "sec:pf:dist",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0094",
+      "to": "eq:smc_margll",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0094",
+      "to": "eq:elbo",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0097",
+      "to": "eq:var-dist",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0097",
+      "to": "eq:lb",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0097",
+      "to": "eq:elbo",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0098",
+      "to": "sec:pf:lb",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0098",
+      "to": "alg:vsmc",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0100",
+      "to": "eq:lb",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0100",
+      "to": "bib:Kingma2014",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0100",
+      "to": "bib:Rezende2014",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0101",
+      "to": "eq:rep-grad",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0101",
+      "to": "bib:Ruiz2016",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0101",
+      "to": "bib:Naesseth2017",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0102",
+      "to": "sec:expts",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0102",
+      "to": "bib:Robert2004",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0102",
+      "to": "bib:Ranganath2014",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0103",
+      "to": "bib:Ranganath2014",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0104",
+      "to": "eq:rb",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0105",
+      "to": "sec:supp:so",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0106",
+      "to": "eq:proxgrad",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0106",
+      "to": "alg:vsmc",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0106",
+      "to": "bib:KingmaB2015",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0106",
+      "to": "bib:Kucukelbir2016",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0107",
+      "to": "alg:so",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0108",
+      "to": "eq:proxgrad",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0108",
+      "to": "eq:stepsize",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0109",
+      "to": "bib:Beal2003",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0110",
+      "to": "eq:lb",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0110",
+      "to": "eq:proxgrad",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0110",
+      "to": "eq:lb:vem",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0110",
+      "to": "bib:Hoffman2013",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0110",
+      "to": "bib:titsias2014doubly",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0125",
+      "to": "prop:dist",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0127",
+      "to": "eq:supp:vsmc",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0133",
+      "to": "thm:lb",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0134",
+      "to": "eq:supp:exact",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0154",
+      "to": "fig:supp:T",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0154",
+      "to": "fig:supp:T",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0154",
+      "to": "fig:supp:T",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0154",
+      "to": "bib:berard2014",
+      "kind": "citation"
+    },
+    {
+      "from": "obj-0162",
+      "to": "eq:var-dist",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0162",
+      "to": "eq:supp:vsmc",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0162",
+      "to": "fig:fig1",
+      "kind": "crossref"
+    },
+    {
+      "from": "obj-0162",
+      "to": "fig:fig1",
+      "kind": "crossref"
+    }
+  ],
+  "note": "全部源页、目标页和正文模块已人工核对；对象段块可交叉覆盖，公式计数和链接另行验证。"
+}

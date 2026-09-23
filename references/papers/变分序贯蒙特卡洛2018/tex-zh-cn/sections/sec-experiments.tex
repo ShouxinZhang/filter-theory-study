@@ -1,0 +1,140 @@
+% 来源：sec-experiments.tex；原 PDF 第 6–8 页。
+
+\section{实验研究}\label{sec:expts}
+\paragraph{线性高斯状态空间模型}
+线性高斯状态空间模型是时间序列数据中广泛使用的模型，具有高效计算精确后验的算法。我们用它研究 VSMC 的收敛性质及有偏梯度的影响，并验证能否学得良好的提议分布。比较对象包括以先验为提议分布的自助粒子滤波器（BPF），以及用似然对先验作倾斜后得到的（局部）最优提议分布。
+
+\begin{figure}[htbp]
+\centering
+\begin{minipage}{.48\linewidth}\centering
+\includegraphics[width=.49\linewidth]{gradient_terms_N2_seed0.pdf}\hfill
+\includegraphics[width=.49\linewidth]{gradient_terms_N2_seed3.pdf}\\
+\includegraphics[width=.49\linewidth]{gradient_terms_N2_seed666.pdf}\hfill
+\includegraphics[width=.49\linewidth]{gradient_terms_N2_seed1986.pdf}
+\end{minipage}\hfill
+\begin{minipage}{.50\linewidth}\centering
+\setlength{\tabcolsep}{0pt}\begin{tabular}{@{}cc@{}}
+\scriptsize $d_x=10,d_y=1$，$C$ 稀疏 & \scriptsize $d_x=25,d_y=1$，$C$ 稠密\\
+\includegraphics[width=.49\linewidth]{LGSS_T10_Dx10_Dy1_R1.0_plot.pdf}&\includegraphics[width=.49\linewidth]{LGSS_T10_Dx25_Dy1_R1.0_plot.pdf}\\
+\scriptsize $d_x=10,d_y=3$，$C$ 稠密 & \scriptsize $d_x=25,d_y=25$，$C$ 稀疏\\
+\includegraphics[width=.49\linewidth]{LGSS_T10_Dx10_Dy3_R1.0_plot.pdf}&\includegraphics[width=.49\linewidth]{LGSS_T10_Dx25_Dy25_R1.0_plot.pdf}
+\end{tabular}
+\end{minipage}
+\caption{\emph{左侧：}标量线性高斯模型在四个随机生成数据集上的随机梯度分量 $g_{\text{score}}$（式~\eqref{eq:rb}）与 $g_{\text{rep}}$（式~\eqref{eq:proxgrad}）的均值和波动范围，粒子数 $N=2$。\emph{右侧：}四种线性高斯模型的对数边缘似然 $\log p(y_{1:T})$，以及使用有偏梯度（蓝色）或无偏梯度（红色）的 VSMC 的 ELBO 随迭代次数的变化。图中 Iterations 表示迭代次数，Var 表示方差。}\label{fig:bVSu}
+\end{figure}
+
+模型为
+
+\begin{align*}
+x_t &= A x_{t-1} +v_t, \\
+y_t &= C x_t+e_t,
+\end{align*}
+其中 $v_t\sim\mathcal N(0,Q)$、$e_t\sim\mathcal N(0,R)$、$x_1\sim\mathcal N(0,I)$。对数边缘似然 $\log p(y_{1:T})$ 可由卡尔曼滤波器计算。
+
+我们研究用有偏梯度~\eqref{eq:proxgrad} 优化代理 ELBO~\eqref{eq:lb} 的影响。先考虑一个简单标量模型，令 $A=0.5$、$Q=1$、$C=1$、$R=1$、$T=2$。提议分布采用 $r(x_t\given x_{t-1}\g\lambda)=\mathcal N(x_t\g\lambda+0.5x_{t-1},1)$，其中 $x_0\equiv0$。图~\ref{fig:bVSu} 左侧展示了四个随机生成数据集上的梯度估计：带控制变量的 $g_{\text{score}}$（式~\eqref{eq:rb}）及 $g_{\text{rep}}$（式~\eqref{eq:proxgrad}）的均值和波动范围随 $\lambda$ 的变化。
+
+当两个均值之和为零时，得到最优 $\lambda$。忽略得分函数项 $g_{\text{score}}$（式~\eqref{eq:rb}）会使最优 $\lambda$ 发生偏移。然而，即使对这样简单的模型，尽管采用了第~\ref{sec:vsmc} 节的方差缩减方法，得分函数项（红色）的方差仍比重参数化项（蓝色）高出几个数量级。这种方差会显著影响随机优化的收敛速度。
+
+接下来，我们考察偏移的大小及其对代理 ELBO 的影响。生成数据时设 $T=10$、$(A)_{ij}=\alpha^{|i-j|+1}$、$\alpha=0.42$、$Q=I$、$R=I$。我们考察了 $d_x=\dim(x_t)$、$d_y=\dim(y_t)$ 和 $C$ 的多种设置。稀疏 $C$ 测量 $x_t$ 的前 $d_y$ 个分量；稠密 $C$ 的元素随机生成，$C_{ij}\sim\mathcal N(0,1)$。图~\ref{fig:bVSu} 右侧展示真实对数边缘似然，以及使用有偏梯度（蓝色）或无偏梯度（红色）的 VSMC 的 ELBO 随迭代次数的变化。提议分布选为
+
+\begin{align*}
+r(x_t\mid x_{t-1}\g\lambda) &= \mathcal{N}\left(x_t\mid \mu_t + 
+\operatorname{diag}(\beta_t) A x_{t-1}, 
+\operatorname{diag}(\sigma_t^2)\right).
+\end{align*}
+其中 $\lambda=\{\mu_t,\beta_t,\sigma_t^2\}_{t=1}^T$，粒子数设为 $N=4$。注意，虽然梯度有偏，所得的代理 ELBO 估计仍无偏。可以看到，无论用有偏还是无偏梯度训练，VSMC 的最终 ELBO 值都很接近，但有偏梯度收敛更快。因此，余下实验均采用有偏梯度。
+
+随后，我们比较 VSMC 学习到的提议分布与 SMC 文献中的标准提议分布。最常用的是从先验 $f$ 采样的 BPF。我们还考虑所谓的最优提议分布 $r\propto f\cdot g$，它最小化增量重要性权重的条件方差\citep{doucet2009tutorial}。表~\ref{tab:vsmcVSopt} 给出了线性高斯 SSM 的结果，设置为 $T=25$、$Q=0.1^2I$、$R=1$、$d_x=10$、$d_y=1$。由于状态维数相对较高，BPF 的对数边缘似然估计表现出显著偏差，而采用最优提议分布的 SMC 好得多。VSMC 优于这两者，学得的准确提议分布使 ELBO 仅比真实对数边缘似然低 $0.9$ nat。还要强调，对大多数模型，最优提议分布无法直接获得。
+
+\begin{table}[tb]
+\centering
+\caption{BPF、使用（局部）最优提议分布的 SMC，以及 VSMC 的 ELBO。真实对数边缘似然为 $\log p(y_{1:T})=-236.9$。}
+
+\label{tab:vsmcVSopt}
+\begin{tabular}{cccc}
+& BPF & 最优提议 SMC & VSMC \\
+ELBO & $-6701.4$ & $-253.4$ & $\bm{-237.8}$
+\end{tabular}
+\end{table}
+
+\paragraph{随机波动率}
+金融计量经济学中常用的一类模型是（多元）随机波动率模型\citep{Chib2009}。模型为
+
+\begin{align*}
+x_t &= \mu +\phi(x_{t-1}-\mu)+v_t, \\
+y_t &= \beta\exp{\left(\frac{x_t}{2}\right)}e_t,
+\end{align*}
+其中 $v_t\sim\mathcal N(0,Q)$、$e_t\sim\mathcal N(0,I)$、$x_1\sim\mathcal N(\mu,Q)$，且 $\theta=(\mu,\phi,Q,\beta)$。（多元情形中的乘法逐元素进行。）该模型的 $\log p(y_{1:T}\g\theta)$ 及其梯度难以计算，因此我们用 VEM 近似来寻找未知参数 $\theta$。我们将 VSMC 与 IWAE、结构化 VI 比较。VSMC 和 IWAE 的提议分布选为
+
+\begin{align*}
+r(x_t \given x_{t-1}\g\lambda,\theta) \propto f(x_t\given 
+x_{t-1}\g\theta) \, \mathcal{N}(x_t\g \mu_t, \Sigma_t),
+\end{align*}
+变分参数为 $\lambda=(\mu_1,\ldots,\mu_T,\Sigma_1,\ldots,\Sigma_T)$。结构化 VI 的变分近似定义为\[q(x_{1:T}\g\lambda,\theta)=\prod_{t=1}^T r(x_t\given x_{t-1}\g\lambda,\theta).\]
+
+我们研究 22 种国际货币兑美元汇率在 10 年间（2007 年 9 月至 2017 年 8 月）的月收益率，数据来自美国联邦储备系统。表~\ref{tab:sv} 报告了粒子／样本数 $N\in\{4,8,16\}$ 下优化后的 ELBO（越高越好）。VSMC 相比其他方法，每个时间步改善近 $0.2$ nat。
+
+\begin{table}[tb]
+\centering
+\caption{汇率数据上 $T=119$ 的随机波动率模型的 ELBO。比较 VSMC（本文）、IWAE 与结构化 VI。}
+
+\label{tab:sv}
+\begin{tabular}{ccc}
+&方法 & ELBO \\
+\rule{0pt}{3ex}
+& 结构化 VI & $6905.1$ \\
+\hline
+\multirow{2}{*}{$N=4$} & IWAE & $6911.2$ \\
+ & \textbf{VSMC} & $\bm{6921.6}$ \\
+\hline
+ \multirow{2}{*}{$N=8$} & IWAE & $6912.4$ \\
+ & \textbf{VSMC} & $\bm{6935.8}$ \\
+\hline
+ \multirow{2}{*}{$N=16$} & IWAE & $6913.3$ \\
+ & \textbf{VSMC} & $\bm{6936.6}$ \\
+\end{tabular}
+\end{table}
+
+理论上，增加样本数 $N$ 可以改善 IWAE 和 VSMC 的下界。这意味着，为了提高计算效率，可以先用较少粒子学习提议分布，再在测试时按需增加 $N$ 以提升精度。我们固定用 $N=16$ 优化得到的 $\theta^\star$ 和 $\lambda^\star$，研究增加样本数对 VSMC 与 IWAE 的影响。图~\ref{fig:sv} 表明，IWAE 的收益有限，而 VSMC 的收益可以很显著。
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=2.5in]{sv_elbo_vs_N_T119_plot.pdf}
+  
+  \caption{固定 $\theta^\star,\lambda^\star$ 后，VSMC（本文）与 IWAE 的 ELBO 估计及置信带随粒子数 $N$ 的变化。}\label{fig:sv}
+
+\end{figure}
+
+
+\paragraph{深度马尔可夫模型}
+
+理解神经回路的动态是神经科学中的一个重要问题。我们研究猕猴完成伸手动作时，同步记录到的 105 个运动皮层神经元\citep[参见][]{Gao2016}。每次试验中，猕猴伸手朝向 14 个目标之一；每次试验长 $T=21$ 个时间步。训练集含 700 次试验，测试集含 84 次。
+
+我们使用循环神经网络同时建模动态与观测。模型为
+
+\begin{align*}
+x_t &= \mu_\theta(x_{t-1})+\exp\left(\sigma_\theta (x_{t-1})/2\right) v_t, \\
+y_t &\sim \operatorname{Poisson}\left(\exp{\left(\eta_\theta(x_t)\right)}\right),
+\end{align*}
+其中 $v_t\sim\mathcal N(0,I)$、$x_0\equiv0$，$\mu,\sigma,\eta$ 为由 $\theta$ 参数化的神经网络。状态转移动力学中的乘法逐元素进行。这是一个深度马尔可夫模型\citep{Krishnan2017}。
+
+在推断中，VSMC 与 IWAE 都使用以下提议分布：
+
+\begin{align*}
+r(x_t\given x_{t-1}, y_t\g\lambda) &\propto 
+\mathcal{N}\left(x_t\g 
+\mu_\lambda^x(x_{t-1}),\exp\left(\sigma_\lambda^x(x_{t-1})\right)\right) \\
+&\times \,
+\mathcal{N}\left(x_t\g 
+\mu_\lambda^y(y_t),\exp\left(\sigma_\lambda^y(y_{t})\right)\right),
+\end{align*}
+其中 $\mu^x,\sigma^x,\mu^y,\sigma^y$ 为由 $\lambda$ 参数化的神经网络，提议分布在 $x_t$ 的各分量上因子分解。
+
+\begin{figure}[tb]
+\centering
+\includegraphics[width=.65\linewidth]{neural_test_T21.pdf}
+\caption{神经元群体测试数据上，VSMC（本文）与 IWAE 的 ELBO 估计随迭代次数的变化，其中 $d_x\in\{3,5,10\}$、$T=21$。图中 Iterations 表示迭代次数。}\label{fig:neural}
+
+\end{figure}
+图~\ref{fig:neural} 展示了 $d_x\in\{3,5,10\}$、$N=8$ 时的结果。VSMC 更快达到相同的 ELBO。
+

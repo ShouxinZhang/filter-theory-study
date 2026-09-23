@@ -1,0 +1,22 @@
+% 译者新增；不计入原论文对象和页码。
+\clearpage
+\section*{翻译说明}\markboth{翻译说明}{翻译说明}
+\phantomsection\label{translation:notes}\addcontentsline{toc}{section}{翻译说明}
+本译稿依据 arXiv:1705.11140v2 源码及其 13 页 PDF。以下修订已直接纳入正文，位置按原 PDF 标注。本次未穷尽原文错误，也未复现实验；实验数值及书目保留。
+
+\begin{enumerate}
+\item \textbf{代理 ELBO 与 KL 上界（原 PDF 第 4 页，第 3 节）。}原文把代理 ELBO 的下界关系直接称为 KL 散度的上界，省略了平移和取负。明确写为 $\operatorname{KL}(q\|p)=\log p(y_{1:T})-\mathcal L(\lambda)\leq\log p(y_{1:T})-\widetilde{\mathcal L}(\lambda)$。
+\item \textbf{路径之外的祖先索引（原 PDF 第 4、11–12 页，式~\eqref{eq:var-dist} 及其证明）。}原文使用 $a_{1:T-1}^{\neg b_{1:T-1}}$ 排除选中路径的祖先变量。然而 $a_{t-1}^i$ 由时刻 $t$ 的子粒子 $i$ 索引，而选中项是 $a_{t-1}^{b_t}=b_{t-1}$，故统一改为 $a_{1:T-1}^{\neg b_{2:T}}$。同时明确路径外密度是其他粒子的重采样与提议核乘积，并非完整联合分布的条件密度；补全附录末步的索引求和依据。
+\item \textbf{边缘化中的求和（原 PDF 第 11 页，A.1 节式~\eqref{eq:supp:vsmc} 之前）。}原文写成对 $b_{1:T}$ 取期望的联合密度；应为对所有 $b_{1:T}$ 的联合密度求和。若再对联合密度取均匀期望，会错误地多出 $N^{-T}$ 因子。后续利用条件索引分布为 $N^{-T}$ 的推导保留。
+\item \textbf{控制变量的归一化项（原 PDF 第 12 页，A.3 节第一式）。}第一项对 $N$ 个祖先求和，第二项漏乘了 $N$。修正为
+\[
+\sum_{i=1}^N\nabla\log w_{t-1}^{a_{t-1}^i}
+-N\sum_{\ell=1}^N\bar w_{t-1}^{\ell}\nabla\log w_{t-1}^{\ell}.
+\]
+每个祖先均贡献一次对数归一化项的导数，修正后条件期望为零。另补明基线不能额外依赖当前祖先抽样，留一估计需 $N>1$。
+\item \textbf{渐近结论的量词与可积性（原 PDF 第 6、13 页，第 4 节及 A.4 节）。}将 $N\to\infty$ 语境中的有限 $N$ 等号写为极限，并明确采用所引 SMC 结果的正则条件。对于 $T\to\infty$、$N=bT$，式中上界趋于 $\sigma^2(\lambda)/(2b)$；任意精度需要选择足够大的 $b$，仅固定比例（例如 $b=2$）并不能推出误差趋零。将用于从分布收敛推至期望收敛的可积性条件明确施加于中心化量 $\log(\widehat p/p)$。
+\item \textbf{对数似然与无偏性的措辞（原 PDF 第 2、7 页，图~\ref{fig:fig1} 及实验正文）。}图~\ref{fig:fig1} 的 ELBO 比较对象明确为对数边缘似然。实验中“所得 ELBO 无偏”明确为“代理 ELBO 的估计无偏”；有偏梯度不等于对该目标的蒙特卡洛估计也有偏。BPF 的显著偏差指其对数似然估计，并不否定边缘似然估计本身的无偏性。
+\end{enumerate}
+
+\paragraph{排版约定}
+采用技能蓝色单栏模板。粗体使用 \verb|\bm|，迹运算符使用正体小写 $\operatorname{tr}$，微分符号使用正体 $\mathrm d$；普通变量 $d_x,d_y$ 保持原义。保留原编号、步骤与引用键；复用原矢量图。图内 particle、time 分别为粒子、时间，其余英文含义见图注。文献题名保留原文以便检索。

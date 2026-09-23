@@ -1,0 +1,38 @@
+\subsection{定理~\ref{thm:lb} 的证明}\label{sec:pf:lb}
+利用上面关于 $q(x_{1:T}\g\lambda)$ 分布的结果，ELBO 可写为
+
+\begin{align}
+\mathcal{L}(\lambda) &= \E_{q(x_{1:T}\g\lambda)}\left[\log 
+p(x_{1:T},y_{1:T}) -\log q(x_{1:T}\g\lambda)\right] 
+\nonumber \\
+&= -\int \left\{p(x_{1:T}^{b_{1:T}},y_{1:T}) 
+\E_{\widetilde\phi(x_{1:T}^{\neg b_{1:T}},a_{1:T-1}^{\neg b_{2:T}} \g\lambda)}
+\left[ \frac{1}{
+\prod_{t=1}^T \frac{1}{N} \sum_{i=1}^N w_t^i }\right] \cdot \nonumber \right.\\
+&\left.\qquad\qquad\qquad\cdot 
+\log  
+\E_{\widetilde\phi(x_{1:T}^{\neg b_{1:T}},a_{1:T-1}^{\neg b_{2:T}} \g\lambda)}
+\left[ \frac{1}{
+\prod_{t=1}^T \frac{1}{N} \sum_{i=1}^N w_t^i }\right] \right\}
+\myd x_{1:T}^{b_{1:T}}.
+\label{eq:supp:exact}
+\end{align}
+注意，$-t\log t$ 在 $t>0$ 上是凹函数，故条件 Jensen 不等式给出 $-\E[t]\log\E[t]\geq-\E[t\log t]$。将其用于式~\eqref{eq:supp:exact}，得到
+
+\begin{align*}
+\mathcal{L}(\lambda) &\geq \int 
+\E_{\widetilde\phi(x_{1:T}^{\neg b_{1:T}},a_{1:T-1}^{\neg b_{2:T}} \g\lambda)}
+\left[ \frac{p(x_{1:T}^{b_{1:T}},y_{1:T})}{
+\prod_{t=1}^T \frac{1}{N} \sum_{i=1}^N w_t^i }
+  \sum_{t=1}^T \log 
+\left(\frac{1}{N}\sum_{i=1}^N w_t^i\right)\right]\myd 
+x_{1:T}^{b_{1:T}} \nonumber\\
+&= \E_{\widetilde\phi(x_{1:T}^{1:N},a_{1:T-1}^{1:N}\g\lambda)}\left[\sum_{t=1}^T \log 
+\left(\frac{1}{N}\sum_{i=1}^N w_t^i\right)\right] = 
+\widetilde{\mathcal{L}}(\lambda),
+\end{align*}
+最后一步使用上述分解：$p(x_{1:T},y_{1:T})\widehat p(y_{1:T})^{-1}$ 乘以固定路径之外的生成密度，等于 $N^T$ 倍的 VSMC 完整联合密度。对路径索引利用交换对称性，再边缘化最终选择 $b_T$，便得到右侧关于全部 SMC 粒子与祖先变量的期望。
+
+\hfill$\square$
+
+

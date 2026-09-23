@@ -1,0 +1,60 @@
+\subsection{命题~\ref{prop:dist} 的证明}\label{sec:pf:dist}
+先注意，VSMC 算法产生的所有随机变量的分布为
+
+\begin{align}
+&\widetilde\phi(x_{1:T}^{1:N},a_{1:T-1}^{1:N},b_T \g\lambda) = \frac{w_T^{b_T}}{\sum_{\ell}w_T^\ell} 
+\prod_{i=1}^N r(x_1^i\g\lambda) \cdot \prod_{t=2}^T \prod_{i=1}^N
+\frac{w_{t-1}^{a_{t-1}^i}}{\sum_\ell w_{t-1}^\ell} r(x_t^i | 
+x_{t-1}^{a_{t-1}^i}\g\lambda).\label{eq:supp:vsmc-all}
+\end{align}
+我们关注边缘分布
+\[
+q(x_{1:T}\g\lambda)=\sum_{b_{1:T}\in\{1,\ldots,N\}^T}\widetilde\phi(x_{1:T}^{b_{1:T}},b_{1:T}\g\lambda).
+\]
+关键观察是：给定返回轨迹 $x_{1:T}$ 后，其祖先路径索引 $b_{1:T}\mid x_{1:T}$ 在 $\{1,\ldots,N\}^T$ 上均匀分布，这是各时刻粒子标签的交换对称性所致。因此，对任意固定的 $b_{1:T}$，有
+
+\begin{align}
+&q(x_{1:T}\g\lambda) = 
+\frac{\widetilde\phi(x_{1:T}^{b_{1:T}},b_{1:T}\g\lambda)}{\widetilde\phi(b_{1:T}\mid x_{1:T}\g\lambda)} 
+=\frac{1}{N^{-T}}  \sum_{a_{1:T-1}^{\neg b_{2:T}}}\int 
+\widetilde\phi(x_{1:T}^{b_{1:T}},x_{1:T}^{\neg 
+b_{1:T}},a_{1:T-1}^{\neg b_{2:T}} \g\lambda)
+\,\myd x_{1:T}^{\neg b_{1:T}},
+\label{eq:supp:vsmc}
+\end{align}
+其中
+\begin{align*}
+&\frac{1}{N^{-T}}  \widetilde\phi(x_{1:T}^{b_{1:T}},x_{1:T}^{\neg b_{1:T}},a_{1:T-1}^{\neg b_{2:T}} \g\lambda) \\
+&= N^T  
+\frac{w_1^{b_1}}{\sum_\ell w_1^\ell}r(x_1^{b_1}\g\lambda)\prod_{t=2}^T 
+\frac{w_t^{b_t}}{\sum_\ell w_t^\ell} r(x_t^{b_t}\mid 
+x_{t-1}^{b_{t-1}}\g\lambda) \cdot
+\prod_{\substack{i=1 \\ i\neq b_1}}^N r(x_1^i\g\lambda) \cdot \prod_{t=2}^T 
+\prod_{\substack{i=1 \\ i\neq b_t}}^N
+\frac{w_{t-1}^{a_{t-1}^i}}{\sum_\ell w_{t-1}^\ell} r(x_t^i | 
+x_{t-1}^{a_{t-1}^i}\g\lambda) \\
+&= p(x_1^{b_1},y_1)\prod_{t=2}^T 
+\frac{p(x_{1:t}^{b_{1:t}},y_{1:t})}{p(x_{1:t-1}^{b_{1:t-1}},y_{1:t-1})}
+\prod_{t=1}^T \frac{1}{\frac{1}{N} \sum_\ell w_t^\ell} \cdot
+\prod_{\substack{i=1 \\ i\neq b_1}}^N r(x_1^i\g\lambda) \cdot \prod_{t=2}^T 
+\prod_{\substack{i=1 \\ i\neq b_t}}^N
+\frac{w_{t-1}^{a_{t-1}^i}}{\sum_\ell w_{t-1}^\ell} r(x_t^i | 
+x_{t-1}^{a_{t-1}^i}\g\lambda) \\
+&= p(x_{1:T}^{b_{1:T}},y_{1:T}) \prod_{t=1}^T \frac{1}{\frac{1}{N} \sum_\ell w_t^\ell}
+\cdot \widetilde\phi(x_{1:T}^{\neg b_{1:T}},a_{1:T-1}^{\neg b_{2:T}} \g\lambda).
+\end{align*}
+将上式代入式~\eqref{eq:supp:vsmc}，得到
+\begin{align}\label{eq:supp:dist}
+q(x_{1:T}\g\lambda) &= p(x_{1:T}^{b_{1:T}},y_{1:T})
+\sum_{a_{1:T-1}^{\neg b_{2:T}}}\int \left(
+\prod_{t=1}^T \frac{1}{N} \sum_{i=1}^N w_t^i \right)^{-1}
+\cdot \widetilde\phi(x_{1:T}^{\neg b_{1:T}},a_{1:T-1}^{\neg b_{2:T}} \g\lambda)
+\,\myd x_{1:T}^{\neg b_{1:T}} \nonumber \\
+&= p(x_{1:T}^{b_{1:T}},y_{1:T})
+\E_{\widetilde\phi(x_{1:T}^{\neg b_{1:T}},a_{1:T-1}^{\neg b_{2:T}} \g\lambda)}
+\left[ \left(
+\prod_{t=1}^T \frac{1}{N} \sum_{i=1}^N w_t^i \right)^{-1}\right].
+\end{align}
+\hfill$\square$
+
+

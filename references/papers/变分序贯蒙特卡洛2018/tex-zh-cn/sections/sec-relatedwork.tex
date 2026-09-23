@@ -1,0 +1,11 @@
+% 来源：sec-relatedwork.tex；原 PDF 第 2 页。
+\paragraph{相关工作}
+已有大量工作致力于为 SMC 学习良好的提议分布\citep{Cornebise2009}。\citet{Guarniero2015} 通过迭代细化自适应地调整提议分布。\citet{naessethLS2015nested} 对（局部）最优提议分布\citep{doucet2009tutorial} 作蒙特卡洛近似。\citet{Gu2015} 利用 SMC 样本，最小化从后验到提议分布的 Kullback–Leibler（KL）散度来学习提议分布；当初始 SMC 提议分布较差时，这一策略可能具有很高的方差。\citet{Paige2016} 通过前向模拟并反演模型来学习提议分布。与这些方法不同，VSMC 针对从 SMC 采样过程到后验的 KL 散度直接优化提议分布。
+
+VSMC 在后验近似中使用辅助变量。这与 VI 中的相关工作有关，例如哈密顿变分推断\citep{Salimans2015}、变分高斯过程\citep{Tran2016}、层次变分模型\citep{Ranganath2016} 和深度辅助变分自编码器\citep{Maaloe2016}。另一类方法用一系列可逆函数，将简单的变分近似变换为复杂近似\citep{Rezende2015,dinh2014nice}。这些丰富的近似形式都可以嵌入 VSMC，以构造更灵活的提议分布。
+
+\citet{Archer2015,Johnson2016} 为具有共轭动态结构的状态空间模型发展了变分推断；\citet{Krishnan2017} 则为具有非线性动态和加性高斯噪声的模型构造了变分近似。相比之下，VSMC 不依赖于动态和噪声的具体分布选择。
+
+重要性加权自编码器\citep{Burda2016} 得到的下界与变分重要性采样（VIS）相同，后者是 VSMC 的一个特例。不过，VIS 提供了一种新的解释，使我们能够得到更准确的变分近似；这与 \citet{Cremer2017,Bachman2015} 对 IWAE 的另一种解释有关。变分粒子近似\citep{saeedi2014variational} 也会随粒子数增加而改善，但它局限于离散隐变量。
+
+最后，对数边缘似然的下界~\eqref{eq:lb} 也由 \citet{Maddison2017} 和 \citet{Le2017aesmc} 同期独立提出。他们的工作与本文的区别在于下界的推导方式，以及所探讨的推论。\citet{Maddison2017,Le2017aesmc} 对 SMC 的对数边缘似然估计应用 Jensen 不等式得到该下界，重点在于模型参数的近似边缘似然估计。本文则将式~\eqref{eq:lb} 推导为新变分族 VSMC 的精确 ELBO 的一个可计算下界。这一视角不仅给出对数边缘似然的下界，也提供了一种新的后验变分近似。

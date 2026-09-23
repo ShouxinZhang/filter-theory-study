@@ -1,0 +1,7 @@
+% 来源：sec-vi.tex；原 PDF 第 3 页。
+\paragraph{变分推断}\label{sec:vi}
+在变分推断中，我们假定一个具有变分参数 $\lambda$ 的近似分布族 $q(x_{1:T};\lambda)$，再最小化近似族与后验之间的散度，通常为 KL 散度，使 $q(x_{1:T};\lambda)\approx p(x_{1:T}\given y_{1:T})$。这一最小化等价于最大化证据下界（ELBO）\citep{Jordan1999}：
+\begin{align}
+\Ls(\lambda)&=\E_{q(x_{1:T};\lambda)}\left[\log p(x_{1:T},y_{1:T})-\log q(x_{1:T};\lambda)\right].\label{eq:elbo}
+\end{align}
+VI 将后验推断转化成了一个优化问题。

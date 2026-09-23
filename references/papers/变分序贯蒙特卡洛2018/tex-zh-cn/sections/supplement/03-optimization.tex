@@ -1,0 +1,54 @@
+\subsection{随机优化}\label{sec:supp:so}
+
+控制变量采用
+\begin{align*}
+\sum_{t=2}^T c_t \E_{s(\cdot)\widetilde\phi(\cdot\mid\cdot\g\lambda)}
+\left[\sum_{i=1}^N \nabla \log w_{t-1}^{a_{t-1}^i} - 
+N\sum_{\ell=1}^N \frac{w_{t-1}^\ell}{\sum_m w_{t-1}^m} \nabla \log 
+w_{t-1}^\ell \right]
+\end{align*}
+其中
+\begin{align*}
+c_t = \E_{s(\cdot)\widetilde\phi(\cdot\mid\cdot\g\lambda)}
+\left[  \sum_{t'=t}^T 
+\log\left(\frac{1}{N}\sum_{i=1}^N 
+w_{t'}^i\right) \right].
+\end{align*}
+实际计算中使用 $c_t$ 的随机估计。为保持控制变量的零均值性质，基线估计不能额外依赖当前被中心化的祖先抽样；可使用独立估计或历史估计。
+
+当 $T=2$ 且 $N>1$ 时，可以对祖先变量的得分函数梯度使用留一估计器：
+
+\begin{align*}
+\sum_{i=1}^N \E_{s(\cdot)\widetilde\phi(\cdot\mid\cdot\g\lambda)}
+\left[\log \left(\frac{N-1}{N}\frac{\sum_{\ell=1}^N w_2^\ell}{\sum_{j\neq i}w_2^j}\right) \left(\nabla \log w_{1}^{a_{1}^i} - 
+\sum_{\ell=1}^N \frac{w_{1}^\ell}{\sum_m w_{1}^m} \nabla \log 
+w_{1}^\ell \right)\right].
+\end{align*}
+
+\paragraph{得分函数梯度}\label{sec:scfnc}
+下面推导一种适用于很一般情形的类得分函数估计器。不过，我们发现它在实践中的方差往往较高。
+
+\begin{align*}
+\nabla \widetilde\Ls(\lambda) &= \nabla 
+\E_{\widetilde\phi(x_{1:T}^{1:N},a_{1:T-1}^{1:N}\g\lambda)}\left[\log 
+\widehat{p}(y_{1:T})\right] \\
+&= \E_{\widetilde\phi(x_{1:T}^{1:N},a_{1:T-1}^{1:N}\g\lambda)}\left[
+\nabla \log \widehat{p}(y_{1:T}) + 
+\log \widehat{p}(y_{1:T}) \nabla \log \widetilde\phi(x_{1:T}^{1:N},a_{1:T-1}^{1:N}\g\lambda)
+\right],
+\end{align*}
+其中
+\begin{align*}
+&\nabla \log \widehat{p}(y_{1:T}) = \nabla \sum_{t=1}^T  
+\log\left(\frac{1}{N}\sum_{i=1}^N w_t^i\right) = \sum_{t=1}^T\sum_{i=1}^N 
+\frac{w_t^i}{\sum_\ell w_t^\ell}\nabla \log w_t^i,
+\end{align*}
+以及
+\begin{align*}
+&\nabla \log \widetilde\phi(x_{1:T}^{1:N},a_{1:T-1}^{1:N}\g\lambda) \\ 
+&= 
+\sum_{i=1}^N \left[\nabla \log r(x_1^i\g\lambda) + \sum_{t=2}^T \left[\nabla \log
+r(x_t^i|x_{t-1}^{a_{t-1}^i}\g\lambda) + \nabla \log w_{t-1}^{a_{t-1}^i} - 
+\sum_{\ell=1}^N \bar w_{t-1}^\ell \nabla \log w_{t-1}^\ell \right] \right].
+\end{align*}
+

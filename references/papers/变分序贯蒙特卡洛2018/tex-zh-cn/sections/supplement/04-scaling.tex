@@ -1,0 +1,20 @@
+\subsection{随维数增长的表现}\label{sec:supp:independent}
+本节在以下简单模型上比较各方法随维数增长的表现：
+
+\begin{align*}
+p(x_{1:T},y_{1:T}) &= \prod_{t=1}^T \mathcal{N}(x_t\g 
+0,1)\mathcal{N}(y_t\g x_t^2,1).
+\end{align*}
+
+\begin{figure}[htbp]
+\centering
+\subfloat[$\lambda_{\mathrm{IWAE}}=\lambda_{\mathrm{VB}}^\star$\label{fig:sameVB}]{\includegraphics[width=.48\linewidth]{fig1_N=2T_IWAEsameVB.pdf}}\hfill
+\subfloat[$\lambda_{\mathrm{IWAE}}=\lambda_{\mathrm{VSMC}}^\star$\label{fig:sameVSMC}]{\includegraphics[width=.48\linewidth]{fig1_N=2T_IWAEsameVSMC.pdf}}
+\caption{简单问题中，标准 VB、IWAE 和 VSMC 的 ELBO 随维数 $T$ 的变化。这里 IWAE 与 VSMC 的样本数设为 $N=2T$。图中 Dimension 表示维数。}\label{fig:supp:T}
+\end{figure}
+
+
+我们研究数据集 $y_t=3$（对所有 $t$）。图~\ref{fig:supp:T} 展示了 IWAE（VIS）与 VSMC 的样本数按维数线性增长，即 $N=2T$ 时的结果。$T$ 较小时，IWAE 的最优参数接近 $\lambda_{\mathrm{VSMC}}^\star$；$T$ 较大时，其最优参数则接近标准 VB 的 $\lambda_{\mathrm{VB}}^\star$。图~\ref{fig:supp:T} 表明，让 $N$ 与 $T$ 成正比，VSMC 仍能在 $T$ 增长时保持良好的近似。一般地，要将渐近 KL 上界压到任意给定阈值以下，需要进一步选取足够大的比例常数，而非仅固定 $N=2T$。在一定正则条件下，状态空间模型 $p(x_{1:T},y_{1:T})$ 也具有这一性质\citep{berard2014}。VIS 不满足这种渐近近似性质；图~\ref{fig:supp:T} 显示其近似随 $T$ 增长而恶化。
+
+
+注意，如果趋于无穷的是单个隐状态的维数 $\operatorname{dim}(x_t)$，而不是时间点数 $T$，则上述结论并不成立。

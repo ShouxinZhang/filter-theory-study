@@ -1,0 +1,165 @@
+% 来源：sec-vsmc.tex；原 PDF 第 3–5 页。
+
+\section{变分序贯蒙特卡洛}\label{sec:vsmc}
+
+我们提出 VSMC：一类基于 SMC 的新变分近似。先定义如何从 VSMC 族采样，再推导其分布。虽然生成样本很直接，但密度难以计算。因此，我们推导一个可计算的目标——ELBO 的新下界，使其适于随机优化。随后给出拟合变分参数的算法，最后探讨如何用变分期望最大化（VEM）学习模型参数。
+
+要从 VSMC 族中采样，先运行 SMC（提议分布由变分参数 $\lambda$ 参数化），再从后验的经验近似~\eqref{eq:smcapprox} 中抽取一个样本。由于提议分布 $r(x_t\mid x_{t-1}\g\lambda)$ 依赖 $\lambda$，SMC 的经验近似也依赖它。算法~\ref{alg:vsmc} 概括了 VSMC 族的生成过程。
+
+\begin{algorithm}[htbp]
+\caption{变分序贯蒙特卡洛}\label{alg:vsmc}
+\begin{algorithmic}[1]
+\REQUIRE 目标 $p(x_{1:t},y_{1:t})$, 提议分布 
+$r(x_t \given x_{t-1}\g \lambda)$, 以及粒子数 $N$. 
+\vspace{.5em}
+\FOR{$i=1 \ldots N$}
+\STATE 采样 $x_1^i$，分布为 $r(x_1\g\lambda)$
+\STATE 设置 $w_1^i = \nicefrac{f(x_1^i) \, g(y_1 \given x_1^i)}{r(x_1^i\g\lambda)}$
+\ENDFOR
+\FOR{$t=2 \ldots T$}
+\FOR{$i=1 \ldots N$}
+\STATE 采样 $a_{t-1}^i$，其中 $\prb(a_{t-1}^i=j) = 
+\frac{w_{t-1}^j}{\sum_\ell w_{t-1}^\ell}$
+\STATE 采样 $x_t^i$，分布为 $r(x_t \given x_{t-1}^{a_{t-1}^i}\g\lambda)$
+\STATE 设置 $x_{1:t}^i = (x_{1:t-1}^{a_{t-1}^i},x_t^i)$
+\STATE 设置 $w_t^i = 
+\nicefrac{f(x_t^i\given x_{t-1}^{a_{t-1}^i}) \, g(y_t\given x_t^i)}{ 
+  r(x_t^i\given x_{t-1}^{a_{t-1}^i}\g\lambda)}$
+\ENDFOR
+\ENDFOR
+\STATE 采样 $b_T$，其中 $\prb(b_{T}=j) = 
+\nicefrac{w_{T}^j}{\sum_\ell w_{T}^\ell}$
+\RETURN $x_{1:T} \triangleq x_{1:T}^{b_T}$
+\end{algorithmic}
+\end{algorithm}
+变分分布 $q(x_{1:T}\g\lambda)$ 将采样过程中产生的全部变量边缘化，只保留输出样本 $x_{1:T}$。这个边缘分布来自 VSMC 所生成的所有变量的联合分布：
+
+\begin{align}
+  &\widetilde\phi(x_{1:T}^{1:N},a_{1:T-1}^{1:N},b_T \g \lambda) =
+    \underbrace{\bigg[\prod_{i=1}^N r(x_1^i\g\lambda)\bigg]}_{\text{步骤 2}} \cdot \nonumber\\
+    &\cdot
+    \prod_{t=2}^T \prod_{i=1}^N
+    \underbrace{\bigg[\frac{w_{t-1}^{a_{t-1}^i}}{\sum_\ell w_{t-1}^\ell} }_{\text{步骤 7}}
+    \underbrace{r(x_t^i \given x_{t-1}^{a_{t-1}^i}\g\lambda) \bigg]}_{\text{步骤 8}}
+    \underbrace{\bigg[\frac{w_T^{b_T}}{\sum_{\ell}w_T^\ell} \bigg]}_{\text{步骤 13}}.
+\label{eq:vsmc-all}
+\end{align}
+公式下方标注了对应的算法步骤。在这个联合分布中，最终输出样本由第 $b_T$ 条轨迹给出，即 $x_{1:T}=x_{1:T}^{b_T}$。注意，数据 $y_{1:T}$ 通过权重进入该分布，也可以通过提议分布进入。这个联合密度容易计算，但变分推断需要的是 $x_{1:T}$ 的边缘分布。下面推导这一分布。
+
+令 $b_t\triangleq a_t^{b_{t+1}}$（$t\leq T-1$）表示算法~\ref{alg:vsmc} 返回的轨迹 $x_{1:T}$ 的祖先索引。令 $\neg b_{1:T}$ 表示各时刻不在 $(b_1,\ldots,b_T)$ 这条路径上的粒子索引，也就是算法未返回的粒子。祖先数组中的被保留项为 $a_{t-1}^{b_t}=b_{t-1}$，因此未保留的祖先变量记为 $a_{1:T-1}^{\neg b_{2:T}}$。在固定返回路径及其索引后，下式中的 $\widetilde\phi$ 表示其余粒子按原重采样和提议核生成的归一化密度；路径的固定依赖在记号中省略。于是 $x_{1:T}=x_{1:T}^{b_{1:T}}=(x_1^{b_1},\ldots,x_T^{b_T})$ 的边缘分布由下述命题给出。
+
+\begin{prop}\label{prop:dist}
+VSMC 在 $x_{1:T}$ 上的近似分布为
+
+\begin{align}
+&q(x_{1:T} \given y_{1:T} \g\lambda) \nonumber \\
+&= p(x_{1:T},y_{1:T})  \, 
+\E_{\widetilde\phi\left(x_{1:T}^{\neg b_{1:T}},a_{1:T-1}^{\neg b_{2:T}} \g \lambda \right)}
+\left[\widehat p(y_{1:T})^{-1}\right].\label{eq:var-dist}
+\end{align}
+
+\end{prop}
+\begin{proof}
+
+参见补充材料~\ref{sec:pf:dist} 节。
+\end{proof}
+这一形式很直观：变分后验的密度，等于精确联合密度乘以归一化常数估计倒数的期望（参见式~\eqref{eq:smc_margll}）。虽然能用蒙特卡洛方法估计这个期望，但将估计代入对数后，得到的 $\log q(x_{1:T}\given y_{1:T};\lambda)$ 及 ELBO~\eqref{eq:elbo} 估计是有偏的。
+
+\paragraph{代理 ELBO}为了得到可计算的目标，我们构造一个同时适于随机优化的 ELBO 下界：
+
+\begin{align}
+\widetilde{\mathcal{L}}(\lambda) &\triangleq \sum_{t=1}^T\E_{\widetilde\phi(x_{1:t}^{1:N},a_{1:t-1}^{1:N}\g\lambda)}\left[ 
+\log \left( \frac{1}{N}\sum_{i=1}^N w_t^i\right) \right] \nonumber \\
+& = \E
+\left[\log \widehat{p}(y_{1:T})\right]
+\label{eq:lb}
+\end{align}
+我们称 $\widetilde{\mathcal L}(\lambda)$ 为\emph{代理 ELBO}。它是 VSMC 的真实 ELBO 的下界；等价地，$\log p(y_{1:T})-\widetilde{\mathcal L}(\lambda)$ 是变分后验到真实后验的 KL 散度的上界。下述定理将这一结论形式化。
+
+\begin{theorem}[代理 ELBO]
+当 $q$ 由式~\eqref{eq:var-dist} 定义时，代理 ELBO~\eqref{eq:lb} 是 ELBO~\eqref{eq:elbo} 的下界，即
+
+\begin{align*}
+\log p(y_{1:T}) \geq \mathcal{L}(\lambda) \geq \widetilde{\mathcal{L}}(\lambda).
+\end{align*}
+\label{thm:lb}
+\end{theorem}
+\begin{proof}
+
+参见补充材料~\ref{sec:pf:lb} 节。
+\end{proof}
+代理 ELBO 是 SMC 对数边缘似然估计的期望。从 VSMC 变分近似中采样（算法~\ref{alg:vsmc}）时，可以顺便得到它的无偏估计。我们运行该算法，并利用这一估计对代理 ELBO 进行随机优化。
+
+\paragraph{随机优化}
+虽然代理 ELBO 中的期望仍无闭式表达，但可以用蒙特卡洛方法估计它及其梯度。这就得到一种随机优化算法，用于寻找 VSMC 族的最优变分参数。
+
+假设提议分布 $r(x_t\given x_{t-1};\lambda)$ 可以重参数化，即对某个不依赖 $\lambda$ 的分布 $s$，可以通过设置 $x_t=h(x_{t-1},\varepsilon_t\g\lambda)$、$\varepsilon_t\sim s(\varepsilon_t)$ 来从 $r$ 采样。在这一假设下，利用重参数化技巧\citep{Kingma2014,Rezende2014}，可将式~\eqref{eq:lb} 的梯度改写为
+
+\begin{align}
+\nabla \widetilde\Ls(\lambda) &= g_{\text{rep}}+ g_{\text{score}}\label{eq:rep-grad}\\
+g_{\text{rep}} &= \E
+\left[ \nabla\log \widehat{p}(y_{1:T})  \right], \nonumber\\
+g_{\text{score}} &=\E
+\left[ \log \widehat{p}(y_{1:T}) \nabla \log 
+\widetilde\phi(a_{1:T-1}^{1:N}\given\varepsilon_{1:T}^{1:N}\g\lambda)\right].\nonumber
+\end{align}
+该展开来自乘积法则，与 \citet{Ruiz2016} 和 \citet{Naesseth2017} 的广义重参数化推导相同。注意，权重 $w_t^i$ 和 $\widehat p(y_{1:T})$ 中隐含的所有 $x_t^i$，现在都替换成了重参数化表达 $h(\cdot\g\lambda)$。祖先变量是离散的，无法作这种重参数化，因此式~\eqref{eq:rep-grad} 中的得分函数项 $g_{\text{score}}$ 可能具有很高的方差。
+
+第~\ref{sec:expts} 节将通过实验评估优化时忽略 $g_{\text{score}}$ 的影响。我们在一个小型状态空间模型中，比较保留与忽略得分函数项的优化；对这个模型，下述标准方差缩减技术已经足够。注意到祖先变量 $a_{t-1}$ 不影响时刻 $t$ 之前的权重，我们使用 Rao–Blackwell 化\citep{Robert2004,Ranganath2014} 来降低方差：
+
+\begin{align}
+&g_{\text{score}} = 
+\nonumber\\
+& \sum_{t=2}^{T}
+\E
+\left[  
+\log \frac{\widehat{p}(y_{1:T})}{\widehat{p}(y_{1:t-1})}
+\left(\sum_{i=1}^N \nabla \log \frac{w_{t-1}^{a_{t-1}^i}}{\sum_\ell w_{t-1}^\ell}\right)
+ \right].\label{eq:rb}
+\end{align}
+此外，我们将得分函数 $\nabla\log\widetilde\phi(a_{1:T-1}^{1:N}\given\varepsilon_{1:T}^{1:N}\g\lambda)$ 与未来各步对数平均权重之和的期望估计结合，用作控制变量\citep{Ranganath2014}。
+
+我们发现，忽略祖先变量带来的得分函数项 $g_{\text{score}}$（式~\eqref{eq:rb}）会使收敛更快，而最终 ELBO 的差别很小。这相当于用下式近似 $\widetilde\Ls$ 的梯度：
+
+\begin{align}
+\nabla \widetilde\Ls(\lambda) &\approx \E
+\left[ \nabla\log \widehat{p}(y_{1:T})  \right] = g_{\text{rep}}.
+\label{eq:proxgrad}
+\end{align}
+我们建议用这个梯度优化 VSMC 的变分参数。更多细节见补充材料~\ref{sec:supp:so} 节，其中还给出一般的类得分函数估计器和控制变量。
+
+\paragraph{算法}
+现在说明优化 VSMC 变分近似的完整算法。我们从 $s(\cdot)\widetilde\phi(\cdot\given\cdot\g\lambda)$ 中抽取一个样本，以估计式~\eqref{eq:proxgrad}，得到随机梯度 $\widehat\nabla\widetilde{\mathcal L}(\lambda)$。该样本是在 VSMC 采样（算法~\ref{alg:vsmc}）过程中顺便得到的。步长采用 Adam\citep{KingmaB2015}，或 \citet{Kucukelbir2016} 提出的序列 $\rho^n$：
+
+\begin{align}
+    &\rho^n = \eta \cdot n^{-1/2 + \delta} \cdot \left(1 + 
+    \sqrt{s^n}\right)^{-1}, \nonumber\\
+    &s^n = t \left( \widehat \nabla \widetilde{\mathcal{L}}(\lambda^n) \right)^2 + (1-t) s^{n-1},
+    \label{eq:stepsize}
+\end{align}
+其中 $n$ 为迭代次数。我们设置 $\delta=10^{-16}$、$t=0.1$，并尝试不同的 $\eta$ 值。算法~\ref{alg:so} 概括了这一优化算法。\footnote{使用 Adam 的参考实现见 \url{https://github.com/blei-lab/variational-smc}。}
+
+\begin{algorithm}[htbp]
+\caption{VSMC 的随机优化}\label{alg:so}
+\begin{algorithmic}[1]
+\REQUIRE 数据 $y_{1:T}$, 模型 $p(x_{1:T},y_{1:T})$, 提议分布 
+$r(x_t\given x_{t-1}\g\lambda)$, 粒子数 $N$
+\ENSURE 变分参数 $\lambda^\star$
+\REPEAT
+\STATE 估计梯度 $\widehat \nabla \widetilde{\mathcal{L}}(\lambda^n)$ 
+，其表达式见 \eqref{eq:proxgrad}
+\STATE 计算步长 $\rho^n$，使用式~\eqref{eq:stepsize}
+\STATE 更新 $\lambda^{n+1} = \lambda^n + \rho^n \widehat \nabla \widetilde{\mathcal{L}}(\lambda^n)$
+\UNTIL {收敛}
+\end{algorithmic}
+\end{algorithm}
+
+\paragraph{变分期望最大化}
+假设目标分布 $p(x_{1:T}\given y_{1:T}\g\theta)$ 含有一组未知参数 $\theta$。可以用变分期望最大化（VEM）\citep{Beal2003} 拟合这些参数。相应的代理 ELBO 满足
+
+\begin{align}
+\log p(y_{1:T}\g\theta) \geq
+\tilde{\mathcal{L}}(\lambda,\theta)\label{eq:lb:vem}
+\end{align}
+此时归一化常数 $p(y_{1:T}\g\theta)$ 是参数 $\theta$ 的函数。注意，$\tilde{\mathcal L}(\lambda,\theta)$ 的表达式与式~\eqref{eq:lb} 完全相同，只是权重（以及可能的提议分布）现在也依赖模型参数 $\theta$。类似地，重参数化梯度与式~\eqref{eq:proxgrad} 具有相同的形式。我们可以对 $\theta$ 和 $\lambda$ 同时作随机优化，最大化式~\eqref{eq:lb:vem} 的下界。借助数据子采样，VSMC 可以扩展到由条件独立序列组成的大规模数据集\citep{Hoffman2013,titsias2014doubly}。
+
