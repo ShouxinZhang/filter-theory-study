@@ -1,0 +1,150 @@
+\section{方法}
+\label{sec:method}
+
+本节的方法可以为多种包含连续潜变量的有向图模型推导下界估计量（即随机目标函数）。这里仅考虑一种常见情形：数据集独立同分布，每个数据点具有潜变量；我们希望对（全局）参数进行最大似然（ML）或最大后验（MAP）推断，对潜变量进行变分推断。例如，将这一设定扩展到对全局参数也进行变分推断的情形是直接的；对应算法见附录，其实验留待未来开展。注意，我们的方法也适用于在线、非平稳的场景，例如流式数据；但为简便起见，这里假设数据集固定。
+
+\begin{figure}[t]
+\begin{center}
+\begin{tikzpicture}[scale=1, transform shape]
+\node[obs] (x1) {$\bm{x}$};
+\node[latent, above=of x1] (z1) {$\bm{z}$};
+\node[const, left=of z1] (phi1) {$\bm{\phi}$};
+\node[const, right=of z1] (theta1) {$\bm{\theta}$};
+\edge [dashed] {phi1} {z1}
+\edge {theta1} {z1}
+\edge {theta1} {x1}
+\draw (x1) edge[out=135,in=225,->,dashed] (z1);
+\edge {z1} {x1}
+\plate [xscale=1.5] {} {(x1)(z1)} {$N$}
+\end{tikzpicture}
+\end{center}
+\caption{
+本文考虑的有向图模型。实线表示生成模型 $\pT(\bz)\pT(\bx|\bz)$，虚线表示对难以处理的后验 $\pT(\bz|\bx)$ 的变分近似 $\qPhi(\bz|\bx)$。变分参数 $\bphi$ 与生成模型参数 $\bT$ 联合学习。
+}\label{fig:model}
+\end{figure}
+
+\subsection{问题设定}
+\label{sec:problem}
+
+考虑数据集 $\bX = \{\bx^{(i)}\}_{i=1}^N$，它由连续或离散变量 $\bx$ 的 $N$ 个独立同分布样本组成。假设数据由某个随机过程生成，其中涉及一个未观测到的连续随机变量 $\bz$。该过程分为两步：（1）从先验分布 $p_{\bT^*}(\bz)$ 生成一个值 $\bzi$；（2）从条件分布 $p_{\bT^*}(\bx|\bz)$ 生成一个值 $\bxi$。我们假设先验 $p_{\bT^*}(\bz)$ 和似然 $p_{\bT^*}(\bx|\bz)$ 分别来自参数化分布族 $\pT(\bz)$ 和 $\pT(\bx|\bz)$，其概率密度（或质量）函数关于 $\bT$ 和 $\bz$ 几乎处处可微。然而，这个过程的许多部分对我们不可见：真实参数 $\bT^*$ 以及潜变量的值 $\bzi$ 均未知。
+
+关键在于，我们\emph{不}对边缘概率或后验概率作通常的简化假设。相反，我们希望得到一个在以下情形中仍能高效工作的通用算法：
+\begin{enumerate}
+\item \emph{难以处理}：边缘似然中的积分 $\pT(\bx) = \int \pT(\bz) \pT(\bx|\bz)\,\mathrm{d}\bz$ 难以计算，因此不能计算边缘似然或对其求导；真实后验密度 $\pT(\bz|\bx) = \pT(\bx|\bz)\pT(\bz)/\pT(\bx)$ 难以处理，因此不能直接使用 EM 算法；任何合理的均值场 VB 算法所需的积分也难以计算。这类困难十分常见，似然函数 $\pT(\bx|\bz)$ 只要稍微复杂一些就会出现，例如采用含非线性隐藏层的神经网络时。
+\item \emph{大规模数据集}：数据量大到使全批量优化代价过高，因此希望使用较小的 minibatch（小批量），甚至单个数据点来更新参数。基于采样的方法，例如蒙特卡洛 EM，通常会过慢，因为它们一般需要对每个数据点执行代价较高的采样循环。
+\end{enumerate}
+
+我们关心上述场景中的三个相关问题，并提出相应解法：
+\begin{enumerate}
+\item 对参数 $\bT$ 进行高效的近似 ML 或 MAP 估计。参数本身可能就是研究对象，例如分析某种自然过程时。参数还使我们能够模拟隐藏的随机过程，生成类似真实数据的人工数据。
+\item 给定参数 $\bT$ 和观测值 $\bx$，对潜变量 $\bz$ 进行高效的近似后验推断。这对编码或数据表示任务很有用。
+\item 对变量 $\bx$ 进行高效的近似边缘推断。这样就能完成各类需要 $\bx$ 的先验分布的推断任务。计算机视觉中的常见应用包括图像去噪、修复和超分辨率。
+\end{enumerate}
+
+为解决这些问题，引入识别模型 $\qPhi(\bz|\bx)$，用它近似难以处理的真实后验 $\pT(\bz|\bx)$。注意，与均值场变分推断中的近似后验不同，它不一定按各分量独立分解，其参数 $\bphi$ 也不是通过某个闭式期望计算得到的。我们将介绍一种方法，联合学习识别模型参数 $\bphi$ 和生成模型参数 $\bT$。
+
+
+从编码理论的角度看，未观测变量 $\bz$ 可以解释为潜在表示或\emph{编码}。因此，本文也将识别模型 $\qPhi(\bz|\bx)$ 称为概率\emph{编码器}：给定数据点 $\bx$，它产生编码 $\bz$ 的可能取值上的分布（例如高斯分布），而这些编码都可能生成该数据点。类似地，我们将 $\pT(\bx|\bz)$ 称为概率\emph{解码器}，因为给定编码 $\bz$，它产生相应的 $\bx$ 的可能取值上的分布。
+
+\subsection{变分下界}\label{subsec:bound}
+对数边缘似然是各数据点的对数边缘似然之和，即 $\log \pT(\bx^{(1)}, \cdots, \bx^{(N)}) = \sum_{i=1}^N \log \pT(\bxi)$。其中每一项均可改写为：
+\begin{align*}
+\log \pT(\bxi) = D_{KL}(\qPhi(\bz|\bxi)||\pT(\bz|\bxi)) + \LB{}{\bxi}
+\eqnr\label{eq:auto-1}\end{align*}
+右端第一项是近似后验相对于真实后验的 KL 散度。由于该 KL 散度非负，右端第二项 $\LB{}{\bxi}$ 称为数据点 $i$ 的对数边缘似然的（变分）\emph{下界}，可写为：
+\begin{align*}
+\log \pT(\bxi) \geq \LB{}{\bxi}
+&= \Exp{\qPhi(\bz|\bxi)}{- \log \qPhi(\bz|\bxi) + \log \pT(\bxi,\bz)}
+\eqnr\label{eq:lowerbound}\end{align*}
+也可以写成：
+\begin{align*}
+\LB{}{\bxi} = - D_{KL}(\qPhi(\bz|\bxi) || \pT(\bz)) + \Exp{\qPhi(\bz|\bxi)}{\log \pT(\bxi | \bz)}
+\eqnr\label{eq:lowerbound2}\end{align*}
+我们希望对下界 $\LB{}{\bxi}$ 关于变分参数 $\bphi$ 和生成参数 $\bT$ 求导并优化。然而，关于 $\bphi$ 的下界梯度不太容易处理。对于不显含 $\bphi$ 的函数 $f$，这类问题通常采用如下朴素蒙特卡洛梯度估计量：
+\begin{align*}\nabla_{\bphi}\Exp{\qPhi(\bz|\bxi)}{f(\bz)} &=\Exp{\qPhi(\bz|\bxi)}{f(\bz)\nabla_{\bphi}\log\qPhi(\bz|\bxi)}\\ &\simeq\frac{1}{L}\sum_{l=1}^L f(\bzl)\nabla_{\bphi}\log\qPhi(\bzl|\bxi),\qquad \bzl\sim\qPhi(\bz|\bxi).\end{align*}这个梯度估计量的方差很高（例如见\cite{blei2012variational}），不适合我们的用途。
+
+
+
+\subsection{SGVB 估计量与 AEVB 算法}
+\label{subsec:our_estimator}
+
+本节介绍一个实用的下界及其参数导数的估计量。我们假定近似后验具有 $\qPhi(\bz|\bx)$ 的形式，但这一技术同样适用于 $\qPhi(\bz)$，即不以 $\bx$ 为条件的情形。对参数后验进行推断的完全变分贝叶斯方法见附录。
+
+对于选定的近似后验 $\qPhi(\bz|\bx)$，在第\ref{subsec:thetrick}节概述的温和条件下，可以借助（辅助）噪声变量 $\beps$ 的可微变换 $\gPhi(\beps,\bx)$，对随机变量 $\btz \sim \qPhi(\bz|\bx)$ 进行重参数化：
+\begin{align*}
+\btz = \gPhi(\beps,\bx) \text{\quad 其中 \quad} \beps \sim p(\beps)
+\eqnr\label{eq:auto-4}\end{align*}
+如何选取合适的分布 $p(\beps)$ 和函数 $\gPhi(\beps,\bx)$，其一般方法见第\ref{subsec:thetrick}节。
+于是，函数 $f(\bz)$ 关于 $\qPhi(\bz|\bx)$ 的期望可用如下蒙特卡洛方法估计：
+\begin{align}
+\Exp{\qPhi(\bz|\bxi)}{f(\bz)}
+= \Exp{p(\beps)}{f(\gPhi(\beps,\bxi))}
+&\simeq \frac{1}{L} \sum_{l=1}^L {f(\gPhi(\bepsl,\bxi))}
+ \text{\quad 其中 \quad} \bepsl \sim p(\beps)
+\label{eq:auto-5}\end{align}
+将该技术用于变分下界，即式\eqref{eq:lowerbound}，得到通用的随机梯度变分贝叶斯（SGVB）估计量 $\LBT{A}{\bxi} \simeq \LB{}{\bxi}$：
+\begin{align*}
+\LBT{A}{\bxi}
+&= \frac{1}{L} \sum_{l=1}^L 
+\bigl[\log \pT(\bxi, \bzil) - \log \qPhi(\bzil|\bxi)\bigr] \\
+\text{其中 \quad} \bzil &= \gPhi(\bepsil,\bxi)
+\text{\quad 且 \quad} \bepsil \sim p(\beps)
+\eqnr\label{eq:fullestimator}
+\end{align*}
+式\eqref{eq:lowerbound2}中的 KL 散度 $D_{KL}(\qPhi(\bz|\bxi) || \pT(\bz))$ 通常可以解析积分（见附录\ref{ap:kl_solution}），于是只有期望对数重构似然 $\Exp{\qPhi(\bz|\bxi)}{\log \pT(\bxi | \bz)}$ 需要通过采样估计。此时，KL 散度项可以解释为对 $\bphi$ 的正则化，促使近似后验接近先验 $\pT(\bz)$。
+由此得到对应于式\eqref{eq:lowerbound2}的第二种 SGVB 估计量 $\LBT{B}{\bxi} \simeq \LB{}{\bxi}$，其方差通常低于通用估计量：
+\begin{align*}
+\LBT{B}{\bxi}
+&= - D_{KL}(\qPhi(\bz|\bxi) || \pT(\bz))
++ \frac{1}{L} \sum_{l=1}^L (\log \pT(\bxi|\bzil)) \\
+\text{其中 \quad} \bzil &= \gPhi(\bepsil,\bxi)
+\text{\quad 且 \quad} \bepsil \sim p(\beps)
+\eqnr\label{eq:estimator2}
+\end{align*}
+对于含 $N$ 个数据点的数据集 $\bX$，可以利用 minibatch 构造整个数据集的对数边缘似然下界估计量：
+\begin{align*}
+\LB{}{\bX} \simeq \LBT{M}{\bX^M} = \frac{N}{M} \sum_{i=1}^M \LBT{}{\bxi}
+\eqnr\label{eq:minibatchestimator}\end{align*}
+其中，minibatch $\bX^M = \{\bxi\}_{i=1}^M$ 是从含 $N$ 个数据点的完整数据集 $\bX$ 中随机抽取的 $M$ 个数据点。实验中我们发现，只要 minibatch 大小 $M$ 足够大，例如 $M=100$，每个数据点的样本数 $L$ 就可以取 $1$。对其求导得到 $\nabla_{\bT,\bphi}\LBT{M}{\bX^M}$，所得梯度可以与 SGD 或 Adagrad\cite{duchi2010adaptive} 等随机优化方法结合使用。计算随机梯度的基本方法见算法\ref{algorithm}。
+
+从式\eqref{eq:estimator2}的目标函数可以清楚地看到它与自编码器的联系。第一项是近似后验相对于先验的 KL 散度的负值，起正则化作用；第二项则是负重构误差的期望。
+选择函数 $\gPhi(.)$，使其将数据点 $\bxi$ 和随机噪声向量 $\bepsl$ 映射为该数据点的近似后验样本：$\bzil = \gPhi(\bepsl, \bxi)$，其中 $\bzil \sim \qPhi(\bz|\bxi)$。
+随后，将样本 $\bzil$ 输入函数 $\log \pT(\bxi|\bzil)$；该函数等于给定 $\bzil$ 时，生成模型下数据点 $\bxi$ 的对数概率密度（或对数概率质量）。用自编码器的术语说，这一项就是负的\emph{重构误差}。
+
+\begin{algorithm}[t]
+\caption{自编码变分贝叶斯（AEVB）算法的 minibatch 版本。第\ref{subsec:our_estimator}节的两种 SGVB 估计量均可使用。实验中取 $M=100$、$L=1$。}
+\renewcommand{\algorithmicforall}{\textbf{对每个}}
+\begin{algorithmic}
+\State $\bT, \bphi \gets$ 初始化参数
+\Repeat
+\State $\bX^M \gets $ 从完整数据集中随机抽取 $M$ 个数据点组成 minibatch
+\State $\beps \gets $ 从噪声分布 $p(\beps)$ 随机采样
+\State $\bg \gets \nabla_{\bT,\bphi} \LBT{M}{\bX^M,\beps}$（minibatch 估计量\eqref{eq:minibatchestimator}的梯度）
+\State $\bT, \bphi \gets $ 利用梯度 $\bg$ 更新参数（如采用 SGD 或 Adagrad\cite{duchi2010adaptive}）
+\Until {参数 $(\bT,\bphi)$ 收敛}
+\State \Return $\bT, \bphi$
+\end{algorithmic}
+\label{algorithm}
+\end{algorithm}
+
+\subsection{重参数化技巧}
+\label{subsec:thetrick}
+
+
+
+为解决上述问题，我们采用另一种从 $\qPhi(\bz|\bx)$ 生成样本的方法。其核心的重参数化技巧很简单。设连续随机变量 $\bz$ 服从某个条件分布 $\qPhi(\bz|\bx)$。通常可以将它表示为 $\bz = \gPhi(\beps, \bx)$，即辅助变量的确定性函数，其中 $\beps$ 的边缘分布 $p(\beps)$ 不依赖于 $\bx$ 和 $\bphi$，而 $\gPhi(.)$ 是由 $\bphi$ 参数化的向量值函数。
+
+这种重参数化之所以有用，是因为它能改写关于 $\qPhi(\bz|\bx)$ 的期望，使相应的蒙特卡洛估计关于 $\bphi$ 可微。证明如下：若映射 $\bz=\gPhi(\beps,\bx)$ 将分布 $p(\beps)$ 推前为 $\qPhi(\bz|\bx)$，则由期望的换元公式\footnote{本文采用微分体积元记号 $\mathrm{d}\bz=\prod_i\mathrm{d}z_i$。}，有 $\int\qPhi(\bz|\bx)f(\bz)\,\mathrm{d}\bz=\int p(\beps)f(\gPhi(\beps,\bx))\,\mathrm{d}\beps$。在同维可逆可微情形，这也可写成体积元关系 $\qPhi(\bz|\bx)\prod_i\mathrm{d}z_i=p(\beps)\prod_i\mathrm{d}\epsilon_i$。于是可构造可微估计量：$\int\qPhi(\bz|\bx)f(\bz)\,\mathrm{d}\bz\simeq\frac{1}{L}\sum_{l=1}^L f(\gPhi(\bepsl,\bx))$，其中 $\bepsl\sim p(\beps)$。第\ref{subsec:our_estimator}节正是利用这一技巧，得到了变分下界的可微估计量。
+
+以单变量高斯分布为例，设 $z\sim p(z|x)=\mathcal{N}(\mu,\sigma^2)$。一个有效的重参数化是 $z=\mu+\sigma\epsilon$，其中辅助噪声变量 $\epsilon\sim\mathcal{N}(0,1)$。因此，$\Exp{\mathcal{N}(z;\mu,\sigma^2)}{f(z)}=\Exp{\mathcal{N}(\epsilon;0,1)}{f(\mu+\sigma\epsilon)}\simeq\frac{1}{L}\sum_{l=1}^L f(\mu+\sigma\epsilon^{(l)})$，其中 $\epsilon^{(l)}\sim\mathcal{N}(0,1)$。
+
+对于哪些 $\qPhi(\bz|\bx)$，可以选取这样的可微变换 $\gPhi(.)$ 和辅助变量 $\beps\sim p(\beps)$？有三种基本方法：
+\begin{enumerate}
+\item 逆累积分布函数（逆 CDF）可处理。单变量情形取 $\epsilon\sim\mathcal{U}(0,1)$，并令 $g_{\bphi}(\epsilon,\bx)$ 为 $\qPhi(\bz|\bx)$ 的逆 CDF；独立分量可逐分量处理。例子包括指数、柯西、逻辑斯蒂、瑞利、帕累托、威布尔、倒数、冈珀茨、耿贝尔和埃尔朗分布。
+
+\item 与高斯分布的例子类似，对于任意“位置—尺度”分布族，可以选择相应的标准分布（位置参数为 $0$、尺度参数为 $1$）作为辅助变量 $\beps$ 的分布，并令 $g(.)=\text{位置参数}+\text{尺度参数}\cdot\beps$。例子包括拉普拉斯、椭圆、Student $t$、逻辑斯蒂、均匀、三角和高斯分布。
+
+\item 复合构造：随机变量通常可表示为辅助变量的不同变换。例如，对数正态变量是正态变量的指数；正整数形状参数的 Gamma 变量可由相互独立、同率的指数变量求和得到；Dirichlet 向量可由具有同一尺度参数的独立 Gamma 变量除以它们的总和得到。其他例子包括 Beta、卡方和 $F$ 分布。
+\end{enumerate}
+
+若以上三种方法均不适用，仍可寻找逆 CDF 的良好近似，其计算时间复杂度可与概率密度函数相当（一些方法见\cite{devroye1986sample}）。

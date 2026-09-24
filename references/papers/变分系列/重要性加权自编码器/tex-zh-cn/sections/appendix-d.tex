@@ -1,0 +1,30 @@
+\clearpage\section*{附录 D}\phantomsection\addcontentsline{toc}{section}{附录 D}
+\label{app:binarization}
+
+\subsection*{固定二值化 MNIST 的结果}
+
+此前多项工作采用了 \cite{binarization} 定义的固定二值化 MNIST 数据集。我们重复实验，在训练集的 50,000 个样本上训练，并在测试集的 10,000 个样本上评估。除此之外，训练流程和超参数与正文实验相同。表~\ref{tbl:results_bin_fix} 表明，在新的实验设置下，关于 VAE 和 IWAE 相对优劣的结论不变。在这一设置中，我们观察到了明显更严重的过拟合。
+
+\vspace{2ex}
+
+\begin{table}[htbp]
+
+\begin{center}
+\begin{tabular}{@{}ll*{4}{c}@{}}
+
+              &     & \multicolumn{2}{c}{VAE} & \multicolumn{2}{c}{IWAE} \\
+\cmidrule(r){3-4} \cmidrule(l){5-6}  
+\shortstack{随机\\层数} & $\numSamples$ & NLL               & \shortstack{活跃\\单元}             & NLL               & \shortstack{活跃\\单元}   \\ 
+\cmidrule(lr){1-1} \cmidrule(lr){2-2} \cmidrule(lr){3-3}\cmidrule(lr){4-4}\cmidrule(lr){5-5}\cmidrule(lr){6-6} \midrule
+1             & 1   & 88.71 &  19  & 88.71 &  19   \\
+              & 5   & 88.83 &  19  & 87.63 &  22   \\
+              & 50  & 89.05 &  20  & 87.10 &  24   \\ \midrule
+2             & 1   & 88.08 &  16+5 & 88.08 &  16+5 \\
+              & 5   & 87.63 &  17+5 & 86.17&  21+5 \\
+              & 50  & 87.86 &  17+6 & 85.32&  24+7 \\ \bottomrule
+\end{tabular}
+\end{center}
+
+\caption{固定二值化 MNIST 数据集上的密度估计结果与活跃潜在维度数。对于具有两个潜变量层的模型，“$k_1+k_2$”表示第一层有 $k_1$ 个活跃单元、第二层有 $k_2$ 个活跃单元。随着 $\numSamples$ 增加，IWAE 的生成性能有所改善，而 VAE 未表现出一致改善。两层模型的生成性能优于单层模型。}
+\label{tbl:results_bin_fix}
+\end{table}

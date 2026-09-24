@@ -1,0 +1,16 @@
+\section{相关工作}
+\label{sec:related-work}
+
+训练深度生成模型的方法大致可分为几类。有些模型用玻尔兹曼分布定义 \citep{rbm,dbm}，其优点是许多条件分布可处理，但难以从模型采样或计算配分函数始终是主要障碍 \citep{ais-rbm}。另一些模型用信念网络定义 \citep{deep-sigmoid,DARN}。这类模型易于采样，但解释消除效应会使条件分布中的依赖关系变得复杂。
+
+应对难以处理的后验推断，一种策略是训练近似后验的识别网络。经典方法是用于训练 Helmholtz 机的唤醒—睡眠算法 \citep{helmholtz_machine}：生成模型学习识别网络推断出的条件分布，识别网络则学习解释生成网络产生的合成数据。不幸的是，唤醒—睡眠算法用不同的目标函数训练两个网络。深度自回归网络 \citep{DARN} 由深层生成网络与识别网络组成，使用同一个变分下界训练。神经变分推断与学习（NVIL；\citealp{nvil}）是另一种训练识别网络的算法：它在 REINFORCE 算法 \citep{reinforce} 的框架下训练第三个网络来预测奖励基线，从而减少更新中的随机性。\citet{dbm-recognition} 则使用识别网络近似深度玻尔兹曼机的后验分布。
+
+第~\ref{sec:background} 节详细介绍的变分自编码器 \citep{vae,vae2}，也是生成网络与识别网络的组合，其训练使用与 DARN 和 NVIL 相同的变分目标。不过，它不用 REINFORCE，而是巧妙地对随机选择进行重参数化，以降低更新方差。重参数化技巧也称为“通过随机数生成器反向传播”\citep{reinforce}。
+
+VAE 与上述其他模型的一个区别是，模型可以描述为先从简单分布采样、再应用确定性映射，而不是一系列随机选择。已有研究提出了架构相似、训练目标不同的模型。生成对抗网络 \citep{generative_adversarial} 训练相互对抗的生成网络与识别网络：识别网络尝试区分训练样本和生成样本，生成模型则尝试产生能够欺骗识别网络的样本。最大均值差异（MMD）网络 \citep{yujia_mmd,karolina_mmd} 试图生成在某组统计量上与训练数据匹配的样本。它们可以看成一种对抗网络，其中对手只观察预先选定的一组统计量 \citep{karolina_mmd}。与 VAE 不同，对抗网络和 MMD 网络的训练准则不基于数据对数似然。
+
+其他研究者也曾通过重要性采样推导对数概率下界。\citet{charlie-stochastic} 和 \citet{jimmy-attention} 完全不使用识别网络，而是从先验进行重要性采样来推断。\citet{dechter-importance} 提出了多种基于重要性加权的图模型推断算法。\cite{RWS} 的重加权唤醒—睡眠（RWS）是另一种使用识别网络的方法：它结合了原始唤醒—睡眠算法和一种生成网络更新，后者等价于对我们的下界 $\isBoundK{\numSamples}$ 做梯度上升。但 \citet{RWS} 将该更新解释为沿 $\nabla_\params\log\pmfGen(\obs)$ 的有偏估计更新，而我们将其解释为沿 $\nabla_\params\isBoundK{\numSamples}$ 的无偏估计更新。IWAE 与 RWS 的另一区别是，生成网络和识别网络都通过最大化同一个目标 $\isBoundK{\numSamples}$ 训练。相比之下，RWS 的 $q$-唤醒步骤和睡眠步骤似乎与 $\isBoundK{\numSamples}$ 没有联系。最后，IWAE 还使用了重参数化技巧，这也区别于 RWS。
+
+除了本文使用多个近似后验样本的方法，增强后验推断灵活性的另一条路线，是使用比重要性采样更复杂的算法。例如归一化流 \citep{normalizing_flows}，以及 \citet{bridging_the_gap} 的哈密顿变分近似。
+
+本文发表后，作者得知 Laurent Dinh 和 Vincent Dumoulin 也独立探索了用重要性加权下界训练变分自编码器的想法，其初步结果已在 2014 年 CIFAR NCAP 深度学习暑期学校上展示。

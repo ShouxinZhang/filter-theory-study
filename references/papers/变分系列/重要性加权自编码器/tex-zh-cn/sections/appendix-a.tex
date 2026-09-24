@@ -1,0 +1,33 @@
+\clearpage\section*{附录 A}\phantomsection\addcontentsline{toc}{section}{附录 A}
+\label{apx:proofs}
+
+
+\textbf{定理 1 的证明}\quad 我们需要证明对数似然下界 $\isBoundK{\numSamples}$ 的以下性质：
+ \begin{enumerate} 
+ \item $\log \pmfGen(\obs) \geq \isBoundK{\numSamples}$,
+\item 当 $\numSamples\geq\numSamplesTwo$ 时，$\isBoundK{\numSamples}\geq\isBoundK{\numSamplesTwo}$，
+\item 若存在 $0<c\leq C<\infty$，使 $c\leq\pmfGen(\hid,\obs)/\pmfRec(\hid|\obs)\leq C$ 几乎处处成立，则 $\log\pmfGen(\obs)=\lim_{\numSamples\to\infty}\isBoundK{\numSamples}$。
+ \end{enumerate}
+下面依次证明：
+\begin{enumerate}
+\item
+由 Jensen 不等式可得
+\begin{equation}
+\isBoundK{\numSamples}=\expect\left[\log \frac{1}{\numSamples} \sum_{\sampleIdx=1}^\numSamples \frac{\pmfGen(\obs,\hidS{\sampleIdx})}{\pmfRec(\hidS{\sampleIdx}|\obs)}  \right]\leq \log \expect\left[\frac{1}{\numSamples} \sum_{\sampleIdx=1}^\numSamples \frac{\pmfGen(\obs,\hidS{\sampleIdx})}{\pmfRec(\hidS{\sampleIdx}|\obs)}  \right]=\log \pmfGen(\obs)\label{eq:source-16}
+\end{equation}
+\item 令 $\indices\subset\{1,\ldots,\numSamples\}$ 为从 $\{1,\ldots,\numSamples\}$ 中均匀选出的、含 $\numSamplesTwo$ 个互不相同指标的子集，即 $|\indices|=\numSamplesTwo$。我们将用到一个简单事实：对任意数列 $a_1,\ldots,a_\numSamples$，有 $\expect_{\indices=\{\sampleIdx_1,\ldots,\sampleIdx_\numSamplesTwo\}}\bigl[(a_{\sampleIdx_1}+\cdots+a_{\sampleIdx_\numSamplesTwo})/\numSamplesTwo\bigr]=(a_1+\cdots+a_\numSamples)/\numSamples$。
+
+结合这一事实与 Jensen 不等式，得到
+\begin{align}
+\isBoundK{\numSamples} &= \expect_{\hidS{1},\ldots,\hidS{\numSamples}} \left[ \log \frac{1}{\numSamples} \sum_{\sampleIdx=1}^\numSamples \frac{\pmfGen(\obs,\hidS{\sampleIdx})}{\pmfRec(\hidS{\sampleIdx}|\obs)} \right]\label{eq:source-17}
+\\
+&= \expect_{\hidS{1},\ldots,\hidS{\numSamples}} \left[ \log\expect_{\indices=\{\sampleIdx_1,\ldots,\sampleIdx_\numSamplesTwo\}}\left[\frac{1}{\numSamplesTwo} \sum_{\sampleIdxTwo=1}^\numSamplesTwo \frac{\pmfGen(\obs,\hidS{\sampleIdx_\sampleIdxTwo})}{\pmfRec(\hidS{\sampleIdx_\sampleIdxTwo}|\obs)} \right] \right]\label{eq:source-18}
+\\
+& \geq \expect_{\hidS{1},\ldots,\hidS{\numSamples}} \left[ \expect_{\indices=\{\sampleIdx_1,\ldots,\sampleIdx_\numSamplesTwo\}} \left[ \log \frac{1}{\numSamplesTwo} \sum_{\sampleIdxTwo=1}^\numSamplesTwo \frac{\pmfGen(\obs,\hidS{\sampleIdx_\sampleIdxTwo})}{\pmfRec(\hidS{\sampleIdx_\sampleIdxTwo}|\obs)} \right] \right]\label{eq:source-19}
+\\
+&=\expect_{\hidS{1},\ldots,\hidS{\numSamplesTwo}}\left[\log \frac{1}{\numSamplesTwo} \sum_{\sampleIdx=1}^\numSamplesTwo \frac{\pmfGen(\obs,\hidS{\sampleIdx})}{\pmfRec(\hidS{\sampleIdx}|\obs)} \right]=\isBoundK{\numSamplesTwo}\label{eq:source-20}
+\end{align}
+\item 考虑随机变量
+\[M_k=\frac{1}{\numSamples}\sum_{\sampleIdx=1}^{\numSamples}\frac{\pmfGen(\obs,\hidS{\sampleIdx})}{\pmfRec(\hidS{\sampleIdx}|\obs)}.\]
+由强大数定律，$M_k$ 几乎必然收敛到 $\expect_{\pmfRec(\hid|\obs)}[\pmfGen(\obs,\hid)/\pmfRec(\hid|\obs)]=\pmfGen(\obs)$。由假设，$c\leq M_k\leq C$，所以 $|\log M_k|\leq\max\{|\log c|,|\log C|\}$。由有界收敛定理，$\isBoundK{\numSamples}=\expect[\log M_k]$ 随 $\numSamples\to\infty$ 收敛到 $\log\pmfGen(\obs)$。
+\end{enumerate}

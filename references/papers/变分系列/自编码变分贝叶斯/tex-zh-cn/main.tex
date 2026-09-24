@@ -1,0 +1,16 @@
+% 入口只组合模块；论文标题/作者在 metadata.tex，正文在 sections/。
+\PassOptionsToPackage{no-math}{fontspec}
+\documentclass[UTF8,11pt,fontset=none]{ctexart}
+\input{config}
+\input{preamble}
+\input{metadata}
+\begin{document}
+\maketitle
+\input{sections/abstract}
+\input{sections/body}
+\input{bibliography/render}
+% 原文有附录时取消下面两行注释；不要替原文凭空增加附录。
+\appendix
+\input{sections/appendix}
+\input{sections/translation-notes}
+\end{document}

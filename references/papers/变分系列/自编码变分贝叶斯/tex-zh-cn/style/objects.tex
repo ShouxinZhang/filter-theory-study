@@ -1,0 +1,25 @@
+% 对象名字与伪代码关键字；变量和数学表达仍由原稿决定。
+\floatname{algorithm}{算法}
+\algrenewcommand{\algorithmicrequire}{\textbf{输入：}}
+\algrenewcommand{\algorithmicensure}{\textbf{输出：}}
+\algrenewcommand{\algorithmicfor}{\textbf{对于}}
+\algrenewcommand{\algorithmicdo}{\textbf{执行}}
+\algrenewcommand{\algorithmicif}{\textbf{若}}
+\algrenewcommand{\algorithmicthen}{\textbf{则}}
+\algrenewcommand{\algorithmicelse}{\textbf{否则}}
+\algrenewcommand{\algorithmicend}{\textbf{结束}}
+\algrenewcommand{\algorithmicreturn}{\textbf{返回}}
+% 中文短标签以间距引出正文，取消 amsthm 默认的英文句点。
+\newtheoremstyle{zhplain}{\topsep}{\topsep}{\itshape}{} {\bfseries}{}{0.5em}{}
+\newtheoremstyle{zhdefinition}{\topsep}{\topsep}{}{} {\bfseries}{}{0.5em}{}
+\theoremstyle{zhplain}
+\newtheorem{theorem}{定理}
+\newtheorem{lemma}[theorem]{引理}
+\newtheorem{proposition}[theorem]{命题}
+\theoremstyle{zhdefinition}
+\newtheorem{definition}{定义}
+\renewcommand{\proofname}{证明}
+\makeatletter
+% proof 带可选参数；实际正文保存在其内部命令中。
+\expandafter\patchcmd\csname\string\proof\endcsname{\@addpunct{.}}{}{}{\PackageError{zh-objects}{Cannot remove proof heading punctuation}{Check the amsthm proof definition.}}
+\makeatother

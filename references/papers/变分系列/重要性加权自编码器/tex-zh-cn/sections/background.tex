@@ -1,0 +1,45 @@
+\section{背景}
+\label{sec:background}
+
+本节回顾 \citet{vae} 的变分自编码器（VAE）模型，尤其介绍其架构向多个随机隐藏层的推广。不过，\citet{vae} 实际使用了单个随机隐藏层；推广到多层还有其他合理方式，例如 \citet{vae2} 提出的方法。
+
+VAE 通过在一系列隐藏层中进行祖先采样来定义生成过程：
+\begin{equation}
+\pmfGen(\obs|\params) = \int \pmfGen(\hidLayer{\numLayers}|\params) \pmfGen(\hidLayer{\numLayers-1}|\hidLayer{\numLayers},\params)\cdots \pmfGen(\obs|\hidLayer{1},\params)\,\mathrm{d}\hid.\label{eq:source-01}
+\end{equation}
+这里，$\params$ 是变分自编码器的参数向量，$\hid=\{\hidLayer{1},\ldots,\hidLayer{\numLayers}\}$ 表示随机隐藏单元，即潜变量。为使表达清晰，下文常省略对 $\params$ 的依赖。方便起见，定义 $\hidLayer{0}=\obs$。每一项 $\pmfGen(\hidLayer{\layerIdx}|\hidLayer{\layerIdx+1})$ 都可以表示复杂的非线性关系，例如由多层神经网络计算的关系。但我们假定，对每个 $\pmfGen(\hidLayer{\layerIdx}|\hidLayer{\layerIdx+1})$，采样与概率计算都是可处理的。注意，$\numLayers$ 表示\emph{随机}隐藏层的数量；这里没有显式写出确定性层。
+我们假定识别模型 $\pmfRec(\hid|\obs)$ 由类似的分解定义：
+\begin{equation}
+\pmfRec(\hid|\obs)=q(\hidLayer{1}|\obs)q(\hidLayer{2}|\hidLayer{1})\cdots \pmfRec(\hidLayer{\numLayers}|\hidLayer{\numLayers-1}),\label{eq:source-02}
+\end{equation}
+其中，乘积中的每一项都能方便地进行采样与概率计算。
+
+本文采用与 \citet{vae} 相同的条件概率分布族。具体而言，先验 $\pmfGen(\hidLayer{\numLayers})$ 固定为零均值、单位方差的高斯分布。一般地，每个条件分布 $\pmfGen(\hidLayer{\layerIdx}|\hidLayer{\layerIdx+1})$ 和 $\pmfRec(\hidLayer{\layerIdx}|\hidLayer{\layerIdx-1})$ 都是具有对角协方差的高斯分布，其均值与协方差参数由确定性的前馈神经网络计算。对于实值观测，$\pmfGen(\obs|\hidLayer{1})$ 也定义为这样的高斯分布；对于二值观测，它被定义为均值参数由神经网络计算的伯努利分布。
+
+VAE 的训练目标是最大化由 Jensen 不等式得到的对数似然变分下界：
+\begin{equation}
+\log \pmfGen(\obs) = \log \expect_{\pmfRec(\hid|\obs)}\left[\frac{\pmfGen(\obs,\hid)}{\pmfRec(\hid|\obs)}\right]\geq \expect_{\pmfRec(\hid|\obs)}\left[\log\frac{\pmfGen(\obs,\hid)}{\pmfRec(\hid|\obs)}\right] = \varBound(\obs). \label{eqn:vae_bound}
+\end{equation}
+由于 $\varBound(\obs)=\log\pmfGen(\obs)-\kldiv(\pmfRec(\hid|\obs)||\pmfGen(\hid|\obs))$，训练必须在数据对数似然 $\log\pmfGen(\obs)$ 与近似后验相对于真实后验的 KL 散度之间作出权衡。这有其益处，因为它鼓励模型学习后验推断易于近似的表示。
+
+如果直接从式~\eqref{eqn:vae_bound} 计算识别网络的目标梯度，就会得到类似 REINFORCE 的更新规则。由于没有利用对潜变量求导的对数似然梯度，这种规则训练较慢 \citep{helmholtz_machine,nvil}。因此，\citet{vae} 提出用具有固定分布的辅助变量对识别分布重参数化，使识别模型的样本成为输入与辅助变量的确定性函数。他们针对多种分布介绍了重参数化技巧；为方便起见，本文只讨论高斯分布这一特例，因为本文只需要这一情形。（一般的重参数化技巧也适用于我们的 IWAE。）
+
+本文中，识别分布 $\pmfRec(\hidLayer{\layerIdx}|\hidLayer{\layerIdx-1},\params)$ 始终是高斯分布 $\normal(\hidLayer{\layerIdx}|\normalMean(\hidLayer{\layerIdx-1},\params),\normalCov(\hidLayer{\layerIdx-1},\params))$，其均值与协方差由上一层隐藏单元的状态及模型参数计算。
+等价地，可以先采样辅助变量 $\auxLayer{\layerIdx}\sim\normal(\zeroVec,\identity)$，再应用确定性映射
+\begin{equation}
+\hidLayer{\layerIdx}(\auxLayer{\layerIdx}, \hidLayer{\layerIdx-1}, \params) = \normalCov(\hidLayer{\layerIdx-1}, \params)^{1/2} \auxLayer{\layerIdx} + \normalMean(\hidLayer{\layerIdx-1}, \params). \label{eqn:layer-mapping}
+\end{equation}
+依次对各层应用式~\eqref{eqn:layer-mapping}，便可用确定性映射 $\hid(\aux,\obs,\params)$ 表示所有潜变量的联合识别分布 $\pmfRec(\hid|\obs,\params)$，其中 $\aux=(\auxLayer{1},\ldots,\auxLayer{\numLayers})$。
+由于 $\aux$ 的分布不依赖于 $\params$，在允许交换求导与期望的通常正则条件下，可以将梯度算子移入期望，从而把式~\eqref{eqn:vae_bound} 中下界 $\varBound(\obs)$ 的梯度改写为：
+\begin{align}
+\nabla_{\params} \expect_{\hid\sim \pmfRec(\hid|\obs,\params)} \left[ \log \frac{\pmfGen(\obs,\hid|\params)}{\pmfRec(\hid|\obs,\params)} \right] 
+&= \nabla_{\params} \expect_{\auxLayer{1}, \ldots, \auxLayer{\numLayers}\sim \normal(\zeroVec, \identity)} \left[ \log \frac{\pmfGen(\obs,\hid(\aux, \obs, \params)|\params)}{\pmfRec(\hid(\aux, \obs, \params)|\obs,\params)} \right]\label{eq:source-05}
+\\
+&= \expect_{\auxLayer{1}, \ldots, \auxLayer{\numLayers} \sim \normal(\zeroVec, \identity)} \left[ \nabla_{\params}\log \frac{\pmfGen(\obs,\hid(\aux, \obs, \params)|\params)}{\pmfRec(\hid(\aux, \obs, \params)|\obs,\params)} \right]. \label{eqn:vae_reparameterization}
+\end{align}
+若映射 $\hid$ 由确定性的前馈神经网络表示，则固定 $\aux$ 后，期望内部的梯度可用标准反向传播计算。实际中，通过生成 $\aux$ 的 $\numSamples$ 个样本，并使用以下蒙特卡洛估计量，近似式~\eqref{eqn:vae_reparameterization} 的期望：
+\begin{equation}
+\label{eqn:ksample_var_grad}
+\frac{1}{\numSamples}\sum_{\sampleIdx=1}^\numSamples\nabla_{\params}\log \isWeight \left(\obs, \hid(\auxS{\sampleIdx}, \obs, \params), \params\right)
+\end{equation}
+其中 $\isWeight(\obs,\hid,\params)=\pmfGen(\obs,\hid|\params)/\pmfRec(\hid|\obs,\params)$。这是 $\nabla_\params\varBound(\obs)$ 的无偏估计。注意，VAE 更新和基本的 REINFORCE 式更新都是同一梯度的无偏估计量；但 VAE 更新利用了对潜变量求导的对数似然梯度，因此在实践中通常具有更低的方差。

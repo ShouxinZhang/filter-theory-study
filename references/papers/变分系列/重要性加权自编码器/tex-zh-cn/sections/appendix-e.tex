@@ -1,0 +1,20 @@
+\clearpage\section*{附录 E}\phantomsection\addcontentsline{toc}{section}{附录 E}
+\label{app:samples}
+
+\subsection*{生成样本}
+\vspace{2ex}
+\begin{table}[htbp]
+
+\begin{center}
+\begin{tabular}[t]{@{}ccc@{}}
+ \includegraphics[width=0.25\textwidth]{\figuresdir{samples1vae.jpg}} & \hspace{3ex} &
+\includegraphics[width=0.25\textwidth]{\figuresdir{samples1iwae.jpg}} \\
+& & \\
+ \includegraphics[width=0.25\textwidth]{\figuresdir{samples2vae.jpg}} & \hspace{3ex} &
+\includegraphics[width=0.25\textwidth]{\figuresdir{samples2iwae.jpg}} \\
+\end{tabular}
+\end{center}
+
+\caption{从 VAE（左列）和 $k=50$ 的 IWAE（右列）模型中随机生成的样本。第一行：单随机层模型。第二行：双随机层模型。样本以相应伯努利分布的均值表示。}
+\label{tbl:samples}
+\end{table}

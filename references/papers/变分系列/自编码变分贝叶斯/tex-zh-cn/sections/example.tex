@@ -1,0 +1,25 @@
+\section{示例：变分自编码器}
+\label{sec:example}
+本节给出一个例子：以神经网络实现概率编码器 $\qPhi(\bz|\bx)$，即对生成模型 $\pT(\bx,\bz)$ 的后验分布的近似，并通过 AEVB 算法联合优化参数 $\bphi$ 和 $\bT$。
+
+设潜变量先验为零均值、各向同性的多元高斯分布 $\pT(\bz)=\mathcal{N}(\bz;\bzero,\bI)$。注意，此时先验没有需要学习的参数。对于实值数据，令 $\pT(\bx|\bz)$ 为多元高斯分布；对于二值数据，则令其为伯努利分布。分布参数由 $\bz$ 经 MLP 计算得到；这里的 MLP 是具有单个隐藏层的全连接神经网络，见附录\ref{ap:encoders_decoders}。此时真实后验 $\pT(\bz|\bx)$ 难以处理。
+虽然 $\qPhi(\bz|\bx)$ 的形式有很大选择空间，这里假设真实但难以处理的后验近似为高斯分布，且协方差近似为对角矩阵。因此，可以令变分近似后验为具有对角协方差结构的多元高斯分布\footnote{这只是一种简化选择，并非本方法的限制。}：
+\begin{align*}
+\log \qPhi(\bz|\bxi)
+&= \log \mathcal{N}(\bz; \bmu^{(i)}, \operatorname{diag}((\bsigma^{(i)})^2))
+\eqnr\label{eq:auto-9}\end{align*}
+其中，近似后验的均值 $\bmu^{(i)}$ 和标准差 $\bsigma^{(i)}$ 是编码 MLP 的输出，即数据点 $\bx^{(i)}$ 与变分参数 $\bphi$ 的非线性函数，见附录\ref{ap:encoders_decoders}。
+
+如第\ref{subsec:thetrick}节所述，我们利用 $\bzil=\gPhi(\bepsl,\bxi)=\bmu^{(i)}+\bsigma^{(i)}\odot\bepsl$ 从后验中采样 $\bzil\sim\qPhi(\bz|\bxi)$，其中 $\bepsl\sim\mathcal{N}(\bzero,\bI)$，符号 $\odot$ 表示逐元素乘积。
+在该模型中，先验 $\pT(\bz)$ 和近似后验 $\qPhi(\bz|\bx)$ 均为高斯分布；因此可以使用式\eqref{eq:estimator2}的估计量，其中 KL 散度可以直接计算并求导，无须采样估计（见附录\ref{ap:kl_solution}）。对于该模型及数据点 $\bxi$，得到的估计量为：
+\begin{align*}
+\LB{}{\bxi}
+&\simeq 
+\frac{1}{2} \sum_{j=1}^J \left(1 + \log ((\sigma_j^{(i)})^2) - (\mu_j^{(i)})^2 - (\sigma_j^{(i)})^2 \right)
++ \frac{1}{L} \sum_{l=1}^L \log \pT(\bxi|\bzil) \\
+\text{其中\quad}
+\bzil &= \bmu^{(i)} + \bsigma^{(i)} \odot \beps^{(l)}
+\text{\quad 且 \quad}
+\bepsl \sim \mathcal{N}(0,\bI)
+\label{eq:gaussian_estimator}\eqnr\end{align*}
+如上文及附录\ref{ap:encoders_decoders}所述，解码项 $\log\pT(\bxi|\bzil)$ 由伯努利或高斯 MLP 给出，具体取决于所建模的数据类型。

@@ -1,0 +1,10 @@
+% 默认数字样式沿用蓝色基线；作者年模式显式选择，不并载另一文献后端。
+\ifdefstring{\PaperCitationMode}{numbers}{}{%
+  \ifdefstring{\PaperCitationMode}{authoryear}{%
+    \setcitestyle{authoryear,round,citesep={;},aysep={,},yysep={;}}
+  }{\PackageError{blue-translation}{Unknown citation mode}{Use numbers or authoryear.}}
+}
+\renewcommand{\bibsection}{%
+  \section*{参考文献}\phantomsection
+  \addcontentsline{toc}{section}{参考文献}
+}

@@ -1,0 +1,26 @@
+\section{作为概率编码器和解码器的 MLP}
+\label{ap:encoders_decoders}
+在变分自编码器中，神经网络用作概率编码器和解码器。根据数据及模型类型的不同，编码器和解码器有许多可能的选择。在本文的例子中，我们使用较简单的神经网络，即多层感知机（MLP）。编码器采用高斯输出的 MLP；解码器根据数据类型，采用高斯或伯努利输出的 MLP。
+
+\subsection{作为解码器的伯努利 MLP}
+此时，令 $\pT(\bx|\bz)$ 为多元伯努利分布，其概率由 $\bz$ 通过具有单个隐藏层的全连接神经网络计算得到：
+\begin{align*}
+\log p(\bx|\bz)
+&= \sum_{i=1}^D \bigl[x_i \log y_i + (1-x_i) \cdot \log(1-y_i)\bigr] \\
+\text{其中\,\,\,}
+\by &= f_\sigma(\bW_2 \tanh(\bW_1 \bz + \bbb_1) + \bbb_2)
+\eqnr\label{eq:auto-11}\end{align*}
+其中 $f_\sigma(.)$ 为逐元素 sigmoid 激活函数，$\bT=\{\bW_1,\bW_2,\bbb_1,\bbb_2\}$ 为 MLP 的权重与偏置。
+
+\subsection{作为编码器或解码器的高斯 MLP}
+此时，令编码器或解码器为具有对角协方差结构的多元高斯分布：
+\begin{align*}
+\log p(\bx|\bz)
+&= \log \mathcal{N}(\bx; \bmu, \operatorname{diag}(\bsigma^2))
+\\
+\text{其中\,\,\,}
+\bmu &= \bW_4 \bh  +\bbb_4 \\
+\log \bsigma^2 &= \bW_5 \bh + \bbb_5 \\
+\bh &= \tanh(\bW_3 \bz + \bbb_3)
+\eqnr\label{eq:auto-12}\end{align*}
+其中 $\{\bW_3,\bW_4,\bW_5,\bbb_3,\bbb_4,\bbb_5\}$ 是 MLP 的权重和偏置；当网络用作解码器时，它们属于 $\bT$。注意，若将该网络用作编码器 $\qPhi(\bz|\bx)$，则需交换 $\bz$ 与 $\bx$，此时权重和偏置属于变分参数 $\bphi$。

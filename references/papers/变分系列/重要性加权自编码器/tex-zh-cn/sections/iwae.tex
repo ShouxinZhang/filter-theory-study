@@ -1,0 +1,65 @@
+\section{重要性加权自编码器}
+\label{sec:iwae}
+
+式~\eqref{eqn:vae_bound} 的 VAE 目标会严厉惩罚不能解释观测的近似后验样本。这对模型构成了较强约束，因为只有近似满足变分假设，才能获得良好的下界。具体而言，后验分布必须近似按维度因子化，并能由前馈神经网络预测。这样的 VAE 准则可能过于严格：即使识别网络只有少部分样本（例如 20\%）落在后验概率较高的区域，也可能足以进行准确推断。若如此放宽要求，就可能更灵活地训练后验分布不满足 VAE 假设的生成网络。这正是我们提出重要性加权自编码器（IWAE）的动机。
+
+IWAE 使用与 VAE 相同的架构，同时包含生成网络和识别网络。区别在于，它通过最大化 $\log\pmfGen(\obs)$ 的另一种下界来训练。具体而言，我们采用以下下界，它对应于使用 $\numSamples$ 个样本的重要性加权对数似然估计：
+\begin{equation}
+\isBoundK{\numSamples}(\obs)=\expect_{\hidS{1},\ldots,\hidS{\numSamples} \sim \pmfRec(\hid | \obs)} \left[ \log \frac{1}{\numSamples} \sum_{\sampleIdx=1}^\numSamples \frac{\pmfGen(\obs,\hidS{\sampleIdx})}{\pmfRec(\hidS{\sampleIdx}|\obs)} \right]. \label{eqn:is_bound}
+\end{equation}
+这里，$\hidS{1},\ldots,\hidS{\numSamples}$ 独立采样自识别模型。求和中的每一项是联合分布的未归一化重要性权重，记为 $\isWeightS{\sampleIdx}=\pmfGen(\obs,\hidS{\sampleIdx})/\pmfRec(\hidS{\sampleIdx}|\obs)$。
+
+在提议分布覆盖目标分布支撑集的条件下，重要性权重的平均值是 $\pmfGen(\obs)$ 的无偏估计量；结合 Jensen 不等式可知，这确实是边缘对数似然的下界：
+\begin{equation}
+\isBoundK{\numSamples}=\expect \left[ \log \frac{1}{\numSamples} \sum_{\sampleIdx=1}^\numSamples \isWeightS{\sampleIdx} \right] \leq \log \expect \left[ \frac{1}{\numSamples} \sum_{\sampleIdx=1}^\numSamples \isWeightS{\sampleIdx} \right] =\log \pmfGen(\obs),\label{eq:source-09}
+\end{equation}
+其中，期望相对于 $\pmfRec(\hid|\obs)$ 计算。
+
+在高维空间中，重要性加权竟能提供合理的估计量，这或许不太直观。但注意，$\numSamples=1$ 的特例就等价于式~\eqref{eqn:vae_bound} 的标准 VAE 目标。使用更多样本只会使下界更紧：
+\begin{theorem}
+对所有 $\numSamples$，下界满足
+\begin{equation}
+\log \pmfGen(\obs) \geq \isBoundK{\numSamples + 1} \geq \isBoundK{\numSamples}.\label{eq:source-10}
+\end{equation}
+进一步，若存在常数 $0<c\leq C<\infty$，使 $c\leq\pmfGen(\hid,\obs)/\pmfRec(\hid|\obs)\leq C$ 几乎处处成立，则当 $\numSamples$ 趋于无穷时，$\isBoundK{\numSamples}$ 趋于 $\log\pmfGen(\obs)$。
+\end{theorem}
+\begin{proof}
+见附录 A。
+\end{proof}
+
+下界 $\isBoundK{\numSamples}$ 可以用直接的蒙特卡洛估计量来估计：从识别网络采样，对重要性权重取平均后取对数。人们可能担心估计量的方差，因为当提议分布与目标分布不匹配时，重要性加权的方差可能极大。不过，对权重平均值取对数可以控制高估尾部；附录 B 进一步证明，其平均绝对偏差受对数估计的偏差控制。这一结论本身不保证方差较小或有限。
+
+
+\subsection{训练过程}
+
+为了使用基于随机梯度的优化器训练 IWAE，我们采用式~\eqref{eqn:is_bound} 定义的 $\isBoundK{\numSamples}$ 的无偏梯度估计。与 VAE 一样，我们使用重参数化技巧推导低方差的更新规则：
+\begin{small}
+\begin{align}
+\nabla_\params \isBoundK{\numSamples}(\obs) = \nabla_\params \expect_{\hidS{1},\ldots,\hidS{\numSamples}} \left[ \log \frac{1}{\numSamples} \sum_{\sampleIdx=1}^\numSamples \isWeightS{\sampleIdx} \right] 
+&= \nabla_\params \expect_{\auxS{1},\ldots,\auxS{\numSamples}} \left[ \log \frac{1}{\numSamples} \sum_{\sampleIdx=1}^\numSamples \isWeight(\obs, \hid(\auxS{\sampleIdx}, \obs, \params), \params) \right]\label{eq:source-11}
+\\
+&= \expect_{\auxS{1},\ldots,\auxS{\numSamples}} \left[ \nabla_\params \log \frac{1}{\numSamples} \sum_{\sampleIdx=1}^\numSamples \isWeight(\obs, \hid(\auxS{\sampleIdx}, \obs, \params), \params) \right]\label{eq:source-12}
+\\
+&= \expect_{\auxS{1},\ldots,\auxS{\numSamples}} \left[ \sum_{\sampleIdx=1}^\numSamples \isWeightNormS{\sampleIdx} \nabla_\params \log \isWeight(\obs, \hid(\auxS{\sampleIdx}, \obs, \params), \params) \right], \label{eqn:iwae_gradient}
+\end{align}
+\end{small}
+
+\noindent 其中，$\auxS{1},\ldots,\auxS{\numSamples}$ 与第~\ref{sec:background} 节为 VAE 定义的辅助变量相同；$\isWeightS{\sampleIdx}=\isWeight(\obs,\hid(\auxS{\sampleIdx},\obs,\params),\params)$ 是写成确定性函数的重要性权重，$\isWeightNormS{\sampleIdx}=\isWeightS{\sampleIdx}/\sum_{\sampleIdxTwo=1}^{\numSamples}\isWeightS{\sampleIdxTwo}$ 是归一化重要性权重。
+
+在基于梯度的学习算法中，我们从识别网络抽取 $\numSamples$ 个样本（等价地，抽取 $\numSamples$ 组辅助变量），并使用式~\eqref{eqn:iwae_gradient} 的蒙特卡洛估计：
+\begin{equation}
+\label{eqn:grad_ksample_objective}
+\sum_{\sampleIdx=1}^\numSamples \isWeightNormS{\sampleIdx} \nabla_{\params}\log \isWeight\left(\obs, \hid(\auxS{\sampleIdx}, \obs, \params), \params\right).
+\end{equation}
+在 $\numSamples=1$ 的特例中，唯一的归一化权重 $\isWeightNormS{1}$ 等于 1，因此得到 VAE 的更新规则。
+
+
+下面进一步分析这一更新，因为它与标准 VAE 的更新并不完全对应。\footnote{\citet{vae} 将式~\eqref{eqn:vae_bound} 中的 KL 散度单独分离出来，以得到更简单、方差更低的更新。不幸的是，当 $\numSamples>1$ 时，没有相应的技巧可用。因此，原则上 IWAE 更新的方差可能更高。但在实验中，我们发现当 $\numSamples=1$ 时，两种更新规则的性能没有可辨别的差异。}对数权重的梯度可分解为：
+\begin{equation}
+\nabla_\params \log \isWeight(\obs, \hid(\auxS{\sampleIdx}, \obs, \params), \params) = \nabla_\params \log \pmfGen(\obs,\hid(\auxS{\sampleIdx}, \obs, \params)|\params) - \nabla_\params \log \pmfRec(\hid(\auxS{\sampleIdx}, \obs, \params)|\obs,\params).\label{eq:source-15}
+\end{equation}
+第一项鼓励生成模型在给定 $\hidLayer{\layerIdx+1}$ 时，为各个 $\hidLayer{\layerIdx}$ 赋予较高概率（沿用 $\obs=\hidLayer{0}$ 的约定）。它也鼓励识别网络调整隐藏表示，使生成网络能够更好地预测。在只有一个随机层（即 $\numLayers=1$）时，这两种作用的结合等价于随机自编码器中的反向传播。更新的第二项鼓励识别网络给出更分散的预测分布。该更新按与重要性权重成比例的权重在样本间取平均，“重要性加权自编码器”的名称即由此而来。
+
+IWAE 训练的主要计算成本，是计算 $\nabla_\params\log\isWeight(\obs,\hid(\auxS{\sampleIdx},\obs,\params),\params)$ 所需的激活值与参数梯度，分别对应反向传播算法的前向与反向过程。在基本的 IWAE 实现中，每个样本都需要独立执行这两个过程，因此运算量随 $\numSamples$ 线性增长。在我们的 GPU 实现中，每个训练样本在小批量内复制 $\numSamples$ 次，从而并行处理这些采样结果。
+
+引入另一种随机性可以大幅降低计算成本。具体而言，计算重要性权重只需要前向过程。对式~\eqref{eqn:grad_ksample_objective} 中的求和，可以按归一化权重 $\isWeightNormS{\sampleIdx}$ 选取单个样本 $\auxS{\sampleIdx}$，再计算 $\nabla_\params\log\isWeight(\obs,\hid(\auxS{\sampleIdx},\obs,\params),\params)$，从而得到随机近似。这样，每个训练样本只需 $\numSamples$ 次前向过程和一次反向过程。由于反向过程所需的乘加运算大约是前向过程的两倍，当 $\numSamples$ 较大时，这一技巧可将乘加运算量降至约三分之一。代价是更新方差增大，但实证上我们发现这一权衡是有利的。

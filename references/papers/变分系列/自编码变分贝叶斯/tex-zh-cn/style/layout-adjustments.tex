@@ -1,0 +1,6 @@
+% 数学长式在正文模块内分行；保留模板字体、纸张及边距。
+\allowdisplaybreaks[1]
+\setcounter{secnumdepth}{2}
+% 先预留标题与随后正文的空间，避免超链接锚点留在分页前一页。
+\pretocmd{\section}{\Needspace{6\baselineskip}}{}{\PackageError{translation}{Cannot patch section spacing}{}}
+\pretocmd{\subsection}{\Needspace{4\baselineskip}}{}{\PackageError{translation}{Cannot patch subsection spacing}{}}

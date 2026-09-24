@@ -1,0 +1,38 @@
+% 沿用本 sandbox 既有中文单栏模板，仅保留本论文所需包。
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage{lmodern,fontspec}
+\setmainfont{TeX Gyre Pagella}
+\setCJKmainfont{FandolSong-Regular.otf}[BoldFont=FandolSong-Bold.otf,ItalicFont=FandolKai-Regular.otf,Script=Default]
+\setCJKsansfont{FandolHei-Regular.otf}[BoldFont=FandolHei-Bold.otf,Script=Default]
+\setCJKmonofont{FandolFang-Regular.otf}[Script=Default]
+\usepackage{microtype,mathtools,amssymb,bm}
+\usepackage{graphicx,booktabs,enumitem,caption,subfig,float,adjustbox}
+\usepackage{placeins,needspace}
+\usepackage{xcolor,titlesec,xurl}
+\definecolor{paperblue}{HTML}{1F4E79}
+\usepackage[numbers,square,compress]{natbib}
+\usepackage{multirow}
+\usepackage[colorlinks=true,linkcolor=paperblue,citecolor=paperblue,urlcolor=paperblue,bookmarksnumbered=true]{hyperref}
+\special{pdf:minorversion 7}
+% 论文特定的 PDF metadata 在填写正文时设置，不残留上一论文的标题/作者。
+\renewcommand{\eqref}[1]{(\ref{#1})}
+\renewcommand{\refname}{参考文献}
+\renewcommand{\abstractname}{摘要}
+\setlength{\parindent}{2em}
+\setlength{\parskip}{0.35em}
+\setlength{\emergencystretch}{2em}
+\setlength{\tabcolsep}{1.8mm}
+\renewcommand{\arraystretch}{1.15}
+\setlist[enumerate]{leftmargin=2.2em,itemsep=0.2em}
+\captionsetup{font=small,labelfont={bf,color=paperblue},labelsep=quad}
+\titleformat{\section}{\Large\sffamily\bfseries\color{paperblue}}{\thesection}{0.75em}{}
+\titleformat{\subsection}{\large\sffamily\bfseries}{\thesubsection}{0.65em}{}
+\titlespacing*{\section}{0pt}{1.5em}{0.55em}
+\titlespacing*{\subsection}{0pt}{1em}{0.35em}
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\bottomfraction}{0.8}
+\renewcommand{\textfraction}{0.08}
+\renewcommand{\floatpagefraction}{0.75}
+\setcounter{topnumber}{3}
+\setcounter{totalnumber}{5}
+\makeatletter\setlength{\@fptop}{0pt}\makeatother

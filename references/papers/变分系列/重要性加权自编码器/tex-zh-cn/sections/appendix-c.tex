@@ -1,0 +1,87 @@
+\clearpage\section*{附录 C}\phantomsection\addcontentsline{toc}{section}{附录 C}
+\label{app:visualizations}
+
+
+\subsection*{网络架构}
+实验所用网络架构汇总如下。图中的“线性”表示仿射层，“sigm”表示 sigmoid 非线性，“100d”和“200d”分别表示 100 维和 200 维。沿用原图记号，$\recStdLayer{\layerIdx}$ 与 $\genStdLayer{\layerIdx}$ 在这些图中表示对角协方差的对角元素。
+
+ \begin{center}\begin{minipage}{\linewidth}\centering\small
+\(\pmfRec(\hidLayer{1}|\obs)=\normal(\hidLayer{1}|\recMeanLayer{1},\mathrm{diag}(\recStdLayer{1}))\)\par\smallskip
+\begin{adjustbox}{max width=\linewidth}\begin{tikzpicture}
+ 
+  \matrix (m) [matrix of math nodes,row sep=0em,column sep=6em,minimum width=2em,nodes={draw}] at (0, 0)
+  {
+     \obs & \mbox{200d} & \mbox{200d} & \recMeanLayer{1} \\
+       &                  &                  & \recStdLayer{1} \\};
+  \path[-stealth]
+    (m-1-1) edge node [above] {线性+$\tanh$} (m-1-2) 
+    (m-1-2) edge node [above] {线性+$\tanh$} (m-1-3)
+    (m-1-3) edge node [above] {线性}         (m-1-4)
+	        edge node [below] {线性+$\exp$}  (m-2-4);
+\end{tikzpicture}\end{adjustbox}\end{minipage}\end{center}
+ 
+\begin{center}\begin{minipage}{\linewidth}\centering\small
+\(\pmfRec(\hidLayer{2}|\hidLayer{1})=\normal(\hidLayer{2}|\recMeanLayer{2},\mathrm{diag}(\recStdLayer{2}))\)\par\smallskip
+\begin{adjustbox}{max width=\linewidth}\begin{tikzpicture}
+ 
+  \matrix (m) [matrix of math nodes,row sep=0em,column sep=6em,minimum width=2em,nodes={draw}] at (0, 0)
+  {
+     \hidLayer{1} & \mbox{100d} & \mbox{100d} & \recMeanLayer{2} \\
+       &                  &                  & \recStdLayer{2} \\};
+  \path[-stealth]
+    (m-1-1) edge node [above] {线性+$\tanh$} (m-1-2) 
+    (m-1-2) edge node [above] {线性+$\tanh$} (m-1-3)
+    (m-1-3) edge node [above] {线性}         (m-1-4)
+	        edge node [below] {线性+$\exp$}  (m-2-4);
+\end{tikzpicture}\end{adjustbox}\end{minipage}\end{center}
+ 
+\begin{center}\begin{minipage}{\linewidth}\centering\small
+\(\pmfGen(\hidLayer{1}|\hidLayer{2})=\normal(\hidLayer{1}|\genMeanLayer{1},\mathrm{diag}(\genStdLayer{1}))\)\par\smallskip
+\begin{adjustbox}{max width=\linewidth}\begin{tikzpicture}
+ 
+  \matrix (m) [matrix of math nodes,row sep=0em,column sep=6em,minimum width=2em,nodes={draw}] at (0, 0)
+  {
+     \hidLayer{2} & \mbox{100d} & \mbox{100d} & \genMeanLayer{1} \\
+       &                  &                  & \genStdLayer{1} \\};
+  \path[-stealth]
+    (m-1-1) edge node [above] {线性+$\tanh$} (m-1-2) 
+    (m-1-2) edge node [above] {线性+$\tanh$} (m-1-3)
+    (m-1-3) edge node [above] {线性}         (m-1-4)
+	        edge node [below] {线性+$\exp$}  (m-2-4);
+\end{tikzpicture}\end{adjustbox}\end{minipage}\end{center}
+ 
+\begin{center}\begin{minipage}{\linewidth}\centering\small
+\(\pmfGen(\obs|\hidLayer{1})=\mathrm{Bernoulli}(\obs|\genMeanLayer{0})\)\par\smallskip
+\begin{adjustbox}{max width=\linewidth}\begin{tikzpicture}
+ 
+  \matrix (m) [matrix of math nodes,row sep=0em,column sep=6em,minimum width=2em,nodes={draw}] at (0, 0)
+  {
+     \hidLayer{1} & \mbox{200d} & \mbox{200d} & \genMeanLayer{0} \\};
+  \path[-stealth]
+    (m-1-1) edge node [above] {线性+$\tanh$} (m-1-2) 
+    (m-1-2) edge node [above] {线性+$\tanh$} (m-1-3)
+    (m-1-3) edge node [above] {线性+sigm}         (m-1-4);
+\end{tikzpicture}\end{adjustbox}\end{minipage}\end{center}
+ 
+
+
+\subsection*{活跃度统计量的分布}
+
+第~\ref{sec:latent} 节定义了活跃度统计量 $A_\latentUnit=\mathrm{Cov}_{\obs}\bigl(\expect_{\latentUnit\sim\pmfRec(\latentUnit|\obs)}[\latentUnit]\bigr)$，并选取 $10^{-2}$ 为判断单元是否活跃的阈值。这样做的一个依据是，在我们考察的所有情形中，该统计量的分布均由两个相距很远的峰组成。下图给出单随机层 VAE 中 $\log A_\latentUnit$ 的直方图：
+\begin{center}
+\includegraphics[width=0.3\textwidth]{\figuresdir{log_vars_means_hist.pdf}}
+\end{center}
+
+\subsection*{后验分布可视化}
+
+下面展示潜在空间为二维的 VAE 与 IWAE 模型的真实后验和近似后验示例。热图表示 6 个训练样本的真实后验分布；底行图像展示这些样本，以及从 $\pmfRec(\hid|\obs)$ 采样所得的重构。\textbf{左：}VAE。\textbf{中：}$\numSamples=5$ 的 IWAE。\textbf{右：}$\numSamples=50$ 的 IWAE。IWAE 倾向于学习形状更不规则的后验，以及更分散的后验预测。
+
+\begin{center}
+\includegraphics[width=0.2\textwidth]{\figuresdir{iwae1_posterior_0_1x1.jpg}} \hspace{2ex} \includegraphics[width=0.2\textwidth]{\figuresdir{iwae5_posterior_0_1x1.jpg}} \hspace{2ex}\includegraphics[width=0.2\textwidth]{\figuresdir{iwae50_posterior_0_1x1.jpg}} \\
+\includegraphics[width=0.2\textwidth]{\figuresdir{iwae1_posterior_1_1x1.jpg}} \hspace{2ex} \includegraphics[width=0.2\textwidth]{\figuresdir{iwae5_posterior_1_1x1.jpg}} \hspace{2ex} \includegraphics[width=0.2\textwidth]{\figuresdir{iwae50_posterior_1_1x1.jpg}} \\
+\includegraphics[width=0.2\textwidth]{\figuresdir{iwae1_posterior_2_1x1.jpg}} \hspace{2ex} \includegraphics[width=0.2\textwidth]{\figuresdir{iwae5_posterior_2_1x1.jpg}} \hspace{2ex} \includegraphics[width=0.2\textwidth]{\figuresdir{iwae50_posterior_2_1x1.jpg}} \\
+\includegraphics[width=0.2\textwidth]{\figuresdir{iwae1_posterior_3_1x1.jpg}} \hspace{2ex} \includegraphics[width=0.2\textwidth]{\figuresdir{iwae5_posterior_3_1x1.jpg}} \hspace{2ex} \includegraphics[width=0.2\textwidth]{\figuresdir{iwae50_posterior_3_1x1.jpg}} \\
+\includegraphics[width=0.2\textwidth]{\figuresdir{iwae1_posterior_4_1x1.jpg}} \hspace{2ex} \includegraphics[width=0.2\textwidth]{\figuresdir{iwae5_posterior_4_1x1.jpg}} \hspace{2ex} \includegraphics[width=0.2\textwidth]{\figuresdir{iwae50_posterior_4_1x1.jpg}} \\
+\includegraphics[width=0.2\textwidth]{\figuresdir{iwae1_posterior_5_1x1.jpg}} \hspace{2ex} \includegraphics[width=0.2\textwidth]{\figuresdir{iwae5_posterior_5_1x1.jpg}} \hspace{2ex} \includegraphics[width=0.2\textwidth]{\figuresdir{iwae50_posterior_5_1x1.jpg}} \\
+\includegraphics[width=0.2\textwidth]{\figuresdir{iwae1_ellipses_samples.png}} \hspace{2ex} \includegraphics[width=0.2\textwidth]{\figuresdir{iwae5_ellipses_samples.png}} \hspace{2ex} \includegraphics[width=0.2\textwidth]{\figuresdir{iwae50_ellipses_samples.png}}
+\end{center}

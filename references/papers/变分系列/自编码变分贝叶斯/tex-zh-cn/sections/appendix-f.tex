@@ -1,0 +1,103 @@
+\section{完全变分贝叶斯}
+如正文所述，除对潜变量进行变分推断外，还可以同时对参数 $\bT$ 和潜变量 $\bz$ 进行变分推断。本节推导这种情形下的估计量。
+
+设 $\pA(\bT)$ 是上述参数的超先验，由 $\balpha$ 参数化。对数边缘似然可写为：
+\begin{align*}
+\log \pA(\bX) = D_{KL}(\qPhi(\bT)||\pA(\bT|\bX)) + \mathcal{L}(\bphi;\bX)
+\eqnr\label{eq:auto-13}\end{align*}
+右端第一项是近似后验相对于真实后验的 KL 散度，$\mathcal{L}(\bphi;\bX)$ 表示对数边缘似然的变分下界：
+\begin{align*}
+\mathcal{L}(\bphi;\bX) = \int \qPhi(\bT) \left( \log \pT(\bX) + \log \pA(\bT) - \log \qPhi(\bT) \right) \,\mathrm{d}\bT
+\eqnr\label{eq:lowerbound1_ap}\end{align*}
+由于 KL 散度非负，这确实是一个下界；当近似后验与真实后验完全一致时，下界等于真实对数边缘似然。
+$\log\pT(\bX)$ 是各数据点对数边缘似然之和，即 $\log\pT(\bX)=\sum_{i=1}^N\log\pT(\bxi)$。其中每一项均可写成：
+\begin{align*}
+\log \pT(\bxi) = D_{KL}(\qPhi(\bz|\bxi)||\pT(\bz|\bxi)) + \mathcal{L}(\bT,\bphi;\bxi)
+\eqnr\label{eq:auto-15}\end{align*}
+右端第一项仍为近似后验相对于真实后验的 KL 散度，而 $\mathcal{L}(\bT,\bphi;\bxi)$ 是数据点 $i$ 的对数边缘似然的变分下界：
+\begin{align*}
+\mathcal{L}(\bT,\bphi;\bxi)
+&= \int \qPhi(\bz|\bxi) \left(\log \pT(\bxi | \bz) + \log \pT(\bz) - \log \qPhi(\bz|\bxi)\right) \,\mathrm{d}\bz 
+\eqnr\label{eq:lowerbound2_ap}\end{align*}
+
+
+式\eqref{eq:lowerbound1_ap}和式\eqref{eq:lowerbound2_ap}右端的期望都可写成三个单独期望之和，其中第二项和第三项有时可以解析求解。例如，对潜变量下界而言，当 $\pT(\bz)$ 和 $\qPhi(\bz|\bx)$ 均为高斯分布时即可如此；对参数下界，则对应于 $\pA(\bT)$ 与 $\qPhi(\bT)$。为保持一般性，这里假设各项期望都难以处理。
+
+对于选定的近似后验 $\qPhi(\bT)$ 和 $\qPhi(\bz|\bx)$，在第\ref{subsec:thetrick}节所述的温和条件下，可将条件样本 $\btz\sim\qPhi(\bz|\bx)$ 重参数化为：
+\begin{align*}
+\btz = \gPhi(\beps,\bx) \text{\quad 其中 \quad} \beps \sim p(\beps)
+\eqnr\label{eq:auto-17}\end{align*}
+选取辅助噪声分布 $p(\beps)$ 和函数 $\gPhi(\beps,\bx)$，使下式成立：
+\begin{align*}
+\mathcal{L}(\bT,\bphi;\bxi)
+&= \int \qPhi(\bz|\bxi) \left(\log \pT(\bxi | \bz) + \log \pT(\bz) - \log \qPhi(\bz|\bxi)\right) \,\mathrm{d}\bz \\
+&= \int p(\beps) \left(\log \pT(\bxi | \bz) + \log \pT(\bz) - \log \qPhi(\bz|\bxi)\right) \bigg|_{\bz=\gPhi(\beps,\bxi)} \,\mathrm{d}\beps
+\eqnr\label{eq:reparameterizedbound2_ap}\end{align*}
+对近似后验 $\qPhi(\bT)$ 也可以进行同样的处理：
+\begin{align*}
+\btT = \hPhi(\bzeta) \text{\quad 其中 \quad} \bzeta \sim p(\bzeta)
+\eqnr\label{eq:auto-19}\end{align*}
+与上文类似，选取辅助噪声分布 $p(\bzeta)$ 和函数 $\hPhi(\bzeta)$，使下式成立：
+\begin{align*}
+\mathcal{L}(\bphi;\bX)
+&= \int \qPhi(\bT) \left( \log \pT(\bX) + \log \pA(\bT) - \log \qPhi(\bT) \right) \,\mathrm{d}\bT \\
+&= \int p(\bzeta) \left( \log \pT(\bX) + \log \pA(\bT) - \log \qPhi(\bT) \right) \bigg|_{\bT=\hPhi(\bzeta)} \,\mathrm{d}\bzeta
+\eqnr\label{eq:reparameterizedbound1_ap}\end{align*}
+
+为简化记号，引入函数 $\fPhi(\bx,\bz,\bT)$：
+\begin{align}
+\fPhi(\bx, \bz, \bT) = N \cdot (\log \pT(\bx | \bz) + \log \pT(\bz) - \log \qPhi(\bz|\bx)) + \log \pA(\bT) - \log \qPhi(\bT)
+\label{eq:f_ap}
+\end{align}
+将式\eqref{eq:reparameterizedbound1_ap}中的各个 $\log\pT(\bxi)$ 替换为式\eqref{eq:reparameterizedbound2_ap}中的下界，得到联合变分下界 $\mathcal{J}(\bphi;\bX)$。它满足 $\mathcal{J}(\bphi;\bX)\leq\mathcal{L}(\bphi;\bX)\leq\log\pA(\bX)$。对数据点也进行均匀随机采样后，其蒙特卡洛估计为：
+\begin{align*}
+\mathcal{J}(\bphi;\bX)
+&\simeq \frac{1}{L} \sum_{l=1}^L \fPhi(\bxl, \gPhi(\bepsl,\bxl), \hPhi(\bzetal))
+\eqnr\label{eq:fullestimator_ap}\end{align*}
+其中，每个 $\bxl$ 均从数据集 $\bX$ 中独立均匀抽取，$\bepsl\sim p(\beps)$、$\bzetal\sim p(\bzeta)$，且这些随机抽样相互独立。
+该估计量使用的数据抽样及来自 $p(\beps)$、$p(\bzeta)$ 的噪声样本均不受 $\bphi$ 影响，因此可对估计量关于 $\bphi$ 求导。所得随机梯度可以与 SGD 或 Adagrad\cite{duchi2010adaptive}等随机优化方法结合使用。计算随机梯度的基本方法见算法\ref{algorithm_ap}。
+
+\begin{algorithm}[t]
+\caption{利用本文估计量计算随机梯度的伪代码。函数 $\fPhi$、$\gPhi$ 和 $\hPhi$ 的含义见正文。}
+\renewcommand{\algorithmicforall}{\textbf{对每个}}
+\begin{algorithmic}
+\Require $\bphi$（变分参数的当前值）
+\State $\bg \gets 0$
+\For{$l=1,\ldots,L$}
+\State $\bx\gets$ 从数据集 $\bX$ 中均匀随机抽取一个数据点
+\State $\beps\gets$ 从辅助噪声分布 $p(\beps)$ 中随机采样
+\State $\bzeta\gets$ 从辅助噪声分布 $p(\bzeta)$ 中随机采样
+\State $\bg \gets \bg + \frac{1}{L} \nabla_{\bphi} \fPhi(\bx, \gPhi(\beps, \bx), \hPhi(\bzeta))$
+\EndFor
+\State \Return $\bg$
+\end{algorithmic}
+\label{algorithm_ap}
+\end{algorithm}
+
+\subsection{示例}
+令参数和潜变量的先验均为零均值、各向同性的高斯分布，即 $\pA(\bT)=\mathcal{N}(\bT;\bzero,\bI)$ 和 $\pT(\bz)=\mathcal{N}(\bz;\bzero,\bI)$。此时先验没有需要学习的参数。再假设真实后验近似为高斯分布，协方差近似为对角矩阵。于是，可将变分近似后验取为具有对角协方差结构的多元高斯分布：
+\begin{align*}
+\log \qPhi(\bT) &= \log \mathcal{N}(\bT; \bmu_{\bT}, \operatorname{diag}(\bsigma_{\bT}^2)) \\
+\log \qPhi(\bz|\bx)
+&= \log \mathcal{N}(\bz; \bmu_{\bz}, \operatorname{diag}(\bsigma_{\bz}^2))
+\eqnr\label{eq:auto-23}\end{align*}
+其中 $\bmu_{\bz}$ 和 $\bsigma_{\bz}$ 是尚未具体指定的 $\bx$ 的函数。
+由于这些分布均为高斯分布，可以按如下方式重参数化：
+\begin{align*}
+\qPhi(\bT) &\text{\quad 重参数化为 \quad} \btT = \bmu_{\bT} + \bsigma_{\bT} \odot \bzeta
+&\text{\quad 其中 \quad} \bzeta \sim \mathcal{N}(\bzero,\bI) \\
+\qPhi(\bz|\bx) &\text{\quad 重参数化为 \quad} \btz = \bmu_{\bz} + \bsigma_{\bz} \odot \beps
+&\text{\quad 其中 \quad} \beps \sim \mathcal{N}(\bzero,\bI) 
+\end{align*}
+符号 $\odot$ 表示逐元素乘积。将上述表示代入前面定义的下界即可，见式\eqref{eq:f_ap}和式\eqref{eq:fullestimator_ap}。
+
+此时还可以构造一个方差更低的估计量。由于 $\pA(\bT)$、$\pT(\bz)$、$\qPhi(\bT)$ 和 $\qPhi(\bz|\bx)$ 均为高斯分布，$\fPhi$ 中的四项可以解析求解。令 $J=\dim\bz$、$P=\dim\bT$，得到：
+\begin{align*}
+\mathcal{J}(\bphi;\bX)
+&\simeq 
+\frac{1}{L} \sum_{l=1}^L 
+N \cdot \Biggl[ \frac{1}{2} \sum_{j=1}^J \left(1 + \log ((\sigma_{\bz,j}^{(l)})^2) - (\mu_{\bz,j}^{(l)})^2 - (\sigma_{\bz,j}^{(l)})^2 \right)
++ \log \pTl(\bxl\mid\bzl) \Biggr] \\
+&\quad+ \frac{1}{2} \sum_{j=1}^P \left(1 + \log (\sigma_{\bT,j}^{2}) - \mu_{\bT,j}^{2} - \sigma_{\bT,j}^{2} \right)
+\label{eq:gaussian_estimator_ap}\eqnr\end{align*}
+其中 $\mu_{\bz,j}^{(l)}$ 和 $\sigma_{\bz,j}^{(l)}$ 分别是编码器在随机数据点 $\bxl$ 处输出的均值与标准差的第 $j$ 个分量；$\bzl=\bmu_{\bz}^{(l)}+\bsigma_{\bz}^{(l)}\odot\bepsl$，$\bTl=\bmu_{\bT}+\bsigma_{\bT}\odot\bzetal$。$\bmu_{\bT}$ 与 $\bsigma_{\bT}$ 是全局变分参数，不带样本索引。

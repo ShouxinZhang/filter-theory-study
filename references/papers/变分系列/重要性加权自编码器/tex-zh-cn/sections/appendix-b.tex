@@ -1,0 +1,28 @@
+\clearpage\section*{附录 B}\phantomsection\addcontentsline{toc}{section}{附录 B}
+\label{app:is_variance}
+
+众所周知，若提议分布与目标分布不匹配，基于未归一化重要性采样的估计量可能具有极大、甚至无穷的方差。这里研究第~\ref{sec:iwae} 节所述 $\isBoundK{\numSamples}$ 蒙特卡洛估计量的波动。更确切地说，我们给出平均绝对偏差（MAD）的上界。该上界并不直接控制方差；小 MAD 也不能排除极大乃至无穷的方差。
+
+设 $\hat Z$ 是某个正数 $Z$ 的严格正的无偏估计量，并希望用 $\log\hat Z$ 估计 $\log Z$。假设 $\expect[|\log\hat Z|]<\infty$。由 Jensen 不等式，这是有偏估计，即 $\expect[\log\hat Z]\leq\log Z$。将偏差记为 $\delta=\log Z-\expect[\log\hat Z]$。首先注意，$\log\hat Z$ 大幅高估 $\log Z$ 的概率较小；由 Markov 不等式可得：
+\begin{equation}
+{\rm Pr}(\log \hat{Z} > \log Z + b) \leq e^{-b}. \label{eqn:markov-bound}
+\end{equation}
+
+令 $(X)_+=\max(X,0)$。利用上述事实，可得 MAD 的上界：
+\begin{align}
+\expect \left[ \left|\log \hat{Z} - \expect[\log \hat{Z}] \right| \right]
+&= 2 \expect \left[ \left(\log \hat{Z} - \expect[\log \hat{Z}] \right)_+ \right] \label{eqn:mad-step}
+\\
+&= 2 \expect \left[ \left(\log \hat{Z} - \log Z + \log Z - \expect[\log \hat{Z}] \right)_+ \right]\label{eq:source-23}
+\\
+&\leq 2 \expect \left[ \left(\log \hat{Z} - \log Z \right)_+ + \left( \log Z - \expect[\log \hat{Z}] \right)_+ \right]\label{eq:source-24}
+\\
+&= 2 \expect \left[ \left(\log \hat{Z} - \log Z \right)_+ \right] + 2 \delta\label{eq:source-25}
+\\
+&= 2 \int_0^\infty {\rm Pr} \left( \log \hat{Z} - \log Z > t \right) \mathrm{d}t + 2 \delta \label{eqn:expectation-step}
+\\
+&\leq 2 \int_0^\infty e^{-t} \mathrm{d}t + 2 \delta \label{eqn:bound-step}
+\\
+&= 2 + 2 \delta\label{eq:source-28}
+\end{align}
+这里，式~\eqref{eqn:mad-step} 是 MAD 的一般恒等式；式~\eqref{eqn:expectation-step} 使用了非负随机变量 $Y$ 的公式 $\expect[Y]=\int_0^\infty\mathrm{Pr}(Y>t)\,\mathrm{d}t$；式~\eqref{eqn:bound-step} 则应用了式~\eqref{eqn:markov-bound} 的上界。因此，MAD 不超过 $2+2\delta$。在 IWAE 中，$\delta$ 对应于 $\log\pmfGen(\obs)$ 与 $\isBoundK{\numSamples}$ 之间的差距。

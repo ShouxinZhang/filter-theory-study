@@ -1,0 +1,22 @@
+\section{边缘似然估计量}
+我们推导了如下边缘似然估计量。在采样空间维数较低（小于 5 维）、样本充分的情况下，它能给出良好的边缘似然估计。设所采样的生成模型为 $\pT(\bx,\bz)=\pT(\bz)\pT(\bx|\bz)$；对于给定数据点 $\bxi$，我们希望估计边缘似然 $\pT(\bxi)$。
+
+估计过程分为三个阶段：
+\begin{enumerate}
+\item 利用基于梯度的 MCMC，例如混合蒙特卡洛，从后验分布中采样 $L$ 个值 $\{\bzl\}$；所用梯度为 $\nabla_{\bz}\log\pT(\bz|\bx)=\nabla_{\bz}\log\pT(\bz)+\nabla_{\bz}\log\pT(\bx|\bz)$。
+\item 用这些样本 $\{\bzl\}$ 拟合密度估计器 $q(\bz)$。
+\item 再从后验分布中采样 $L$ 个新值，将这些样本和拟合的 $q(\bz)$ 代入下式：
+\begin{align*}
+\pT(\bxi) \simeq \left( \frac{1}{L} \sum_{l=1}^L \frac{q(\bzl)}{\pT(\bzl) \pT(\bxi|\bzl)} \right)^{-1} \text{\quad 其中 \quad} \bzl \sim \pT(\bz|\bxi)
+\end{align*}
+\end{enumerate}
+
+该估计量的推导如下；这里要求 $q$ 归一化，且其支撑集包含于 $\pT(\bxi,\bz)>0$ 的区域：
+\begin{align*}
+\frac{1}{\pT(\bxi)} 
+&= \frac{\int q(\bz) \,\mathrm{d}\bz}{\pT(\bxi)}
+= \frac{\int q(\bz) \frac{\pT(\bxi, \bz) }{\pT(\bxi, \bz)} \,\mathrm{d}\bz}{\pT(\bxi)} \\
+&= \int \frac{\pT(\bxi, \bz)}{\pT(\bxi)} \frac{q(\bz)}{\pT(\bxi, \bz)} \,\mathrm{d}\bz \\
+&= \int \pT(\bz|\bxi) \frac{q(\bz)}{\pT(\bxi, \bz)} \,\mathrm{d}\bz \\
+&\simeq \frac{1}{L} \sum_{l=1}^L \frac{q(\bzl)}{\pT(\bzl) \pT(\bxi|\bzl)} \text{\quad 其中 \quad} \bzl \sim \pT(\bz|\bxi)
+\end{align*}

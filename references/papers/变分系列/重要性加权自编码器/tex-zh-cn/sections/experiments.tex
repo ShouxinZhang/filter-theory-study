@@ -1,0 +1,99 @@
+\section{实验结果}
+\label{sec:experiments}
+
+我们在两个密度估计基准数据集上，通过留出数据的对数似然比较 VAE 与 IWAE 的生成性能。我们还进一步研究了在 VAE 和 IWAE 中观察到的一个问题：它们学到的潜在空间维数明显低于模型所允许的容量。我们检验了 IWAE 训练方法能否缓解这一现象。
+
+
+\subsection{密度估计评估}
+
+我们在两个基准数据集上评估模型：手写数字图像数据集 MNIST \citep{mnist}，以及包含世界上多种字母系统的手写字符数据集 Omniglot \citep{omniglot}。两者的观测均为二值化的 $28\times28$ 图像。\footnote{不幸的是，生成建模文献采用的二值化方法并不统一，不同选择可能导致对数似然数值有很大差异。我们遵循 \citet{ais-rbm} 的流程：采样二值观测，使其期望等于训练集中的实值。另一种二值化方案见附录 D。}MNIST 使用标准的 60,000 个训练样本和 10,000 个测试样本划分；Omniglot 使用 24,345 个训练样本和 8,070 个测试样本。
+
+我们训练了两种架构：
+\begin{enumerate}
+\item 单个随机层 $\hidLayer{1}$，含 50 个单元。观测层与随机层之间有两个确定性层，每层含 200 个单元。
+\item 两个随机层 $\hidLayer{1}$ 和 $\hidLayer{2}$，分别含 100 和 50 个单元。$\obs$ 与 $\hidLayer{1}$ 之间有两个确定性层，每层 200 个单元；$\hidLayer{1}$ 与 $\hidLayer{2}$ 之间有两个确定性层，每层 100 个单元。
+\end{enumerate}
+所有确定性隐藏单元均采用 $\tanh$ 非线性。除可见层采用伯努利分布外，所有随机层均采用对角协方差高斯分布。预测的高斯方差经过 $\exp$ 非线性变换。网络架构汇总于附录 C。
+
+
+
+所有模型均使用 \citet{initialization} 的启发式方法初始化。优化使用 Adam \citep{adam}，参数为 $\beta_1=0.9$、$\beta_2=0.999$、$\epsilon=10^{-4}$，小批量大小为 20。对 $i=0,\ldots,7$，以学习率 $0.001\cdot10^{-i/7}$ 遍历数据 $3^i$ 次，总计 $\sum_{i=0}^7 3^i=3280$ 次。该学习率调度根据在 MNIST 上训练单随机层 VAE 的初步实验选定。
+
+对每个样本数 $\numSamples\in\{1,5,50\}$，我们都训练一个按式~\eqref{eqn:ksample_var_grad} 估计 $\varBound(\obs)$ 梯度的 VAE，以及一个按式~\eqref{eqn:grad_ksample_objective} 估计梯度的 IWAE。对于每个 $\numSamples$，VAE 与 IWAE 的训练时间大致相同。
+
+所有对数似然数值均通过在测试集上计算 $\isBoundK{5000}$ 的均值来估计。因此，报告值是真实值的随机下界估计，但很可能比训练所用的下界更准确。
+
+对数似然结果见表~\ref{tbl:results}。我们的 VAE 结果与文献此前报告的结果相当。我们观察到，使用 $\numSamples>1$ 训练 VAE 只带来轻微改善；相比之下，多个样本显著改善了 IWAE 在两个数据集上的结果。注意，当 $\numSamples=1$ 时，两种算法相同，因此除随机波动外，结果应当一致。
+
+在 MNIST 上，具有两个随机层、$\numSamples=50$ 的 IWAE 在不利用像素空间排列结构的设置下取得了 $-82.90$ 的对数似然。作为比较，深度信念网络的对数似然约为 $-84.55$ nat \citep{dbn_chib}，深度自回归网络为 $-84.13$ nat \citep{DARN}。利用了空间结构的 \citet{draw} 取得了 $-80.97$。我们没有发现过拟合是 VAE 或 IWAE 的严重问题：两者的训练对数似然比测试对数似然高 $0.62$ 至 $0.79$ nat。模型生成的样本见附录 E。
+
+在 OMNIGLOT 上，表现最好的 IWAE 对数似然为 $-103.38$ nat，略逊于使用持久对比散度训练、含 500 个隐藏单元的受限玻尔兹曼机所取得的 $-100.46$ nat \citep{raise}。使用中心化方法或 FANG 方法训练的 RBM 也取得了约 $-100$ nat 的相近表现 \citep{fang}。我们训练的模型，其训练对数似然比测试对数似然高 $2.39$ 至 $2.65$ nat。
+
+
+
+\begin{table}
+
+\begin{center}
+\begin{tabular}{@{}ll*{8}{c}@{}}
+              &     & \multicolumn{4}{c}{MNIST} & \multicolumn{4}{c}{OMNIGLOT} \\
+\cmidrule(r){3-6} \cmidrule(l){7-10} 
+              &     & \multicolumn{2}{c}{VAE} & \multicolumn{2}{c}{IWAE} & \multicolumn{2}{c}{VAE} & \multicolumn{2}{c}{IWAE} \\
+\cmidrule(r){3-4} \cmidrule(l){5-6} \cmidrule(lr){7-8} \cmidrule(l){9-10} 
+\shortstack{随机\\层数} & $\numSamples$ & NLL               & \shortstack{活跃\\单元}             & NLL               & \shortstack{活跃\\单元}  & NLL                & \shortstack{活跃\\单元}   & NLL               & \shortstack{活跃\\单元}  \\ 
+\cmidrule(lr){1-1} \cmidrule(lr){2-2} \cmidrule(lr){3-3}\cmidrule(lr){4-4}\cmidrule(lr){5-5}\cmidrule(lr){6-6} \cmidrule(lr){7-7}\cmidrule(lr){8-8}\cmidrule(lr){9-9}\cmidrule(lr){10-10}      \midrule
+1             & 1   & 86.76 &  19  & 86.76&  19  & 108.11 & 28 & 108.11 & 28 \\
+              & 5   & 86.47 &  20  & 85.54&  22  & 107.62 & 28 & 106.12 & 34 \\
+              & 50  & 86.35 &  20  & 84.78&  25  & 107.80 & 28 & 104.67 & 41 \\ \midrule
+2             & 1   & 85.33 &  16+5 & 85.33&  16+5& 107.58 &28+4& 107.56 & 30+5 \\
+              & 5   & 85.01 &  17+5 & 83.89&  21+5& 106.31 &30+5& 104.79 & 38+6 \\
+              & 50  & 84.78 &  17+5 & 82.90&  26+7& 106.30 &30+5& 103.38 & 44+7 \\ \bottomrule
+\end{tabular}
+\end{center}
+
+\caption{密度估计结果与活跃潜在维度数。对于具有两个潜变量层的模型，“$k_1+k_2$”表示第一层有 $k_1$ 个活跃单元、第二层有 $k_2$ 个活跃单元。随着 $\numSamples$ 增加，IWAE 的生成性能有所改善，而 VAE 仅略有受益。两层模型的生成性能优于单层模型。}
+\label{tbl:results}
+\end{table}
+
+
+
+\subsection{潜在空间表示}
+\label{sec:latent}
+
+我们观察到，VAE 与 IWAE 通常都会学到有效维数远低于其容量的潜在表示。接下来的实验旨在量化这一现象，并确定 IWAE 目标能否缓解它。
+
+
+
+
+如果某个潜在维度编码了数据的有用信息，我们预期它的分布会随观测而变化。基于这一直觉，我们用统计量 $A_\latentUnit=\mathrm{Cov}_{\obs}\bigl(\expect_{\latentUnit\sim\pmfRec(\latentUnit|\obs)}[\latentUnit]\bigr)$ 衡量潜在维度 $\latentUnit$ 的活跃程度。若 $A_\latentUnit>10^{-2}$，就称该维度为活跃维度。以下两项证据表明，这一判据既明确又有意义：
+\begin{enumerate}
+\item 训练后模型的 $A_\latentUnit$ 分布由两个相距很远的峰组成，如附录 C 所示。
+\item 为确认非活跃维度确实对预测影响很小，我们移除非活跃维度后评估了所有模型。在全部情形下，测试对数似然的变化均小于 $0.06$ nat。
+\end{enumerate}
+
+
+表~\ref{tbl:results} 报告了所有条件下的活跃单元数。在全部条件下，活跃维度都远少于总维度数。增加潜在维度并没有增加活跃维度数。有趣的是，在两层模型中，第二层利用的建模容量很少：活跃维度数始终小于 10。在所有 $\numSamples>1$ 的情形下，IWAE 学到的活跃潜在维度都多于 VAE。由于这伴随着更高的对数似然，我们推测，更多活跃维度反映了更丰富的潜在表示。
+
+
+
+
+表面上看，非活跃维度现象类似于神经网络和潜变量模型中的“单元失活”问题，后者常被归因于优化困难。例如，一个非活跃单元可能因为优化地形中的平台而始终收不到有意义的梯度信号。在这种情况下，更好的初始化可能避免问题。为判断非活跃单元源于优化问题还是建模问题，我们选取表~\ref{tbl:results} 中的单层 MNIST 模型：VAE（$k=1$）与 IWAE（$k=50$），然后分别改用 IWAE 目标和 VAE 目标继续训练。两种情况下都以 $10^{-4}$ 的学习率额外遍历数据 $3^7$ 次。
+
+结果见表~\ref{tbl:optima}。使用 IWAE 目标继续训练 VAE，会增加活跃维度数并提高测试对数似然；使用 VAE 目标继续训练 IWAE 则产生相反效果。VAE 目标的训练会主动减少活跃维度并降低对数似然，这强烈表明，潜在维度的非活跃化是由目标函数驱动的，而非仅由优化问题造成。不过，优化似乎也起一定作用，因为表~\ref{tbl:optima} 的结果与表~\ref{tbl:results} 并不完全相同。
+
+\begin{table}
+
+\begin{center}
+\begin{tabular}{@{}c ccc ccc@{}}
+& \multicolumn{3}{c}{第一阶段} & \multicolumn{3}{c}{第二阶段} \\
+\cmidrule(r){2-4} \cmidrule(l){5-7} 
+& 训练目标   & NLL   & 活跃单元 & 训练目标             & NLL   & 活跃单元 \\ 
+\cmidrule(lr){2-2} \cmidrule(lr){3-3} \cmidrule(lr){4-4} \cmidrule(lr){5-5} \cmidrule(lr){6-6} \cmidrule(lr){7-7} \midrule
+实验 1 & VAE          & 86.76 & 19           & IWAE, $\numSamples=50$           & 84.88 & 22           \\ \midrule
+实验 2 & IWAE, $\numSamples=50$ & 84.78 & 25           & VAE                    & 86.02 & 23           \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\caption{改用 IWAE 目标继续训练 VAE，以及反向切换训练目标的结果。用 IWAE 目标训练 VAE，会增加潜在维数并提高测试对数似然；用 VAE 目标训练 IWAE 则产生相反效果。}
+\label{tbl:optima}
+\end{table}
