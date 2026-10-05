@@ -118,6 +118,48 @@ class ModelTests(unittest.TestCase):
         result=subprocess.run(['python3',str(SCRIPT)],env=env,capture_output=True,text=True,check=True)
         self.assertEqual(result.stdout,'unknown\n')
 
+    def test_antigravity_model_normal_and_switch(self):
+        sid = 'convo-1'
+        env = {'ANTIGRAVITY_APP_DATA_DIR': str(self.root), 'ANTIGRAVITY_CONVERSATION_ID': sid}
+        events = [
+            {'type': 'USER_INPUT', 'source': 'USER_EXPLICIT', 'content': '<USER_SETTINGS_CHANGE>\nThe user changed setting `Model Selection` from None to Gemini 3.8 Flash (Medium). No need to comment on this change\n</USER_SETTINGS_CHANGE>'},
+        ]
+        self.write(f'brain/{sid}/.system_generated/logs/transcript.jsonl', events)
+        self.assertEqual(m.antigravity_model(env), 'gemini-3.8-flash')
+
+        events.append({'type': 'USER_INPUT', 'source': 'USER_EXPLICIT', 'content': '<USER_SETTINGS_CHANGE>\nThe user changed setting `Model Selection` from Gemini 3.8 Flash (Medium) to Claude Opus 5.5 (Medium). No need to comment\n</USER_SETTINGS_CHANGE>'})
+        self.write(f'brain/{sid}/.system_generated/logs/transcript.jsonl', events)
+        self.assertEqual(m.antigravity_model(env), 'claude-opus-5.5')
+
+    def test_antigravity_auto_invalidates_and_ignores_tool_echo(self):
+        sid = 'convo-2'
+        env = {'ANTIGRAVITY_APP_DATA_DIR': str(self.root), 'ANTIGRAVITY_CONVERSATION_ID': sid}
+        events = [
+            {'type': 'USER_INPUT', 'source': 'USER_EXPLICIT', 'content': '<USER_SETTINGS_CHANGE>\nThe user changed setting `Model Selection` from None to Claude Opus 5.5 (Medium).\n</USER_SETTINGS_CHANGE>'},
+            # Tool echo should NOT override model
+            {'type': 'GENERIC', 'source': 'MODEL', 'content': 'Output: setting `Model Selection` to gemini-fake-model.'},
+            {'type': 'PLANNER_RESPONSE', 'source': 'MODEL', 'thinking': 'setting `Model Selection` to gemini-fake.'},
+        ]
+        self.write(f'brain/{sid}/.system_generated/logs/transcript.jsonl', events)
+        self.assertEqual(m.antigravity_model(env), 'claude-opus-5.5')
+
+        # Auto switch
+        events.append({'type': 'USER_INPUT', 'source': 'USER_EXPLICIT', 'content': '<USER_SETTINGS_CHANGE>\nThe user changed setting `Model Selection` to auto.\n</USER_SETTINGS_CHANGE>'})
+        self.write(f'brain/{sid}/.system_generated/logs/transcript.jsonl', events)
+        self.assertEqual(m.antigravity_model(env), 'unknown')
+
+    def test_antigravity_requires_session_id(self):
+        env = {'ANTIGRAVITY_APP_DATA_DIR': str(self.root)}
+        self.assertIsNone(m.antigravity_model(env))
+        self.assertIsNone(m.antigravity_model(env, session_id_arg='*invalid*'))
+
+    def test_antigravity_framework_detection(self):
+        self.assertEqual(m.infer_framework({'ANTIGRAVITY_AGENT': '1'}), 'antigravity')
+        self.assertEqual(m.infer_framework({'ANTIGRAVITY_CONVERSATION_ID': 'abc'}), 'antigravity')
+        with patch.object(m, 'parent_commands', return_value='bash\nlanguage_server\nantigravity'):
+            self.assertEqual(m.infer_framework({}), 'antigravity')
+
 
 if __name__ == '__main__':
     unittest.main()
+

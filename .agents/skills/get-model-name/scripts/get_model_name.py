@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import sqlite3
 from contextlib import closing
 from collections import deque
@@ -15,6 +16,7 @@ from typing import Any
 
 UNKNOWN = "unknown"
 FRAMEWORKS = (
+    "antigravity",
     "codex",
     "github-copilot",
     "github-copilot-vscode",
@@ -106,6 +108,53 @@ def model_from_mapping(value: Any) -> str | None:
 
 def valid_session_id(value: str | None) -> bool:
     return bool(value) and all(c.isalnum() or c in "-_" for c in value)
+
+
+def normalize_antigravity_model(value: Any) -> str | None:
+    """将 Antigravity 模型显示名称（含思考预算等修饰）转为规范 slug。"""
+    if not isinstance(value, str):
+        return None
+    cleaned = value.strip()
+    if not cleaned or cleaned.lower() in {"none", "auto", "default", "unknown", "<synthetic>"}:
+        return None
+    cleaned = re.sub(r"\s*\((?:High|Medium|Low)\)\s*$", "", cleaned, flags=re.I).strip()
+    if not cleaned or cleaned.lower() in {"none", "auto", "default", "unknown"}:
+        return None
+    slug = re.sub(r"[\s_]+", "-", cleaned.lower())
+    return clean_model(slug)
+
+
+def antigravity_model(
+    env: dict[str, str], session_id_arg: str | None = None
+) -> str | None:
+    """从 Antigravity 当前会话的 transcript.jsonl 读取最后选择的模型。"""
+    session_id = session_id_arg or env.get("ANTIGRAVITY_CONVERSATION_ID")
+    if not valid_session_id(session_id):
+        return None
+    root = Path(
+        env.get("ANTIGRAVITY_APP_DATA_DIR", str(Path.home() / ".gemini/antigravity"))
+    ).expanduser()
+    log_dir = root / "brain" / session_id / ".system_generated" / "logs"
+    transcript = log_dir / "transcript.jsonl"
+    if not transcript.is_file():
+        transcript = log_dir / "transcript_full.jsonl"
+    if not transcript.is_file():
+        return None
+
+    last_model: str | None = None
+    pattern = re.compile(
+        r"setting\s+`Model Selection`\s+(?:from\s+.*?\s+)?to\s+(.*?)(?:\.\s+No need|\.\s*$|\.\n|\n|$)",
+        re.DOTALL,
+    )
+    for item in json_lines(transcript):
+        if item.get("type") == "USER_INPUT" or item.get("source") in {"USER_EXPLICIT", "USER"}:
+            content = item.get("content", "")
+            if isinstance(content, str):
+                for m in pattern.finditer(content):
+                    slug = normalize_antigravity_model(m.group(1))
+                    last_model = slug or UNKNOWN
+
+    return last_model
 
 
 def codex_model(env: dict[str, str]) -> str | None:
@@ -340,6 +389,7 @@ def infer_framework(env: dict[str, str]) -> str | None:
     ):
         return "github-copilot-vscode"
     markers = (
+        ("antigravity", ("ANTIGRAVITY_AGENT", "ANTIGRAVITY_CONVERSATION_ID")),
         ("codex", ("CODEX_THREAD_ID",)),
         ("github-copilot", ("COPILOT_CLI", "COPILOT_SESSION_ID", "COPILOT_MODEL")),
         ("opencode", ("OPENCODE_PID", "OPENCODE_SESSION_ID")),
@@ -351,6 +401,8 @@ def infer_framework(env: dict[str, str]) -> str | None:
             return framework
     commands = parent_commands()
     for framework, command in (
+        ("antigravity", "antigravity"),
+        ("antigravity", "language_server"),
         ("codex", "codex"),
         ("github-copilot", "copilot"),
         ("claude-code", "claude"),
@@ -370,6 +422,12 @@ def main() -> int:
         "--framework", choices=FRAMEWORKS, help="显式指定当前 AI 编程框架"
     )
     parser.add_argument(
+        "--conversation-id",
+        "--session-id",
+        dest="session_id",
+        help="Antigravity 会话 ID（ANTIGRAVITY_CONVERSATION_ID）",
+    )
+    parser.add_argument(
         "--session-log",
         help="VS Code Copilot Chat 的 VSCODE_TARGET_SESSION_LOG（debug-logs/<会话 ID> 目录）",
     )
@@ -380,10 +438,13 @@ def main() -> int:
         print(explicit_model or UNKNOWN)
         return 0
     framework = args.framework or (
-        "github-copilot-vscode" if args.session_log else infer_framework(env)
+        "github-copilot-vscode"
+        if args.session_log
+        else ("antigravity" if args.session_id else infer_framework(env))
     )
     cwd = Path.cwd().resolve()
     detectors: dict[str, Callable[[], str | None]] = {
+        "antigravity": lambda: antigravity_model(env, args.session_id),
         "codex": lambda: codex_model(env),
         "github-copilot": lambda: copilot_model(env),
         "github-copilot-vscode": lambda: copilot_vscode_model(env, args.session_log),
