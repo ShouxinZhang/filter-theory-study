@@ -54,10 +54,15 @@ def refresh_week_table(content: str) -> str:
 
 
 def check_max_lines(file_path: Path, max_lines: int) -> bool:
-    """检查文件行数是否严格满足 < max_lines"""
-    with open(file_path, "r", encoding="utf-8") as f:
-        line_count = sum(1 for _ in f)
-    print(f"[wc -l] {file_path.name}: {line_count} 行 (目标: < {max_lines})")
+    """检查折算行数（<=10 行的公式块计 1 行）是否严格满足 < max_lines"""
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from count_lines import count_lines
+
+    line_count, phys, blocks = count_lines(file_path.read_text(encoding="utf-8"))
+    print(
+        f"[折算行数] {file_path.name}: {line_count} 行 "
+        f"(wc -l: {phys}, 公式块折算 {blocks} 个; 目标: < {max_lines})"
+    )
     if line_count >= max_lines:
         print(f"Error: 行数 {line_count} 超出限制 (< {max_lines})！", file=sys.stderr)
         return False

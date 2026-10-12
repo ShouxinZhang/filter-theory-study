@@ -4,8 +4,9 @@
 - 新增回答时更新 .agents/.tmp/agent/README.md 的归档索引（可使用 tmp-archive 脚本自动更新）；移动既有文档时同步调整相关链接。无日期前缀的旧文档按归档前文件修改日期归档，并在索引中注明依据。
 - 临时脚本、实验数据等资源放 .agents/.tmp/task/<任务名>/（已 gitignore），不要在 git 跟踪范围内新建。
 - md的公示排版参考`.agents/prompts/公式排版.md`. Tex自由考虑
-- 用户在末尾部分输入< 20或者< 10时，指的是< n行，生成后必须用 wc -l 校验。
+- 用户在末尾输入< 20或< 10时，指< n行，生成后用 `python3 .agents/skills/tmp-archive/scripts/count_lines.py -m n <文件>` 校验（<=10 行公式块计 1 行）。
 - .tmp的内容，请不要在chat context里二次重复，浪费上下文记忆.
+- 对于chat上下文中的回答，一律 <= 8行. 超过8行请在.tmp 中生成md文件。
 - 所有新增报告（含 .tmp Markdown）须在开头声明 `agent name: <model slug>`，使用 `get-model-name` 获取；无法核实时写 `unknown`，不得猜测。
 - 用户说"对齐"的时候，表示用户尚不清楚该怎么做，请你不要擅自行动，而是和用户沟通交流，商量该怎么做。用户没说对齐的时候，你自行裁定是否需要对齐.（风险性不大的时候直接CRUD即可）
 - 符号习惯参考仓库内`习惯.md`

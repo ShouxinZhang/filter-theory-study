@@ -1,6 +1,6 @@
 ---
 name: tmp-archive
-description: 用于 .tmp 问答生成后的自动归档、行数硬校验（wc -l）与 README.md 周期表格和索引的一键同步更新。
+description: 用于 .tmp 问答生成后的自动归档、行数硬校验（公式块 <=10 行计 1 行的折算统计 count_lines.py）与 README.md 周期表格和索引的一键同步更新。
 ---
 
 # tmp-archive
@@ -15,7 +15,8 @@ python3 .agents/skills/tmp-archive/scripts/archive_tmp.py --file <文档路径> 
 
 - `--file, -f`: 新建的 Markdown 归档文件路径（相对或绝对）。
 - `--type, -t`: 记录类别，默认 `讨论`，可选 `推导`、`报告`、`习题`、`记录` 等。
-- `--max-lines, -m`: 可选。对应用户的 `< N` 规则，脚本会自动以 `wc -l` 校验行数是否严格小于 $N$；若超出则报错中断。
+- `--max-lines, -m`: 可选。对应用户的 `< N` 规则，脚本会自动以 `scripts/count_lines.py`（<=10 行公式块计 1 行）校验折算行数是否严格小于 $N$；若超出则报错中断。
+- 单独统计：`python3 .agents/skills/tmp-archive/scripts/count_lines.py -m <N> <文件>`，`--math-max` 可调公式块折算阈值（默认 10，含 `$$` 行）。
 - `--refresh-only`: 仅重新扫描周目录并刷新 README 顶部的文档计数表格。
 
 ## 执行效果
