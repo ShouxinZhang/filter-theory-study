@@ -1,6 +1,6 @@
 ---
 name: task
-description: 在 .agents/.tmp/task/YYYY-MM-DD_任务名/ 下建立任务目录 (跨日沿用). 文档分 docs/plans/, docs/logs/ (一个用户 prompt 一份), docs/reports/ 三个子目录; 子代理工作区 tasks/<slug>/; 产出物在 outputs/ 下按类型分目录.
+description: 在 .agents/.tmp/task/YYYY-MM/YYYY-MM-DD_任务名/ 下建立任务目录 (按月归档, 跨日沿用). 文档分 docs/plans/, docs/logs/ (一个用户 prompt 一份), docs/reports/ 三个子目录; 子代理工作区 tasks/<slug>/; 产出物在 outputs/ 下按类型分目录.
 ---
 
 # task

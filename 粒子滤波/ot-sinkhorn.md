@@ -80,7 +80,7 @@ $$
 
 多面体 $U(\bm a,\bm b)$ 本质上是满足边际推前约束的全部耦合测度族 $\Pi(\mathbb{P}_X, \mathbb{P}_Y)$：
 $$
-\Pi(\mathbb{P}_X, \mathbb{P}_Y) = \{ \mathbb{P}_{(X,Y)} \in \mathcal{M}_{+}^{1}(\mathcal{X} \times \mathcal{Y}) \mid (\pi_1)_* \mathbb{P}_{(X,Y)} = \mathbb{P}_X, \, (\pi_2)_* \mathbb{P}_{(X,Y)} = \mathbb{P}_Y \}
+\Pi(\mathbb{P}_X, \mathbb{P}_Y) = \{ \mathbb{P}_{(X,Y)} \in \mathcal{M}^{1}(\mathcal{X} \times \mathcal{Y}) \mid (\pi_1)_* \mathbb{P}_{(X,Y)} = \mathbb{P}_X, \, (\pi_2)_* \mathbb{P}_{(X,Y)} = \mathbb{P}_Y \}
 $$
 集合中的一般联合测度通过转移核表示为半直积测度（独立乘积是其特例） $\mathbb{P}_{(X,Y)} = \mathbb{P}_X \ltimes \mathbb{P}_{Y \mid X}$。
 

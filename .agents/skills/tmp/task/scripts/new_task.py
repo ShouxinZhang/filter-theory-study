@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""创建或补全 .agents/.tmp/task/<YYYY-MM-DD_任务名>/ 任务目录及 docs/ 存档骨架.
+"""创建或补全 .agents/.tmp/task/<YYYY-MM>/<YYYY-MM-DD_任务名>/ 任务目录及 docs/ 存档骨架.
 
 docs/ 下按类型分为三个子目录, 每类均可多份:
   plans/YYYY-MM-DD_HH-mm_<标题>.md    计划 (初始计划, 修订计划...)
@@ -53,11 +53,20 @@ def model_info(header: bool = False) -> str:
 
 
 def resolve_dir(name: str) -> Path:
-    """带日期前缀时直接定位; 否则优先匹配已有 ????-??-??_任务名 (跨日续用原目录)."""
+    """带日期前缀时直接定位 (优先 YYYY-MM 子目录); 否则优先匹配已有 YYYY-MM/????-??-??_任务名 (跨日续用原目录)."""
     if re.match(r"^\d{4}-\d{2}-\d{2}_", name):
-        return TASK_ROOT / name
-    hits = sorted(TASK_ROOT.glob(f"????-??-??_{name}"))
-    return hits[-1] if hits else TASK_ROOT / f"{now('%Y-%m-%d')}_{name}"
+        m = name[:7]
+        p_month = TASK_ROOT / m / name
+        if p_month.exists():
+            return p_month
+        p_flat = TASK_ROOT / name
+        if p_flat.exists():
+            return p_flat
+        return p_month
+    hits = sorted(TASK_ROOT.glob(f"????-??/????-??-??_{name}"))
+    if not hits:
+        hits = sorted(TASK_ROOT.glob(f"????-??-??_{name}"))
+    return hits[-1] if hits else TASK_ROOT / now('%Y-%m') / f"{now('%Y-%m-%d')}_{name}"
 
 
 def slug(title: str) -> str:

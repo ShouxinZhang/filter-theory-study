@@ -1,6 +1,6 @@
 ---
 name: tmp
-description: '.tmp 工作区总入口, 路由到两个子技能: qa-archive (用户输入 .tmp 时的问答归档, README 索引, < n 行校验) 与 task (.agents/.tmp/task/ 下任务目录, docs/plans, logs, reports 三个子目录存档).'
+description: '.tmp 工作区总入口, 路由到两个子技能: qa-archive (用户输入 .tmp 时的问答归档, README 索引, < n 行校验) 与 task (.agents/.tmp/task/YYYY-MM/ 下按月归档任务目录, docs/plans, logs, reports 三个子目录存档).'
 ---
 
 # tmp

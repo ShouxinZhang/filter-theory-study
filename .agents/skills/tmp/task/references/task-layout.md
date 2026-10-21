@@ -2,12 +2,12 @@
 
 ## 命名与位置
 
-- 路径: `.agents/.tmp/task/YYYY-MM-DD_任务名/` (已 gitignore), 日期按 Asia/Shanghai, 取任务创建日.
+- 路径: `.agents/.tmp/task/YYYY-MM/YYYY-MM-DD_任务名/` (已 gitignore), 日期按 Asia/Shanghai, 按月划分一级目录, 取任务创建日.
 - **跨日续用**: 任务跨日继续时沿用原目录, 不新建; 新一天的工作以新 log 区分 (日期见其文件名). `new_task.py` 对不带日期前缀的任务名优先匹配已有 `????-??-??_任务名`.
 - 临时脚本, 实验数据, 中间产物均置于此, 不在 git 跟踪范围内新建.
 
 ```text
-.agents/.tmp/task/YYYY-MM-DD_任务名/
+.agents/.tmp/task/YYYY-MM/YYYY-MM-DD_任务名/
 ├── docs/
 │   ├── plans/     # 计划, 可多份: YYYY-MM-DD_HH-mm_<标题>.md
 │   ├── logs/      # 日志, 一个用户 prompt 一份: YYYY-MM-DD_HH-mm_<slug>.md (.current 指向活动 log)

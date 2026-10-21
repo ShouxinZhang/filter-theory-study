@@ -2,7 +2,7 @@
 - 每周从周日 00:00 开始，到下周日 00:00 前结束，按 Asia/Shanghai 时区计算；目录名的两个日期分别为该周周日和周六，例如 2026-09-13_2026-09-19。
 - 周目录下的 Markdown 文件统一命名为 YYYY-MM-DD_HH-mm_任务名称.md. Use `TZ=Asia/Shanghai date '+%Y-%m-%d_%H-%M'`。按文件名日期确定所属周。
 - 新增回答时更新 .agents/.tmp/agent/README.md 的归档索引（可使用 tmp/qa-archive 脚本自动更新）；移动既有文档时同步调整相关链接。无日期前缀的旧文档按归档前文件修改日期归档，并在索引中注明依据。
-- 临时脚本、实验数据等资源放 .agents/.tmp/task/YYYY-MM-DD_<任务名>/（已 gitignore），不要在 git 跟踪范围内新建。每个 task 须含 docs/plans/、docs/logs/（一个用户 prompt 一份）、docs/reports/（按需）三个子目录；跨日沿用原目录；子代理工作区为 tasks/<slug>/；产出物在 outputs/ 下按类型分目录。规范见 tmp/task 技能。
+- 临时脚本、实验数据等资源放 .agents/.tmp/task/YYYY-MM/YYYY-MM-DD_<任务名>/（已 gitignore），按月归档，不要在 git 跟踪范围内新建。每个 task 须含 docs/plans/、docs/logs/（一个用户 prompt 一份）、docs/reports/（按需）三个子目录；跨日沿用原目录；子代理工作区为 tasks/<slug>/；产出物在 outputs/ 下按类型分目录。规范见 tmp/task 技能。
 - md的公示排版参考`.agents/prompts/公式排版.md`. Tex自由考虑
 - 用户在末尾输入< 20或< 10时，指< n行，生成后用 `python3 .agents/skills/tmp/qa-archive/scripts/count_lines.py -m n <文件>` 校验（<=10 行公式块计 1 行）。
 - .tmp的内容，请不要在chat context里二次重复，浪费上下文记忆.
