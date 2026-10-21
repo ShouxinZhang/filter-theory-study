@@ -11,6 +11,12 @@ description: 从当前 AI 编程会话记录读取模型名称，无法核实时
 python3 .agents/skills/get-model-name/scripts/get_model_name.py
 ```
 
+文档署名块（列表格式：agent name、harness、session 前 8 位，Antigravity 附 `conversation://` 链接、time）：
+
+```bash
+python3 .agents/skills/get-model-name/scripts/get_model_name.py --header
+```
+
 只使用当前会话证据。输出为精确 model slug；无法确认或运行时使用 `auto` 时输出 `unknown`，不得猜测。
 
 自动识别失败时指定框架：

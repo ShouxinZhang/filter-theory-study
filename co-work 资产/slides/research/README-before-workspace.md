@@ -40,7 +40,7 @@ npm run dev
 
 复制整个 `template/` 文件夹，排除 `node_modules/`，`dist/`，`dist-starter/` 与 `output/`。保留 `package-lock.json`，布局，样式与 `public/`。将 `starter.md` 的内容复制到新目录的 `slides.md`，再执行 `npm ci` 与 `npm run dev`。
 
-当前汇报的理论与实验依据 `.agents/.tmp/task/tex-build0906`。两张仿真图从已有 CSV 重绘，没有重新运行实验；来源与数值选择见 [内容映射](research/CONTENT_MAP.md)。最小起步模板 `starter.md` 中的一维高斯图仍为解析占位图。封面标识复用用户指定的 HITSZ 仓库素材。
+当前汇报的理论与实验依据 `.agents/.tmp/task/2026-09-06_tex-build0906`。两张仿真图从已有 CSV 重绘，没有重新运行实验；来源与数值选择见 [内容映射](research/CONTENT_MAP.md)。最小起步模板 `starter.md` 中的一维高斯图仍为解析占位图。封面标识复用用户指定的 HITSZ 仓库素材。
 
 资料依据：[Slidev 拖拽元素](https://sli.dev/features/draggable)，[内置编辑器](https://sli.dev/features/side-editor)，[导出说明](https://sli.dev/guide/exporting)。核查日期：2026-09-09，实测版本：52.19.1。
 

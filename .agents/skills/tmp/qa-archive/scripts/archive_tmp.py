@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-tmp-archive: 自动更新 .agents/.tmp/agent/README.md 归档索引与周文档计数
+tmp/qa-archive: 自动更新 .agents/.tmp/agent/README.md 归档索引与周文档计数
 """
 
 import argparse
@@ -8,7 +8,7 @@ import re
 import sys
 from pathlib import Path
 
-AGENTS_DIR = Path(__file__).resolve().parents[3]
+AGENTS_DIR = Path(__file__).resolve().parents[4]
 TMP_AGENT_DIR = AGENTS_DIR / ".tmp" / "agent"
 README_PATH = TMP_AGENT_DIR / "README.md"
 WEEK_DIR_PATTERN = re.compile(r"^\d{4}-\d{2}-\d{2}_\d{4}-\d{2}-\d{2}$")

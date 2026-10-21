@@ -431,30 +431,79 @@ def main() -> int:
         "--session-log",
         help="VS Code Copilot Chat 的 VSCODE_TARGET_SESSION_LOG（debug-logs/<会话 ID> 目录）",
     )
+    parser.add_argument(
+        "--header",
+        action="store_true",
+        help="输出文档署名块: agent name, harness, session, time",
+    )
     args = parser.parse_args()
     env = dict(os.environ)
     explicit_model = clean_model(env.get("AI_MODEL_NAME"))
-    if "AI_MODEL_NAME" in env:
-        print(explicit_model or UNKNOWN)
-        return 0
     framework = args.framework or (
         "github-copilot-vscode"
         if args.session_log
         else ("antigravity" if args.session_id else infer_framework(env))
     )
-    cwd = Path.cwd().resolve()
-    detectors: dict[str, Callable[[], str | None]] = {
-        "antigravity": lambda: antigravity_model(env, args.session_id),
-        "codex": lambda: codex_model(env),
-        "github-copilot": lambda: copilot_model(env),
-        "github-copilot-vscode": lambda: copilot_vscode_model(env, args.session_log),
-        "claude-code": lambda: claude_model(env),
-        "opencode": lambda: opencode_model(env, cwd),
-        "grok": lambda: grok_model(env, cwd),
-    }
-    model = detectors[framework]() if framework in detectors else None
-    print(model or UNKNOWN)
+    if "AI_MODEL_NAME" in env:
+        model = explicit_model
+    else:
+        cwd = Path.cwd().resolve()
+        detectors: dict[str, Callable[[], str | None]] = {
+            "antigravity": lambda: antigravity_model(env, args.session_id),
+            "codex": lambda: codex_model(env),
+            "github-copilot": lambda: copilot_model(env),
+            "github-copilot-vscode": lambda: copilot_vscode_model(env, args.session_log),
+            "claude-code": lambda: claude_model(env),
+            "opencode": lambda: opencode_model(env, cwd),
+            "grok": lambda: grok_model(env, cwd),
+        }
+        model = detectors[framework]() if framework in detectors else None
+    if not args.header:
+        print(model or UNKNOWN)
+        return 0
+    print(format_header(model or UNKNOWN, framework, session_of(framework, env, args)))
     return 0
+
+
+SESSION_ENV = {
+    "antigravity": ("ANTIGRAVITY_CONVERSATION_ID",),
+    "codex": ("CODEX_THREAD_ID",),
+    "github-copilot": ("COPILOT_SESSION_ID",),
+    "claude-code": ("CLAUDE_CODE_SESSION_ID", "CLAUDE_SESSION_ID"),
+    "opencode": ("OPENCODE_SESSION_ID",),
+    "grok": ("GROK_SESSION_ID",),
+}
+
+
+def session_of(framework: str | None, env: dict[str, str], args: Any) -> str | None:
+    """返回当前会话 ID; 无法确定时返回 None."""
+    if framework == "antigravity" and args.session_id:
+        return args.session_id
+    if framework == "github-copilot-vscode":
+        log = args.session_log or env.get("VSCODE_TARGET_SESSION_LOG")
+        return Path(log).name if log else None
+    for key in SESSION_ENV.get(framework or "", ()):
+        if valid_session_id(env.get(key)):
+            return env[key]
+    return None
+
+
+def format_header(model: str, framework: str | None, session: str | None) -> str:
+    """署名块: 列表格式, session 取前 8 位, Antigravity 附 conversation:// 链接."""
+    from datetime import datetime
+    from zoneinfo import ZoneInfo
+
+    if session and framework == "antigravity":
+        sess = f"[{session[:8]}](conversation://{session})"
+    else:
+        sess = session[:8] if session else UNKNOWN
+    now = datetime.now(ZoneInfo("Asia/Shanghai")).strftime("%Y-%m-%d %H:%M")
+    return "\n".join([
+        f"- agent name: {model}",
+        f"- harness: {framework or UNKNOWN}",
+        f"- session: {sess}",
+        f"- time: {now} (Asia/Shanghai)",
+    ])
 
 
 if __name__ == "__main__":
