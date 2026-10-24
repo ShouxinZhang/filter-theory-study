@@ -4,8 +4,9 @@
 
 - 父任务: {name}
 - 父日志: {related}
-- 执行者: main-agent 或 subagent:<名称>
+- 执行者: subagent:<名称> (使用具写权限的 `self` 子代理)
 - 可写路径: `tasks/{slug}/agents/<名称>/`
+- 必交报告: `tasks/{slug}/agents/<名称>/docs/reports/YYYY-MM-DD_HH-mm_<标题>.md`
 - 禁改路径: 除可写路径外的全部文件
 
 ## 目标

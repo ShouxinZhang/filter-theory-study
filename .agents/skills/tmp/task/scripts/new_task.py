@@ -159,6 +159,7 @@ def main():
     ap.add_argument("--plan", nargs="?", const="修订计划", default=None, help="新增一份计划, 可给标题")
     ap.add_argument("--report", nargs="?", const="报告", default=None, help="新增一份报告, 可给标题")
     ap.add_argument("--subtask", default=None, help="新建子任务区 tasks/<slug>/")
+    ap.add_argument("--agent", nargs="+", default=None, help="在子任务区下初始化子代理目录 agents/<name>/docs/reports/")
     ap.add_argument("--migrate", action="store_true", help="旧版布局迁移")
     a = ap.parse_args()
 
@@ -185,7 +186,7 @@ def main():
         set_current(p)
     if a.plan:
         write_new(stamped(docs / "plans", a.plan), "plan", {**ctx, "title": a.plan})
-    if a.report:
+    if a.report and not (a.subtask and a.agent):
         write_new(stamped(docs / "reports", a.report), "report", {**ctx, "title": a.report})
     if a.subtask:
         s = slug(a.subtask)
@@ -195,10 +196,21 @@ def main():
         sctx = {**ctx, "title": a.subtask, "slug": s}
         if not (t / "brief.md").exists():
             write_new(t / "brief.md", "brief", {**sctx, "related": rel(parent, t)})
-        sl = stamped(t / "logs", s)
-        write_new(sl, "log", {**sctx, "related": f"父日志 {rel(parent, sl.parent)}; brief ../brief.md"})
-        if parent:
-            append_event(parent, f"开启子任务 tasks/{s}/")
+        if not any((t / "logs").glob("*.md")) if (t / "logs").exists() else True:
+            sl = stamped(t / "logs", s)
+            write_new(sl, "log", {**sctx, "related": f"父日志 {rel(parent, sl.parent)}; brief ../brief.md"})
+            if parent:
+                append_event(parent, f"开启子任务 tasks/{s}/")
+        if a.agent:
+            for ag in a.agent:
+                ag_slug = slug(ag)
+                ag_docs = t / "agents" / ag_slug / "docs"
+                (ag_docs / "reports").mkdir(parents=True, exist_ok=True)
+                (ag_docs / "logs").mkdir(parents=True, exist_ok=True)
+                print(f"initialized {(ag_docs / 'reports').relative_to(ROOT)}")
+                if a.report:
+                    write_new(stamped(ag_docs / "reports", a.report), "report",
+                              {**ctx, "name": f"{d.name}/{s}/{ag_slug}", "title": a.report})
     if a.log:
         log = latest_log(docs)
         if log is None:
