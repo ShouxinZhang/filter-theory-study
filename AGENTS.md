@@ -6,7 +6,7 @@
 - md的公示排版参考`.agents/prompts/公式排版.md`. Tex自由考虑
 - 用户在末尾输入< 20或< 10时，指< n行，生成后用 `python3 .agents/skills/tmp/qa-archive/scripts/count_lines.py -m n <文件>` 校验（<=10 行公式块计 1 行）。
 - .tmp的内容，请不要在chat context里二次重复，浪费上下文记忆.
-- 对于chat上下文中的回答，一律 <= 8行. 超过8行请在.tmp 中生成md文件。
+- 对于chat上下文中的回答，一律 ⩽ 8行. 超过8行请在.tmp 中生成md文件。
 - 所有新增报告（含 .tmp Markdown）须在开头放置署名块（agent name、harness、session、time），使用 `get_model_name.py --header` 生成；无法核实时写 `unknown`，不得猜测。
 - 用户说"对齐"的时候，表示用户尚不清楚该怎么做，请你不要擅自行动，而是和用户沟通交流，商量该怎么做。用户没说对齐的时候，你自行裁定是否需要对齐.（风险性不大的时候直接CRUD即可）
 - 符号习惯参考仓库内`习惯.md`
