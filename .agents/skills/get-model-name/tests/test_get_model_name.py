@@ -40,6 +40,22 @@ class ModelTests(unittest.TestCase):
         self.assertIsNone(m.codex_model({'CODEX_HOME':str(self.root),'CODEX_THREAD_ID':'current'}))
         self.assertIsNone(m.codex_model({'CODEX_HOME':str(self.root),'CODEX_THREAD_ID':'*'}))
 
+    def test_codex_explicit_log_checks_identity_and_latest_model(self):
+        path = self.write('exported.jsonl', [
+            {'type': 'session_meta', 'payload': {'id': 'current'}},
+            {'type': 'turn_context', 'payload': {'model': 'first-model'}},
+            {'type': 'turn_context', 'payload': {'model': 'latest-model'}},
+        ])
+        self.assertEqual(m.codex_model({'CODEX_THREAD_ID': 'current'}, str(path)), 'latest-model')
+        self.assertIsNone(m.codex_model({'CODEX_THREAD_ID': 'other'}, str(path)))
+        self.assertIsNone(m.codex_model({}, str(path)))
+
+    def test_codex_explicit_log_without_metadata_is_unknown(self):
+        path = self.write('unverified.jsonl', [
+            {'type': 'turn_context', 'payload': {'model': 'unverified-model'}},
+        ])
+        self.assertIsNone(m.codex_model({'CODEX_THREAD_ID': 'current'}, str(path)))
+
     def test_copilot_no_latest_session_fallback(self):
         self.write('session-state/other/events.jsonl', [{'type':'session.start','data':{'model':'wrong'}}])
         self.assertIsNone(m.copilot_model({'COPILOT_HOME':str(self.root),'COPILOT_MODEL':'default-model'}))

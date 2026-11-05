@@ -27,6 +27,8 @@ python3 .agents/skills/get-model-name/scripts/get_model_name.py --framework anti
 
 可选值：`antigravity`、`codex`、`github-copilot`（CLI）、`github-copilot-vscode`、`claude-code`、`opencode`、`grok`。
 
+后台导出指定 Codex 会话时，设置该会话的 `CODEX_THREAD_ID`，并使用 `--framework codex --session-log /absolute/rollout.jsonl --header`。脚本核对日志中 `session_meta.payload.id` 与指定 ID，支持已归档或导出的日志，身份不匹配时模型返回 `unknown`。
+
 VS Code Copilot Chat（agent 模式）不导出会话 ID 环境变量；若系统提示提供了 `VSCODE_TARGET_SESSION_LOG`，须显式传入：
 
 ```bash

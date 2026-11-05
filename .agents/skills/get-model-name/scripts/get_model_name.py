@@ -157,13 +157,20 @@ def antigravity_model(
     return last_model
 
 
-def codex_model(env: dict[str, str]) -> str | None:
+def codex_model(env: dict[str, str], session_log: str | None = None) -> str | None:
     """从当前 Codex 回合上下文读取实际模型。"""
     thread_id = env.get("CODEX_THREAD_ID")
     if not valid_session_id(thread_id):
         return None
     root = Path(env.get("CODEX_HOME", str(Path.home() / ".codex"))).expanduser()
-    session = newest(root.glob(f"sessions/**/*-{thread_id}.jsonl"))
+    if session_log:
+        session = Path(session_log).expanduser()
+        metadata = next((item.get("payload", {}) for item in json_lines(session)
+                         if item.get("type") == "session_meta"), {})
+        if not isinstance(metadata, dict) or metadata.get("id") != thread_id:
+            return None
+    else:
+        session = newest(root.glob(f"sessions/**/*-{thread_id}.jsonl"))
     if not session:
         return None
 
@@ -429,7 +436,7 @@ def main() -> int:
     )
     parser.add_argument(
         "--session-log",
-        help="VS Code Copilot Chat 的 VSCODE_TARGET_SESSION_LOG（debug-logs/<会话 ID> 目录）",
+        help="Codex 的明确 rollout 文件（需 --framework codex），或 VS Code Copilot Chat 的日志目录",
     )
     parser.add_argument(
         "--header",
@@ -450,7 +457,7 @@ def main() -> int:
         cwd = Path.cwd().resolve()
         detectors: dict[str, Callable[[], str | None]] = {
             "antigravity": lambda: antigravity_model(env, args.session_id),
-            "codex": lambda: codex_model(env),
+            "codex": lambda: codex_model(env, args.session_log),
             "github-copilot": lambda: copilot_model(env),
             "github-copilot-vscode": lambda: copilot_vscode_model(env, args.session_log),
             "claude-code": lambda: claude_model(env),

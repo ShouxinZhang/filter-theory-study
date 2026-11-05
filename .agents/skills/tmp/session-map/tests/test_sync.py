@@ -17,6 +17,7 @@ spec = importlib.util.spec_from_file_location("session_map_sync", SCRIPTS / "syn
 sync = importlib.util.module_from_spec(spec)
 sys.modules[spec.name] = sync
 spec.loader.exec_module(sync)
+SOURCE_ATTRIBUTION = sync.attribution
 
 SID = "11111111-2222-3333-4444-555555555555"
 STAMP = "2026-11-04T08:00:00Z"
@@ -188,7 +189,7 @@ class SyncTests(unittest.TestCase):
         self.assertIn("old answer", (folder / "prompts.md").read_text())
 
     def test_watch_cli_appends_and_keeps_map(self):
-        path = self.write_codex([message("user", "initial")])
+        path = self.write_codex([record("turn_context", model="watcher-model"), message("user", "initial")])
         sync.sync(SID)
         draft = self.output / SID / "map.md"
         draft.write_text("keep me")
@@ -207,6 +208,10 @@ class SyncTests(unittest.TestCase):
             else:
                 self.fail("watcher did not synchronize appended prompt")
             self.assertEqual(draft.read_text(), "keep me")
+            header = (draft.parent / "prompts.md").read_text().split("\n\n", 1)[0]
+            self.assertIn("agent name: watcher-model", header)
+            self.assertIn("harness: codex", header)
+            self.assertIn(f"session: {SID[:8]}", header)
             self.assertEqual(sync.watcher_status()["status"], "running")
             sync.unsubscribe(SID)
             before = (draft.parent / "prompts.md").read_bytes()
@@ -306,6 +311,42 @@ class SyncTests(unittest.TestCase):
         code, result = self.run_management("show", "99999999")
         self.assertEqual(code, 1)
         self.assertIn("error", result)
+
+    def test_source_attribution_without_daemon_session_environment(self):
+        path = self.write_codex([record("turn_context", model="source-model")])
+        with patch.dict(os.environ, {}, clear=True):
+            header = SOURCE_ATTRIBUTION(sync.Source(SID, "codex", path))
+        self.assertIn("agent name: source-model", header)
+        self.assertIn("harness: codex", header)
+        self.assertIn(f"session: {SID[:8]}", header)
+
+    def test_attribution_ignores_caller_model_and_uses_archived_source(self):
+        path = self.write_codex([record("turn_context", model="first-model"),
+                                 record("turn_context", model="latest-model")])
+        archived = self.root / "exported.jsonl"
+        path.rename(archived)
+        with patch.dict(os.environ, {"AI_MODEL_NAME": "wrong-model", "CODEX_THREAD_ID": "other"}):
+            header = SOURCE_ATTRIBUTION(sync.Source(SID, "codex", archived))
+        self.assertIn("agent name: latest-model", header)
+        self.assertNotIn("wrong-model", header)
+
+    def test_unknown_model_keeps_verified_source_identity(self):
+        path = self.write_codex([message("user", "no model evidence")])
+        header = SOURCE_ATTRIBUTION(sync.Source(SID, "codex", path))
+        self.assertIn("agent name: unknown", header)
+        self.assertIn("harness: codex", header)
+        self.assertIn(f"session: {SID[:8]}", header)
+
+    def test_antigravity_attribution_uses_source_brain(self):
+        path = self.brain / SID / ".system_generated/logs/transcript_full.jsonl"
+        path.parent.mkdir(parents=True)
+        path.write_text(json.dumps({"type": "USER_INPUT", "content":
+                                    "setting `Model Selection` to Gemini 3.8 Flash (Medium)."}) + "\n")
+        with patch.dict(os.environ, {"AI_MODEL_NAME": "wrong-model", "CODEX_THREAD_ID": "other"}):
+            header = SOURCE_ATTRIBUTION(sync.Source(SID, "antigravity", path))
+        self.assertIn("agent name: gemini-3.8-flash", header)
+        self.assertIn("harness: antigravity", header)
+        self.assertIn(f"conversation://{SID}", header)
 
 
 if __name__ == "__main__":

@@ -211,16 +211,27 @@ def read_records(src):
     return read_snapshot(src)[0]
 
 
-def attribution():
+def attribution(source):
     script = REPO / ".agents/skills/get-model-name/scripts/get_model_name.py"
+    command = [sys.executable, str(script), "--header", "--framework", source.harness]
+    env = dict(os.environ)
+    # A watcher may be launched by a different agent. Attribute the bound source,
+    # never an inherited model override or the process that runs the export.
+    env.pop("AI_MODEL_NAME", None)
+    if source.harness == "codex":
+        env["CODEX_THREAD_ID"] = source.sid
+        command.extend(["--session-log", str(source.path)])
+    else:
+        env["ANTIGRAVITY_CONVERSATION_ID"] = source.sid
+        env["ANTIGRAVITY_APP_DATA_DIR"] = str(source.path.parents[4])
+        command.extend(["--session-id", source.sid])
     try:
-        result = subprocess.run([sys.executable, str(script), "--header"],
-                                capture_output=True, text=True, timeout=20, check=True)
+        result = subprocess.run(command, env=env, capture_output=True, text=True, timeout=20, check=True)
         if all(f"- {key}:" in result.stdout for key in ("agent name", "harness", "session", "time")):
             return result.stdout.strip()
     except (OSError, subprocess.SubprocessError):
         pass
-    return ("- agent name: unknown\n- harness: unknown\n- session: unknown\n"
+    return (f"- agent name: unknown\n- harness: {source.harness}\n- session: {source.sid[:8]}\n"
             f"- time: {datetime.now(TZ):%Y-%m-%d %H:%M} (Asia/Shanghai)")
 
 
@@ -233,7 +244,7 @@ def render(sid, src, harness="antigravity", header=None, records=None):
         ut = user_text(t["user"].get("content"))
         first = ut.splitlines()[0][:60] if ut else ""
         idx.append(f"- [p{k}](#p{k}) {esc(first)}")
-    head = (f"{header or attribution()}\n\n# prompts · {sid[:8]}\n\n"
+    head = (f"{header or attribution(Source(sid, harness, src))}\n\n# prompts · {sid[:8]}\n\n"
             f"来源 harness `{harness}`，会话 `{sid}`。\n\n"
             f"<!-- 机械文件, sync.py 自动生成, 勿手改. "
             f"源: {src} · 同步于 {datetime.now(TZ):%Y-%m-%d %H:%M:%S} -->\n\n"
@@ -341,7 +352,7 @@ def sync_source(source, subscribe=False):
             saved = read_json(binding)
             if saved["harness"] != source.harness or saved["sid"] != source.sid:
                 raise ValueError(f"{directory} 已绑定到不同来源")
-        header = attribution()
+        header = attribution(source)
         signature = source_signature(source.path)
         records, incomplete_tail = read_snapshot(source.path)
         content = render(source.sid, source.path, source.harness, header, records)

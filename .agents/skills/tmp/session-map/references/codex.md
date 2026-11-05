@@ -42,4 +42,6 @@ python3 $S --harness codex --current --output-root /absolute/task/outputs/sessio
 python3 .agents/skills/meta-skill/scripts/skill_ctl.py lint .agents/skills/tmp
 ```
 
-隔离预览目录应放入当前任务的 `outputs/`。确认需要持续追踪后，使用默认输出目录订阅聊天，并运行 `--watch` 或已有用户服务。生成文件开头的署名块来自 `get_model_name.py --header`，表示执行导出的会话环境。后台无法核实时记录 `unknown`，正文另行标明被导出会话的 harness 和 ID。
+隔离预览目录应放入当前任务的 `outputs/`。确认需要持续追踪后，使用默认输出目录订阅聊天，并运行 `--watch` 或已有用户服务。
+
+生成文件开头的署名块来自 `get_model_name.py --header`，表示绑定的源会话。后台明确传入源 harness、会话 ID 和 Codex rollout 路径，并清除运行进程继承的模型覆盖值。模型取该源会话最后记录的可核实值，会话中途切换模型时，头部不代表每一轮都使用同一模型。模型缺失时仅该字段显示 `unknown`，已知的 harness 和会话 ID 仍保留。
