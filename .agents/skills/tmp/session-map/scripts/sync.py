@@ -27,6 +27,7 @@ from pathlib import Path
 
 sys.dont_write_bytecode = True
 from codex import parse_turns as codex_turns
+from assets import AssetStore
 
 BRAIN = Path.home() / ".gemini/antigravity/brain"
 CODEX_HOME = Path(os.environ.get("CODEX_HOME", Path.home() / ".codex")).expanduser()
@@ -93,8 +94,17 @@ def tool_title(tc):
     return f"{verb} {base}".strip()
 
 
-def tool_body(tc, result):
+def tool_body(tc, result, assets=None):
     a, n = tc.get("args", {}), tc.get("name", "?")
+    result = tc.get("result", result)
+    references = set()
+    if assets:
+        cleaned, refs = assets.extract(json.dumps(a, ensure_ascii=False))
+        a = json.loads(cleaned)
+        references.update(refs)
+        if result:
+            result, refs = assets.extract(result)
+            references.update(refs)
     if n == "run_command":
         head = fence(a.get("CommandLine", ""), "bash")
     elif n in {"exec", "functions.exec"} and isinstance(a.get("input"), str):
@@ -108,11 +118,11 @@ def tool_body(tc, result):
                 + "\n\n→\n\n" + fence(a.get("Replacement", ""), "text"))
     else:
         head = fence(json.dumps(a, ensure_ascii=False, indent=2), "json")
-    result = tc.get("result", result)
     out = "_(等待输出)_" if tc.get("pending") else "_(无输出)_"
     if result:
         out = fence(result, "text")
-    return f"{head}\n\n{out}"
+    body = f"{head}\n\n{out}"
+    return assets.compact_tool(body, references) if assets else body
 
 
 def turns(steps):
@@ -141,12 +151,21 @@ def thought_label(st, i):
     return "Thought"
 
 
-def render_turn(k, t):
+def render_turn(k, t, assets=None):
+    references = set()
+
+    def text(value):
+        if not assets:
+            return value
+        value, refs = assets.extract(value)
+        references.update(refs)
+        return assets.display_images(value)
+
     u = t["user"]
     st = t["steps"]
     when = ts(u["created_at"])
     lines = [f'<a id="p{k}"></a>', "", f"## p{k} · {when:%m-%d %H:%M}", ""]
-    txt = esc(user_text(u.get("content")))
+    txt = esc(text(user_text(u.get("content"))))
     lines += ["> " + (ln + "  " if ln else "") for ln in txt.splitlines()] + [""]
     for m in u.get("media") or []:
         lines.append(f"- 📎 [{os.path.basename(m.get('uri',''))}](file://{m.get('uri','')})")
@@ -159,14 +178,14 @@ def render_turn(k, t):
     for i, d in enumerate(st):
         if i == final_i:
             if d.get("thinking"):
-                inner.append(details(thought_label(st, i), esc(d["thinking"])))
+                inner.append(details(thought_label(st, i), esc(text(d["thinking"]))))
             continue
         ty = d.get("type")
         if ty == "PLANNER_RESPONSE":
             if d.get("thinking"):
-                inner.append(details(thought_label(st, i), esc(d["thinking"])))
+                inner.append(details(thought_label(st, i), esc(text(d["thinking"]))))
             if d.get("content"):
-                inner.append(d["content"])
+                inner.append(text(d["content"]))
             pending = list(d.get("tool_calls") or [])
             if not pending:
                 continue
@@ -174,9 +193,9 @@ def render_turn(k, t):
             while j < len(st) and st[j].get("type") == "GENERIC" and len(res) < len(pending):
                 res.append(st[j].get("content", "")); j += 1
             for tc, r in zip(pending, res + [""] * (len(pending) - len(res))):
-                inner.append(details(tool_title(tc), tool_body(tc, r)))
+                inner.append(details(tool_title(tc), tool_body(tc, r, assets)))
         elif ty == "ERROR_MESSAGE":
-            inner.append(details("⚠ Error", fence(d.get("error", ""), "text")))
+            inner.append(details("⚠ Error", fence(text(d.get("error", "")), "text")))
     if st or t.get("status"):
         ended = t.get("ended_at") or t.get("last_activity_at") or (st[-1]["created_at"] if st else u["created_at"])
         dur = t.get("duration_seconds", max(0, int((ts(ended) - when).total_seconds())))
@@ -184,7 +203,9 @@ def render_turn(k, t):
         status = {"working": "Working", "interrupted": "Interrupted"}.get(t.get("status"), "Worked")
         lines += ["", details(f"{status} for {dur}s · {nt} tools", "\n\n".join(inner) or "_(空)_")]
     if final_i is not None:
-        lines += ["", st[final_i]["content"].strip()]
+        lines += ["", text(st[final_i]["content"].strip())]
+    if assets and references:
+        lines.append(assets.links(references))
     lines += ["", "---", ""]
     return "\n".join(lines)
 
@@ -235,21 +256,23 @@ def attribution(source):
             f"- time: {datetime.now(TZ):%Y-%m-%d %H:%M} (Asia/Shanghai)")
 
 
-def render(sid, src, harness="antigravity", header=None, records=None):
+def render(sid, src, harness="antigravity", header=None, records=None, assets=None):
     if records is None:
         records = read_records(src)
-    ts_ = codex_turns(records) if harness == "codex" else list(turns(records))
+    ts_ = codex_turns(records, assets=assets) if harness == "codex" else list(turns(records))
     idx = []
     for k, t in enumerate(ts_, 1):
         ut = user_text(t["user"].get("content"))
         first = ut.splitlines()[0][:60] if ut else ""
+        if first.startswith("!["):
+            first = "图像附件"
         idx.append(f"- [p{k}](#p{k}) {esc(first)}")
     head = (f"{header or attribution(Source(sid, harness, src))}\n\n# prompts · {sid[:8]}\n\n"
             f"来源 harness `{harness}`，会话 `{sid}`。\n\n"
             f"<!-- 机械文件, sync.py 自动生成, 勿手改. "
-            f"源: {src} · 同步于 {datetime.now(TZ):%Y-%m-%d %H:%M:%S} -->\n\n"
+            f"源: {src} · 同步状态见 .sync-state.json -->\n\n"
             + "\n".join(idx) + "\n\n---\n\n")
-    return head + "\n".join(render_turn(k, t) for k, t in enumerate(ts_, 1))
+    return head + "\n".join(render_turn(k, t, assets) for k, t in enumerate(ts_, 1))
 
 
 @dataclass(frozen=True)
@@ -313,6 +336,8 @@ def resolve_source(prefix, harness="auto", source_path=None):
 
 
 def atomic_write(path, text):
+    if path.is_file() and path.read_text(encoding="utf-8") == text:
+        return False
     descriptor, temporary = tempfile.mkstemp(prefix=f".{path.name}.", dir=path.parent)
     try:
         with os.fdopen(descriptor, "w", encoding="utf-8") as stream:
@@ -320,6 +345,16 @@ def atomic_write(path, text):
         os.replace(temporary, path)
     finally:
         Path(temporary).unlink(missing_ok=True)
+    return True
+
+
+def write_prompts(path, content):
+    # Attribution time alone must not make an unchanged transcript reload in VS Code.
+    def substantive(text):
+        return re.sub(r"^- time:.*$", "- time:", text, count=1, flags=re.MULTILINE)
+    if path.exists() and substantive(path.read_text(encoding="utf-8")) == substantive(content):
+        return False
+    return atomic_write(path, content)
 
 
 def source_signature(path):
@@ -355,8 +390,9 @@ def sync_source(source, subscribe=False):
         header = attribution(source)
         signature = source_signature(source.path)
         records, incomplete_tail = read_snapshot(source.path)
-        content = render(source.sid, source.path, source.harness, header, records)
-        atomic_write(directory / "prompts.md", content)
+        content = render(source.sid, source.path, source.harness, header, records,
+                         assets=AssetStore(directory))
+        write_prompts(directory / "prompts.md", content)
         source_metadata = {"sid": source.sid, "harness": source.harness, "path": str(source.path)}
         if saved != source_metadata:
             atomic_write(binding, json.dumps(source_metadata, ensure_ascii=False, indent=2) + "\n")

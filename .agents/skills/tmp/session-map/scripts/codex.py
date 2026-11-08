@@ -4,7 +4,7 @@ import json
 import re
 
 
-def text_content(content):
+def text_content(content, assets=None):
     if isinstance(content, str):
         return content
     parts = []
@@ -12,15 +12,22 @@ def text_content(content):
         if block.get("type") in {"input_text", "output_text", "text", "summary_text"}:
             parts.append(block.get("text", ""))
         elif block.get("type") in {"input_image", "image"}:
-            parts.append("[图像附件]")
+            url = block.get("image_url", "")
+            if assets and isinstance(url, str) and url.startswith("data:"):
+                path, refs = assets.extract(url)
+                parts.append(f"![图像附件]({path})" if refs else "[图像附件]")
+            elif assets and isinstance(url, str) and (path := assets.image_path(url)):
+                parts.append(f"![图像附件]({path})")
+            else:
+                parts.append("[图像附件]")
     return "\n\n".join(parts)
 
 
-def prompt_text(content):
+def prompt_text(content, assets=None):
     """Exclude host-injected context while retaining actual user text."""
     parts = []
     for block in content or []:
-        text = text_content([block]).strip()
+        text = text_content([block], assets).strip()
         if text.startswith("# AGENTS.md instructions for "):
             continue
         if re.fullmatch(
@@ -31,7 +38,16 @@ def prompt_text(content):
             continue
         if text:
             parts.append(text)
-    return "\n\n".join(parts)
+    text = "\n\n".join(parts)
+    if text.startswith("# Files mentioned by the user:") and "## My request:\n" in text:
+        text = text.split("## My request:\n", 1)[1]
+        # Codex's attachment envelope is transport metadata, not user prose.
+        opening = r'^<image name=[^\n]+ path="[^"\n]+">\s*$'
+        if re.search(opening, text, re.MULTILINE):
+            text = re.sub(opening, "", text, flags=re.MULTILINE)
+            text = re.sub(r"^</image>\s*$", "", text, flags=re.MULTILINE)
+    return text.strip()
+
 
 
 def output_text(value):
@@ -41,7 +57,7 @@ def output_text(value):
     return value if isinstance(value, str) else json.dumps(value, ensure_ascii=False, indent=2)
 
 
-def parse_turns(records):
+def parse_turns(records, assets=None):
     # Rollouts can contain UI events and Responses items for the same message.
     # Responses items are canonical when available, including on Desktop.
     response_roles = {
@@ -109,7 +125,7 @@ def parse_turns(records):
                 continue
             seen_items.add(item_id)
         if kind == "message" and payload.get("role") == "user":
-            text = prompt_text(payload.get("content"))
+            text = prompt_text(payload.get("content"), assets)
             if text:
                 start_prompt(text, timestamp)
             continue
@@ -120,7 +136,7 @@ def parse_turns(records):
             phase = payload.get("phase") or payload.get("channel")
             if phase in {"analysis", "justify", "confidence"}:
                 continue
-            step.update(content=text_content(payload.get("content")), phase=phase or "final")
+            step.update(content=text_content(payload.get("content"), assets), phase=phase or "final")
         elif kind == "reasoning":
             summary = text_content(payload.get("summary"))
             if not summary:

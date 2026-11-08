@@ -5,9 +5,10 @@ description: 为 Antigravity 与 Codex App/CLI 的本地长会话建立讨论主
 
 # session-map
 
-在 `.agents/.tmp/session/<id>/` 下维护双文件。
+在 `.agents/.tmp/session/<id>/` 下维护讨论树、记录及附件。
 - `map.md` 由用户与 agent 协作维护讨论主线、支线和待办，用 `[pN](prompts.md#pN)` 引用对应轮次。同步脚本仅在文件缺失时生成模板，已有内容始终保留。
 - `prompts.md` 由本地日志机械生成，通过 `<details>` 折叠过程和工具输出，最终回复在外层显示。
+- 图片等二进制附件按内容哈希存入 `assets/media/`，不嵌入 Base64。用户和助手正文的图片通过相对路径显示；工具输出中的图片保留按需打开的链接。超长工具记录存入 `assets/tool-output/`，正文保留短预览和完整记录链接；读取细节时再打开对应附件。
 - Antigravity 读取 `~/.gemini/antigravity/brain/<id>/.system_generated/logs/transcript_full.jsonl`。
 - Codex 读取 `${CODEX_HOME:-~/.codex}/sessions/` 或 `archived_sessions/` 的 `rollout-*.jsonl`，支持 Desktop 与 CLI。推理仅导出公开 `summary`，不导出原始思维链或加密内容。
 
@@ -45,7 +46,7 @@ python3 $S --status-service
 - 首次同步会保存 `.source.json`，后续 `--all` 和 `--watch` 读取同一来源。原有 Antigravity 目录可直接沿用。
 - 署名根据绑定的源会话生成，模型取日志最后记录值，后台服务可独立于当前聊天环境运行。
 - `--current` 读取 `CODEX_THREAD_ID` 或 `ANTIGRAVITY_CONVERSATION_ID`。无法唯一识别时指定 harness 和 ID。
-- `--watch` 每秒检查已订阅日志的修改时间和大小，有更新时原子替换 `prompts.md`。脚本升级后需重启已有服务以加载新代码。
+- `--watch` 每秒检查已订阅日志的修改时间和大小，有更新时重新生成；正文实质内容变化时才原子替换 `prompts.md`，仅同步时间变化不触发重写。附件不变则不重写。脚本升级后需重启已有服务以加载新代码。
 - 删除会话归档目录即可停止该会话的追踪。
 - 用户要求维护 `map.md` 时，默认基于当前上下文直接整理，按需读取现有草稿和精简轮次索引。压缩后存在信息缺口或具体结论有疑问时，再定点读取相关原文。
 - 尊重用户审核和修改草稿的能力，先形成可审核的主题、结论和状态，保留用户编辑，依反馈迭代。具体遵循 [讨论树维护约定](references/map-maintenance.md)。

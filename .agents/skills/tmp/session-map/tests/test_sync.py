@@ -1,4 +1,5 @@
 import importlib.util
+import base64
 import contextlib
 import io
 import json
@@ -61,6 +62,108 @@ class SyncTests(unittest.TestCase):
         content = [record("session_meta", id=sid), *records]
         path.write_text("".join(json.dumps(item) + "\n" for item in content))
         return path
+
+    def test_media_externalized_deduplicated_and_clickable(self):
+        binary = b"\x89PNG\r\n\x1a\n" + bytes(range(256)) * 200
+        encoded = base64.b64encode(binary).decode()
+        uri = "data:image/png;base64," + encoded
+        path = self.write_codex([
+            record("response_item", type="message", role="user", content=[
+                {"type": "input_text", "text": "image question"},
+                {"type": "input_image", "image_url": uri}]),
+            record("response_item", type="function_call", name="images", call_id="img",
+                   arguments=json.dumps({"reference": uri})),
+            record("response_item", type="function_call_output", call_id="img", output=[
+                {"type": "image", "mimeType": "image/png", "data": encoded},
+                {"type": "input_image", "image_url": uri}]),
+            message("assistant", "completed"),
+        ])
+        sync.sync_source(sync.Source(SID, "codex", path), subscribe=True)
+        folder = self.output / SID
+        media = list((folder / "assets/media").iterdir())
+        self.assertEqual(len(media), 1)
+        self.assertEqual(media[0].read_bytes(), binary)
+        content = (folder / "prompts.md").read_text()
+        self.assertNotIn(encoded, content)
+        self.assertIn(f"](assets/media/{media[0].name})", content)
+        self.assertIn('id="p1"', content)
+        before = media[0].stat().st_mtime_ns
+        sync.sync_source(sync.Source(SID, "codex", path))
+        self.assertEqual(media[0].stat().st_mtime_ns, before)
+
+    def test_large_tools_saved_in_full_with_bounded_preview(self):
+        output = "BEGIN\n" + "long line " * 10000 + "\nEND"
+        path = self.write_codex([
+            message("user", "read tool output"),
+            record("response_item", type="function_call", name="read", call_id="r", arguments="{}"),
+            record("response_item", type="function_call_output", call_id="r", output=output),
+            message("assistant", "final answer retained"),
+        ])
+        sync.sync_source(sync.Source(SID, "codex", path), subscribe=True)
+        folder = self.output / SID
+        content = (folder / "prompts.md").read_text()
+        self.assertLess(len(content), 5000)
+        self.assertIn("final answer retained", content)
+        self.assertIn("完整工具记录", content)
+        full = list((folder / "assets/tool-output").iterdir())
+        self.assertEqual(len(full), 1)
+        self.assertIn(output, full[0].read_text())
+
+    def test_noop_or_ignored_event_keeps_document_mtime(self):
+        path = self.write_codex([message("user", "unchanged")])
+        source = sync.Source(SID, "codex", path)
+        sync.sync_source(source, subscribe=True)
+        destination = self.output / SID / "prompts.md"
+        before = destination.stat().st_mtime_ns
+        with path.open("a") as stream:
+            stream.write(json.dumps(record("event_msg", type="token_count", usage=100)) + "\n")
+        with patch.object(sync, "attribution", return_value=HEADER.replace("time: unknown", "time: later")):
+            sync.sync_source(source)
+        self.assertEqual(before, destination.stat().st_mtime_ns)
+        with path.open("a") as stream:
+            stream.write(json.dumps(message("assistant", "new visible answer")) + "\n")
+        sync.sync_source(source)
+        self.assertIn("new visible answer", destination.read_text())
+        self.assertNotEqual(before, destination.stat().st_mtime_ns)
+
+    def test_invalid_base64_preserved_without_external_reads(self):
+        store = sync.AssetStore(self.root)
+        text = "data:image/png;base64,SECRET_IMAGE https://example.com/picture.png"
+        cleaned, refs = store.extract(text)
+        self.assertEqual(cleaned, text)
+        self.assertFalse(refs)
+        self.assertFalse((self.root / "assets").exists())
+
+    def test_attachment_envelope_and_user_image_display(self):
+        uri = "data:image/png;base64," + base64.b64encode(b"image-bytes").decode()
+        path = self.write_codex([record("response_item", type="message", role="user", content=[
+            {"type": "input_text", "text": '# Files mentioned by the user:\n\n## picture.png: /tmp/picture.png\nImage attachment: true\n\n## My request:\n为什么？\n<image name=[Image #1] path="/tmp/picture.png">'},
+            {"type": "input_image", "image_url": uri},
+            {"type": "input_text", "text": "</image>"}])])
+        sync.sync_source(sync.Source(SID, "codex", path), subscribe=True)
+        text = (self.output / SID / "prompts.md").read_text()
+        self.assertIn("> 为什么？", text)
+        self.assertIn("> ![图像附件](assets/media/", text)
+        self.assertNotIn("&lt;image", text)
+        self.assertNotIn("&lt;/image", text)
+        self.assertNotIn("Files mentioned", text)
+
+    def test_assistant_local_images_archived_but_code_unchanged(self):
+        picture = self.root / "photo (one).png"
+        picture.write_bytes(b"local-image")
+        source = (f"![preview](<{picture}>)\n\n"
+                  f"`![example](<{picture}>)`\n\n"
+                  f"```md\n![example](<{picture}>)\n```\n"
+                  "![remote](https://example.com/photo.png)\n")
+        path = self.write_codex([message("user", "show image"), message("assistant", source)])
+        sync.sync_source(sync.Source(SID, "codex", path), subscribe=True)
+        folder = self.output / SID
+        text = (folder / "prompts.md").read_text()
+        self.assertIn("![preview](assets/media/", text)
+        self.assertIn(f"`![example](<{picture}>)`", text)
+        self.assertIn(f"```md\n![example](<{picture}>)\n```", text)
+        self.assertIn("![remote](https://example.com/photo.png)", text)
+        self.assertEqual(list((folder / "assets/media").iterdir())[0].read_bytes(), b"local-image")
 
     def test_calls_pair_by_id_and_exclude_private_reasoning(self):
         path = self.write_codex([
