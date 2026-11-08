@@ -1,4 +1,3 @@
-import importlib.util
 import base64
 import contextlib
 import io
@@ -13,12 +12,14 @@ import unittest
 from urllib.parse import quote, unquote, urlsplit
 from unittest.mock import patch
 
-SCRIPTS = Path(__file__).resolve().parents[1] / "scripts"
+SCRIPTS = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(SCRIPTS))
-spec = importlib.util.spec_from_file_location("session_map_sync", SCRIPTS / "sync.py")
-sync = importlib.util.module_from_spec(spec)
-sys.modules[spec.name] = sync
-spec.loader.exec_module(sync)
+import runtime as sync
+import sync as cli
+import sources
+import codex
+import antigravity
+import render as renderer
 SOURCE_ATTRIBUTION = sync.attribution
 
 SID = "11111111-2222-3333-4444-555555555555"
@@ -50,7 +51,7 @@ class SyncTests(unittest.TestCase):
         self.brain = self.root / "brain"
         self.output = self.root / "output"
         for name, value in (("CODEX_HOME", self.codex_home), ("BRAIN", self.brain), ("SESS", self.output)):
-            patcher = patch.object(sync, name, value)
+            patcher = patch.object(sync if name == "SESS" else sources, name, value)
             patcher.start()
             self.addCleanup(patcher.stop)
         patcher = patch.object(sync, "attribution", return_value=HEADER)
@@ -182,6 +183,42 @@ class SyncTests(unittest.TestCase):
         self.assertNotIn("file:", store.display_links(raw))
         self.assertIn("note%20%28one%29.md", store.display_links(raw))
 
+    def test_antigravity_adapter_pairs_outputs_without_mutating_records(self):
+        records = [
+            {"type": "USER_INPUT", "created_at": STAMP, "content": "question"},
+            {"type": "PLANNER_RESPONSE", "created_at": STAMP, "tool_calls": [
+                {"name": "one", "args": {}}, {"name": "two", "args": {}}]},
+            {"type": "GENERIC", "created_at": STAMP, "content": "FIRST"},
+            {"type": "GENERIC", "created_at": STAMP, "content": "SECOND"},
+        ]
+        before = json.dumps(records)
+        turns = list(antigravity.parse_turns(records))
+        calls = turns[0]["steps"][0]["tool_calls"]
+        self.assertEqual([call["result"] for call in calls], ["FIRST", "SECOND"])
+        self.assertEqual(json.dumps(records), before)
+
+    def test_adapters_share_a_renderer_without_source_reads(self):
+        inputs = {
+            "antigravity": [
+                {"type": "USER_INPUT", "created_at": STAMP, "content": "question"},
+                {"type": "PLANNER_RESPONSE", "created_at": STAMP, "content": "answer"}],
+            "codex": [message("user", "question"), message("assistant", "answer")],
+        }
+        for harness, records in inputs.items():
+            with self.subTest(harness=harness):
+                turns = sources.parse_turns(records, harness)
+                with patch("builtins.open", side_effect=AssertionError("renderer read a source")):
+                    text = renderer.render(SID, Path("not-a-real-log"), harness, HEADER, turns)
+                self.assertIn("> question", text)
+                self.assertIn("\n\nanswer\n", text)
+
+    def test_service_keeps_the_public_cli_entrypoint(self):
+        unit = self.root / "systemd/session-map-sync.service"
+        with patch.object(sync, "SERVICE_PATH", unit), patch.object(sync.subprocess, "run"):
+            sync.install_service()
+        self.assertIn(f"ExecStart=/usr/bin/python3 {SCRIPTS / 'sync.py'} --watch", unit.read_text())
+        self.assertNotIn("runtime.py --watch", unit.read_text())
+
     def test_file_hyperlinks_leave_examples_and_remote_urls_unchanged(self):
         store = sync.AssetStore(self.root)
         link = "[doc](file:///tmp/doc.md)"
@@ -230,7 +267,7 @@ class SyncTests(unittest.TestCase):
             message("assistant", "DONE", phase="final_answer"),
             record("event_msg", type="task_complete", last_agent_message="DONE", duration_ms=1200),
         ])
-        turns = sync.codex_turns(sync.read_records(path))
+        turns = codex.parse_turns(sync.read_records(path))
         self.assertEqual(len(turns), 1)
         calls = [s["tool_calls"][0] for s in turns[0]["steps"] if s.get("tool_calls")]
         self.assertEqual([c["result"] for c in calls], ["FIRST_OUTPUT", "SECOND_OUTPUT"])
@@ -250,7 +287,7 @@ class SyncTests(unittest.TestCase):
             message("user", "same question"),
             message("assistant", "progress", phase="commentary"),
         ])
-        turns = sync.codex_turns(sync.read_records(path))
+        turns = codex.parse_turns(sync.read_records(path))
         self.assertEqual(len(turns), 2)
         self.assertEqual(turns[1]["user"]["content"], "same question")
         rendered = sync.render(SID, path, "codex", HEADER)
@@ -318,7 +355,7 @@ class SyncTests(unittest.TestCase):
         prompt = record("response_item", type="message", id="image-message", role="user",
                         content=[{"type": "input_image", "image_url": "data:image/png;base64,SECRET_IMAGE"}])
         path = self.write_codex([prompt, prompt])
-        turns = sync.codex_turns(sync.read_records(path))
+        turns = codex.parse_turns(sync.read_records(path))
         self.assertEqual(len(turns), 1)
         self.assertEqual(turns[0]["user"]["content"], "[图像附件]")
         self.assertNotIn("SECRET_IMAGE", sync.render(SID, path, "codex", HEADER))
@@ -382,7 +419,7 @@ class SyncTests(unittest.TestCase):
     def run_management(self, *args):
         output = io.StringIO()
         with contextlib.redirect_stdout(output):
-            code = sync.manage([*args, "--json"])
+            code = cli.manage([*args, "--json"])
         return code, json.loads(output.getvalue())
 
     def test_management_json_and_read_only_inventory(self):

@@ -39,19 +39,31 @@ python3 $S --install-service
 python3 $S --status-service
 ```
 
-## 工作流
+## 工作流模块
 
-- 用户问“哪些 session 在订阅”“订阅详情”时，先调用 `list --json` 或 `show ID --json`，依据输出回答。单独区分 `subscribed`、`watching` 和 `sync_status`，不能仅凭目录存在判断正在同步。
-- 用户要求订阅/退订时调用对应命令。`unsubscribe` 停止后续同步并保留文档，`subscribe` 可重新启用。旧式 `sync.py ID` 和 `--current` 仍等价于订阅并同步。
-- 首次同步会保存 `.source.json`，后续 `--all` 和 `--watch` 读取同一来源。原有 Antigravity 目录可直接沿用。
-- 署名根据绑定的源会话生成，模型取日志最后记录值，后台服务可独立于当前聊天环境运行。
-- `--current` 读取 `CODEX_THREAD_ID` 或 `ANTIGRAVITY_CONVERSATION_ID`。无法唯一识别时指定 harness 和 ID。
-- `--watch` 每秒检查已订阅日志的修改时间和大小，有更新时重新生成；正文实质内容变化时才原子替换 `prompts.md`，仅同步时间变化不触发重写。附件不变则不重写。脚本升级后需重启已有服务以加载新代码。
-- 删除会话归档目录即可停止该会话的追踪。
-- 用户要求维护 `map.md` 时，默认基于当前上下文直接整理，按需读取现有草稿和精简轮次索引。压缩后存在信息缺口或具体结论有疑问时，再定点读取相关原文。
-- 尊重用户审核和修改草稿的能力，先形成可审核的主题、结论和状态，保留用户编辑，依反馈迭代。具体遵循 [讨论树维护约定](references/map-maintenance.md)。
-- 在支持原生 HTML 折叠的 Markdown 预览中阅读记录。仅追加日志时 `pN` 锚点保持稳定。
-- 支持 Linux/macOS 本地日志，后台 systemd 服务限 Linux。远程或云端聊天需要先取得本地 rollout 文件。
+### 讨论树维护
+
+- `map.md` 默认基于当前上下文整理，按需读取现有草稿和精简轮次索引；压缩后有信息缺口时再定点读原文，不重复通读 `prompts.md`。
+- 先形成用户可审核的主题、结论和待办，保留用户编辑。遵循 [讨论树维护约定](references/map-maintenance.md)。
+
+### 记录生成
+
+- 两种 harness 经各自适配器转换为统一轮次，再共用 Markdown 渲染和附件处理。
+- 首次同步保存 `.source.json`，后续沿用来源；署名由绑定源会话生成，不使用后台进程所属聊天的身份。
+- 在支持 HTML 折叠的 Markdown 预览中阅读。日志仅追加时 `pN` 稳定；本工具读取本地日志，云端聊天需先取得日志文件。
+
+### 订阅与后台
+
+- 查询订阅先用 `list --json` 或 `show ID --json`，区分 `subscribed`、`watching`、`sync_status`，不能仅凭目录存在判断正在同步。
+- 订阅/退订使用对应命令；退订保留文档。旧式 `sync.py ID` 和 `--current` 仍等价于订阅并同步。无法唯一识别当前聊天时，指定 harness 和 ID。
+- `--watch` 每秒检查日志变化；正文不变时不重写 `prompts.md`，附件不变时不重写。删除归档目录会停止追踪；脚本升级后重启已有服务。
+- 单次同步和 watch 支持 Linux/macOS；systemd 用户服务限 Linux。详情见 [订阅管理](references/subscriptions.md)。
+
+### 代码维护
+
+- 运行代码和测试统一放在 `scripts/`，测试位于 `scripts/tests/`。
+- 修改解析、渲染或同步逻辑前，按 [模块职责与调用流程](references/architecture.md) 找到负责模块。
+- 保留 `sync.py` 命令入口、已有状态文件及 `map.md`；运行回归测试，脚本升级后再重启监听服务。
 
 ## 参考
 

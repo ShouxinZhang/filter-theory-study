@@ -4,6 +4,20 @@ import json
 import re
 
 
+def matches(records):
+    return any(record.get("type") == "session_meta" for record in records)
+
+
+def session_id(records, path):
+    return next(record.get("payload", {}).get("id", "") for record in records
+                if record.get("type") == "session_meta")
+
+
+def find_paths(root, prefix):
+    for folder in (root / "sessions", root / "archived_sessions"):
+        yield from folder.rglob(f"rollout-*{prefix}*.jsonl")
+
+
 def text_content(content, assets=None):
     if isinstance(content, str):
         return content

@@ -1,5 +1,7 @@
 # Codex App 本地会话适配
 
+实现由 `scripts/codex.py` 适配原始日志，其余流程与 AGY 共用；代码维护见 [模块职责](architecture.md)。
+
 ## 定位来源
 
 `--current --harness codex` 从 `CODEX_THREAD_ID` 读取聊天 ID。自动查找覆盖 `$CODEX_HOME/sessions/` 的日期子目录和 `$CODEX_HOME/archived_sessions/`，默认根目录为 `~/.codex`。通过文件内 `session_meta.payload.id` 核验聊天身份，避免将 session tree 的根 ID 当成当前 thread ID。
@@ -41,7 +43,7 @@ Code Mode 外层调用的源码和返回结果进入工具折叠块，内层执�
 
 ```bash
 S=.agents/skills/tmp/session-map/scripts/sync.py
-PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s .agents/skills/tmp/session-map/tests -v
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s .agents/skills/tmp/session-map/scripts/tests -v
 python3 $S --harness codex --current --output-root /absolute/task/outputs/session-preview
 python3 .agents/skills/meta-skill/scripts/skill_ctl.py lint .agents/skills/tmp
 ```
