@@ -159,7 +159,7 @@ def render_turn(k, t, assets=None):
             return value
         value, refs = assets.extract(value)
         references.update(refs)
-        return assets.display_images(value)
+        return assets.display_links(assets.display_images(value))
 
     u = t["user"]
     st = t["steps"]
@@ -168,7 +168,8 @@ def render_turn(k, t, assets=None):
     txt = esc(text(user_text(u.get("content"))))
     lines += ["> " + (ln + "  " if ln else "") for ln in txt.splitlines()] + [""]
     for m in u.get("media") or []:
-        lines.append(f"- 📎 [{os.path.basename(m.get('uri',''))}](file://{m.get('uri','')})")
+        link = f"- 📎 [{os.path.basename(m.get('uri',''))}](file://{m.get('uri','')})"
+        lines.append(assets.display_links(link) if assets else link)
     final_i = None
     for i, d in enumerate(st):
         if (d.get("type") == "PLANNER_RESPONSE" and d.get("content")

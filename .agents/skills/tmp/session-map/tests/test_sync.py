@@ -10,6 +10,7 @@ import sys
 import tempfile
 import time
 import unittest
+from urllib.parse import quote, unquote, urlsplit
 from unittest.mock import patch
 
 SCRIPTS = Path(__file__).resolve().parents[1] / "scripts"
@@ -164,6 +165,55 @@ class SyncTests(unittest.TestCase):
         self.assertIn(f"```md\n![example](<{picture}>)\n```", text)
         self.assertIn("![remote](https://example.com/photo.png)", text)
         self.assertEqual(list((folder / "assets/media").iterdir())[0].read_bytes(), b"local-image")
+
+    def test_file_hyperlinks_relative_encoded_and_idempotent(self):
+        folder = self.root / "archive/session"
+        target = self.root / "中文目录" / "note (one) #2.md"
+        store = sync.AssetStore(folder)
+        url = target.as_uri() + "#L71-L75"
+        source = f'[文档](<{url}> "说明")'
+        relative = quote(os.path.relpath(target, folder), safe="/.-_~")
+        expected = f'[文档]({relative}#L71-L75 "说明")'
+        self.assertEqual(store.display_links(source), expected)
+        self.assertEqual(store.display_links(expected), expected)
+        self.assertEqual((folder / unquote(urlsplit(relative).path)).resolve(), target)
+        # Also support raw Unicode and spaces commonly emitted by Antigravity.
+        raw = f"[文档](file://{target.parent}/note (one).md)"
+        self.assertNotIn("file:", store.display_links(raw))
+        self.assertIn("note%20%28one%29.md", store.display_links(raw))
+
+    def test_file_hyperlinks_leave_examples_and_remote_urls_unchanged(self):
+        store = sync.AssetStore(self.root)
+        link = "[doc](file:///tmp/doc.md)"
+        examples = (f"`{link}`\n\n```md\n{link}\n```\n"
+                    f"~~~md\n{link}\n~~~\n"
+                    "[remote](https://example.com/doc.md)\n"
+                    "[share](file://server/share/doc.md)\n"
+                    "[relative](../doc.md#section)\n"
+                    "![image](file:///tmp/pic.png)\n")
+        self.assertEqual(store.display_links(examples), examples)
+
+    def test_antigravity_user_and_final_file_links_rendered(self):
+        folder = self.output / SID
+        target = self.root / "document.md"
+        source = self.brain / SID / ".system_generated/logs/transcript_full.jsonl"
+        source.parent.mkdir(parents=True)
+        link = f"[document]({target.as_uri()}#L71-L75)"
+        records = [
+            {"type": "USER_INPUT", "created_at": STAMP, "content": link},
+            {"type": "PLANNER_RESPONSE", "created_at": STAMP, "content": link},
+        ]
+        original = "".join(json.dumps(r) + "\n" for r in records)
+        source.write_text(original)
+        folder.mkdir(parents=True)
+        (folder / "map.md").write_text("user maintained map")
+        sync.sync_source(sync.Source(SID, "antigravity", source), subscribe=True)
+        body = (folder / "prompts.md").read_text()
+        expected = "[document](" + quote(os.path.relpath(target, folder), safe="/.-_~") + "#L71-L75)"
+        self.assertIn("> " + expected, body)
+        self.assertIn("\n\n" + expected, body)
+        self.assertEqual(source.read_text(), original)
+        self.assertEqual((folder / "map.md").read_text(), "user maintained map")
 
     def test_calls_pair_by_id_and_exclude_private_reasoning(self):
         path = self.write_codex([

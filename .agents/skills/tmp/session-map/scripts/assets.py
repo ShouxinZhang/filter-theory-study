@@ -8,7 +8,7 @@ import os
 from pathlib import Path
 import re
 import tempfile
-from urllib.parse import unquote, urlsplit
+from urllib.parse import quote, unquote, urlsplit
 
 
 DATA_URI = re.compile(r"data:([\w.+-]+/[\w.+-]+);base64,([A-Za-z0-9+/=]+(?:\\/[A-Za-z0-9+/=]*)*)(?![\w+/=])")
@@ -19,6 +19,28 @@ TOOL_LIMIT = 16 * 1024
 LINE_LIMIT = 4096
 IMAGE_LINK = re.compile(r'!\[([^\]\n]*)\]\((<[^>\n]+>|(?:[^()\n]|\([^()\n]*\))+)\)')
 IMAGE_SUFFIXES = {".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg", ".avif", ".bmp"}
+LOCAL_LINK = re.compile(r'(?<!!)\[([^\]\n]*)\]\((<[^>\n]+>|(?:[^()\n]|\([^()\n]*\))+)\)')
+
+
+def rewrite_prose(text, transform):
+    """Apply a Markdown rewrite outside fenced and inline code."""
+    lines, fence = [], None
+    for line in text.splitlines(keepends=True):
+        marker = re.match(r"^\s*(`{3,}|~{3,})", line)
+        if marker:
+            token = marker[1]
+            if fence is None:
+                fence = token
+            elif token[0] == fence[0] and len(token) >= len(fence):
+                fence = None
+            lines.append(line)
+        elif fence:
+            lines.append(line)
+        else:
+            parts = re.split(r"(`+[^`\n]*`+)", line)
+            lines.append("".join(part if i % 2 else transform(part)
+                                 for i, part in enumerate(parts)))
+    return "".join(lines)
 
 
 class AssetStore:
@@ -56,23 +78,38 @@ class AssetStore:
             path = self.image_path(target)
             return f"![{match[1]}]({path})" if path else match[0]
 
-        lines, fence = [], None
-        for line in text.splitlines(keepends=True):
-            marker = re.match(r"^\s*(`{3,}|~{3,})", line)
-            if marker:
-                token = marker[1]
-                if fence is None:
-                    fence = token
-                elif token[0] == fence[0] and len(token) >= len(fence):
-                    fence = None
-                lines.append(line)
-            elif fence:
-                lines.append(line)
-            else:
-                parts = re.split(r"(`+[^`\n]*`+)", line)
-                lines.append("".join(part if i % 2 else IMAGE_LINK.sub(replace, part)
-                                     for i, part in enumerate(parts)))
-        return "".join(lines)
+        return rewrite_prose(text, lambda part: IMAGE_LINK.sub(replace, part))
+
+    def display_links(self, text):
+        """Markdown previews reject file: URLs; use encoded archive-relative URLs.
+
+        Keep source transcripts and code examples intact. Non-local URLs, including
+        file://server shares, retain their original semantics.
+        """
+        def replace(match):
+            target, title = match[2].strip(), ""
+            titled = re.fullmatch(r"""(.*?)(\s+(?:"[^"\n]*"|'[^'\n]*'))""", target)
+            if titled:
+                target, title = titled.groups()
+            if target.startswith("<") and target.endswith(">"):
+                target = target[1:-1]
+            try:
+                parsed = urlsplit(target)
+            except ValueError:
+                return match[0]
+            if parsed.scheme.lower() != "file" or parsed.netloc not in {"", "localhost"}:
+                return match[0]
+            path = Path(unquote(parsed.path))
+            if not path.is_absolute():
+                return match[0]
+            relative = quote(os.path.relpath(path, self.directory), safe="/.-_~")
+            if parsed.query:
+                relative += "?" + quote(parsed.query, safe="%=&/:?+,-._~")
+            if parsed.fragment:
+                relative += "#" + quote(parsed.fragment, safe="%-._~")
+            return f"[{match[1]}]({relative}{title})"
+
+        return rewrite_prose(text, lambda part: LOCAL_LINK.sub(replace, part))
 
     def put(self, data, folder, suffix):
         digest = hashlib.sha256(data).hexdigest()
