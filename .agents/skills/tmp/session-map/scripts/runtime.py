@@ -13,7 +13,8 @@ from pathlib import Path
 from assets import AssetStore
 from models import Source, TZ, ts
 from memory import ensure_memory
-from render import MAP_TMPL, user_text
+from map_layout import ensure_map, map_path
+from render import user_text
 import render as renderer
 import sources
 from sources import read_json, read_records, read_snapshot, source_signature, validate_id
@@ -93,11 +94,7 @@ def sync_source(source, subscribe=False):
         source_metadata = {"sid": source.sid, "harness": source.harness, "path": str(source.path)}
         if saved != source_metadata:
             atomic_write(binding, json.dumps(source_metadata, ensure_ascii=False, indent=2) + "\n")
-        try:
-            with (directory / "map.md").open("x", encoding="utf-8") as stream:
-                stream.write(header + "\n\n" + MAP_TMPL.format(sid8=source.sid[:8]))
-        except FileExistsError:
-            pass
+        ensure_map(directory, header, source.sid)
         ensure_memory(directory, header)
         parsed = sources.parse_turns(records, source.harness)
         title = user_text(parsed[0]["user"].get("content", "")) if parsed else ""
@@ -225,7 +222,7 @@ def subscription_info(directory, watcher=None):
             "watching": subscribed(directory) and watcher["status"] == "running",
             "source_path": None, "source_modified_at": None, "last_synced_at": None,
             "last_attempt_at": None, "turn_count": None, "sync_status": "unknown",
-            "error": None, "map_path": str(directory / "map.md"),
+            "error": None, "map_path": str(map_path(directory)),
             "prompts_path": str(directory / "prompts.md"),
             "memory_path": str(directory / "memory/memory.md"),
             "memory_drafts_path": str(directory / "memory/agent-memory-drafts.md"),

@@ -66,7 +66,7 @@ class MemoryTests(unittest.TestCase):
             folder / "memory/memory.md": b"",  # An intentional human deletion of all entries.
             folder / "memory/agent-memory-drafts.md": "- 人类修改后的候选\n  第二行\n".encode(),
             folder / "memory/references/picture.png": b"\x89PNG\r\nunchanged",
-            folder / "map.md": b"human topic map",
+            folder / "map/map.md": b"human topic map",
         }
         for path, data in preserved.items():
             path.write_bytes(data)

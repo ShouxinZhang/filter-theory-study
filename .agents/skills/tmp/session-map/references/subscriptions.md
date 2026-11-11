@@ -32,7 +32,7 @@ python3 $S unsubscribe 01a1a583 --json
 | `last_synced_at`、`last_attempt_at` | 最近成功同步时间和最近尝试时间，含时区 |
 | `turn_count` | 最近成功同步识别出的提问轮数 |
 | `error` | 最近同步失败或状态读取错误 |
-| `map_path`、`prompts_path` | 可直接打开的绝对路径 |
+| `map_path`、`prompts_path` | 新版 `map/map.md` 与 `prompts.md` 的绝对路径；旧订阅下次同步时迁移地图 |
 | `memory_path`、`memory_drafts_path`、`memory_references_path` | 本 session 正式记忆、待审核草稿和附件目录的绝对路径，供调用方按需访问 |
 
 名称是可追溯的本地展示标签，不保证与 App 侧栏当前标题一致。
@@ -54,6 +54,6 @@ python3 $S unsubscribe 01a1a583 --json
 
 ## 文件与并发
 
-`.source.json` 绑定来源，`.sync-state.json` 保存成功快照和错误，`.unsubscribed` 表示暂停订阅。退订在同一个会话写锁下创建标记，等待正在进行的同步结束，后续 watcher 和 `--all` 跳过该会话。重新订阅成功同步后移除标记，已有 `map.md` 原样保留。
+`.source.json` 绑定来源，`.sync-state.json` 保存成功快照和错误，`.unsubscribed` 表示暂停订阅。退订在同一个会话写锁下创建标记，等待正在进行的同步结束，后续 watcher 和 `--all` 跳过该会话。重新订阅成功同步后移除标记，已有 `map/map.md` 原样保留，旧版按迁移规则备份。
 
 无需删除归档文档来退订。手工删除整个会话目录仍会停止追踪。更新脚本后需要重启已运行的 watcher，使其识别退订标记和心跳协议。

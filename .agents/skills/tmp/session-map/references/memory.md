@@ -9,7 +9,8 @@
 
 ```text
 .agents/.tmp/session/<session-id>/
-├── map.md
+├── map/
+│   └── map.md
 ├── prompts.md
 └── memory/
     ├── agent-memory-drafts.md
@@ -20,7 +21,7 @@
 - `agent-memory-drafts.md`：AI 可以主动增删改查，供人类审阅；内容没有规则效力，不得作为已确认用户偏好、任务授权或正式记忆的依据。
 - `memory.md`：保存本 session 经人类审核的记忆；人类可直接增删改查。AI 仅按人类明确确认的内容和范围修改，保留现有人类修订。
 - `references/`：容纳无法压缩的长说明、证据、图片及其他附件，由条目使用相对路径引用；附件不因被引用而整篇获得规则效力。
-- `map.md` 继续记录讨论脉络与待办；`prompts.md` 保留机械导出的记录。两者不自动转为正式记忆。
+- `map/map.md` 记录会话时序，map/ 下的主题文件记录讨论脉络与待办；`prompts.md` 保留机械导出的记录。两者不自动转为正式记忆。
 
 ## 整理与审核
 

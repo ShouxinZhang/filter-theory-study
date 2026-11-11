@@ -250,7 +250,8 @@ class SyncTests(unittest.TestCase):
         self.assertIn("> " + expected, body)
         self.assertIn("\n\n" + expected, body)
         self.assertEqual(source.read_text(), original)
-        self.assertEqual((folder / "map.md").read_text(), "user maintained map")
+        self.assertEqual((folder / "map/map.md").read_text(), "user maintained map")
+        self.assertFalse((folder / "map.md").exists())
 
     def test_calls_pair_by_id_and_exclude_private_reasoning(self):
         path = self.write_codex([
@@ -319,14 +320,14 @@ class SyncTests(unittest.TestCase):
         path = self.write_codex([message("user", "question")])
         self.assertEqual(sync.resolve_source(SID[:8]).path, path)
         sync.sync(SID[:8])
-        draft = self.output / SID / "map.md"
+        draft = self.output / SID / "map/map.md"
         draft.write_text("human draft")
         archived = self.codex_home / "archived_sessions" / path.name
         archived.parent.mkdir(parents=True)
         path.rename(archived)
         sync.sync_all()
         self.assertEqual(draft.read_text(), "human draft")
-        binding = json.loads((draft.parent / ".source.json").read_text())
+        binding = json.loads((draft.parent.parent / ".source.json").read_text())
         self.assertEqual(binding["path"], str(archived))
 
     def test_ambiguous_prefix_and_harness_validation(self):
@@ -375,17 +376,18 @@ class SyncTests(unittest.TestCase):
         folder.mkdir(parents=True)
         (folder / "map.md").write_text("legacy map")
         self.assertTrue(sync.sync_all())
-        self.assertEqual((folder / "map.md").read_text(), "legacy map")
+        self.assertEqual((folder / "map/map.md").read_text(), "legacy map")
+        self.assertFalse((folder / "map.md").exists())
         self.assertIn("old answer", (folder / "prompts.md").read_text())
 
     def test_watch_cli_appends_and_keeps_map(self):
         path = self.write_codex([record("turn_context", model="watcher-model"), message("user", "initial")])
         sync.sync(SID)
-        draft = self.output / SID / "map.md"
+        draft = self.output / SID / "map/map.md"
         draft.write_text("keep me")
-        approved = draft.parent / "memory/memory.md"
+        approved = draft.parent.parent / "memory/memory.md"
         approved.write_text("- Human-reviewed entry\n")
-        memory_draft = draft.parent / "memory/agent-memory-drafts.md"
+        memory_draft = draft.parent.parent / "memory/agent-memory-drafts.md"
         memory_draft.write_text("- Candidate, not approved\n")
         env = {**os.environ, "CODEX_HOME": str(self.codex_home), "PYTHONDONTWRITEBYTECODE": "1"}
         command = [sys.executable, str(SCRIPTS / "sync.py"), "--watch", "--interval", "0.05",
@@ -396,7 +398,7 @@ class SyncTests(unittest.TestCase):
                 stream.write(json.dumps(message("user", "APPENDED_PROMPT")) + "\n")
             deadline = time.monotonic() + 10
             while time.monotonic() < deadline:
-                if "APPENDED_PROMPT" in (draft.parent / "prompts.md").read_text():
+                if "APPENDED_PROMPT" in (draft.parent.parent / "prompts.md").read_text():
                     break
                 time.sleep(0.05)
             else:
@@ -404,20 +406,20 @@ class SyncTests(unittest.TestCase):
             self.assertEqual(draft.read_text(), "keep me")
             self.assertEqual(approved.read_text(), "- Human-reviewed entry\n")
             self.assertEqual(memory_draft.read_text(), "- Candidate, not approved\n")
-            header = (draft.parent / "prompts.md").read_text().split("\n\n", 1)[0]
+            header = (draft.parent.parent / "prompts.md").read_text().split("\n\n", 1)[0]
             self.assertIn("agent name: watcher-model", header)
             self.assertIn("harness: codex", header)
             self.assertIn(f"session: {SID[:8]}", header)
             self.assertEqual(sync.watcher_status()["status"], "running")
             sync.unsubscribe(SID)
-            before = (draft.parent / "prompts.md").read_bytes()
+            before = (draft.parent.parent / "prompts.md").read_bytes()
             with path.open("a") as stream:
                 stream.write(json.dumps(message("user", "AFTER_UNSUBSCRIBE")) + "\n")
             time.sleep(0.2)
-            self.assertEqual((draft.parent / "prompts.md").read_bytes(), before)
-            self.assertFalse(sync.subscription_info(draft.parent)["watching"])
+            self.assertEqual((draft.parent.parent / "prompts.md").read_bytes(), before)
+            self.assertFalse(sync.subscription_info(draft.parent.parent)["watching"])
             sync.sync(SID)
-            self.assertIn("AFTER_UNSUBSCRIBE", (draft.parent / "prompts.md").read_text())
+            self.assertIn("AFTER_UNSUBSCRIBE", (draft.parent.parent / "prompts.md").read_text())
             self.assertEqual(approved.read_text(), "- Human-reviewed entry\n")
         finally:
             process.terminate()
@@ -439,6 +441,7 @@ class SyncTests(unittest.TestCase):
         self.assertEqual(code, 0)
         self.assertEqual(result["subscription"]["sync_status"], "up_to_date")
         self.assertEqual(result["subscription"]["name"], "Display title")
+        self.assertEqual(result["subscription"]["map_path"], str(self.output / SID / "map/map.md"))
         before = {p: p.stat().st_mtime_ns for p in self.output.rglob("*") if p.is_file()}
         with patch.object(sync, "resolve_source", side_effect=AssertionError("inventory scanned logs")):
             code, shown = self.run_management("show", SID[:8])
@@ -451,7 +454,7 @@ class SyncTests(unittest.TestCase):
         self.write_codex([message("user", "keep")])
         self.run_management("subscribe", SID)
         folder = self.output / SID
-        (folder / "map.md").write_text("edited map")
+        (folder / "map/map.md").write_text("edited map")
         before = (folder / "prompts.md").read_bytes()
         code, result = self.run_management("unsubscribe", SID[:8])
         self.assertEqual(code, 0)
@@ -464,7 +467,7 @@ class SyncTests(unittest.TestCase):
         self.assertEqual(len(self.run_management("list", "--all")[1]["subscriptions"]), 1)
         self.run_management("subscribe", SID)
         self.assertTrue(sync.subscribed(folder))
-        self.assertEqual((folder / "map.md").read_text(), "edited map")
+        self.assertEqual((folder / "map/map.md").read_text(), "edited map")
 
     def test_sync_status_pending_error_and_missing(self):
         path = self.write_codex([message("user", "ready")])

@@ -5,21 +5,12 @@ import re
 
 from models import ts
 
-MAP_TMPL = """# map · {sid8}
+MAP_TMPL = """# 本 session 时序 · {sid8}
 
-<!-- 人写区域, 脚本永不覆盖. 引用原件: [p1](prompts.md#p1) -->
+<!-- 由用户与 agent 协作维护。原文：[会话记录](../prompts.md) -->
 
-## 主线
-
-- [ ] [p1](prompts.md#p1)
-
-## 支线
-
-- 
-
-## 待办 / 迷失时看这里
-
-- 
+| 时间 / 原话 | 当时想做什么、决定了什么 | 状态 / 主题 |
+| --- | --- | --- |
 """
 
 

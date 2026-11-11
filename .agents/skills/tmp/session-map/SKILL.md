@@ -6,7 +6,7 @@ description: 为 Antigravity 与 Codex App/CLI 的本地长会话维护会话时
 # session-map
 
 在 `.agents/.tmp/session/<id>/` 下维护用户的会话地图、记录及附件。
-- `map/` 以人类 prompt 为核心维护时序、数学思路与开发任务，内容整理交给 [map 子技能](../map/SKILL.md)。
+- `map/` 以人类 prompt 为核心维护时序、数学思路与开发任务，内容整理交给 [地图模块](references/map/index.md)。
 - `prompts.md` 由本地日志机械生成，通过 `<details>` 折叠过程和工具输出，最终回复在外层显示。
 - `memory/` 仅属于该 session：后台脚本负责建立缺失的目录和空白模板、保留已有文件；记忆草稿由 agent 整理，正式记忆由人类审核决定。AI 草稿不具备规则效力。
 - 图片等二进制附件按内容哈希存入 `assets/media/`，不嵌入 Base64。用户和助手正文的图片通过相对路径显示；工具输出中的图片保留按需打开的链接。超长工具记录存入 `assets/tool-output/`，正文保留短预览和完整记录链接；读取细节时再打开对应附件。
@@ -42,11 +42,6 @@ python3 $S --status-service
 
 ## 工作流模块
 
-### 会话地图维护
-
-- 用户要求整理时序、数学讨论或任务进度时，读取 [map 子技能](../map/SKILL.md)，更新 `map/map.md` 与有关主题。
-- 现有同步脚本仍在 session 根目录初始化旧 `map.md`，`show/list` 的 `map_path` 也指向旧文件；新版内容由 agent 写入 `map/`。读取新版地图时使用 `map/map.md`。
-
 ### 记录生成
 
 - 两种 harness 经各自适配器转换为统一轮次，再共用 Markdown 渲染和附件处理。
@@ -70,7 +65,7 @@ python3 $S --status-service
 
 - 运行代码和测试统一放在 `scripts/`，测试位于 `scripts/tests/`。
 - 修改解析、渲染或同步逻辑前，按 [模块职责与调用流程](references/architecture.md) 找到负责模块。
-- 保留 `sync.py` 命令入口、已有状态文件及 `map.md`；运行回归测试，脚本升级后再重启监听服务。
+- 保留 `sync.py` 命令入口、已有状态文件及 `map/map.md`；运行回归测试，脚本升级后再重启监听服务。
 
 ## 参考
 
