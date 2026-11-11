@@ -12,6 +12,7 @@ from pathlib import Path
 
 from assets import AssetStore
 from models import Source, TZ, ts
+from memory import ensure_memory
 from render import MAP_TMPL, user_text
 import render as renderer
 import sources
@@ -97,6 +98,7 @@ def sync_source(source, subscribe=False):
                 stream.write(header + "\n\n" + MAP_TMPL.format(sid8=source.sid[:8]))
         except FileExistsError:
             pass
+        ensure_memory(directory, header)
         parsed = sources.parse_turns(records, source.harness)
         title = user_text(parsed[0]["user"].get("content", "")) if parsed else ""
         now = datetime.now(TZ).isoformat()
@@ -224,7 +226,10 @@ def subscription_info(directory, watcher=None):
             "source_path": None, "source_modified_at": None, "last_synced_at": None,
             "last_attempt_at": None, "turn_count": None, "sync_status": "unknown",
             "error": None, "map_path": str(directory / "map.md"),
-            "prompts_path": str(directory / "prompts.md")}
+            "prompts_path": str(directory / "prompts.md"),
+            "memory_path": str(directory / "memory/memory.md"),
+            "memory_drafts_path": str(directory / "memory/agent-memory-drafts.md"),
+            "memory_references_path": str(directory / "memory/references")}
     try:
         binding = read_json(directory / ".source.json")
         state = read_json(directory / ".sync-state.json")

@@ -15,7 +15,7 @@ python3 $S unsubscribe 01a1a583 --json
 
 全部子命令支持 `--output-root` 隔离输出目录。`--json` 成功时 stdout 只输出一个 JSON 对象。业务错误输出含 `error` 的 JSON 并返回非零退出码，参数语法错误由 argparse 写入 stderr。
 
-查询只读取小型状态文件、检查进程和文件状态，避免重新扫描或解析整份会话日志。部分订阅损坏时，列表仍返回其余结果，损坏项单独标记错误。
+查询读取订阅状态文件，并检查进程和源文件状态。部分订阅损坏时，列表仍返回其余结果，损坏项单独标记错误。
 
 ## JSON 字段
 
@@ -33,6 +33,7 @@ python3 $S unsubscribe 01a1a583 --json
 | `turn_count` | 最近成功同步识别出的提问轮数 |
 | `error` | 最近同步失败或状态读取错误 |
 | `map_path`、`prompts_path` | 可直接打开的绝对路径 |
+| `memory_path`、`memory_drafts_path`、`memory_references_path` | 本 session 正式记忆、待审核草稿和附件目录的绝对路径，供调用方按需访问 |
 
 名称是可追溯的本地展示标签，不保证与 App 侧栏当前标题一致。
 

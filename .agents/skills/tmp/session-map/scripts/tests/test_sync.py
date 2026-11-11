@@ -383,6 +383,10 @@ class SyncTests(unittest.TestCase):
         sync.sync(SID)
         draft = self.output / SID / "map.md"
         draft.write_text("keep me")
+        approved = draft.parent / "memory/memory.md"
+        approved.write_text("- Human-reviewed entry\n")
+        memory_draft = draft.parent / "memory/agent-memory-drafts.md"
+        memory_draft.write_text("- Candidate, not approved\n")
         env = {**os.environ, "CODEX_HOME": str(self.codex_home), "PYTHONDONTWRITEBYTECODE": "1"}
         command = [sys.executable, str(SCRIPTS / "sync.py"), "--watch", "--interval", "0.05",
                    "--output-root", str(self.output)]
@@ -398,6 +402,8 @@ class SyncTests(unittest.TestCase):
             else:
                 self.fail("watcher did not synchronize appended prompt")
             self.assertEqual(draft.read_text(), "keep me")
+            self.assertEqual(approved.read_text(), "- Human-reviewed entry\n")
+            self.assertEqual(memory_draft.read_text(), "- Candidate, not approved\n")
             header = (draft.parent / "prompts.md").read_text().split("\n\n", 1)[0]
             self.assertIn("agent name: watcher-model", header)
             self.assertIn("harness: codex", header)
@@ -412,6 +418,7 @@ class SyncTests(unittest.TestCase):
             self.assertFalse(sync.subscription_info(draft.parent)["watching"])
             sync.sync(SID)
             self.assertIn("AFTER_UNSUBSCRIBE", (draft.parent / "prompts.md").read_text())
+            self.assertEqual(approved.read_text(), "- Human-reviewed entry\n")
         finally:
             process.terminate()
             process.communicate(timeout=5)

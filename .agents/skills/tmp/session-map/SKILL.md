@@ -1,6 +1,6 @@
 ---
 name: session-map
-description: 为 Antigravity 与 Codex App/CLI 的本地长会话建立讨论主题树 (map.md) 与渐进折叠记录 (prompts.md)，按会话 ID 存放在 .agents/.tmp/session/。支持基于当前上下文维护讨论树、订阅查询和详情、订阅/退订管理、公开推理摘要和工具输出、后台热同步。
+description: 为 Antigravity 与 Codex App/CLI 的本地长会话维护讨论树 map.md、折叠记录 prompts.md 和 session 专属 memory。用于恢复上下文、整理记忆草稿、人类审核正式记忆，以及订阅查询、订阅管理和后台热同步。
 ---
 
 # session-map
@@ -8,6 +8,7 @@ description: 为 Antigravity 与 Codex App/CLI 的本地长会话建立讨论主
 在 `.agents/.tmp/session/<id>/` 下维护讨论树、记录及附件。
 - `map.md` 由用户与 agent 协作维护讨论主线、支线和待办，用 `[pN](prompts.md#pN)` 引用对应轮次。同步脚本仅在文件缺失时生成模板，已有内容始终保留。
 - `prompts.md` 由本地日志机械生成，通过 `<details>` 折叠过程和工具输出，最终回复在外层显示。
+- `memory/` 仅属于该 session：后台脚本负责建立缺失的目录和空白模板、保留已有文件；记忆草稿由 agent 整理，正式记忆由人类审核决定。AI 草稿不具备规则效力。
 - 图片等二进制附件按内容哈希存入 `assets/media/`，不嵌入 Base64。用户和助手正文的图片通过相对路径显示；工具输出中的图片保留按需打开的链接。超长工具记录存入 `assets/tool-output/`，正文保留短预览和完整记录链接；读取细节时再打开对应附件。
 - Antigravity 读取 `~/.gemini/antigravity/brain/<id>/.system_generated/logs/transcript_full.jsonl`。
 - Codex 读取 `${CODEX_HOME:-~/.codex}/sessions/` 或 `archived_sessions/` 的 `rollout-*.jsonl`，支持 Desktop 与 CLI。推理仅导出公开 `summary`，不导出原始思维链或加密内容。
@@ -52,9 +53,15 @@ python3 $S --status-service
 - 首次同步保存 `.source.json`，后续沿用来源；署名由绑定源会话生成，不使用后台进程所属聊天的身份。
 - 在支持 HTML 折叠的 Markdown 预览中阅读。日志仅追加时 `pN` 稳定；本工具读取本地日志，云端聊天需先取得日志文件。
 
+### Session 记忆
+
+- 继续或恢复本 session 时读取 `memory/memory.md`；草稿仅在整理或审阅时读取，引用附件按任务需要读取，不跨 session 自动共享。
+- AI 可主动 CRUD `memory/agent-memory-drafts.md`；每条草稿和正式记忆至多两行，长内容放 `memory/references/`。
+- 用户要求“总结 memory”时先整理并对齐，以人类明确确认的内容和范围更新正式记忆，并保留人类直接修订。细则见 [memory.md](references/memory.md)。
+
 ### 订阅与后台
 
-- 查询订阅先用 `list --json` 或 `show ID --json`，区分 `subscribed`、`watching`、`sync_status`，不能仅凭目录存在判断正在同步。
+- 查询订阅先用 `list --json` 或 `show ID --json`，分别查看 `subscribed`、`watching`、`sync_status`，据此判断订阅、监听及同步状态。
 - 订阅/退订使用对应命令；退订保留文档。旧式 `sync.py ID` 和 `--current` 仍等价于订阅并同步。无法唯一识别当前聊天时，指定 harness 和 ID。
 - `--watch` 每秒检查日志变化；正文不变时不重写 `prompts.md`，附件不变时不重写。删除归档目录会停止追踪；脚本升级后重启已有服务。
 - 单次同步和 watch 支持 Linux/macOS；systemd 用户服务限 Linux。详情见 [订阅管理](references/subscriptions.md)。
