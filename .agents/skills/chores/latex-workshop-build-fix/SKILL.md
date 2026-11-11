@@ -4,7 +4,7 @@ description: 定位并修复 VS Code LaTeX Workshop 的 Recipe terminated with e
 ---
 # LaTeX Workshop 构建排障
 
-遵循项目 AGENTS.md 与 [coding.md](../../prompts/coding.md)，保护用户正在编辑的 TeX 内容。
+遵循项目 AGENTS.md 与 [coding.md](../../../prompts/coding.md)，保护用户正在编辑的 TeX 内容。
 
 - 在任务目录保留简短的打勾计划和排障日志，技能正文不堆放单次故障记录。
 - 弹窗只是失败摘要，先读 LaTeX Workshop 的 Output 与最新编译日志，定位第一条致命错误。
