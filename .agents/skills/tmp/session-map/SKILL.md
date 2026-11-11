@@ -1,12 +1,12 @@
 ---
 name: session-map
-description: 为 Antigravity 与 Codex App/CLI 的本地长会话维护讨论树 map.md、折叠记录 prompts.md 和 session 专属 memory。用于恢复上下文、整理记忆草稿、人类审核正式记忆，以及订阅查询、订阅管理和后台热同步。
+description: 为 Antigravity 与 Codex App/CLI 的本地长会话维护会话时序与主题 map/、折叠记录 prompts.md 和 session 专属 memory。用于恢复上下文、整理记忆草稿、人类审核正式记忆，以及订阅查询、订阅管理和后台热同步。
 ---
 
 # session-map
 
-在 `.agents/.tmp/session/<id>/` 下维护讨论树、记录及附件。
-- `map.md` 由用户与 agent 协作维护讨论主线、支线和待办，用 `[pN](prompts.md#pN)` 引用对应轮次。同步脚本仅在文件缺失时生成模板，已有内容始终保留。
+在 `.agents/.tmp/session/<id>/` 下维护用户的会话地图、记录及附件。
+- `map/` 以人类 prompt 为核心维护时序、数学思路与开发任务，内容整理交给 [map 子技能](../map/SKILL.md)。
 - `prompts.md` 由本地日志机械生成，通过 `<details>` 折叠过程和工具输出，最终回复在外层显示。
 - `memory/` 仅属于该 session：后台脚本负责建立缺失的目录和空白模板、保留已有文件；记忆草稿由 agent 整理，正式记忆由人类审核决定。AI 草稿不具备规则效力。
 - 图片等二进制附件按内容哈希存入 `assets/media/`，不嵌入 Base64。用户和助手正文的图片通过相对路径显示；工具输出中的图片保留按需打开的链接。超长工具记录存入 `assets/tool-output/`，正文保留短预览和完整记录链接；读取细节时再打开对应附件。
@@ -42,10 +42,10 @@ python3 $S --status-service
 
 ## 工作流模块
 
-### 讨论树维护
+### 会话地图维护
 
-- `map.md` 默认基于当前上下文整理，按需读取现有草稿和精简轮次索引；压缩后有信息缺口时再定点读原文，不重复通读 `prompts.md`。
-- 先形成用户可审核的主题、结论和待办，保留用户编辑。遵循 [讨论树维护约定](references/map-maintenance.md)。
+- 用户要求整理时序、数学讨论或任务进度时，读取 [map 子技能](../map/SKILL.md)，更新 `map/map.md` 与有关主题。
+- 现有同步脚本仍在 session 根目录初始化旧 `map.md`，`show/list` 的 `map_path` 也指向旧文件；新版内容由 agent 写入 `map/`。读取新版地图时使用 `map/map.md`。
 
 ### 记录生成
 

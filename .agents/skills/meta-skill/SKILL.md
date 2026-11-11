@@ -30,8 +30,10 @@ python3 $S lint
 
 ## 核心准则
 
-1. **三块结构**：每个原子技能由 `SKILL.md`（入口速查）、`references/`（按需细则/模板）、`scripts/`（黑盒 CLI）构成，可选块（`tests/`、`agents/` 等）自动兼容。
+1. **三块结构**：每个原子技能由 `SKILL.md`（入口速查）、`references/`（按需细则、例子与模板）、`scripts/`（黑盒 CLI）构成，可选块（`tests/`、`agents/` 等）自动兼容。
 2. **子技能收纳**：宿主只扫描 `.agents/skills/<top>/SKILL.md`；同类子技能收纳在路由组 `<group>/<sub-skill>/` 下，由父级 `SKILL.md` 聚合触发词并分发。
+
+3. **细则、例子与模板解耦**：模块细则放 `references/`，具体例子统一放 `references/examples/`；已提炼的可复用模板放 `references/templates/`。例子可先于模板存在，各模块按需链接。
 
 ## 参考
 
