@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HIT · 黑金校徽</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23191a1c'/%3E%3Ctext x='16' y='22' text-anchor='middle' font-size='18' fill='%23dbb66a'%3EH%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="./src/style.css">
+<script type="importmap">{"imports":{"three":"./vendor/package/build/three.module.js","three/addons/":"./vendor/package/examples/jsm/"}}</script>
+</head>
+<body>
+<header><a class="brand" href="./" aria-label="回到初始视角"><span class="monogram">H</span><span>HIT <i>/</i> OBJECTS</span></a><span class="edition">01 — BLACK & GOLD</span></header>
+<main id="viewer" aria-label="可交互的黑金校徽三维展厅">
+<div class="caption"><p class="eyebrow">HARBIN INSTITUTE OF TECHNOLOGY</p><h1>黑金校徽<span>立体典藏</span></h1><p class="description">金属的光泽，藏在每一次转动里。</p></div>
+<div id="loading" class="loading" role="status"><span class="spinner"></span><span id="load-message">正在载入校徽…</span><button id="retry" hidden>重新加载</button></div>
+<div class="year" aria-hidden="true">1920</div>
+<div class="toolbar" role="group" aria-label="视角控制">
+<button data-view="front" disabled>正面</button><button data-view="angled" disabled class="active" aria-pressed="true">斜视</button><button data-view="back" disabled>背面</button>
+<span class="separator"></span><button id="rotate" disabled aria-pressed="false">自动旋转</button><button id="reset" disabled title="恢复初始视角、位置与缩放">复位 ↗</button>
+</div>
+</main>
+<footer><span class="desktop-hint">拖动旋转 <i>·</i> 滚轮缩放 <i>·</i> 右键平移</span><span class="touch-hint">单指旋转 <i>·</i> 双指缩放与平移</span><span id="status" aria-live="polite">HIT / 3D STUDY</span></footer>
+<script type="module" src="./src/app.js"></script>
+</body></html>

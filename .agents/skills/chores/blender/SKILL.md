@@ -1,6 +1,6 @@
 ---
 name: blender
-description: Blender 实验技能，涵盖运维、bpy 开发与果冻案例。用户尚无 Blender 经验、不具备审核能力；其他 agent 参考执行前必须询问用户，并谨慎核验适用性。
+description: Blender 实验技能，涵盖运维、bpy 开发、果冻与黑金校徽案例。用户尚无 Blender 经验、不具备审核能力；其他 agent 参考执行前必须询问用户，并谨慎核验适用性。
 ---
 
 # Blender · 实验版
@@ -21,6 +21,7 @@ description: Blender 实验技能，涵盖运维、bpy 开发与果冻案例。�
 | 安装、升级、配置与环境检查 | [运维](references/operations/index.md) |
 | bpy、材质、渲染、MCP | [开发技术](references/development/index.md) |
 | 参考粉色内核与半透明叠层 | [果冻具体案例](references/examples/jelly-cube.md) |
+| 参考独立黑金校徽、金属浮雕与本地 3D 页面 | [HIT 黑金校徽案例](references/examples/hit-black-gold.md) |
 | 将案例发展成可复用模板 | [模板状态](references/templates/index.md) |
 
 ## 代码与资产
@@ -29,4 +30,5 @@ description: Blender 实验技能，涵盖运维、bpy 开发与果冻案例。�
 - `scripts/development/run.py`：从系统 Python 启动 Blender，保存日志和退出状态。
 - `scripts/development/inspect_scene.py`、`render.py`：由 Blender 内置 Python 执行。
 - `assets/examples/jelly-cube/`：已有工程、两张预览与案例专用生成脚本。
+- `assets/examples/hit-black-gold/`：黑金校徽工程、矢量源、两张预览、复现脚本与离线 3D 页面。
 - 初次编写时的验证范围见 [实验验证记录](references/validation.md)；视觉效果和可迁移性仍需实际验证。
