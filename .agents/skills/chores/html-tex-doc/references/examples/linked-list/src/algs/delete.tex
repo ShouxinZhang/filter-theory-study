@@ -1,0 +1,14 @@
+\documentclass[varwidth=14cm,border=3pt]{standalone}
+\input{common}
+\input{algcommon}
+\begin{document}
+\begin{algorithmic}[1]
+\Procedure{DeleteAfter}{$p$}
+  \If{$\fld{p}{next} = \nil$} \State \Return \Comment{$p$ 是尾结点，无后继可删}
+  \EndIf
+  \State $q \gets \fld{p}{next}$
+  \State $\fld{p}{next} \gets \fld{q}{next}$ \Comment{绕过 $q$}
+  \State \Call{Free}{$q$}
+\EndProcedure
+\end{algorithmic}
+\end{document}

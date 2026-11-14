@@ -1,0 +1,35 @@
+<!-- title: 文档标题 -->
+
+<header class="title">
+  <h1>文档标题</h1>
+  <p class="subtitle">无分页 HTML 正文 + TeX 出图混合文档</p>
+</header>
+
+<!--TOC-->
+
+<h2 data-label="sec:intro">引言</h2>
+<p>
+  正文由 HTML 与 MathJax 排版，复杂图示（{@fig:demo}）与伪代码（{@alg:demo}）由 TeX <code>standalone</code> 编译为内联 SVG，
+  并共享同一套编号与悬停预览机制（参见{@eq:demo}与{@thm:demo}）。
+</p>
+
+<div class="eq" data-label="eq:demo">
+\[ \E[X] = \int_{\R} x\, p(x)\,\mathrm{d}x, \qquad T(n) = \Oh(n). \]
+</div>
+
+<figure class="fig" data-label="fig:demo" data-tex="figs/demo.tex">
+  <!--TEX-->
+  <figcaption>TikZ 矢量图示例：图中通过 <code>\cref</code> 指向正文对象，支持悬停预览与点击跳转。</figcaption>
+</figure>
+
+<figure class="alg" data-label="alg:demo" data-tex="algs/demo.tex">
+  <figcaption>示例过程伪代码</figcaption>
+  <!--TEX-->
+</figure>
+
+<div class="thm" data-kind="定理" data-label="thm:demo" data-title="示例定理">
+  <p>在满足{@eq:demo}的前提下，{@alg:demo}在有限步内终止。</p>
+</div>
+<div class="proof">
+  <p><em>证明.</em> 由{@fig:demo}的状态转移直接可得。∎</p>
+</div>

@@ -1,0 +1,14 @@
+\documentclass[varwidth=14cm,border=3pt]{standalone}
+\input{common}
+\input{algcommon}
+\begin{document}
+\begin{algorithmic}[1]
+\Procedure{Step}{$x, n$}
+  \State 初始化状态 $s \gets x$ \Comment{流程见\cref{fig:demo}}
+  \For{$k = 1 \dots n$}
+    \State 按\cref{eq:demo}更新 $s$ \Comment{性质见\cref{thm:demo}}
+  \EndFor
+  \State \Return $s$
+\EndProcedure
+\end{algorithmic}
+\end{document}

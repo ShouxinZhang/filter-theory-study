@@ -1,0 +1,111 @@
+/* ---------- 主题变量：auto 跟随系统；html[data-theme] 由 reader.js 设置以手动覆盖 ---------- */
+:root {
+  --fg: #1d1d1f; --bg: #fdfdfc; --muted: #6b6b70; --accent: #1f6fb2; --rule: #e3e3e0;
+  --card: #f5f5f2; --fig-fg: #1d1d1f; --shadow: 0 6px 28px rgba(0,0,0,.16);
+  --measure: 52rem;            /* 正文栏最大宽度；拖拽手柄会改写此变量 */
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --fg: #e2e2df; --bg: #17181a; --muted: #9a9aa0; --accent: #7ab8ee; --rule: #33353a;
+    --card: #212226; --fig-fg: #c9c9c4; --shadow: 0 6px 28px rgba(0,0,0,.6);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --fg: #e2e2df; --bg: #17181a; --muted: #9a9aa0; --accent: #7ab8ee; --rule: #33353a;
+  --card: #212226; --fig-fg: #c9c9c4; --shadow: 0 6px 28px rgba(0,0,0,.6);
+  color-scheme: dark;
+}
+
+html { background: var(--bg); color: var(--fg); }
+body {
+  position: relative;
+  max-width: min(var(--measure), 100%); margin: 0 auto; padding: 2.5rem clamp(1rem, 4vw, 2.5rem) 5rem;
+  box-sizing: border-box;
+  font: clamp(16px, .85rem + .3vw, 19px)/1.8 "Noto Serif CJK SC", "Source Han Serif SC", "Songti SC", serif;
+}
+h1, h2, h3 { font-family: "Noto Sans CJK SC", "Source Han Sans SC", sans-serif; line-height: 1.35; }
+h1 { font-size: 1.9rem; margin: 0; }
+h2 { font-size: 1.4rem; margin-top: 2.6rem; border-bottom: 1px solid var(--rule); padding-bottom: .3rem; }
+h3 { font-size: 1.15rem; margin-top: 1.8rem; }
+.secnum { color: var(--accent); margin-right: .6em; }
+.subtitle { color: var(--muted); margin: .3rem 0 0; }
+code { font-size: .9em; background: var(--card); padding: 0 .3em; border-radius: 3px; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+:target { scroll-margin-top: 1.5rem; animation: flash 1.6s ease-out; }
+@keyframes flash { from { background: color-mix(in srgb, var(--accent) 22%, transparent); } to { background: transparent; } }
+
+nav.toc { background: var(--card); border-radius: 6px; padding: .8rem 1.2rem; margin: 1.8rem 0; font-size: .95rem; }
+nav.toc ol { list-style: none; margin: 0; padding-left: 0; }
+nav.toc ol ol { padding-left: 1.6em; }
+
+/* 公式：编号由 build.py 以 \tag 写入，MathJax 负责排版 */
+div.eq { margin: 1rem 0; overflow-x: auto; overflow-y: hidden; padding: .2rem 0; }
+
+/* ---------- 图、算法、表 ---------- */
+figure { margin: 1.8rem 0; text-align: center; }
+figcaption { font-size: .93rem; color: var(--muted); margin: .6rem auto 0; max-width: 42rem; text-align: left; }
+.caplabel { color: var(--fg); font-weight: 600; margin-right: .5em; }
+/* 内联 SVG 的灰阶/白色/强调色已被 build.py 改写为 currentColor / var(--bg) / var(--accent)，
+   这里的 color 决定线条与文字颜色：深色模式用略暗于正文的 --fig-fg，避免纯白线条刺眼 */
+svg.texfig { max-width: 100%; height: auto; color: var(--fig-fg); }
+svg.texfig a { cursor: pointer; }
+svg.texfig a:hover { opacity: .7; }
+figure.alg { text-align: left; border-top: 2px solid var(--fg); border-bottom: 1px solid var(--fg); padding: .2rem 0 .6rem; }
+figure.alg figcaption { margin: 0 0 .5rem; padding-bottom: .3rem; border-bottom: 1px solid var(--fg); color: var(--fg); max-width: none; }
+figure.tbl figcaption { margin: 0 auto .6rem; }
+table { border-collapse: collapse; margin: 0 auto; font-size: .95rem; }
+th, td { padding: .35rem .9rem; border-bottom: 1px solid var(--rule); }
+thead th { border-bottom: 2px solid var(--fg); }
+
+/* 命题与证明 */
+div.thm { background: var(--card); border-left: 3px solid var(--accent); padding: .4rem 1rem; margin: 1.4rem 0 .6rem; }
+.thmhead { font-weight: 700; }
+div.proof { margin-bottom: 1.4rem; }
+
+/* ---------- 阅读器：栏宽拖拽手柄 ---------- */
+.measure-handle {
+  position: absolute; top: 0; bottom: 0; width: 14px; cursor: col-resize; touch-action: none;
+}
+.measure-handle.left { left: -7px; } .measure-handle.right { right: -7px; }
+.measure-handle::after {
+  content: ""; position: absolute; top: 0; bottom: 0; left: 6px; width: 2px;
+  background: var(--accent); opacity: 0; transition: opacity .15s;
+}
+.measure-handle:hover::after, body.resizing .measure-handle::after { opacity: .45; }
+body.resizing { user-select: none; cursor: col-resize; }
+.measure-badge {
+  position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 30;
+  background: var(--fg); color: var(--bg); font: 600 .9rem/1 sans-serif; padding: .5rem .8rem;
+  border-radius: 6px; pointer-events: none; opacity: 0; transition: opacity .15s;
+}
+body.resizing .measure-badge { opacity: .85; }
+
+/* ---------- 阅读器：右上角工具条 ---------- */
+.reader-bar {
+  position: fixed; top: .8rem; right: .8rem; z-index: 20; display: flex; gap: .3rem;
+  font: .82rem/1 sans-serif;
+}
+.reader-bar button {
+  background: var(--card); color: var(--fg); border: 1px solid var(--rule); border-radius: 6px;
+  padding: .4rem .6rem; cursor: pointer; opacity: .75;
+}
+.reader-bar button:hover { opacity: 1; border-color: var(--accent); }
+
+/* ---------- 阅读器：链接悬停预览（类似 PDF 阅读器的链接预览） ---------- */
+.xref-preview {
+  position: fixed; z-index: 40; box-sizing: border-box;
+  width: max-content; max-width: min(40rem, calc(100vw - 2rem)); max-height: min(60vh, 32rem); overflow: auto;
+  background: var(--bg); color: var(--fg); border: 1px solid var(--rule); border-radius: 8px;
+  box-shadow: var(--shadow); padding: .6rem 1rem; font-size: .92rem; line-height: 1.7;
+  opacity: 0; transform: translateY(4px); transition: opacity .12s, transform .12s; pointer-events: none;
+}
+.xref-preview.show { opacity: 1; transform: none; pointer-events: auto; }
+.xref-preview .pv-head { font: 600 .78rem/1.4 sans-serif; color: var(--muted); margin-bottom: .3rem; }
+.xref-preview figure, .xref-preview div.eq, .xref-preview div.thm { margin: .3rem 0; }
+.xref-preview h2, .xref-preview h3 { margin: .2rem 0 .4rem; font-size: 1.05rem; border: 0; }
+.xref-preview :target { animation: none; }
+@media (prefers-reduced-motion: reduce) { .xref-preview { transition: none; } :target { animation: none; } }
+@media print { .reader-bar, .measure-handle, .xref-preview { display: none; } }

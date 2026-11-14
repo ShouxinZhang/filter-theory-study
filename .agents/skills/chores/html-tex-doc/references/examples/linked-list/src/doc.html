@@ -1,0 +1,150 @@
+<!-- title: 链表：结构、操作与复杂度 -->
+<!--
+  源文件约定（build.py 解析）：
+  - 章节 <h2>/<h3> 自动编号；data-label 供引用（缺省自动生成）。
+  - 公式 <div class="eq" data-label="eq:..">\[ ... \]</div> 自动加 \tag{n}。
+  - 图/算法 <figure class="fig|alg" data-label=".." data-tex="..tex"> 中的 TEX 占位注释由 TeX 生成的 SVG 替换。
+  - 表 <figure class="tbl" data-label="tab:..">；命题 <div class="thm" data-kind="命题" data-label="prop:..">。
+  - 引用 {@key} 输出完整文本（如“式 (3)”）并超链接；{@key|n} 只输出编号。
+-->
+
+<header class="title">
+  <h1>链表：结构、操作与复杂度</h1>
+  <p class="subtitle">HTML 正文 + TeX 出图的混合排版示例</p>
+</header>
+
+<!--TOC-->
+
+<h2 data-label="sec:intro">引言</h2>
+<p>
+  数组把元素放在一段连续内存中，因此能以 \(\Theta(1)\) 时间按下标访问；代价是插入与删除需要整体搬移元素。
+  <strong>链表</strong>（linked list）放弃连续性：每个元素各自分配一块内存（称为<em>结点</em>），
+  结点之间用指针串联。这样，只要拿到某个结点的位置，就能在常数时间内在其后插入或删除，
+  但按下标访问必须从头逐个走过去。
+</p>
+<p>
+  本文依次介绍单链表的结构（{@sec:singly}）、三个基本操作（{@sec:ops}）、
+  双向与循环链表（{@sec:variants}），最后在{@sec:compare}给出与数组的复杂度对比。
+</p>
+
+<h2 data-label="sec:singly">单链表</h2>
+<p>
+  单链表的每个结点含两个域：存放元素的数据域 <code>data</code>，以及指向后继结点的指针域 <code>next</code>；
+  尾结点的 <code>next</code> 为 \(\nil\)。整个表只需记住头指针 <code>head</code>，如{@fig:singly}所示。
+</p>
+<figure class="fig" data-label="fig:singly" data-tex="figs/singly.tex">
+  <!--TEX-->
+  <figcaption>单链表 \(\seq{a_1}{a_n}\)：每个结点由数据域与指针域组成，尾结点指针为 \(\nil\)（记作 \(\wedge\)）。</figcaption>
+</figure>
+<p>
+  设数据域占 \(s_d\) 字节、指针占 \(s_p\) 字节，则长度为 \(n\) 的单链表占用
+</p>
+<div class="eq" data-label="eq:mem">
+\[ S(n) = n\,(s_d + s_p), \qquad \rho = \frac{s_p}{s_d + s_p}, \]
+</div>
+<p>
+  其中 \(\rho\) 是指针开销所占比例。元素越小，\(\rho\) 越大：例如在 64 位机器上存放 4 字节整数时，
+  \(\rho = 8/12 \approx 67\%\)，这是链表常被诟病的空间代价。
+</p>
+
+<h2 data-label="sec:ops">基本操作</h2>
+
+<h3 data-label="sec:search">查找</h3>
+<p>
+  查找值为 \(x\) 的结点只能从 <code>head</code> 起顺序比较。若 \(x\) 等可能地位于 \(n\) 个位置之一，
+  成功查找的期望比较次数为
+</p>
+<div class="eq" data-label="eq:search">
+\[ \E[C] = \frac{1}{n}\sum_{i=1}^{n} i = \frac{n+1}{2} = \Theta(n). \]
+</div>
+<p>
+  链表结点在内存中分散，顺序访问时缓存命中率也远低于数组，因此{@eq:search}的常数因子在实践中往往更差。
+</p>
+
+<h3 data-label="sec:insert">插入</h3>
+<p>
+  在已知结点 \(p\) 之后插入新元素 \(x\) 只需修改两条指针，过程如{@fig:insert}所示，伪代码见{@alg:insert}。
+  关键在于顺序：必须先让新结点接上原后继，再让 \(p\) 指向新结点。
+</p>
+<figure class="fig" data-label="fig:insert" data-tex="figs/insert.tex">
+  <!--TEX-->
+  <figcaption>在结点 \(p\) 之后插入新结点 \(s\)。灰色虚线为被替换的原链接，蓝色箭头上的数字为执行顺序；图中文字的引用可点击。</figcaption>
+</figure>
+<figure class="alg" data-label="alg:insert" data-tex="algs/insert.tex">
+  <figcaption>在结点 \(p\) 之后插入元素 \(x\)</figcaption>
+  <!--TEX-->
+</figure>
+<p>
+  {@alg:insert}与表长无关，因此
+</p>
+<div class="eq" data-label="eq:insert-cost">
+\[ T_{\text{insert}}(n) = \Theta(1) \quad (\text{已知前驱 } p), \qquad T^{\text{数组}}_{\text{insert}}(n) = \Theta(n). \]
+</div>
+<p>
+  注意{@eq:insert-cost}的前提是“已知 \(p\)”。若只给出下标 \(k\)，仍需先花 \(\Theta(k)\) 时间走到第 \(k\) 个结点。
+</p>
+
+<h3 data-label="sec:delete">删除</h3>
+<p>
+  删除与插入对称：删除 \(p\) 的后继只需让 \(p\) 绕过它（{@alg:delete}）。
+  但单链表无法在 \(\Theta(1)\) 时间删除结点 \(p\) <em>本身</em>，因为要修改的是 \(p\) 的<em>前驱</em>的指针，
+  而找到前驱需要从头扫描。这正是双向链表要解决的问题。
+</p>
+<figure class="alg" data-label="alg:delete" data-tex="algs/delete.tex">
+  <figcaption>删除结点 \(p\) 的后继</figcaption>
+  <!--TEX-->
+</figure>
+
+<h3 data-label="sec:reverse">反转</h3>
+<p>
+  反转是检验指针操作是否熟练的经典问题。{@alg:reverse}用三个指针一次遍历完成。
+  设原表为 \(\seq{a_1}{a_n}\)，第 \(k\) 轮循环结束时满足不变式
+</p>
+<div class="eq" data-label="eq:invariant">
+\[ \mathit{prev} \text{ 所指的表} = \seq{a_k}{a_1}, \qquad \mathit{cur} = a_{k+1}\ (\text{当 } k = n \text{ 时 } \mathit{cur} = \nil). \]
+</div>
+<figure class="alg" data-label="alg:reverse" data-tex="algs/reverse.tex">
+  <figcaption>原地反转单链表</figcaption>
+  <!--TEX-->
+</figure>
+<div class="thm" data-kind="命题" data-label="prop:reverse" data-title="反转的正确性与代价">
+  <p>{@alg:reverse}返回原表的反转 \(\rev\seq{a_1}{a_n} = \seq{a_n}{a_1}\)，时间为 \(\Theta(n)\)，额外空间为 \(\Theta(1)\)。</p>
+</div>
+<div class="proof">
+  <p>
+    <em>证明.</em> 对轮数 \(k\) 归纳验证{@eq:invariant}：\(k=0\) 时 \(\mathit{prev}\) 为空表、\(\mathit{cur}=a_1\)；
+    若第 \(k\) 轮后成立，第 \(k+1\) 轮把 \(a_{k+1}\) 的指针改指 \(\mathit{prev}\)，使其成为新表头，不变式仍成立。
+    循环在 \(k=n\) 时终止，此时 \(\mathit{prev}\) 即 \(\seq{a_n}{a_1}\)。每轮常数时间、共 \(n\) 轮，只用三个指针变量。∎
+  </p>
+</div>
+
+<h2 data-label="sec:variants">双向链表与循环链表</h2>
+<p>
+  双向链表的结点再增加一个指向前驱的 <code>prev</code> 指针，于是可以在 \(\Theta(1)\) 时间删除任意已知结点，
+  代价是每个结点多一个指针，即{@eq:mem}中的 \(s_p\) 变为 \(2 s_p\)。
+  再把尾结点与头部首尾相连，并引入一个不存数据的<em>哨兵</em>结点，就得到{@fig:doubly}中的循环双链表：
+  空表与非空表的插入、删除可以用同一段代码处理，无需判断 \(\nil\)。
+</p>
+<figure class="fig" data-label="fig:doubly" data-tex="figs/doubly.tex">
+  <!--TEX-->
+  <figcaption>带哨兵的循环双链表。上方箭头为 <code>next</code>，下方箭头为 <code>prev</code>，蓝色虚线为首尾相连的两条指针。</figcaption>
+</figure>
+
+<h2 data-label="sec:compare">复杂度对比</h2>
+<p>
+  {@tab:compare}汇总了本文讨论的结论。可以看到链表与数组互为取舍：链表以随机访问和空间换取已知位置处的常数时间修改。
+</p>
+<figure class="tbl" data-label="tab:compare">
+  <figcaption>数组与链表各操作的时间复杂度（\(n\) 为表长）</figcaption>
+  <table>
+    <thead><tr><th>操作</th><th>数组</th><th>单链表</th><th>双向链表</th><th>依据</th></tr></thead>
+    <tbody>
+      <tr><td>按下标访问</td><td>\(\Theta(1)\)</td><td>\(\Theta(n)\)</td><td>\(\Theta(n)\)</td><td>{@sec:search}</td></tr>
+      <tr><td>按值查找</td><td>\(\Theta(n)\)</td><td>\(\Theta(n)\)</td><td>\(\Theta(n)\)</td><td>{@eq:search}</td></tr>
+      <tr><td>已知结点后插入</td><td>\(\Theta(n)\)</td><td>\(\Theta(1)\)</td><td>\(\Theta(1)\)</td><td>{@alg:insert}</td></tr>
+      <tr><td>删除已知结点本身</td><td>\(\Theta(n)\)</td><td>\(\Theta(n)\)</td><td>\(\Theta(1)\)</td><td>{@sec:delete}</td></tr>
+      <tr><td>反转</td><td>\(\Theta(n)\)</td><td>\(\Theta(n)\)</td><td>\(\Theta(n)\)</td><td>{@prop:reverse}</td></tr>
+      <tr><td>每元素额外空间</td><td>0</td><td>\(s_p\)</td><td>\(2s_p\)</td><td>{@eq:mem}</td></tr>
+    </tbody>
+  </table>
+</figure>

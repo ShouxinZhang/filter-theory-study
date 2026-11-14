@@ -1,0 +1,16 @@
+\documentclass[varwidth=14cm,border=3pt]{standalone}
+\input{common}
+\input{algcommon}
+\begin{document}
+\begin{algorithmic}[1]
+\Function{Reverse}{$\mathit{head}$}
+  \State $\mathit{prev} \gets \nil$;\quad $\mathit{cur} \gets \mathit{head}$
+  \While{$\mathit{cur} \neq \nil$} \Comment{循环不变式见\cref{eq:invariant}}
+    \State $\mathit{nxt} \gets \fld{\mathit{cur}}{next}$
+    \State $\fld{\mathit{cur}}{next} \gets \mathit{prev}$ \Comment{反转一条指针}
+    \State $\mathit{prev} \gets \mathit{cur}$;\quad $\mathit{cur} \gets \mathit{nxt}$
+  \EndWhile
+  \State \Return $\mathit{prev}$ \Comment{正确性见\cref{prop:reverse}}
+\EndFunction
+\end{algorithmic}
+\end{document}

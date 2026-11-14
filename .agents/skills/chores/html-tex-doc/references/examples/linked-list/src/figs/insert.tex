@@ -1,0 +1,31 @@
+\documentclass[tikz,border=4pt]{standalone}
+\input{common}
+\usetikzlibrary{arrows.meta,positioning,calc}
+\begin{document}
+\begin{tikzpicture}[
+    box/.style={draw,minimum height=7mm,inner sep=0pt},
+    ptr/.style={-{Stealth[length=2.2mm]},thick},
+    old/.style={ptr,black!35,dashed},
+    new/.style={ptr,accent},
+    stepnum/.style={circle,draw=accent,text=accent,font=\scriptsize\bfseries,inner sep=1pt}]
+  \newcommand{\cell}[3]{%
+    \node[box,minimum width=10mm] (#1d) at #2 {#3};
+    \node[box,minimum width=6mm,right=0pt of #1d] (#1p) {};
+    \fill (#1p.center) circle (1.4pt);}
+  \cell{p}{(0,0)}{$p$}
+  \cell{q}{(4.2,0)}{$q$}
+  \cell{s}{(2.1,-1.9)}{$x$}
+  \node[left=1mm of pd] {$\cdots$};
+  \node[right=1mm of qp] {$\cdots$};
+  \node[below=1mm of sd,font=\small] {新结点 $s$};
+  % 原链接（将被替换）
+  \draw[old] (pp.center) -- (qd.west);
+  % 步骤 1：s.next <- p.next ；步骤 2：p.next <- s
+  \draw[new] (sp.center) to[out=0,in=-110] node[stepnum,pos=0.45,right=1pt] {1} (qd.south west);
+  \draw[new] (pp.center) to[out=-60,in=180] node[stepnum,pos=0.5,left=2pt] {2} (sd.west);
+  % 图中对算法与公式的引用（SVG 内超链接）
+  \node[font=\small,anchor=north west,align=left] at (-0.8,-3.0)
+    {执行顺序见\cref{alg:insert}第 2、3 行：必须先 1 后 2，\\
+     否则 $\fld{p}{next}$ 被覆盖后将丢失后继 $q$；代价见\cref{eq:insert-cost}。};
+\end{tikzpicture}
+\end{document}

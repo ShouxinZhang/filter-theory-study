@@ -1,0 +1,31 @@
+\documentclass[tikz,border=4pt]{standalone}
+\input{common}
+\usetikzlibrary{arrows.meta,positioning,calc}
+\begin{document}
+\begin{tikzpicture}[
+    box/.style={draw,minimum height=7mm,inner sep=0pt},
+    ptr/.style={-{Stealth[length=2.2mm]},thick},
+    note/.style={font=\small,text=black!70}]
+  % 结点 = 数据域 + 指针域
+  \newcommand{\cell}[3]{%
+    \node[box,minimum width=10mm] (#1d) at (#2,0) {#3};
+    \node[box,minimum width=6mm,right=0pt of #1d] (#1p) {};}
+  \node (head) at (-1.6,0) {\texttt{head}};
+  \cell{a}{0}{$a_1$}
+  \cell{b}{2.6}{$a_2$}
+  \cell{c}{5.2}{$a_3$}
+  \node at (7.1,0) {$\cdots$};
+  \cell{z}{8.6}{$a_n$}
+  \node at (zp) {$\wedge$};
+  \foreach \n in {a,b,c} {\fill (\n p.center) circle (1.4pt);}
+  \draw[ptr] (head) -- (ad.west);
+  \draw[ptr] (ap.center) -- (bd.west);
+  \draw[ptr] (bp.center) -- (cd.west);
+  \draw[ptr] (cp.center) -- (6.6,0);
+  \draw[ptr] (7.5,0) -- (zd.west);
+  % 域的标注
+  \draw[note,<-] (ad.north) -- ++(0,0.6) node[above] {数据域 \texttt{data}};
+  \draw[note,<-] (ap.north) -- ++(0.9,0.6) node[above right=-2pt] {指针域 \texttt{next}};
+  \node[note,below=2mm of zp] {$\nil$};
+\end{tikzpicture}
+\end{document}

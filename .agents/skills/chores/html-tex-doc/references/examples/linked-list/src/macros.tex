@@ -1,0 +1,9 @@
+% 共享数学宏：唯一来源。
+% TeX 侧由 common.tex \input；HTML 侧由 build.py 解析为 MathJax macros。
+% 只用 \newcommand{\name}[n]{body} 形式，且 body 需同时被 TeX 与 MathJax 支持。
+\newcommand{\nil}{\mathtt{NIL}}
+\newcommand{\fld}[2]{#1.\mathit{#2}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Oh}{\mathcal{O}}
+\newcommand{\seq}[2]{\langle #1,\ldots,#2\rangle}
+\newcommand{\rev}{\operatorname{rev}}

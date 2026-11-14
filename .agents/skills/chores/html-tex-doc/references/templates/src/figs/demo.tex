@@ -1,0 +1,15 @@
+\documentclass[tikz,border=4pt]{standalone}
+\input{common}
+\usetikzlibrary{arrows.meta,positioning}
+\begin{document}
+\begin{tikzpicture}[
+    box/.style={draw,rounded corners=2pt,minimum height=7mm,minimum width=16mm},
+    ptr/.style={-{Stealth[length=2.2mm]},thick}]
+  \node[box] (a) at (0,0) {输入 $x$};
+  \node[box,draw=accent,text=accent] (b) at (3.2,0) {更新（\cref{alg:demo}）};
+  \node[box] (c) at (6.6,0) {输出 $\E[X]$};
+  \draw[ptr] (a) -- (b);
+  \draw[ptr] (b) -- (c);
+  \node[font=\small,text=black!65] at (3.3,-0.85) {目标定义见\cref{eq:demo}};
+\end{tikzpicture}
+\end{document}

@@ -1,0 +1,26 @@
+\documentclass[tikz,border=4pt]{standalone}
+\input{common}
+\usetikzlibrary{arrows.meta,positioning,calc}
+\begin{document}
+\begin{tikzpicture}[
+    box/.style={draw,minimum height=7mm,inner sep=0pt},
+    ptr/.style={-{Stealth[length=2mm]},thick},
+    circ/.style={ptr,accent,dashed}]
+  % 结点 = prev | data | next
+  \newcommand{\cell}[3]{%
+    \node[box,minimum width=6mm] (#1l) at (#2,0) {};
+    \node[box,minimum width=9mm,right=0pt of #1l] (#1d) {#3};
+    \node[box,minimum width=6mm,right=0pt of #1d] (#1r) {};
+    \fill (#1l.center) circle (1.3pt); \fill (#1r.center) circle (1.3pt);}
+  \cell{h}{0}{\small 哨兵}
+  \cell{a}{3.2}{$a_1$}
+  \cell{b}{6.4}{$a_2$}
+  \cell{c}{9.6}{$a_3$}
+  \foreach \u/\v in {h/a,a/b,b/c} {
+    \draw[ptr] ($(\u r.center)+(0,0.12)$) -- ($(\v l.west)+(0,0.12)$);
+    \draw[ptr] ($(\v l.center)-(0,0.12)$) -- ($(\u r.east)-(0,0.12)$);}
+  % 循环：尾结点 next 指回哨兵，哨兵 prev 指向尾结点
+  \draw[circ] (cr.center) to[out=70,in=110,looseness=0.32] node[above,font=\small] {$\fld{a_3}{next}$} (hl.north);
+  \draw[circ] (hl.center) to[out=-70,in=-110,looseness=0.32] node[below,font=\small] {$\fld{\text{哨兵}}{prev}$} (cr.south);
+\end{tikzpicture}
+\end{document}

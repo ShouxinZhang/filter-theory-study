@@ -1,0 +1,12 @@
+\documentclass[varwidth=14cm,border=3pt]{standalone}
+\input{common}
+\input{algcommon}
+\begin{document}
+\begin{algorithmic}[1]
+\Procedure{InsertAfter}{$p, x$}
+  \State $s \gets \Call{NewNode}{x}$
+  \State $\fld{s}{next} \gets \fld{p}{next}$ \Comment{\cref{fig:insert}步骤 1}
+  \State $\fld{p}{next} \gets s$ \Comment{\cref{fig:insert}步骤 2；总代价见\cref{eq:insert-cost}}
+\EndProcedure
+\end{algorithmic}
+\end{document}
