@@ -14,7 +14,22 @@
     }
   ],
   "firestore": {
-    "rules": "firestore.rules"
+    "rules": "firestore.rules",
+    "database": "(default)",
+    "location": "us-central1"
+  },
+  "auth": {
+    "providers": {
+      "anonymous": true,
+      "googleSignIn": {
+        "oAuthBrandDisplayName": "像素农场",
+        "supportEmail": "wudizhe001@gmail.com",
+        "authorizedRedirectUris": [
+          "https://pixel-farm-f52b28.firebaseapp.com/__/auth/handler",
+          "https://pixel-farm-f52b28.web.app/__/auth/handler"
+        ]
+      }
+    }
   },
   "emulators": {
     "auth": { "port": 9099 },
