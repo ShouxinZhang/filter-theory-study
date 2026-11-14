@@ -1,0 +1,42 @@
+{
+  "hosting": {
+    "public": "web/dist",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "rewrites": [{ "source": "**", "destination": "/index.html" }],
+    "predeploy": ["npm --prefix web run build"]
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": ["node_modules", ".git", "*.log", "src/**/*.test.mts"],
+      "predeploy": ["npm --prefix \"$RESOURCE_DIR\" run build"]
+    }
+  ],
+  "firestore": {
+    "rules": "firestore.rules",
+    "database": "(default)",
+    "location": "us-central1"
+  },
+  "auth": {
+    "providers": {
+      "anonymous": true,
+      "googleSignIn": {
+        "oAuthBrandDisplayName": "像素农场",
+        "supportEmail": "wudizhe001@gmail.com",
+        "authorizedRedirectUris": [
+          "https://pixel-farm-f52b28.firebaseapp.com/__/auth/handler",
+          "https://pixel-farm-f52b28.web.app/__/auth/handler"
+        ]
+      }
+    }
+  },
+  "emulators": {
+    "auth": { "port": 9099 },
+    "firestore": { "port": 8080 },
+    "functions": { "port": 5001 },
+    "hosting": { "port": 5000 },
+    "ui": { "enabled": false },
+    "singleProjectMode": true
+  }
+}
