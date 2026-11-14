@@ -18,7 +18,7 @@ python3 .agents/skills/tmp/qa-archive/scripts/archive_tmp.py --refresh-only
 
 ## 流程
 
-1. 以 `TZ=Asia/Shanghai date '+%Y-%m-%d_%H-%M'` 生成文件名, 放入所属周目录.
+1. 以 `TZ=Asia/Singapore date '+%Y-%m-%d_%H-%M'` 生成文件名, 放入所属周目录.
 2. 开头声明 `agent name: <model slug>` (见 `get-model-name` 技能).
 3. 用户要求 `< n` 行时, 以 `-m n` 校验.
 4. 运行 `archive_tmp.py` 追加索引并刷新周期表.

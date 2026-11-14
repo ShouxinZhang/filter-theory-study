@@ -29,7 +29,7 @@ from zoneinfo import ZoneInfo
 
 ROOT = Path(__file__).resolve().parents[5]
 TASK_ROOT = ROOT / ".agents/.tmp/task"
-TZ = ZoneInfo("Asia/Shanghai")
+TZ = ZoneInfo("Asia/Singapore")
 TEMPLATES = Path(__file__).resolve().parents[1] / "references" / "templates"
 GET_MODEL = ROOT / ".agents/skills/get-model-name/scripts/get_model_name.py"
 KINDS = ("plans", "logs", "reports")

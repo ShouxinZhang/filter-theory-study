@@ -2,7 +2,7 @@
 
 ## 命名与位置
 
-- 路径: `.agents/.tmp/task/YYYY-MM/YYYY-MM-DD_任务名/` (已 gitignore), 日期按 Asia/Shanghai, 按月划分一级目录, 取任务创建日.
+- 路径: `.agents/.tmp/task/YYYY-MM/YYYY-MM-DD_任务名/` (已 gitignore), 日期按 Asia/Singapore, 按月划分一级目录, 取任务创建日.
 - **跨日续用**: 任务跨日继续时沿用原目录, 不新建; 新一天的工作以新 log 区分 (日期见其文件名). `new_task.py` 对不带日期前缀的任务名优先匹配已有 `????-??-??_任务名`.
 - 临时脚本, 实验数据, 中间产物均置于此, 不在 git 跟踪范围内新建.
 
@@ -18,7 +18,7 @@
 ```
 
 - 三类文档一律放在对应子目录中, `docs/` 根下不放文档文件.
-- 文件名时间戳取创建时刻 (`TZ=Asia/Shanghai date '+%Y-%m-%d_%H-%M'`); 标题简短, 可用中文, 不含空格与路径符号.
+- 文件名时间戳取创建时刻 (`TZ=Asia/Singapore date '+%Y-%m-%d_%H-%M'`); 标题简短, 可用中文, 不含空格与路径符号.
 - 旧版布局用 `new_task.py --migrate` 迁移 (按日 log 改名为 `<日期>_00-00_legacy.md`, 内容不变).
 
 ## docs/logs/: 一个用户 prompt 一份

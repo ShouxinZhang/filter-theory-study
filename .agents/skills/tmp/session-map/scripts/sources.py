@@ -132,5 +132,5 @@ def attribution(source, repo):
     except (OSError, subprocess.SubprocessError):
         pass
     return (f"- agent name: unknown\n- harness: {source.harness}\n- session: {source.sid[:8]}\n"
-            f"- time: {datetime.now(TZ):%Y-%m-%d %H:%M} (Asia/Shanghai)")
+            f"- time: {datetime.now(TZ):%Y-%m-%d %H:%M} (Asia/Singapore)")
 

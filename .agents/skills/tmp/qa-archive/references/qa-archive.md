@@ -3,11 +3,11 @@
 ## 周目录
 
 - 路径: `.agents/.tmp/agent/YYYY-MM-DD_YYYY-MM-DD/`.
-- 每周自周日 00:00 起, 至下周日 00:00 前止, 按 Asia/Shanghai 计算; 两个日期分别为该周周日与周六, 例如 `2026-09-13_2026-09-19`.
+- 每周自周日 00:00 起, 至下周日 00:00 前止, 按 Asia/Singapore 计算; 两个日期分别为该周周日与周六, 例如 `2026-09-13_2026-09-19`.
 
 ## 文件命名
 
-- `YYYY-MM-DD_HH-mm_任务名称.md`, 时间取 `TZ=Asia/Shanghai date '+%Y-%m-%d_%H-%M'`.
+- `YYYY-MM-DD_HH-mm_任务名称.md`, 时间取 `TZ=Asia/Singapore date '+%Y-%m-%d_%H-%M'`.
 - 所属周按文件名日期确定.
 - 文档开头声明 `agent name: <model slug>`, 无法核实时写 `unknown`.
 - 公式排版参考 `.agents/prompts/公式排版.md`; 符号习惯参考仓库内 `习惯.md`.

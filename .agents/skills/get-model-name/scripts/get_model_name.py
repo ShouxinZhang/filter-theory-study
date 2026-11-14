@@ -504,12 +504,12 @@ def format_header(model: str, framework: str | None, session: str | None) -> str
         sess = f"[{session[:8]}](conversation://{session})"
     else:
         sess = session[:8] if session else UNKNOWN
-    now = datetime.now(ZoneInfo("Asia/Shanghai")).strftime("%Y-%m-%d %H:%M")
+    now = datetime.now(ZoneInfo("Asia/Singapore")).strftime("%Y-%m-%d %H:%M")
     return "\n".join([
         f"- agent name: {model}",
         f"- harness: {framework or UNKNOWN}",
         f"- session: {sess}",
-        f"- time: {now} (Asia/Shanghai)",
+        f"- time: {now} (Asia/Singapore)",
     ])
 
 
