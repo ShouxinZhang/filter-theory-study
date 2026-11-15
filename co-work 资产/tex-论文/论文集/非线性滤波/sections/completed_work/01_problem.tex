@@ -3,16 +3,16 @@
 
 本文从状态空间模型与 Bayes 递推出发，梳理粒子滤波及最优输运重采样的数学关系，并给出算法实现与仿真比较。经典滤波框架与序贯蒙特卡罗方法分别参考文献\cite{bar2001estimation,doucet2001sequential}。
 
-本文约定：凡使用密度公式时，均假设相应密度存在，以相应空间的体积测度为参考测度，密度等式按几乎处处理解。状态空间的体积测度记为 $v_X$。第~\ref{cw:sec:sim-logistic} 节的零过程噪声模型使用 Dirac 转移核，预测按测度推前理解。
+本文约定：凡使用密度公式时，均假设相应密度存在，以相应空间的体积测度为参考测度，密度等式按几乎处处理解。状态空间的体积测度记为 $v_X$。第~\ref{cw:sec:sim-logistic} 节的零过程噪声模型使用单点质量转移核，预测按测度推前理解。
 
-设概率空间为 $(\Omega,\mathcal{F},\mathbb{P})$，状态空间为 $(\mathcal{X},\mathcal{B}(\mathcal{X}))$，观测空间为 $(\mathcal{Y},\mathcal{B}(\mathcal{Y}))$，其中 $\mathcal{X}=\mathbb{R}^{n_x}$，$\mathcal{Y}=\mathbb{R}^{n_y}$，$\mathcal{B}$ 表示 Borel 集合族。状态与观测满足
+设概率空间为 $(\Omega,\mathcal{F},\mathbb{P})$，状态空间为 $(\mathcal{S}_X,\mathcal{B}(\mathcal{S}_X))$，观测空间为 $(\mathcal{S}_Y,\mathcal{B}(\mathcal{S}_Y))$，其中 $\mathcal{S}_X=\mathbb{R}^{n_x}$，$\mathcal{S}_Y=\mathbb{R}^{n_y}$，$\mathcal{B}$ 表示可测集合族。状态与观测满足
 \begin{equation}\label{cw:eq:1}
 \begin{aligned}
 &X_k=f(X_{k-1},N_{x,k}),\\
 &Y_k=h(X_k,N_{y,k}),\;k\geq1.
 \end{aligned}
 \end{equation}
-其中 $X_k:\Omega\to\mathcal{X}$，$Y_k:\Omega\to\mathcal{Y}$ 为可测映射，$f,h$ 为已知可测函数。$\mathbb{P}$ 定义在 $\Omega$ 上，状态分布 $\mathbb{P}_{X_k}=(X_k)_*\mathbb{P}$ 与滤波后验分布定义在 $\mathcal{X}$ 上。
+其中 $X_k:\Omega\to\mathcal{S}_X$，$Y_k:\Omega\to\mathcal{S}_Y$ 为可测映射，$f,h$ 为已知可测函数。$\mathbb{P}$ 定义在 $\Omega$ 上，状态分布 $\mathbb{P}_{X_k}=(X_k)_*\mathbb{P}$ 与滤波后验分布定义在 $\mathcal{S}_X$ 上。
 
 条件：
 \begin{itemize}

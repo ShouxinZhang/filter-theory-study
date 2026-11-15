@@ -2,4 +2,5 @@
 /build/
 /output/debug/
 /logs/*.log
+/outputs/logs/*.log
 *.synctex.gz

@@ -1,4 +1,11 @@
+- agent name: unknown
+- harness: unknown
+- session: unknown
+- time: 2026-09-18 03:50 (Asia/Singapore)
+
 # LaTeX Workshop 预览排障
+
+> 归档说明：原路径 `docs/VSCODE-PREVIEW-FIX.md` 无日期前缀，按归档前文件修改时间 `2026-09-18 03:50`（Asia/Singapore，正文日期同为 `2026-09-18`）迁入 `docs/logs/`。
 
 日期：2026-09-18。
 
@@ -26,3 +33,5 @@
 按工作区 HITSZ build 配方原样展开并执行 `bash <论文目录>/build.sh`，退出码 0；新日志引擎为 XeTeX，PDF 为 42 页，没有未定义引用、溢出或缺字。
 `build/main.pdf` 与 `output/main.pdf` 逐字节一致，预览目录设置解析到本论文的 build。
 通过 VS Code CLI 请求打开正确的 build/main.pdf；本次未自动点击界面的 View LaTeX PDF 按钮。
+
+- 2026-11-15 10:40 — 转入 2026-11-15_10-40_对齐官方硕士模板并删除AI声明章.md

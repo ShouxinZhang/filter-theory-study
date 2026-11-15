@@ -1,8 +1,8 @@
 % !TeX root = ../../../main.tex
 \section{均方误差的四项分解}\label{cw:sec:algorithm-errors}
 令 $\mathcal H=L^2(\Omega,\mathcal F,\mathbb P;\mathbb R^{n_x})$，概率空间包含真实系统与算法随机性。
-记 $\mathcal Y_k\subseteq\mathcal H$ 为所有关于 $\sigma(Y_{1:k})$ 可测的随机变量构成的闭子空间，
-$\mathcal P_{\mathcal Y_k}X_k$ 是利用全部历史观测的最优均方估计。
+记 $\mathcal Y_k\leqslant\mathcal H$ 为所有关于 $\sigma(Y_{1:k})$ 可测的随机变量构成的闭子空间，
+$\mathscr P_{\mathcal Y_k}X_k$ 是利用全部历史观测的最优均方估计。
 本节记 $\hat X_k=X_k^+\mathbf1_N/N$ 为重采样后均值；算法~\ref{cw:alg:bpf} 与~\ref{cw:alg:etpf} 的在线输出 $X_k^-\bm w_k^+$ 是重采样前的加权均值。
 
 \begin{theorem}[四项误差分解]\label{cw:thm:four-errors}
@@ -11,17 +11,17 @@ $\mathcal P_{\mathcal Y_k}X_k$ 是利用全部历史观测的最优均方估计�
 \begin{equation}\label{cw:eq:four-errors}
 \begin{aligned}
 &\|X_k-\hat X_k\|_{\mathcal H}^2\\
-= &\underbrace{\|\mathcal P_{\mathcal Y_k}^{\perp}X_k\|_{\mathcal H}^2}_{\text{不可约 Bayes 误差}}
-+\underbrace{\|\mathcal P_{\mathcal Y_k}(X_k-X_k^-\bm w_k^+)\|_{\mathcal H}^2}_{\text{算法偏差平方}}\\
-&+\underbrace{\|\mathcal P_{\mathcal Y_k}^{\perp}(X_k^-\bm w_k^+)\|_{\mathcal H}^2}_{\text{算法随机波动}}
+= &\underbrace{\|\mathscr P_{\mathcal Y_k}^{\perp}X_k\|_{\mathcal H}^2}_{\text{不可约 Bayes 误差}}
++\underbrace{\|\mathscr P_{\mathcal Y_k}(X_k-X_k^-\bm w_k^+)\|_{\mathcal H}^2}_{\text{算法偏差平方}}\\
+&+\underbrace{\|\mathscr P_{\mathcal Y_k}^{\perp}(X_k^-\bm w_k^+)\|_{\mathcal H}^2}_{\text{算法随机波动}}
 +\underbrace{\|X_k^-\bm w_k^+-\hat X_k\|_{\mathcal H}^2}_{\text{当前重采样扰动}}.
 \end{aligned}
 \end{equation}
 \end{theorem}
 \begin{proof}
-令 $\mathcal Z_k$ 为截至当前的观测 $Y_{1:k}$ 与本步重采样前全部算法随机源生成的 $L^2$ 子空间；加权均值 $X_k^-\bm w_k^+$ 对相应的 $\sigma$ 代数可测，属于该子空间。
-随机源独立性给出 $\mathcal P_{\mathcal Z_k}X_k=\mathcal P_{\mathcal Y_k}X_k$；
-重采样的条件无偏性给出 $\mathcal P_{\mathcal Z_k}\hat X_k=X_k^-\bm w_k^+$，ETPF 则逐次精确相等。
+令 $\mathcal Z_k\leqslant\mathcal H$ 为截至当前的观测 $Y_{1:k}$ 与本步重采样前全部算法随机源生成的闭子空间；加权均值 $X_k^-\bm w_k^+$ 对相应的 $\sigma$ 代数可测，属于该子空间。
+随机源独立性给出 $\mathscr P_{\mathcal Z_k}X_k=\mathscr P_{\mathcal Y_k}X_k$；
+重采样的条件无偏性给出 $\mathscr P_{\mathcal Z_k}\hat X_k=X_k^-\bm w_k^+$，ETPF 则逐次精确相等。
 当前重采样使用新的独立随机数，故其扰动与 $X_k$ 及 $\mathcal Z_k$ 正交。
 \end{proof}
 

@@ -16,7 +16,7 @@
 \begin{equation}\label{cw:eq:6}
 \begin{aligned}
 &p(x_k\mid y_{1:k-1})\\
-= &\int_{\mathcal{X}}p(x_k\mid x_{k-1})p(x_{k-1}\mid y_{1:k-1})\,\mathrm{d}v_X(x_{k-1}).
+= &\int_{\mathcal{S}_X}p(x_k\mid x_{k-1})p(x_{k-1}\mid y_{1:k-1})\,\mathrm{d}v_X(x_{k-1}).
 \end{aligned}
 \end{equation}
 
@@ -31,11 +31,11 @@
 \begin{equation}\label{cw:eq:8}
 \begin{aligned}
 &p(x_k\mid y_{1:k-1})\\
-\approx &\int_{\mathcal{X}}p(x_k\mid x_{k-1})\,\mathrm{d}\hat{\mathbb{P}}_{N;X_{k-1}}^+(x_{k-1})\\
-= &\frac1N\sum_{i=1}^N\int_{\mathcal{X}}p(x_k\mid x_{k-1})\,\mathrm{d}\delta_{x_{k-1}^{+,(i)}}(x_{k-1}).
+\approx &\int_{\mathcal{S}_X}p(x_k\mid x_{k-1})\,\mathrm{d}\hat{\mathbb{P}}_{N;X_{k-1}}^+(x_{k-1})\\
+= &\frac1N\sum_{i=1}^N\int_{\mathcal{S}_X}p(x_k\mid x_{k-1})\,\mathrm{d}\delta_{x_{k-1}^{+,(i)}}(x_{k-1}).
 \end{aligned}
 \end{equation}
-最后使用 Dirac 测度的积分性质 $\int\varphi(x)\,\mathrm{d}\delta_a(x)=\varphi(a)$，每个积分都变成在对应样本处的函数值：
+最后使用单点质量测度的积分性质 $\int\varphi(x)\,\mathrm{d}\delta_a(x)=\varphi(a)$，每个积分都变成在对应样本处的函数值：
 \begin{equation}\label{cw:eq:9}
 p(x_k\mid y_{1:k-1})\approx\frac1N\sum_{i=1}^N p(x_k\mid x_{k-1}^{+,(i)}).
 \end{equation}
@@ -68,13 +68,13 @@ x_k^{-,(i)}=f\bigl(x_{k-1}^{+,(i)},n_{x,k}^{(i)}\bigr).
 这一步用有限个点质量进一步近似前面得到的混合分布。给定旧粒子后，各层样本独立，但各自服从对应的转移分布。
 
 \textbf{更新：}$-$ 与 $+$ 分别表示使用当前观测前后的预测与后验阶段，此处只更新权重.
-对任意可测集合 $A$，将 Bayes 公式中的预测测度替换为等权经验测度，再用 Dirac 积分性质展开；假设样本似然总和有限且严格为正，约去 $1/N$ 后得到后验近似：
+对任意可测集合 $A$，将 Bayes 公式中的预测测度替换为等权经验测度，再用单点质量测度的积分性质展开；假设样本似然总和有限且严格为正，约去 $1/N$ 后得到后验近似：
 \begin{equation}\label{cw:eq:particle-update}
 \begin{aligned}
 &\mathbb{P}_{X_k}^+(A)\\
-={}&\int_A\frac{p(y_k\mid x)p(x\mid y_{1:k-1})}{\displaystyle\int_{\mathcal{X}}p(y_k\mid z)p(z\mid y_{1:k-1})\,\mathrm{d}v_X(z)}\,\mathrm{d}v_X(x)\\
-={}&\frac{\displaystyle\int_A p(y_k\mid x)\,\mathrm{d}\mathbb{P}_{X_k}^-(x)}{\displaystyle\int_{\mathcal{X}}p(y_k\mid x)\,\mathrm{d}\mathbb{P}_{X_k}^-(x)},\\
-\Rightarrow\quad &\hat{\mathbb{P}}_{N;X_k}^+(A):=\frac{\displaystyle\int_A p(y_k\mid x)\,\mathrm{d}\hat{\mathbb{P}}_{N;X_k}^-(x)}{\displaystyle\int_{\mathcal{X}}p(y_k\mid x)\,\mathrm{d}\hat{\mathbb{P}}_{N;X_k}^-(x)}\\
+={}&\int_A\frac{p(y_k\mid x)p(x\mid y_{1:k-1})}{\displaystyle\int_{\mathcal{S}_X}p(y_k\mid z)p(z\mid y_{1:k-1})\,\mathrm{d}v_X(z)}\,\mathrm{d}v_X(x)\\
+={}&\frac{\displaystyle\int_A p(y_k\mid x)\,\mathrm{d}\mathbb{P}_{X_k}^-(x)}{\displaystyle\int_{\mathcal{S}_X}p(y_k\mid x)\,\mathrm{d}\mathbb{P}_{X_k}^-(x)},\\
+\Rightarrow\quad &\hat{\mathbb{P}}_{N;X_k}^+(A):=\frac{\displaystyle\int_A p(y_k\mid x)\,\mathrm{d}\hat{\mathbb{P}}_{N;X_k}^-(x)}{\displaystyle\int_{\mathcal{S}_X}p(y_k\mid x)\,\mathrm{d}\hat{\mathbb{P}}_{N;X_k}^-(x)}\\
 ={}&\sum_{i=1}^N w_k^{+,(i)}\delta_{x_k^{-,(i)}}(A),\\
 &w_k^{+,(i)}:=\frac{p(y_k\mid x_k^{-,(i)})}{\displaystyle\sum_{j=1}^N p(y_k\mid x_k^{-,(j)})},\;i=1..N.
 \end{aligned}

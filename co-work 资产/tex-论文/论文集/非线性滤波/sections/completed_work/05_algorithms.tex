@@ -1,6 +1,6 @@
 % !TeX root = ../../main.tex
 \chapter{算法分析}[Algorithm Analysis]\label{cw:sec:algorithms}
-本节先给出每个时刻都有观测的基本算法。输入观测序列 $y_{1:T}=(y_1,\dots,y_T)$, 其中 $y_k$ 是时刻 $k$ 实际获得的观测值, $T$ 是总时间步数。已知状态转移模型 $f$, 过程噪声分布 $\mathbb P_{N_x}$ 与观测条件密度 $p_{Y_k\mid X_k}(y\mid x)$；收到 $y_k$ 后定义似然函数
+本节先给出每个时刻都有观测的基本算法。输入观测序列 $y_{1:T}=(y_1,\dots,y_T)^{\mathrm T}$, 其中 $y_k$ 是时刻 $k$ 实际获得的观测值, $T$ 是总时间步数。已知状态转移模型 $f$, 过程噪声分布 $\mathbb P_{N_x}$ 与观测条件密度 $p_{Y_k\mid X_k}(y\mid x)$；收到 $y_k$ 后定义似然函数
 \begin{equation}
  g_k(x):=p_{Y_k\mid X_k}(y_k\mid x).
 \end{equation}
@@ -35,7 +35,7 @@
 \section{集合输运粒子滤波}\label{cw:sec:alg-etpf}
 Reich 的原始 ETPF\cite{reich2013nonparametric}共享 BPF 的预测与权重更新, 通过离散最优输运替换随机重采样。令 $\bm a=\bm w_k^+$, $\bm b=\mathbf1_N/N$, $C_{ij}=\|x_k^{-,(i)}-x_k^{-,(j)}\|^2$, 求解线性规划
 \begin{equation}\label{cw:eq:algorithm-etpf-original}
-\bm\Pi_k\in\operatorname*{argmin}_{\bm\Pi\in U(\bm a,\bm b)}\langle\bm\Pi,\bm C\rangle_F.
+\bm\Pi_k\in\operatorname*{argmin}_{\bm\Pi\in U(\bm a,\bm b)}\langle\bm\Pi\mid\bm C\rangle.
 \end{equation}
 目标槽位 $j$ 的参考位置为 $x_k^{-,(j)}$。由于列和为 $1/N$, $N\Pi_{k;ij}$ 是该槽位对应的条件权重, 新粒子取其加权平均。
 

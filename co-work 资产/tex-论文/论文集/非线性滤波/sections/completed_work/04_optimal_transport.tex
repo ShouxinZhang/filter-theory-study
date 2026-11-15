@@ -12,35 +12,35 @@
 
 \subsection{从 Monge 映射到 Kantorovich 耦合}\label{cw:sec:monge}
 
-本节采用最优输运的标准映射与耦合表述\cite{villani2009optimal,peyre2019computational}；其基本理论、离散模型与正则化方法亦可参见马丽涛、边伟的中文综述\cite{ma2019optimaltransportzh}。
+本节采用最优输运的标准映射与耦合表述\cite{villani2009optimal,peyre2019computational}；其基本理论、离散模型与正则化方法亦可参考文献\cite{ma2019optimaltransportzh}。
 
 本节暂用 $X,Y$ 表示一般输运问题的源、目标随机变量，$Y$ 不特指滤波观测。给定边缘分布 $\mathbb P_X,\mathbb P_Y$ 与非负代价函数 $c$，Monge 问题寻找可测映射 $T$，使
 \begin{equation}\label{cw:eq:monge}
 \begin{aligned}
 &Y=T(X),\qquad T_*\mathbb P_X=T_*X_*\mathbb P=\mathbb P_Y,\\
 &\inf_{T:\,T_*\mathbb P_X=\mathbb P_Y}
-\int_{\mathcal X}c(x,T(x))\,\mathrm d\mathbb P_X(x)
+\int_{\mathcal S_X}c(x,T(x))\,\mathrm d\mathbb P_X(x)
 =\inf_{T:\,T_*\mathbb P_X=\mathbb P_Y}
 \mathbb E_{X\sim\mathbb P_X}[c(X,T(X))].
 \end{aligned}
 \end{equation}
-确定性绑定 $Y=T(X)$ 使条件分布退化为 $\mathbb P_{Y\mid X=x}=\delta_{T(x)}$：一个源点的质量只能整体送往一个目标点，不能拆分。离散边缘因而可能不存在这样的映射；均匀离散分布的整除条件见第~\ref{cw:app:monge}~节。
+确定性绑定 $Y=T(X)$ 使条件分布退化为 $\mathbb P_{Y\mid X=x}=\delta_{T(x)}$：一个源点的质量只能整体送往一个目标点，不能拆分。离散边缘因而可能不存在这样的映射；均匀离散分布的整除条件见附录~\ref{cw:app:monge}。
 
 \textbf{耦合松弛：}解除函数绑定，允许任意满足两个边缘约束的联合分布。记坐标投影 $\pi_1(x,y)=x$、$\pi_2(x,y)=y$，定义
 \begin{equation}\label{cw:eq:coupling-family}
 \Pi(\mathbb P_X,\mathbb P_Y)
-:=\left\{\mu\in\mathcal M_+^1(\mathcal X\times\mathcal Y):
+:=\left\{\mu\in\mathcal M^1(\mathcal S_X\times\mathcal S_Y):
 (\pi_1)_*\mu=\mathbb P_X,\ (\pi_2)_*\mu=\mathbb P_Y\right\}.
 \end{equation}
 输运目标于是成为联合分布上的期望最小化：
 \begin{equation}\label{cw:eq:kantorovich}
 \inf_{\mu\in\Pi(\mathbb P_X,\mathbb P_Y)}
-\int_{\mathcal X\times\mathcal Y}c(x,y)\,\mathrm d\mu(x,y)
+\int_{\mathcal S_X\times\mathcal S_Y}c(x,y)\,\mathrm d\mu(x,y)
 =\inf_{\mathbb P_{(X,Y)}\in\Pi(\mathbb P_X,\mathbb P_Y)}
 \mathbb E_{(X,Y)\sim\mathbb P_{(X,Y)}}[c(X,Y)].
 \end{equation}
-在这里的欧氏状态空间上，联合分布可通过条件转移核写成半直积
-$\mathbb P_{(X,Y)}=\mathbb P_X\ltimes\mathbb P_{Y\mid X}$；独立乘积
+在有限维实向量空间上，联合分布可通过条件转移核写成测度-核乘积耦合
+$\mathbb P_{(X,Y)}=\mathbb P_X\otimes_m\mathbb P_{Y\mid X}$；独立乘积
 $\mathbb P_X\otimes\mathbb P_Y$ 是其中一个特例。
 
 \subsection{离散耦合与条件概率及边缘约束}\label{cw:sec:discrete-ot}
@@ -48,8 +48,8 @@ $\mathbb P_X\otimes\mathbb P_Y$ 是其中一个特例。
 设两组支撑点各自互异，$\bm a\in\Delta^{m-1}$、$\bm b\in\Delta^{n-1}$，且暂取 $a_i,b_j>0$；符号定义见第~\ref{cw:app:notation}~节。记
 \begin{equation}\label{cw:eq:discrete-coupling}
 \begin{aligned}
-&\mathbb P_X=\langle\bm a,\delta_{x_{1..m}}\rangle,\qquad
-\mathbb P_Y=\langle\bm b,\delta_{y_{1..n}}\rangle,\\
+&\mathbb P_X=\delta_{x_{1..m}}\bm a,\qquad
+\mathbb P_Y=\delta_{y_{1..n}}\bm b,\\
 &\Pi_{ij}:=\mathbb P_{(X,Y)}(\{(x_i,y_j)\}),\qquad
 \mathbb P_{(X,Y)}=\sum_{i=1}^m\sum_{j=1}^n\Pi_{ij}\,
 \delta_{x_i}\otimes\delta_{y_j}.
@@ -65,13 +65,13 @@ $\mathbb P_X\otimes\mathbb P_Y$ 是其中一个特例。
 \end{aligned}
 \end{equation}
 函数与测度的对偶配对记为 $\langle f,\mu\rangle_{\mathcal S}:=\int_{\mathcal S}f(s)\,\mathrm d\mu(s)$，下标标明测度所在空间。
-对于一般情况（假使需要讨论连续而非离散），等价地，用推前与拉回对偶，对任意 Borel 集合 $A\subseteq\mathcal X$ 有
+对于一般情况（假使需要讨论连续而非离散），等价地，用推前与拉回对偶，对任意可测集合 $A\in\mathcal B(\mathcal S_X)$ 有
 \begin{equation}\label{cw:eq:marginal-duality}
 \begin{aligned}
-\langle\mathbb I_A\otimes\mathbf1_{\mathcal Y},\mathbb P_{(X,Y)}\rangle_{\mathcal X\times\mathcal Y}
-&=\langle\pi_1^*\mathbb I_A,\mathbb P_{(X,Y)}\rangle_{\mathcal X\times\mathcal Y}\\
-&=\langle\mathbb I_A,(\pi_1)_*\mathbb P_{(X,Y)}\rangle_{\mathcal X}
-=\langle\mathbb I_A,\mathbb P_X\rangle_{\mathcal X}.
+\langle\mathbb I_A\otimes\mathbf1_{\mathcal S_Y},\mathbb P_{(X,Y)}\rangle_{\mathcal S_X\times\mathcal S_Y}
+&=\langle\pi_1^*\mathbb I_A,\mathbb P_{(X,Y)}\rangle_{\mathcal S_X\times\mathcal S_Y}\\
+&=\langle\mathbb I_A,(\pi_1)_*\mathbb P_{(X,Y)}\rangle_{\mathcal S_X}
+=\langle\mathbb I_A,\mathbb P_X\rangle_{\mathcal S_X}.
 \end{aligned}
 \end{equation}
 \begingroup\raggedright
@@ -97,8 +97,8 @@ P_{X\mid Y;j,i}:=\mathbb P_{X\mid Y=y_j}(\{x_i\})=\frac{\Pi_{ij}}{b_j},\\
 \begin{aligned}
 &U(\bm a,\bm b):=\{\bm\Pi\in\mathbb R_+^{m\times n}:
 \bm\Pi\mathbf1_n=\bm a,\ \bm\Pi^{\mathrm T}\mathbf1_m=\bm b\},\\
-&\min_{\bm\Pi\in U(\bm a,\bm b)}\langle\bm\Pi,\bm C\rangle_F,
-\qquad\langle\bm\Pi,\bm C\rangle_F:=\sum_{i=1}^m\sum_{j=1}^n\Pi_{ij}C_{ij}.
+&\min_{\bm\Pi\in U(\bm a,\bm b)}\langle\bm\Pi\mid\bm C\rangle,
+\qquad\langle\bm\Pi\mid\bm C\rangle:=\operatorname{tr}(\bm\Pi^{\mathrm T}\bm C)=\sum_{i=1}^m\sum_{j=1}^n\Pi_{ij}C_{ij}.
 \end{aligned}
 \end{equation}
 独立联合分布对应 $\bm\Pi=\bm a\bm b^{\mathrm T}\in U(\bm a,\bm b)$。
@@ -111,7 +111,7 @@ P_{X\mid Y;j,i}:=\mathbb P_{X\mid Y=y_j}(\{x_i\})=\frac{\Pi_{ij}}{b_j},\\
 \begin{equation}\label{cw:eq:regularized-measure}
 \mathbb P_{(X,Y)}^\varepsilon
 =\operatorname*{argmin}_{\mu\in\Pi(\mathbb P_X,\mathbb P_Y)}
-\left\{\int c(x,y)\,\mathrm d\mu(x,y)
+\left\{\int_{\mathcal S_X\times\mathcal S_Y} c(x,y)\,\mathrm d\mu(x,y)
 +\varepsilon D_{\mathrm{KL}}(\mu\|\mathbb P_X\otimes\mathbb P_Y)\right\}.
 \end{equation}
 在离散边缘固定时，KL 项与负熵仅相差一个常数；以下采用 $0\log0=0$：
@@ -127,7 +127,7 @@ D_{\mathrm{KL}}(\bm\Pi\|\bm a\bm b^{\mathrm T})
 \begin{equation}\label{cw:eq:regularized-matrix}
 \bm\Pi^\varepsilon
 =\operatorname*{argmin}_{\bm\Pi\in U(\bm a,\bm b)}
-\left\{\langle\bm\Pi,\bm C\rangle_F
+\left\{\langle\bm\Pi\mid\bm C\rangle
 +\varepsilon\sum_{i=1}^m\sum_{j=1}^n\Pi_{ij}(\log\Pi_{ij}-1)\right\}.
 \end{equation}
 这里额外减去 $\varepsilon\sum_{i,j}\Pi_{ij}=\varepsilon$ 也是常数，使求导后的表达更简洁。
@@ -136,7 +136,7 @@ D_{\mathrm{KL}}(\bm\Pi\|\bm a\bm b^{\mathrm T})
 \begin{equation}\label{cw:eq:sinkhorn-lagrangian}
 \begin{aligned}
 \mathcal L(\bm\Pi,\bm\alpha,\bm\beta)
-={}&\langle\bm\Pi,\bm C\rangle_F
+={}&\langle\bm\Pi\mid\bm C\rangle
 +\varepsilon\sum_{i=1}^m\sum_{j=1}^n\Pi_{ij}(\log\Pi_{ij}-1)\\
 &+\bm\alpha^{\mathrm T}(\bm\Pi\mathbf1_n-\bm a)
 +\bm\beta^{\mathrm T}(\bm\Pi^{\mathrm T}\mathbf1_m-\bm b).

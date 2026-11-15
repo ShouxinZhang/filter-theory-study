@@ -1,0 +1,62 @@
+% !TeX root = ../main.tex
+\chapter{Bayes 滤波引理与更新公式证明}[Proofs for Bayesian Filtering]\label{cw:app:appendix}
+% 新证明单独维护，保持附录主干简洁。
+\input{sections/completed_work/proofs/markov}
+
+\section{Bayes 更新公式的证明}\label{cw:app:proofs}
+
+\begin{theorem}[Bayes 更新公式\cite{sarkka2013bayesian,cappe2005inference}]\label{cw:thm:bayes}
+
+在本文约定与模型条件下，对 $k\geq1$，给定历史观测 $y_{1:k-1}$ 并收到当前观测 $y_k$ 后，状态后验密度满足
+\begin{equation}\label{cw:eq:15}
+\begin{aligned}
+&p_{X_k\mid Y_{1:k}}(x_k\mid y_{1:k})\\
+= &\frac{p_{Y_k\mid X_k}(y_k\mid x_k)p_{X_k\mid Y_{1:k-1}}(x_k\mid y_{1:k-1})}
+{\displaystyle\int_{\mathcal{S}_X}p_{Y_k\mid X_k}(y_k\mid x)p_{X_k\mid Y_{1:k-1}}(x\mid y_{1:k-1})\,\mathrm{d}v_X(x)}.
+\end{aligned}
+\end{equation}
+
+\end{theorem}
+
+\begin{proof}
+为完整起见，下面给出自行推导的证明。
+
+先固定历史观测 $y_{1:k-1}$。收到 $y_k$ 后，要求的是在这些历史观测的基础上，再给定 $Y_k=y_k$ 时的状态密度。按条件密度公式，将条件联合密度除以新观测的条件边缘密度：
+\begin{equation}\label{cw:eq:16}
+\begin{aligned}
+&p_{X_k\mid Y_{1:k}}(x_k\mid y_{1:k})\\
+= &\frac{p_{(X_k,Y_k)\mid Y_{1:k-1}}(x_k,y_k\mid y_{1:k-1})}
+{p_{Y_k\mid Y_{1:k-1}}(y_k\mid y_{1:k-1})}.
+\end{aligned}
+\end{equation}
+
+对分子使用密度的乘法公式，按“先取状态，再给定状态取观测”的顺序分解。两个因子都保留历史观测条件，其中状态因子正是预测步骤已求得的密度：
+\begin{equation}\label{cw:eq:17}
+\begin{aligned}
+&p_{(X_k,Y_k)\mid Y_{1:k-1}}(x_k,y_k\mid y_{1:k-1})\\
+= &p_{Y_k\mid X_k,Y_{1:k-1}}(y_k\mid x_k,y_{1:k-1})
+p_{X_k\mid Y_{1:k-1}}(x_k\mid y_{1:k-1}).
+\end{aligned}
+\end{equation}
+将这一分解代入上一式，就是以历史观测为条件的 Bayes 公式。
+
+接着应用无记忆性引理中的观测条件独立性。给定当前状态 $X_k$ 后，历史观测不再影响 $Y_k$ 的条件分布，因此观测因子可以直接使用模型给出的似然：
+\begin{equation}\label{cw:eq:18}
+p_{Y_k\mid X_k,Y_{1:k-1}}(y_k\mid x_k,y_{1:k-1})
+=p_{Y_k\mid X_k}(y_k\mid x_k).
+\end{equation}
+这里仅消去了观测因子中的历史条件，预测密度仍依赖历史观测。
+
+分母由条件联合密度对状态变量积分得到，这是条件全概率公式。再代入上面的乘法分解与条件独立关系，就将观测的预测密度写成似然关于状态预测分布的平均：
+\begin{equation}\label{cw:eq:19}
+\begin{aligned}
+&p_{Y_k\mid Y_{1:k-1}}(y_k\mid y_{1:k-1})\\
+= &\int_{\mathcal{S}_X}p_{(X_k,Y_k)\mid Y_{1:k-1}}(x,y_k\mid y_{1:k-1})\,\mathrm{d}v_X(x)\\
+= &\int_{\mathcal{S}_X}p_{Y_k\mid X_k}(y_k\mid x)
+p_{X_k\mid Y_{1:k-1}}(x\mid y_{1:k-1})\,\mathrm{d}v_X(x).
+\end{aligned}
+\end{equation}
+其中 $x$ 是积分变量，覆盖整个状态空间。按前述条件，这个分母有限且严格为正，可以用于归一化。
+
+最后，将得到的分子与分母代回最初的条件密度公式，即得定理中的更新式。分母是似然加权后预测密度的总积分，因此相除后得到积分为 $1$ 的后验密度。
+\end{proof}
