@@ -1,0 +1,16 @@
+% !TeX root = ../../../main.tex
+% 模板原生算法样式；离线摊销训练与在线前向更新紧凑呈现。
+\begin{algorithm}[H]
+\caption{静态潜空间摊销条件输运粒子滤波}\label{cw:alg:amortized-otpf}
+\KwIn{训练图像 $x_{1..M}$，算子 $\mathscr T_{\Rightarrow},\ell$，掩码 $\bm m_{1..K}$，测试流 $(\bm m_k\odot y,\bm m_k)_{k=1}^K$，粒子数 $N$}
+\KwOut{后验粒子 $z_k^{+,(1..N)}$ 与类别估计 $\hat c_{1:K}$}
+\textbf{离线阶段：}计算 $z_j=\mathscr T_{\Rightarrow}(x_j)$，$j=1,\dots,M$\;
+\While{未达训练预算}{
+    随机抽取样本对、独立先验与步数 $k$，加噪构造 $\tilde y_k=(\bm m_k\odot(x+n),\bm m_k)$\;
+    交替沿随机梯度上升（$f$）与多步下降（$T$）更新式~\eqref{cw:eq:ml-objective} 的 $J(f,T)$\;
+}
+\textbf{在线阶段：}抽取 $z_0^{+,(1..N)}\sim\mathbb P_Z$\;
+\For{$k=1,\dots,K$}{
+    并行计算 $z_k^{+,(i)}\gets T\bigl(z_0^{+,(i)},\bm m_k\odot y,\bm m_k\bigr)$，$i=1,\dots,N$，并按式~\eqref{cw:eq:ml-vote} 输出众数 $\hat c_k$\;
+}
+\end{algorithm}

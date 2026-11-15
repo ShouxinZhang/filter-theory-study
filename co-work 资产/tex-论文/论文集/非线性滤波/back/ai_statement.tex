@@ -1,0 +1,15 @@
+% !TeX root = ../main.tex
+\makeatletter
+\ifhit@openright\cleardoublepage\else\clearpage\fi
+\hit@appendix@chapter*{人工智能使用声明}[AI Use Statement]
+\makeatother
+
+根据相关学术规范政策，本文对研究与撰写过程中生成式人工智能（AI）工具的使用情况作如下透明披露：
+\begin{enumerate}[label=(\arabic*),leftmargin=0pt,labelindent=2\ccwd,itemindent=*,labelsep=0.4em,nosep]
+  \item 文献综述部分的文献检索与前期调研较大幅度使用了 AI 工具辅助，作者负责最终引用文献的筛选、原始出处的溯源以及正文叙述内容的逐项核对。
+  \item 文中大部分数学推导的展开细节由作者与 AI 工具协力完成，作者主导问题建模、符号体系设计、可读性校验与理论体系化归纳；对于部分核心定理与命题，作者进一步使用交互式定理证明器 Lean 4 指导 AI 完成了形式化证明核验，以确保推导与证明严格无误。
+  \item 仿真与视觉实验的实现代码（除直接引用相关文献的既有开源实现外）由 AI 工具负责编写，全部代码与复现脚本开源托管于 GitHub 仓库（\href{https://github.com/ShouxinZhang/filter-theory-study}{\texttt{https://github.com/ShouxinZhang/filter-theory-study}}）；作者负责依据数学原理设计数值与性质核验模块，在各项核验指标未出现明确异常时予以采纳。
+  \item 本文主体内容整合自作者日常研究积累的若干专题笔记；在相关笔记的创作与整理过程中，AI 工具高度参与了协同撰写，作者本人负责全部内容的统合梳理与逐字校对。
+\end{enumerate}
+
+除上述辅助环节外，作者对本论文的全部研究结论、文字表述、数学论断与实验结果的真实性及准确性承担完整学术责任。

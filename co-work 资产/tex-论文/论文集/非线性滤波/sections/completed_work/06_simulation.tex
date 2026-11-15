@@ -1,6 +1,6 @@
 % !TeX root = ../../main.tex
 \chapter{仿真实验}[Numerical Experiments]\label{cw:sec:simulation}
-本节先汇报 Gordon 基准冻结数据集上的滤波对照、参数消融与串行计时结果，再通过零过程噪声 Logistic 模型考察粒子贫化与误差分解；运行环境见表~\ref{cw:tab:sim-environment}。
+本章依次在三个递进场景上验证前述理论与算法：首先在强过程噪声 Gordon 一维基准上开展滤波精度对照、参数消融与串行计时分析，其次通过零过程噪声混沌 Logistic 模型检验离散输运对单点贫化的抑制及四项误差分解，最后在 $784$ 维 MNIST 逐窗口含噪手写数字识别任务上评估流形压缩还原与条件输运映射滤波的表现；实验软硬件环境汇总于表~\ref{cw:tab:sim-environment}。
 
 \begin{table}[htbp]
 \centering
@@ -12,10 +12,11 @@
 项目 & 配置 \\
 \midrule[1pt]
 CPU & AMD Ryzen 9 9955HX3D，16 核 32 线程 \\
+GPU & NVIDIA GeForce RTX 5090 Laptop GPU，24 GiB 显存 \\
 系统可见内存 & 60.50 GiB \\
 操作系统 & Ubuntu 24.04.4 LTS \\
-数值内核 & C++17 / Eigen 3.4.0 \\
-数值精度 & 双精度 \\
+低维基准数值内核（4.1--4.4 节） & C++17 / Eigen 3.4.0（双精度） \\
+高维识别学习框架（4.5 节） & Python 3.12 / PyTorch 2.11.0 / CUDA 13.0（单精度） \\
 \bottomrule[1.5pt]
 \end{tabular}
 \end{table}
@@ -131,3 +132,5 @@ EKF 最快但误差最大；BPF 在该设置下兼具较低误差与计算成本
 % 先收束 Gordon 基准图表，避免混入后续 Logistic 实验。
 \FloatBarrier
 \input{sections/completed_work/simulation/logistic}
+\FloatBarrier
+\input{sections/completed_work/simulation/mnist_transport}

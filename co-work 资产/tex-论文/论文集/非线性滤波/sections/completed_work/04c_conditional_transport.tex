@@ -1,0 +1,89 @@
+% !TeX root = ../../main.tex
+\section{条件输运映射与潜空间后验表示}\label{cw:sec:ml-transport-theory}
+
+第~\ref{cw:sec:ot}~节的离散耦合变换在给定预测支撑点上重分配质量，仍以重要性权重作为源边际输入。本节从连续映射视角出发，建立不经由似然权重的条件最优输运极大极小对偶表述，并在第~\ref{cw:sec:ml-compress}~节的潜空间上给出局部序贯观测模型、最优后验分类准则及静态潜状态后验的一步累积表示，作为第~\ref{cw:sec:ml-updates}~节算法构造与机制分析的理论基础。
+
+\subsection{条件 Monge 推前约束与极大极小对偶表述}\label{cw:sec:ml-minimax}
+
+考虑潜状态与观测二元随机变量 $(Z,Y)\sim\mathbb P_{(Z,Y)}$，另取与 $(Z,Y)$ 独立的参考先验随机变量 $\bar Z\sim\mathbb P_Z$，使独立耦合满足 $(\bar Z,Y)\sim\mathbb P_Z\otimes\mathbb P_Y$。条件输运方法旨在寻找可测映射 $T:\mathcal S_Z\times\mathcal S_Y\to\mathcal S_Z$，使对 $\mathbb P_Y$-几乎处处的观测实现 $y\in\mathcal S_Y$ 均成立条件推前关系 $T(\cdot,y)_*\mathbb P_Z=\mathbb P_{Z\mid Y=y}$\cite{aljarrah2023otpf,aljarrah2024brenier}。引入保持观测坐标不变的联合提升映射 $S_T(z,y):=(T(z,y),y)$，结合条件核乘积分解，逐点条件推前关系等价于联合测度推前等式：
+\begin{equation}\label{cw:eq:ml-joint-constraint}
+(S_T)_*(\mathbb P_Z\otimes\mathbb P_Y)=\mathbb P_{(Z,Y)}.
+\end{equation}
+式~\eqref{cw:eq:ml-joint-constraint} 表明，将独立先验样本 $\bar Z$ 连同实际观测 $Y$ 送入映射后，所得二元组 $(T(\bar Z,Y),Y)$ 与真实状态—观测对 $(Z,Y)$ 同分布。满足式~\eqref{cw:eq:ml-joint-constraint} 的可测映射一般并不唯一；与式~\eqref{cw:eq:monge} 的二次代价准则一致，在可行映射族中选取平均平方位移最小者：
+\begin{equation}\label{cw:eq:ml-constrained}
+\min_{T}\ \mathbb E_{(\bar Z,Y)\sim\mathbb P_Z\otimes\mathbb P_Y}\Bigl[\tfrac12\bigl\|T(\bar Z,Y)-\bar Z\bigr\|^2\Bigr]
+\qquad\text{s.t.}\qquad (S_T)_*(\mathbb P_Z\otimes\mathbb P_Y)=\mathbb P_{(Z,Y)}.
+\end{equation}
+
+与第~\ref{cw:sec:sinkhorn}~节对离散边缘约束引入乘子的思路平行，利用连续有界检验函数 $f:\mathcal S_Z\times\mathcal S_Y\to\mathbb R$ 刻画测度等式~\eqref{cw:eq:ml-joint-constraint}。由推前与拉回的对偶配对关系
+\begin{equation}
+\langle f,(S_T)_*(\mathbb P_Z\otimes\mathbb P_Y)\rangle_{\mathcal S_Z\times\mathcal S_Y}
+=\langle S_T^*f,\mathbb P_Z\otimes\mathbb P_Y\rangle_{\mathcal S_Z\times\mathcal S_Y},
+\end{equation}
+将检验函数 $f$ 作为约束乘子并入目标，定义对偶鞍点泛函：
+\begin{equation}\label{cw:eq:ml-objective}
+\begin{aligned}
+J(f,T):={}&\langle f,\mathbb P_{(Z,Y)}\rangle_{\mathcal S_Z\times\mathcal S_Y}
+-\langle S_T^*f,\mathbb P_Z\otimes\mathbb P_Y\rangle_{\mathcal S_Z\times\mathcal S_Y}\\
+&+\mathbb E_{(\bar Z,Y)\sim\mathbb P_Z\otimes\mathbb P_Y}\Bigl[\tfrac12\bigl\|T(\bar Z,Y)-\bar Z\bigr\|^2\Bigr].
+\end{aligned}
+\end{equation}
+当推前约束式~\eqref{cw:eq:ml-joint-constraint} 不成立时，$\sup_f J(f,T)=+\infty$，故原约束问题~\eqref{cw:eq:ml-constrained} 等价于 $\min_T\sup_f J(f,T)$。交换极值次序后得到无约束极大极小鞍点问题：
+\begin{equation}\label{cw:eq:ml-minimax}
+(f^{\optstar},T^{\optstar})\in\operatorname*{argmax}_{f}\ \operatorname*{argmin}_{T}\ J(f,T).
+\end{equation}
+在式~\eqref{cw:eq:ml-objective} 中，前两项之差度量推前联合分布与真实联合分布在检验函数 $f$ 下的期望偏差，外层极大化寻找最具区分度的判别函数，内层极小化驱动推前样本匹配真实后验；末项则以二次位移代价固定最优映射的几何选择。关于第一变元的凸势约束与极值交换合法性的严格条件参见文献\cite{aljarrah2024brenier}。值得注意的是，泛函 $J(f,T)$ 仅通过联合样本 $(Z,Y)$ 与独立样本 $\bar Z$ 的期望定义，不涉及观测条件密度的显式解析求值。
+
+\subsection{潜空间局部序贯观测模型与最优识别准则}\label{cw:sec:ml-problem}
+
+将第~\ref{cw:sec:ml-compress}~节的流形表示用于局部序贯观测下的模式识别。设完整高维对象 $X\in\mathcal S_X=\mathbb R^{n_D}$ 及其离散类别 $C\in\{0,\dots,9\}$ 由潜空间坐标 $Z\in\mathcal S_Z=\mathbb R^{n_d}$（$n_d<n_D$）经还原算子 $\mathscr T_{\Leftarrow}:\mathcal S_Z\to\mathcal S_X$ 与读出映射 $\ell:\mathcal S_Z\to\{0,\dots,9\}$ 确定：
+\begin{equation}\label{cw:eq:ml-latent}
+X=\mathscr T_{\Leftarrow}(Z),\qquad C=\ell(Z),\qquad Z\sim\mathbb P_Z,
+\end{equation}
+其中先验 $\mathbb P_Z$ 取式~\eqref{cw:eq:ml-prior} 的经验推前测度。在序贯观测过程中，底层对象保持静止，时刻 $k\in\{1,\dots,K\}$ 仅经由局部选择矩阵 $\bm H_k\in\{0,1\}^{r^2\times n_D}$ 观测第 $k$ 个 $r\times r$ 窗口的含噪响应：
+\begin{equation}\label{cw:eq:ml-model}
+\begin{aligned}
+&Z_k=Z_{k-1},\qquad Z_0\sim\mathbb P_Z,\\
+&Y_k=\bm H_k\mathscr T_{\Leftarrow}(Z_k)+N_{y,k},\qquad N_{y,k}\sim\mathcal N(\bm 0,\sigma^2\bm I_{r^2}),
+\end{aligned}
+\end{equation}
+各时刻观测噪声 $\{N_{y,k}\}$ 相互独立且与 $Z_0$ 独立。式~\eqref{cw:eq:ml-model} 是第~\ref{cw:sec:model}~节一般非线性滤波模型在潜状态静止（过程噪声恒为零）下的具体实例。
+
+\begin{proposition}[序贯识别的最优后验准则]\label{cw:lem:ml-bayes-rule}
+在生成关系~\eqref{cw:eq:ml-latent} 与状态空间模型~\eqref{cw:eq:ml-model} 下，时刻 $k$ 使错判概率 $\mathbb P\bigl(\hat c_k(Y_{1:k})\neq C\bigr)$ 最小的可测分类准则满足
+\begin{equation}\label{cw:eq:ml-bayes-rule}
+\hat c_k^{\optstar}(y_{1:k})\in\operatorname*{argmax}_{c\in\{0,\dots,9\}}\
+\mathbb P_{Z_k\mid Y_{1:k}=y_{1:k}}\bigl(\ell^{-1}(c)\bigr).
+\end{equation}
+\end{proposition}
+\begin{proof}
+对任意可测分类器 $\hat c_k$，正确分类概率满足全期望分解
+$\mathbb P\bigl(\hat c_k(Y_{1:k})=C\bigr)=\mathbb E_{Y_{1:k}\sim\mathbb P_{Y_{1:k}}}\bigl[\mathbb P\bigl(C=\hat c_k(Y_{1:k})\mid Y_{1:k}\bigr)\bigr]$，
+对每个实现 $y_{1:k}$ 逐点最大化条件后验概率即可最小化总错判率。由 $C=\ell(Z_0)=\ell(Z_k)$，有 $\mathbb P(C=c\mid Y_{1:k}=y_{1:k})=\mathbb P_{Z_k\mid Y_{1:k}=y_{1:k}}(\ell^{-1}(c))$。
+\end{proof}
+
+当滤波后验由等权经验测度 $\frac1N\sum_{i=1}^N\delta_{z_k^{+,(i)}}$ 近似时，将经验测度代入式~\eqref{cw:eq:ml-bayes-rule} 即得粒子读出众数判决：
+\begin{equation}\label{cw:eq:ml-vote}
+\hat c_k=\operatorname*{argmax}_{c\in\{0,\dots,9\}}\ \frac1N\sum_{i=1}^N\mathbb I_{\{c\}}\bigl(\ell(z_k^{+,(i)})\bigr).
+\end{equation}
+
+\subsection{静止潜状态下滤波后验的一步累积表示}\label{cw:sec:ml-static-theory}
+
+一般动态系统中，第 $k$ 步预测分布 $\mathbb P_{Z_k\mid Y_{1:k-1}=y_{1:k-1}}$ 依赖历史观测路径，使式~\eqref{cw:eq:ml-minimax} 中的源分布随步改变。在式~\eqref{cw:eq:ml-model} 的静态演化下，多步递推后验可精确化归为固定先验上的一步条件更新。
+
+\begin{proposition}[静止状态下滤波后验的一步表示]\label{cw:lem:ml-static}
+设潜状态满足 $Z_k=Z_0\sim\mathbb P_Z$，且给定潜状态时各时刻观测 $\{Y_j\}_{j=1}^k$ 条件独立，条件密度记为 $p_{Y_j\mid Z_j}(y_j\mid z)$。当分母积分有限且严格为正时，对任意时刻 $k\ge1$ 有
+\begin{equation}\label{cw:eq:ml-static}
+\frac{\mathrm d\mathbb P_{Z_k\mid Y_{1:k}=y_{1:k}}}{\mathrm d\mathbb P_Z}(z)
+=\frac{\prod_{j=1}^k p_{Y_j\mid Z_j}(y_j\mid z)}{\int_{\mathcal S_Z}\prod_{j=1}^k p_{Y_j\mid Z_j}(y_j\mid\tilde z)\,\mathrm d\mathbb P_Z(\tilde z)},
+\end{equation}
+即第 $k$ 步递推滤波后验等于以累积观测 $y_{1:k}$ 对初始先验 $\mathbb P_Z$ 作单次更新所得的后验分布。
+\end{proposition}
+\begin{proof}
+对 $k$ 归纳。$k=1$ 时由定理~\ref{cw:thm:bayes} 成立。设结论对 $k-1$ 成立；因 $Z_k=Z_{k-1}$，预测分布满足 $\mathbb P_{Z_k\mid Y_{1:k-1}=y_{1:k-1}}=\mathbb P_{Z_{k-1}\mid Y_{1:k-1}=y_{1:k-1}}$。在时刻 $k$ 应用条件独立性与密度导数链式法则，将该分布关于 $\mathbb P_Z$ 的密度导数乘以 $p_{Y_k\mid Z_k}(y_k\mid z)$ 并归一化，即得式~\eqref{cw:eq:ml-static}。
+\end{proof}
+
+记 $y\in\mathbb R^{n_D}$ 为叠加全图观测噪声后的像素向量，$\bm m_k\in\{0,1\}^{n_D}$ 为标记前 $k$ 个窗口覆盖像素位置的二值掩码向量，则变长累积观测 $y_{1:k}$ 可统一嵌入定长空间表示为 $(\bm m_k\odot y,\bm m_k)$（未揭示区域置零，并由 $\bm m_k$ 区分未观测像素与零值背景）。结合命题~\ref{cw:lem:ml-static} 与式~\eqref{cw:eq:ml-joint-constraint}，只需构造单一的摊销条件输运映射 $T:\mathcal S_Z\times\mathbb R^{n_D}\times\{0,1\}^{n_D}\to\mathcal S_Z$，使其对一切时刻 $k\in\{1,\dots,K\}$ 满足一步推前关系
+\begin{equation}\label{cw:eq:ml-amortized-pushforward}
+T(\cdot,\bm m_k\odot y,\bm m_k)_*\mathbb P_Z=\mathbb P_{Z_k\mid Y_{1:k}=y_{1:k}}.
+\end{equation}

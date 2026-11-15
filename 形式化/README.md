@@ -10,9 +10,12 @@
 
 ## 模块结构
 
-- [`FilterFormalization/Basic.lean`](FilterFormalization/Basic.lean)：基础推前-拉回积分对偶冒烟模块
-- [`FilterFormalization/Model.lean`](FilterFormalization/Model.lean)：一般非线性状态空间模型（式 `cw:eq:1`）、历史轨迹投影、机制转移核 `mechKernel` 与噪声独立性引理
-- [`FilterFormalization/Memorylessness.lean`](FilterFormalization/Memorylessness.lean)：无记忆性引理（引理 `cw:lem:markov` 及附录 A.1 一般情形）的三层完整形式化（任意可测空间集合条件概率 `condExp`、标准 Borel 正则条件分布核 `condDistrib`、关于 $\sigma$-有限参考测度的条件密度 `IsCondDensity` / `rnDeriv`）
+- [`FilterFormalization/Model.lean`](FilterFormalization/Model.lean)：一般非线性状态空间模型（式 `cw:eq:1`），机制转移核 `mechKernel`，联合历史 `hist`，以及历史与当前噪声的独立性
+- [`FilterFormalization/Memorylessness.lean`](FilterFormalization/Memorylessness.lean)：无记忆性引理（引理 `cw:lem:markov`）。先对抽象机制 $Z=g(\pi(W),N)$ 证明条件分布核形式与条件密度形式，再用于状态方程与观测方程
+
+- [`FilterFormalization/Impoverishment.lean`](FilterFormalization/Impoverishment.lean)：零过程噪声下的粒子贫化（定理 `cw:thm:bpf-impoverishment`）。以离散概率分布刻画「确定性预测，加权，多项重采样」的粒子组演化，证明互异粒子数期望的上下界与极限
+
+主要定理：`state_memoryless`，`state_memoryless_density`，`obs_memoryless`，`obs_memoryless_density`；`ZeroNoiseBPF.one_le_expect_distinct`，`ZeroNoiseBPF.expect_distinct_le`，`ZeroNoiseBPF.tendsto_expect_distinct`。
 
 ## 常用命令
 

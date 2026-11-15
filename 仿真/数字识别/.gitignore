@@ -1,0 +1,6 @@
+data/
+third_party/
+outputs/checkpoints/
+outputs/logs/
+outputs/smoke/
+__pycache__/
