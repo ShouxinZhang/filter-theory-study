@@ -64,7 +64,7 @@ def classify(tag: str, a: dict[str, str]) -> str | None:
     cls = a.get("class", "")
     if tag in ("h2", "h3"):
         return "sec"
-    if tag == "div" and cls == "eq":
+    if tag == "div" and "eq" in cls.split():
         return "eq" if "data-label" in a else None
     if tag == "div" and cls == "thm":
         return "thm"
@@ -377,7 +377,7 @@ def render(
         toc.append((lv, ha["id"], num, clean_title))
 
     def eq_fn(m: re.Match[str]) -> str:
-        a, body = attrs(m.group(1)), m.group(2)
+        extra_cls, a, body = m.group(1), attrs(m.group(2)), m.group(3)
         if "data-label" not in a:
             return m.group(0)
         L = labels[a["data-label"]]
@@ -387,9 +387,9 @@ def render(
             return m.group(0)
         body = body[:i] + f"\\tag{{{L['num']}}} " + body[i:]
         loc = _keep_loc(a)
-        return f'<div class="eq" id="{L["id"]}"{loc}>{body}</div>'
+        return f'<div class="eq{extra_cls}" id="{L["id"]}"{loc}>{body}</div>'
 
-    doc = re.sub(r'<div class="eq"([^>]*)>(.*?)</div>', eq_fn, doc, flags=re.S)
+    doc = re.sub(r'<div class="eq([^"]*)"([^>]*)>(.*?)</div>', eq_fn, doc, flags=re.S)
 
     def thm_open_fn(m: re.Match[str]) -> str:
         a, gap, p_open = attrs(m.group(1)), m.group(2), m.group(3)

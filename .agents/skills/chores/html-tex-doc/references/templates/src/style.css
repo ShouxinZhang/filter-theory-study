@@ -135,6 +135,9 @@ li[data-lv="3"] > .toc-row > .toc-item { font-size: .92em; color: color-mix(in s
 
 /* ---------- 公式、图、算法、表、命题、文献 ---------- */
 div.eq { margin: 1rem 0; overflow-x: auto; overflow-y: hidden; padding: .2rem .25rem; border-radius: 4px; }
+div.eq.tight-top { margin-top: .25rem; }
+div.eq.tight-bot { margin-bottom: .25rem; }
+p.cont { margin-top: .25rem; text-indent: 0; }
 figure { margin: 1.8rem 0; text-align: center; border-radius: 4px; }
 figcaption { font-size: .93rem; color: var(--muted); margin: .6rem auto 0; max-width: 42rem; text-align: left; }
 .caplabel { color: var(--fg); font-weight: 600; margin-right: .5em; }

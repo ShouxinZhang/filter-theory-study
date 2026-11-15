@@ -173,10 +173,11 @@ class MarkdownCompiler:
             spans.append(f'<span class="sl" data-file="{ef}" data-l="{ln0}">{prefix}</span>')
         return "\n".join(spans)
 
-    def eq(self, label: str | None, body: str, fname: str, l1: int, l2: int) -> str:
+    def eq(self, label: str | None, body: str, fname: str, l1: int, l2: int, extra_cls: str = "") -> str:
         ef = html.escape(fname, quote=True)
         lab = f' data-label="{html.escape(label, quote=True)}"' if label else ""
-        return f'<div class="eq"{lab} data-file="{ef}" data-l1="{l1}" data-l2="{l2}">\n\\[ {esc(body)} \\]\n</div>'
+        cls = f"eq {extra_cls}".strip()
+        return f'<div class="{cls}"{lab} data-file="{ef}" data-l1="{l1}" data-l2="{l2}">\n\\[ {esc(body)} \\]\n</div>'
 
     def _render_item(self, pairs: list[tuple[int, str]], fname: str) -> str:
         """列表项内部：支持文字行与内嵌 $$ 公式块。"""
@@ -246,22 +247,32 @@ class MarkdownCompiler:
         # stack entries: (kind_type, open_line, out_index, base_tag_prefix)
         stack: list[tuple[str, int, int, str]] = []
         prefix = ""
+        next_cont = False
         lines = text.split("\n")
         i = 0
 
+        def is_cont_text(raw: str) -> bool:
+            s = raw.strip()
+            if not s or s == ":::" or s == "---":
+                return False
+            return not any(p.match(s) for p in (FENCE_OPEN, HEAD, BOX_OPEN, MD_FIG, ITEM, RAW))
+
         def flush() -> None:
-            nonlocal prefix
+            nonlocal prefix, next_cont
             if para:
                 l1, l2 = para[0][0], para[-1][0]
                 inner = self.render_lines_with_spans(para, fname, prefix)
-                out.append(f'<p data-file="{ef}" data-l1="{l1}" data-l2="{l2}">{inner}</p>')
+                cls = ' class="cont"' if next_cont else ""
+                out.append(f'<p{cls} data-file="{ef}" data-l1="{l1}" data-l2="{l2}">{inner}</p>')
                 prefix = ""
+                next_cont = False
                 para.clear()
 
         while i < len(lines):
             ln = i + 1
             line = lines[i].rstrip()
             if m := FENCE_OPEN.match(line):
+                tight_top = bool(para)
                 flush()
                 j = i + 1
                 close_lab = None
@@ -276,13 +287,17 @@ class MarkdownCompiler:
                     end_ln = len(lines)
                 else:
                     end_ln = j + 1
+                tight_bot = j + 1 < len(lines) and is_cont_text(lines[j + 1])
+                next_cont = tight_bot
+                eq_cls = " ".join(c for c, flag in (("tight-top", tight_top), ("tight-bot", tight_bot)) if flag)
                 lab = m.group(1) or close_lab
-                out.append(self.eq(lab, "\n".join(lines[i + 1 : j]), fname, ln, end_ln))
+                out.append(self.eq(lab, "\n".join(lines[i + 1 : j]), fname, ln, end_ln, eq_cls))
                 i = j + 1
                 continue
 
             if not line.strip():
                 flush()
+                next_cont = False
             elif line.strip() == ":::":
                 flush()
                 if not stack:

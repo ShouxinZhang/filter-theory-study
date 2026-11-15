@@ -18,9 +18,10 @@ def convert_chapter(raw: str) -> str:
     s = re.sub(r"\\ifhit@openright.*?\\fi", "", s)
     stash: list[str] = []
 
-    def keep(block: str) -> str:
+    def keep(block: str, own_para: bool = True) -> str:
         stash.append(block)
-        return f"\n\n@@S{len(stash) - 1}@@\n\n"
+        mark = f"@@S{len(stash) - 1}@@"
+        return f"\n\n{mark}\n\n" if own_para else mark
 
     def on_alg(m: re.Match[str]) -> str:
         body = m.group(1)
@@ -49,7 +50,7 @@ def convert_chapter(raw: str) -> str:
         lab_m = re.search(r"\\label\{([^}]+)\}", body)
         body = re.sub(r"\\label\{[^}]+\}", "", body).strip()
         attr = f" {{#{lab_m.group(1)}}}" if lab_m else ""
-        return keep(f"$${attr}\n{body}\n$$")
+        return keep(f"$${attr}\n{body}\n$$", own_para=False)
 
     s = re.sub(r"\\begin\{algorithm\}(?:\[[^\]]*\])?(.*?)\\end\{algorithm\}", on_alg, s, flags=re.S)
     s = re.sub(r"\\begin\{equation\}(.*?)\\end\{equation\}", on_eq, s, flags=re.S)
@@ -71,6 +72,8 @@ def convert_chapter(raw: str) -> str:
     s = re.sub(r"\\ref\{([^}]+)\}", r"{@\1|n}", s)
     s = re.sub(r"~?\\cite\{([^}]+)\}", lambda m: "[@" + re.sub(r"\s+", "", m.group(1)) + "]", s)
     s = s.replace("~", " ")
+    s = re.sub(r"([^\n])(@@S\d+@@)", r"\1\n\2", s)
+    s = re.sub(r"(@@S\d+@@)([^\n])", r"\1\n\2", s)
     s = re.sub(r"@@S(\d+)@@", lambda m: stash[int(m.group(1))], s)
     return re.sub(r"\n{3,}", "\n\n", s).strip() + "\n"
 

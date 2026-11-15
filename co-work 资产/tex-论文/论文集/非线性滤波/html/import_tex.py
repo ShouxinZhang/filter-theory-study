@@ -142,7 +142,7 @@ class Importer:
     def keep(self, block: str, own_para: bool) -> str:
         self.stash.append(block)
         mark = f"@@S{len(self.stash) - 1}@@"
-        return f"\n\n{mark}\n\n" if own_para else f"\n{mark}\n"
+        return f"\n\n{mark}\n\n" if own_para else mark
 
     def figure(self, m: re.Match[str]) -> str:
         body = m.group(1)
@@ -234,6 +234,8 @@ class Importer:
             s = sub_cmd(s, cmd, n, lambda *a: "")
         s = re.sub(r"\\suppressfloats(\[[^\]]*\])?|\\(FloatBarrier|noindent|par|centering)(?![a-zA-Z])", "", s)
         s = inline(s)
+        s = re.sub(r"([^\n])(@@S\d+@@)", r"\1\n\2", s)
+        s = re.sub(r"(@@S\d+@@)([^\n])", r"\1\n\2", s)
         s = re.sub(r"@@S(\d+)@@", lambda m: self.stash[int(m.group(1))], s)
         s = "\n".join(l.strip() for l in s.split("\n"))
         return re.sub(r"\n{3,}", "\n\n", s).strip() + "\n"
