@@ -296,7 +296,7 @@
     edTa.style.height = `${h}px`;
   }
 
-  function scrollEditorToLine(line1, smooth = true) {
+  function scrollEditorToLine(line1, smooth = false) {
     if (!edBackdrop || !edScroll) return;
     const row = edBackdrop.querySelector(`.ed-line[data-l="${line1}"]`);
     if (!row) return;
@@ -375,7 +375,7 @@
       renderBackdrop();
       edTa.focus({ preventScroll: true });
       edTa.setSelectionRange(offset + col, offset + col + selLen);
-      scrollEditorToLine(clampedLine, true);
+      scrollEditorToLine(clampedLine, false);
     } else {
       curLine = 1;
       renderBackdrop();
@@ -546,9 +546,9 @@
         const r = rightEl.getBoundingClientRect();
         if (isSplit) {
           const offsetInPane = r.top - paneRect.top + docRoot.scrollTop;
-          docRoot.scrollTo({ top: Math.max(0, offsetInPane - docRoot.clientHeight * 0.32), behavior: "smooth" });
+          docRoot.scrollTo({ top: Math.max(0, offsetInPane - docRoot.clientHeight * 0.32), behavior: "auto" });
         } else {
-          rightEl.scrollIntoView({ behavior: "smooth", block: "center" });
+          rightEl.scrollIntoView({ behavior: "auto", block: "center" });
         }
       }
     }
@@ -573,7 +573,7 @@
       const er = hit.el.getBoundingClientRect();
       if (er.top < pr.top + 40 || er.bottom > pr.bottom - 40) {
         const offsetInPane = er.top - pr.top + docRoot.scrollTop;
-        docRoot.scrollTo({ top: Math.max(0, offsetInPane - docRoot.clientHeight * 0.35), behavior: "smooth" });
+        docRoot.scrollTo({ top: Math.max(0, offsetInPane - docRoot.clientHeight * 0.35), behavior: "auto" });
       }
     }
   }
