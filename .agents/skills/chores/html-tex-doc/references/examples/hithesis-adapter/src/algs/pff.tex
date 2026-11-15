@@ -1,0 +1,14 @@
+\documentclass[varwidth=15.5cm,border=1pt]{standalone}
+\input{common}
+\input{alg2e}
+\begin{document}
+\begin{algorithm}[H]
+\KwIn{先验粒子集 $\{x_0^{(i)}\}_{i=1}^N$，伪时间步长 $\Delta\lambda$}
+\KwOut{后验粒子集 $\{x_1^{(i)}\}_{i=1}^N$}
+依据\cref{prop:bayes}计算先验均值与协方差\;
+\For{$\lambda \leftarrow 0$ \KwTo $1$}{
+  按\cref{eq:ssm} 的量测雅可比更新粒子漂移项\;
+}
+\Return{$\{x_1^{(i)}\}_{i=1}^N$}\;
+\end{algorithm}
+\end{document}

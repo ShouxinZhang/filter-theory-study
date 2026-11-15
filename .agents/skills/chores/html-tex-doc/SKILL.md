@@ -1,38 +1,38 @@
 ---
 name: html-tex-doc
-description: 无分页 HTML 正文 + TeX standalone 出图/算法的混合排版工作流：唯一编号源、SVG 内嵌超链接、深色主题自动改色、栏宽拖拽与链接悬停预览。
+description: 无分页 HTML/受控 Markdown + TeX standalone 出图与算法的混合排版工作流，支持可折叠目录、Web 双栏编辑器、全文搜索及 Ctrl+Click 双向高亮对齐。
 ---
 
 # html-tex-doc
 
-用流式无分页 HTML + MathJax 编写正文与公式，用 TeX `standalone` 编译 TikZ 图与 `algpseudocode` 算法框为内联 SVG，统一编号、双向超链接与深色主题。
+用流式无分页 HTML 或多文件受控 Markdown + MathJax 编写正文与公式，用 TeX `standalone` 编译 TikZ 图与伪代码算法框为内联 SVG，统一编号、双向超链接、深色主题与 Web 双栏实时编辑。
 
 ## 速查
 
 ```bash
 S=.agents/skills/chores/html-tex-doc/scripts/html_tex_doc.py
 
-# 1. 初始化混合文档工程骨架（生成 <dir>/src/）
-python3 $S init <dir> --title "文档标题"
+# 初始化工程骨架：basic（单文件 doc.html）或 academic-md（多章 Markdown + BibTeX + algorithm2e）
+python3 $S init <dir> --preset academic-md --title "文档标题"
 
-# 2. 增量构建单页站点（默认读 <dir>/src，输出 <dir>/outputs/site）
-python3 $S build <dir>
+# 静态增量构建（默认读 <dir>/src，输出 <dir>/outputs/site）
+python3 $S build <dir> [--force]
+python3 $S build --src <src_dir> --build-dir <build_dir> --out <site_dir>
 
-# 3. 显式指定源码/缓存/输出路径（如编译内置示例到临时目录）
-python3 $S build --src <src_dir> --build-dir <build_dir> --out <site_dir> [--force]
-
-# 4. 本地 HTTP 预览
-python3 -m http.server 18767 --bind 127.0.0.1 -d <dir>/outputs/site
+# 启动实时预览与 Web 双栏编辑服务器（默认 http://127.0.0.1:18767）
+python3 $S serve <dir> [--port 18767]
 ```
 
-## 核心流程
+## 核心能力与快捷键
 
-1. **编辑正文与宏**：在 `src/macros.tex` 维护同源 `\newcommand`；在 `src/doc.html` 用 `data-label` 标记章节/公式/图表/命题，用 `{@key}` 引用。
-2. **编写 TeX 图/算法**：在 `src/figs/*.tex` 或 `src/algs/*.tex` 中 `\input{common}`，通过 `\cref{key}` 引用 HTML 编号（自动生成 SVG 页内超链接），并在 `doc.html` 对应 `<figure data-tex="...">` 内放 `<!--TEX-->` 占位注释。
-3. **构建与门禁核验**：运行 `html_tex_doc.py build`，自动完成唯一编号、`labels.tex` 生成、`xelatex` + `dvisvgm` 矢量编译、深色自适应改色及未定义引用检查。
+- 同源编译：自动识别单文件 `src/doc.html` 或多文件 `src/*.md` + `refs.bib`，同源解析 `src/macros.tex`，注入双层源码锚点并增量编译 `figs/*.tex` 与 `algs/*.tex`。
+- 目录折叠：正文内联目录卡支持整卡折叠与收起子节；右上角 `☰ 目录`（`Alt+T`）呼出带章节过滤与阅读进度联动（ScrollSpy）的浮动抽屉。
+- Web 双栏工作台（`serve` 模式）：点右上角 `◫ 双栏` 或按 `Ctrl+\` 开合左源码右渲染分屏；支持 `Ctrl+F` 页内搜索，`Ctrl+Shift+F` 跨文件搜索，`Ctrl+S` 保存与防抖热补丁。
+- 类 SyncTeX 双向高亮对齐：按住 `Ctrl`/`Cmd` 悬停右侧渲染区预览 `文件:行号`，`Ctrl+Click` 任意句子、公式、定理或算法框即跳至左侧精确源码行（对算法框按 `Ctrl+Shift+Click` 跳至 `.md` 调用处）；左侧点击行号栏、`Ctrl+Click` 或按 `Ctrl+Alt+J` 正向定位右侧段落并双端脉冲高亮。
 
 ## 参考
 
-- [references/spec.md](references/spec.md): 标签语法、共享宏、`\cref` 机制、深色改色与阅读器细则.
-- [references/templates/src/](references/templates/src/): `init` 使用的可复用空白工程骨架（含 `reader.js` 与 `style.css`）.
-- [references/examples/linked-list/README.md](references/examples/linked-list/README.md): 《链表：结构、操作与复杂度》完整示例源码与编译命令.
+- [references/spec.md](references/spec.md): 受控 Markdown 与 HTML 标签语法、BibTeX、双层 SyncMap 协议、双栏 API 与阅读器细则。
+- [references/templates/src/](references/templates/src/) 与 [references/templates/academic-md/src/](references/templates/academic-md/src/): `basic` 与 `academic-md` 预设空白骨架。
+- [references/examples/linked-list/README.md](references/examples/linked-list/README.md): 原生无 `.cls` 算法笔记完整示例（TikZ + `algpseudocode`）。
+- [references/examples/hithesis-adapter/README.md](references/examples/hithesis-adapter/README.md): 外部 `.cls` 学位论文（`hithesis`）薄适配器接入示例。

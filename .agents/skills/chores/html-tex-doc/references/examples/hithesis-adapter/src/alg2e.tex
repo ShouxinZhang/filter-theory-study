@@ -1,0 +1,10 @@
+% algorithm2e 公共配置（供 src/algs/*.tex 在 \input{common} 之后引入）
+\usepackage[ruled,linesnumbered,vlined]{algorithm2e}
+\DontPrintSemicolon
+\SetKwInput{KwIn}{输入}
+\SetKwInput{KwOut}{输出}
+\SetAlCapSkip{0.4em}
+% 算法标题与编号由外层 HTML <figcaption> 统一生成
+\renewcommand{\caption}[1]{}
+\SetAlgoCaptionLayout{algocf}{}
+\SetAlgoNlRelativeSize{-1}

@@ -240,7 +240,7 @@ class Importer:
 
 
 def main() -> int:
-    for f in ("common.tex", "macros.tex", "style.css"):
+    for f in ("common.tex", "macros.tex"):
         shutil.copy(SKILL / "references/templates/src" / f, SRC / f) if not (SRC / f).exists() else None
     imp = Importer()
     for name, rels in FILES:

@@ -1,0 +1,32 @@
+% 模拟 hithesis 章节源码（含私有开页宏、定理、公式、algorithm2e 与文献引用）
+\ifhit@openright\cleardoublepage\fi
+\chapter{状态估计与粒子流基础}\label{sec:intro}
+
+非线性状态估计旨在从观测序列中递推恢复隐状态后验分布~\cite{kalman1960,daum2010}。
+
+\section{离散状态空间模型}\label{sec:ssm}
+
+设离散时间状态转移与量测方程为
+\begin{equation}\label{eq:ssm}
+x_k = f_k(x_{k-1}) + w_k, \qquad z_k = h_k(x_k) + v_k.
+\end{equation}
+
+\begin{proposition}[预测-更新分解]\label{prop:bayes}
+在马尔可夫假设下，式~\eqref{eq:ssm} 的后验密度满足递推关系，其中范数记为 $\norm{x_k}$。
+\end{proposition}
+\begin{proof}
+由条件独立性与全概率公式直接得到。
+\end{proof}
+
+\begin{algorithm}[htbp]
+\caption{单步同伦粒子流更新}\label{alg:pff}
+\KwIn{先验粒子集 $\{x_0^{(i)}\}_{i=1}^N$，伪时间步长 $\Delta\lambda$}
+\KwOut{后验粒子集 $\{x_1^{(i)}\}_{i=1}^N$}
+依据\ref{prop:bayes}计算先验均值与协方差\;
+\For{$\lambda \leftarrow 0$ \KwTo $1$}{
+  按式~\eqref{eq:ssm} 的量测雅可比更新粒子漂移项\;
+}
+\Return{$\{x_1^{(i)}\}_{i=1}^N$}\;
+\end{algorithm}
+
+算法~\ref{alg:pff} 在伪时间轴上平滑迁移粒子而无需重要性重采样。

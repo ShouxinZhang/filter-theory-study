@@ -1,0 +1,12 @@
+\documentclass[varwidth=15cm,border=1pt]{standalone}
+\input{common}
+\input{alg2e}
+\begin{document}
+\begin{algorithm}[H]
+\KwIn{初始状态 $\bm{x}_0$，总步数 $T$}
+\KwOut{轨迹序列 $\{\bm{x}_k\}_{k=1}^T$}
+\For{$k = 1$ \KwTo $T$}{
+  按 \cref{eq:demo} 执行一步状态更新
+}
+\end{algorithm}
+\end{document}
