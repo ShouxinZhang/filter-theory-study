@@ -236,6 +236,34 @@ class IncrementalTests(unittest.TestCase):
             stream.write("not json\n" * 3)
         self.assertEqual(sources.source_from_path(self.path).sid, SID)
 
+    def test_antigravity_media_splits_match_full_sync(self):
+        user_img = self.root / "user.png"
+        tool_img = self.root / "tool.png"
+        user_img.write_bytes(b"\x89PNG\r\n\x1a\nuser")
+        tool_img.write_bytes(b"\x89PNG\r\n\x1a\ntool")
+        records = [
+            {"type": "USER_INPUT", "created_at": STAMP, "content": "<USER_REQUEST>see</USER_REQUEST>",
+             "media": [{"mime_type": "image/png", "uri": str(user_img)}]},
+            {"type": "PLANNER_RESPONSE", "created_at": STAMP,
+             "tool_calls": [{"name": "read_file", "args": {"Path": str(tool_img)}}]},
+            {"type": "GENERIC", "created_at": STAMP, "content": "Showing binary file",
+             "media": [{"mime_type": "image/png", "uri": tool_img.as_uri()}]},
+            {"type": "PLANNER_RESPONSE", "created_at": STAMP, "content": "done"},
+        ]
+        reference_dir = self.root / "reference"
+        expected = sync.render(SID, self.path, "antigravity", HEADER, records=records,
+                               assets=sync.AssetStore(reference_dir))
+        for step in (1, 2, len(records)):
+            with self.subTest(step=step):
+                self.path.write_bytes(b"")
+                shutil.rmtree(self.output, ignore_errors=True)
+                source, cache = sync.Source(SID, "antigravity", self.path), {}
+                for start in range(0, len(records), step):
+                    self.append(records[start:start + step])
+                    sync.sync_source(source, subscribe=True, cache=cache)
+                self.assertEqual(self.destination.read_text(), expected)
+                self.assertEqual(len(list((self.output / SID / "assets/media").iterdir())), 2)
+
 
 if __name__ == "__main__":
     unittest.main()

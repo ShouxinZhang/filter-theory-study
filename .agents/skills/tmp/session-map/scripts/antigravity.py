@@ -1,6 +1,16 @@
 """Adapt Antigravity transcripts into the shared user/steps turn structure."""
 
+import re
+
 from models import TurnParser
+
+TRUNCATED_OUTPUT = re.compile(
+    r"\A((?:Created At: [^\n]+\n)?(?:Completed At: [^\n]+\n)?)"
+    r"The tool's output was truncated due to being too long\. "
+    r"You can find the full output in a file at "
+    r"(file:///[^\s\n]+/\.system_generated/steps/(\d+)/output\.txt)\.\n+"
+    r"Here is a preview with the middle of the output truncated:\n",
+)
 
 
 def matches(records):
@@ -51,19 +61,32 @@ def parse_turns(steps, assets=None):
 
 
 def normalize_turn(turn):
-    """Pair AGY's adjacent GENERIC outputs here, never in the shared renderer."""
+    """Pair AGY's adjacent GENERIC outputs and media here, never in the shared renderer."""
     steps = [dict(step) for step in turn["steps"]]
     for index, step in enumerate(steps):
         calls = step.get("tool_calls") or []
         if step.get("type") != "PLANNER_RESPONSE" or not calls:
             continue
-        results, following = [], index + 1
+        outputs, following = [], index + 1
         while (following < len(steps) and steps[following].get("type") == "GENERIC"
-               and len(results) < len(calls)):
-            results.append(steps[following].get("content", ""))
+               and len(outputs) < len(calls)):
+            outputs.append(steps[following])
             following += 1
-        results.extend([""] * (len(calls) - len(results)))
-        step["tool_calls"] = [{**call, "result": call.get("result", result)}
-                              for call, result in zip(calls, results)]
+        paired = []
+        for call_index, call in enumerate(calls):
+            generic = outputs[call_index] if call_index < len(outputs) else None
+            content = generic.get("content", "") if generic else ""
+            entry = {**call, "result": call.get("result", content)}
+            media = call.get("media") or (generic.get("media") if generic else None)
+            if media:
+                entry["media"] = [dict(item) for item in media if isinstance(item, dict)]
+            if generic and "output_uri" not in entry:
+                match = TRUNCATED_OUTPUT.match(content)
+                step_id = generic.get("step_index")
+                if match and (step_id is None or str(step_id) == match[3]):
+                    entry["output_prefix"] = match[1]
+                    entry["output_uri"] = match[2]
+            paired.append(entry)
+        step["tool_calls"] = paired
     return {**turn, "steps": steps}
 

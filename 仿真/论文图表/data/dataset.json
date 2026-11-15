@@ -1,0 +1,78 @@
+{
+  "directory": "<home>/Documents/GitHub/filter-theory-HIT/.agents/.tmp/task/2026-09-07_filter-baselines/data/714eaf41170ebb8d",
+  "dataset_id": "714eaf41170ebb8d",
+  "spec": {
+    "model": "gordon",
+    "steps": 100,
+    "trials": 8,
+    "seed": 62001
+  },
+  "generator": "57ad5983aebdacedf83409d154f0f3da179481fd265b12b8cad90e192c5f69a5",
+  "format": 1,
+  "trials": [
+    {
+      "trial": 0,
+      "seed": 62001,
+      "observations": "trial_0000/observations.csv",
+      "observations_sha256": "3603a3aaa084c3e12d680f5a9024c98737fac81cff5909f77be1a76bdc2e0c58",
+      "truth": "trial_0000/truth.csv",
+      "truth_sha256": "18cce19dfd43b92cc57802a19ae3211b69a40f9754cd6988e222010572ce063c"
+    },
+    {
+      "trial": 1,
+      "seed": 62002,
+      "observations": "trial_0001/observations.csv",
+      "observations_sha256": "2bc8bf5e0c0ce2e67474ddb77cda355057a7c0da30d2c502e4a348a384884b19",
+      "truth": "trial_0001/truth.csv",
+      "truth_sha256": "d2836ed505ac3c6f30a2e208061c34cf83581001415755e02b50ba6cbde1e14b"
+    },
+    {
+      "trial": 2,
+      "seed": 62003,
+      "observations": "trial_0002/observations.csv",
+      "observations_sha256": "3bf93b01d0448bd9acf5c1fcfcfde69a102a28e3d74033912d22fda43f75d270",
+      "truth": "trial_0002/truth.csv",
+      "truth_sha256": "9bb5b3f20458372c325c7e9f951f1af3bdd9187504d9393df9c8f65108593144"
+    },
+    {
+      "trial": 3,
+      "seed": 62004,
+      "observations": "trial_0003/observations.csv",
+      "observations_sha256": "53c0500de63b37f64ca93421101c89c0297cc42dd4ee7aae0497161b888f96c0",
+      "truth": "trial_0003/truth.csv",
+      "truth_sha256": "2cc6656f54af35c5b84d12ad3e396af04a4110c7982fd4cdd8eca70bc89ac135"
+    },
+    {
+      "trial": 4,
+      "seed": 62005,
+      "observations": "trial_0004/observations.csv",
+      "observations_sha256": "877034cba0b5daa63023b6c43eae951b0ef1bb79c5668483d7f0ca080deb0e07",
+      "truth": "trial_0004/truth.csv",
+      "truth_sha256": "92876ff2158727d9fca2ce483d667bd6f764c80cad48b47621ace7ff5f41c2b2"
+    },
+    {
+      "trial": 5,
+      "seed": 62006,
+      "observations": "trial_0005/observations.csv",
+      "observations_sha256": "1730ada30061ed38e38f3e0374ac5fa47c9899ad067489718459ba4e7118d1c6",
+      "truth": "trial_0005/truth.csv",
+      "truth_sha256": "9a509df30cdace4714b5fe8d16b596788d5a0089335d12973ae5d7416a4dd091"
+    },
+    {
+      "trial": 6,
+      "seed": 62007,
+      "observations": "trial_0006/observations.csv",
+      "observations_sha256": "93bd3f1f11d9ae92e6273a9f6fd782b850f8d0fcfe40a33a290f5849f0331a99",
+      "truth": "trial_0006/truth.csv",
+      "truth_sha256": "2293a792ce2472b0992abc98b5a68ffa0a6a66574776d37022722e6ffda86282"
+    },
+    {
+      "trial": 7,
+      "seed": 62008,
+      "observations": "trial_0007/observations.csv",
+      "observations_sha256": "69dc9433b3a0ea4c1d2e2d116fc79534cdf35434514b4d347d320af1b9e0886d",
+      "truth": "trial_0007/truth.csv",
+      "truth_sha256": "83ecd06af9b8c939ae93f1663c88d4325db8c20e3d491b283b6e6e86ec437f86"
+    }
+  ]
+}

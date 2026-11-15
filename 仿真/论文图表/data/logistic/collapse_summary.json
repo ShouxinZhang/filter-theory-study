@@ -1,0 +1,16 @@
+{
+  "bpf": {
+    "runs": 2048,
+    "ever_single_count": 2048,
+    "first_single_median": 16.0,
+    "final_single_count": 2048,
+    "final_unique_mean": 1
+  },
+  "etpf": {
+    "runs": 2048,
+    "ever_single_count": 0,
+    "first_single_median": null,
+    "final_single_count": 0,
+    "final_unique_mean": 69.66650390625
+  }
+}

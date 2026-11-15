@@ -1,0 +1,5 @@
+{
+  "paired_observation_noise_steps": 64000,
+  "max_observation_noise_difference": 4.440892098500626e-16,
+  "max_q0_deterministic_transition_residual_steps_2_to_1000": 0
+}

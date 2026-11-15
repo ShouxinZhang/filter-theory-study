@@ -14,12 +14,16 @@ from urllib.parse import quote, unquote, urlsplit
 DATA_URI = re.compile(r"data:([\w.+-]+/[\w.+-]+);base64,([A-Za-z0-9+/=]+(?:\\/[A-Za-z0-9+/=]*)*)(?![\w+/=])")
 EXTENSIONS = {"image/png": ".png", "image/jpeg": ".jpg", "image/gif": ".gif",
               "image/webp": ".webp", "image/svg+xml": ".svg", "image/avif": ".avif",
+              "image/bmp": ".bmp", "application/pdf": ".pdf",
               "audio/mpeg": ".mp3", "audio/wav": ".wav", "video/mp4": ".mp4"}
 TOOL_LIMIT = 16 * 1024
 LINE_LIMIT = 4096
-IMAGE_LINK = re.compile(r'!\[([^\]\n]*)\]\((<[^>\n]+>|(?:[^()\n]|\([^()\n]*\))+)\)')
 IMAGE_SUFFIXES = {".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg", ".avif", ".bmp"}
-LOCAL_LINK = re.compile(r'(?<!!)\[([^\]\n]*)\]\((<[^>\n]+>|(?:[^()\n]|\([^()\n]*\))+)\)')
+LINK_LABEL = r"(?:`+[^`\n]*`+|!\[[^\]\n]*\]\([^)\n]*\)|[^\[\]`\n])*"
+LINK_TARGET = r"<[^>\n]+>|(?:[^()\n]|\([^()\n]*\))+"
+IMAGE_LINK = re.compile(rf"!\[({LINK_LABEL})\]\(({LINK_TARGET})\)")
+LOCAL_LINK = re.compile(rf"(?<!!)\[({LINK_LABEL})\]\(({LINK_TARGET})\)")
+PROSE_ATOM = re.compile(rf"(`+[^`\n]*`+)|(!?\[{LINK_LABEL}\]\((?:{LINK_TARGET})\))")
 
 
 def rewrite_prose(text, transform):
@@ -37,9 +41,15 @@ def rewrite_prose(text, transform):
         elif fence:
             lines.append(line)
         else:
-            parts = re.split(r"(`+[^`\n]*`+)", line)
-            lines.append("".join(part if i % 2 else transform(part)
-                                 for i, part in enumerate(parts)))
+            out, cursor = [], 0
+            for match in PROSE_ATOM.finditer(line):
+                if match.start() > cursor:
+                    out.append(transform(line[cursor:match.start()]))
+                out.append(match[1] if match[1] else transform(match[2]))
+                cursor = match.end()
+            if cursor < len(line):
+                out.append(transform(line[cursor:]))
+            lines.append("".join(out))
     return "".join(lines)
 
 
@@ -48,26 +58,62 @@ class AssetStore:
         self.directory = Path(directory)
         self.local_images = {}
 
-    def image_path(self, target):
-        """Archive explicitly referenced local images, never fetch remote URLs."""
-        if target.startswith("assets/media/"):
-            return target
-        parsed = urlsplit(target)
-        if parsed.scheme not in {"", "file"} or parsed.netloc:
+    def _local_path(self, target):
+        if not isinstance(target, str) or not target:
+            return None
+        try:
+            parsed = urlsplit(target)
+        except ValueError:
+            return None
+        if parsed.scheme.lower() not in {"", "file"} or parsed.netloc not in {"", "localhost"}:
             return None
         path = Path(unquote(parsed.path))
-        if path.suffix.lower() not in IMAGE_SUFFIXES:
-            return None
         if not path.is_absolute():
             path = self.directory / path
+        return path
+
+    def media_path(self, target, mime=""):
+        """Archive explicitly referenced local media files, never fetch remote URLs."""
+        if not isinstance(target, str) or not target:
+            return None
+        if target.startswith("assets/media/"):
+            return target
+        if target.startswith("data:"):
+            path, refs = self.extract(target)
+            return path if refs else None
+        path = self._local_path(target)
+        if path is None:
+            return None
+        suffix = path.suffix.lower() or EXTENSIONS.get((mime or "").lower(), ".bin")
         try:
             stat = path.stat()
             key = (str(path), stat.st_mtime_ns, stat.st_size)
             if key not in self.local_images:
-                self.local_images[key] = self.put(path.read_bytes(), "media", path.suffix.lower())
+                self.local_images[key] = self.put(path.read_bytes(), "media", suffix)
             return self.local_images[key]
         except OSError:
             return None
+
+    def read_local_text(self, target):
+        """Read a host-generated local UTF-8 sidecar transcript when available."""
+        path = self._local_path(target)
+        if path is None:
+            return None
+        try:
+            return path.read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            return None
+
+    def image_path(self, target):
+        """Archive explicitly referenced local images, never fetch remote URLs."""
+        if not isinstance(target, str) or not target:
+            return None
+        if target.startswith("assets/media/"):
+            return target
+        path = self._local_path(target)
+        if path is None or path.suffix.lower() not in IMAGE_SUFFIXES:
+            return None
+        return self.media_path(target)
 
     def display_images(self, text):
         """Rewrite visible Markdown images; leave code examples untouched."""
@@ -176,9 +222,9 @@ class AssetStore:
             f"- [附件 {Path(path).name[:12]}]({path})" for path in sorted(references)
         ) if references else ""
 
-    def compact_tool(self, body, references=()):
+    def compact_tool(self, body, references=(), force=False):
         """body is already sanitized; full text remains lossless in a sidecar."""
-        if (len(body.encode("utf-8")) <= TOOL_LIMIT
+        if (not force and len(body.encode("utf-8")) <= TOOL_LIMIT
                 and all(len(line) <= LINE_LIMIT for line in body.splitlines())):
             return body + self.links(references)
         path = self.put(body.encode("utf-8"), "tool-output", ".txt")

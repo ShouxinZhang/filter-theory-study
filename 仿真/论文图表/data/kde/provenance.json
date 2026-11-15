@@ -1,0 +1,137 @@
+{
+  "dataset": "714eaf41170ebb8d",
+  "trial": 0,
+  "steps": [
+    11,
+    21
+  ],
+  "n": 500,
+  "interval": 1,
+  "epsilon": 1,
+  "sinkhorn_tolerance": 1e-08,
+  "sinkhorn_max_iterations": 1000,
+  "algorithm_seeds": {
+    "bpf": 91001,
+    "enkf": 91001,
+    "etpf": 91001,
+    "ekf": 91001
+  },
+  "bandwidth_rule": "各集合样本标准差乘N^(-1/5)，Scott规则",
+  "diagnostics": [
+    {
+      "algorithm": "bpf",
+      "particle_stage": "系统重采样后的等权粒子",
+      "step": "11",
+      "n": "500",
+      "bandwidth": "3.0653628420711221",
+      "sample_mean": "6.8414543083089541",
+      "sample_variance": "112.86304911218345",
+      "ekf_mean": "-15.335148389976222",
+      "ekf_variance": "3.9133664387640454",
+      "kde_integral": "0.99999999984784882",
+      "ekf_integral": "0.99999999999999778",
+      "truth": 13.226074608932812
+    },
+    {
+      "algorithm": "enkf",
+      "particle_stage": "观测更新后的集合",
+      "step": "11",
+      "n": "500",
+      "bandwidth": "1.4535402536721713",
+      "sample_mean": "4.4373784890713441",
+      "sample_variance": "25.377108036598113",
+      "ekf_mean": "-15.335148389976222",
+      "ekf_variance": "3.9133664387640454",
+      "kde_integral": "0.99999999999728395",
+      "ekf_integral": "0.99999999901293224",
+      "truth": 13.226074608932812
+    },
+    {
+      "algorithm": "etpf",
+      "particle_stage": "输运后的等权粒子",
+      "step": "11",
+      "n": "500",
+      "bandwidth": "3.5369470731285779",
+      "sample_mean": "1.1770264367622054",
+      "sample_variance": "150.26060180769019",
+      "ekf_mean": "-15.335148389976222",
+      "ekf_variance": "3.9133664387640454",
+      "kde_integral": "0.99999999974324394",
+      "ekf_integral": "0.99999999999999867",
+      "truth": 13.226074608932812
+    },
+    {
+      "algorithm": "bpf",
+      "particle_stage": "系统重采样后的等权粒子",
+      "step": "21",
+      "n": "500",
+      "bandwidth": "0.65032025229641166",
+      "sample_mean": "-4.8805027366466183",
+      "sample_variance": "5.0797525826205465",
+      "ekf_mean": "-5.7235966920863683",
+      "ekf_variance": "2.9085470188114853",
+      "kde_integral": "0.99999999999604694",
+      "ekf_integral": "0.99999999901324821",
+      "truth": -7.811674223685695
+    },
+    {
+      "algorithm": "enkf",
+      "particle_stage": "观测更新后的集合",
+      "step": "21",
+      "n": "500",
+      "bandwidth": "1.0226357336570575",
+      "sample_mean": "-4.4892489686116335",
+      "sample_variance": "12.561165273939169",
+      "ekf_mean": "-5.7235966920863683",
+      "ekf_variance": "2.9085470188114853",
+      "kde_integral": "0.99999999999409728",
+      "ekf_integral": "0.99999999992208266",
+      "truth": -7.811674223685695
+    },
+    {
+      "algorithm": "etpf",
+      "particle_stage": "输运后的等权粒子",
+      "step": "21",
+      "n": "500",
+      "bandwidth": "0.60595199054638516",
+      "sample_mean": "-4.9386120177586905",
+      "sample_variance": "4.4102624502879371",
+      "ekf_mean": "-5.7235966920863683",
+      "ekf_variance": "2.9085470188114853",
+      "kde_integral": "0.99999999999802391",
+      "ekf_integral": "0.99999999901325309",
+      "truth": -7.811674223685695
+    }
+  ],
+  "font": {
+    "family": "SimSun",
+    "path": "/usr/local/share/fonts/simsun.ttc",
+    "sha256": "05068fa1acae212120dcc7e98c884b174a6eca252a636b4b64030235473ec27e",
+    "latin_family": "Times New Roman",
+    "latin_path": "/usr/share/fonts/truetype/msttcorefonts/Times_New_Roman.ttf",
+    "latin_sha256": "4e98adeff8ccc8ef4e3ece8d4547e288ff85fdc9c7ca711a4599c234874bbe86",
+    "math_renderer": "Matplotlib MathText",
+    "math_fontset": "stix",
+    "png_dpi": 300,
+    "vector_format": "SVG",
+    "svg_fonttype": "path"
+  },
+  "method_reference": "https://docs.scipy.org/doc/scipy-1.14.1/reference/generated/scipy.stats.gaussian_kde.html",
+  "inputs": {
+    "<home>/Documents/GitHub/filter-theory-HIT/.agents/.tmp/task/2026-09-07_filter-baselines/data/714eaf41170ebb8d/trial_0000/observations.csv": "3603a3aaa084c3e12d680f5a9024c98737fac81cff5909f77be1a76bdc2e0c58",
+    "<home>/Documents/GitHub/filter-theory-HIT/.agents/.tmp/task/2026-09-07_filter-baselines/data/714eaf41170ebb8d/trial_0000/truth.csv": "18cce19dfd43b92cc57802a19ae3211b69a40f9754cd6988e222010572ce063c",
+    "<home>/Documents/GitHub/filter-theory-HIT/.agents/.tmp/task/2026-09-07_filter-baselines/runs/quick-eb95c99ee644/jobs/bpf_n500_e0_m1/trial_0000/filter.csv": "76657b6bc6d118013df58cb449f44ec8a89b97f6b0f95fd58ccb3eee7344c369",
+    "<home>/Documents/GitHub/filter-theory-HIT/.agents/.tmp/task/2026-09-07_filter-baselines/runs/quick-eb95c99ee644/jobs/enkf_n500_e0_m1/trial_0000/filter.csv": "c6da169ae4c9768b1934110f021fdf492c460cbab8b956915d623030c73e7dba",
+    "<home>/Documents/GitHub/filter-theory-HIT/.agents/.tmp/task/2026-09-07_filter-baselines/runs/quick-eb95c99ee644/jobs/etpf_n500_e1_m1/trial_0000/filter.csv": "5534605ae3b4f2f18b6e94d9ac5301beb167929bf6ea1a7c6080f1add119b766",
+    "<home>/Documents/GitHub/filter-theory-HIT/.agents/.tmp/task/2026-09-07_filter-baselines/runs/quick-eb95c99ee644/jobs/ekf_n0_e0_m1/trial_0000/filter.csv": "675e6bfbd2a4e559be68909465eb985892a3bd0dabf65c0c8edb87e53a2c7d07"
+  },
+  "source": {
+    "apps/posterior_snapshot.cpp": "aa3df8b76a9304783ad426d230012b3903a866e317817f06f578fbe57223d979",
+    "apps/kde_density.cpp": "49c455a37055e72a2e3902c7a97560a6cd3a8d83a19ccc49b0acd80cb707cf65",
+    "src/evaluation/density.cpp": "03971d82b47dccd823a6ed32e4d1c1547df7605a1b3e26f05ce861c8669da7cc",
+    "include/baseline/density.hpp": "52953b8efc27b46741ff68ec2b1d675ae1bbcc51a3d21beee77a4ab3fe4bd6fc",
+    "build/posterior_snapshot": "8a37fc7cb4700eda76dd4ebd00fc85c1794ec31595741f1d5ffee88037b54ff1",
+    "build/kde_density": "4c5bf64ffa007740dc6bbc7fad75a92c33bc543facbe30db4ea7659eb137bd6a"
+  },
+  "plot_script_sha256": "ea938872f64c839ae0e31e27ed6526b13ad20d7544c6336c0cc98088892ab151"
+}

@@ -1,0 +1,8 @@
+{
+  "reference_mean_refinement": 1.6524730440670155e-06,
+  "reference_variance_refinement": 7.2183459472185962e-07,
+  "max_decomposition_residual": 1.7618285302889447e-19,
+  "max_first_step_pair_difference": 0,
+  "max_etpf_centroid_defect": 9.8809849191638932e-15,
+  "max_transport_marginal_residual": 3.219646771412954e-15
+}

@@ -1,0 +1,43 @@
+{
+  "run": "quick-eb95c99ee644",
+  "sources": {
+    "summary.csv": "1e6282d8f8c25906e31522ba8350434ea3f59339f18484d430e2463f648273b8",
+    "time_series.csv": "9ab039275ecee5029c94e2a0081560da24272bba6c45d4853e9711a039c155a9",
+    "config.json": "0eb2b338f22c64d302d3d4bb064a9eae36b850092cfb10362b51b35af29287e7",
+    "dataset.json": "ccc7b76cd1012000742f80c916fec74ac8c8fe7d35dfe7d7cbfc2fcb0c164c12"
+  },
+  "serial_timing_index": "984c0b4ca9f206f7d53241112f9689ef0ad7eabb9c3b3d96adb84bf1a7cdc44d",
+  "statistics_executable": "d35610580436f78cb26cfa024458f38c7bdf2980e96fe13abb6f9ecd67959694",
+  "kde_reference": "cc14198de82025f6cc407f49c9a4d99bc8270cef15d39709721930d4cb75ae22",
+  "tex_sources": {
+    "simulation.tex": "e7772212fe80673cccc3acfe186515b56430237ad3e6d81d0ad45772bd837dca",
+    "nonlinear_filtering.tex": "2c9b167bcd302220d7231fe93341644a830f40f17bd83a082654729d01ac219c",
+    "algorithm_analysis.tex": "ec02ee16e438971f2f286c09e41066e5f9f219befbe1e53c7ba3a9cb80234e8d",
+    "appendix.tex": "35fd6993320af4854cc610cc9b8956203fb893f78255b0f9d7fab8fe503a2513"
+  },
+  "bayes_reference": {
+    "bayes_confidence.csv": "a111964ae090e1cb13666718a436e107f42b86fcc78dc8485ee7c8eec0a00ead",
+    "bayes_original.csv": "bbf443c685fb153f7f585e48768360193ad5a80a8d4d1d18943b7d79e2b988e1",
+    "bayes_monte_carlo.csv": "0e2787cbad6d2d6aa4901a22da9a3eb0cab193b0a2f0197d408c971fd21c1a71"
+  },
+  "statistics_source": "b10ad14fd9987184f9327f971e2e8240eb3f27b48aa4515cf790ba3875f2493e",
+  "font": {
+    "family": "SimSun",
+    "path": "/usr/local/share/fonts/simsun.ttc",
+    "sha256": "05068fa1acae212120dcc7e98c884b174a6eca252a636b4b64030235473ec27e",
+    "latin_family": "Times New Roman",
+    "latin_path": "/usr/share/fonts/truetype/msttcorefonts/Times_New_Roman.ttf",
+    "latin_sha256": "4e98adeff8ccc8ef4e3ece8d4547e288ff85fdc9c7ca711a4599c234874bbe86",
+    "math_renderer": "Matplotlib MathText",
+    "math_fontset": "stix",
+    "png_dpi": 300,
+    "vector_format": "SVG",
+    "svg_fonttype": "path"
+  },
+  "scripts": {
+    "prepare_assets.py": "736f32c887e672900905f74d09e26903bc34f515aaddfeb53f27742281cea9db",
+    "benchmark_serial.py": "7bc3c0bf06b6fd44f54f87c70da99ce517312078b177bfdd3575dad8f86ab946",
+    "paper_plots.py": "dfc76f79d3daf85a5183122b5edc6d4af1bd4e79ee3e3f773dca780434b57785",
+    "prepare_density.py": "ea938872f64c839ae0e31e27ed6526b13ad20d7544c6336c0cc98088892ab151"
+  }
+}

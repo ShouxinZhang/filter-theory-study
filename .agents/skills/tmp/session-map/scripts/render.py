@@ -1,8 +1,11 @@
 """Render normalized turns as Markdown; no source discovery or subscriptions."""
 import json
 import os
+from pathlib import Path
 import re
+from urllib.parse import unquote, urlsplit
 
+from assets import IMAGE_SUFFIXES
 from models import ts
 
 MAP_TMPL = """# 本 session 时序 · {sid8}
@@ -50,13 +53,24 @@ def tool_body(tc, result, assets=None):
     a, n = tc.get("args", {}), tc.get("name", "?")
     result = tc.get("result", result)
     references = set()
+    force_sidecar = False
     if assets:
         cleaned, refs = assets.extract(json.dumps(a, ensure_ascii=False))
         a = json.loads(cleaned)
         references.update(refs)
+        if tc.get("output_uri"):
+            full = assets.read_local_text(tc["output_uri"])
+            if full is not None:
+                result = tc.get("output_prefix", "") + full
+                force_sidecar = True
         if result:
             result, refs = assets.extract(result)
             references.update(refs)
+        for item in tc.get("media") or []:
+            if isinstance(item, dict):
+                path = assets.media_path(item.get("uri", ""), item.get("mime_type", ""))
+                if path:
+                    references.add(path)
     if n == "run_command":
         head = fence(a.get("CommandLine", ""), "bash")
     elif n in {"exec", "functions.exec"} and isinstance(a.get("input"), str):
@@ -74,7 +88,7 @@ def tool_body(tc, result, assets=None):
     if result:
         out = fence(result, "text")
     body = f"{head}\n\n{out}"
-    return assets.compact_tool(body, references) if assets else body
+    return assets.compact_tool(body, references, force=force_sidecar) if assets else body
 
 
 def thought_label(st, i):
@@ -88,6 +102,26 @@ def thought_label(st, i):
         except Exception:
             pass
     return "Thought"
+
+
+def media_markdown(item, assets=None):
+    if not isinstance(item, dict):
+        return ""
+    uri, mime = item.get("uri") or "", item.get("mime_type") or ""
+    try:
+        raw_path = unquote(urlsplit(uri).path)
+    except ValueError:
+        raw_path = uri
+    name = os.path.basename(raw_path)
+    is_image = Path(raw_path).suffix.lower() in IMAGE_SUFFIXES or mime.lower().startswith("image/")
+    archived = assets.media_path(uri, mime) if assets else None
+    if archived:
+        if Path(archived).suffix.lower() in IMAGE_SUFFIXES:
+            return f"![图像附件]({archived})"
+        return f"📎 [{esc(name or Path(archived).name[:12])}]({archived})"
+    if is_image:
+        return "[图像附件]"
+    return f"[附件 {esc(name)}]" if name else "[附件]"
 
 
 def render_turn(k, t, assets=None):
@@ -104,14 +138,13 @@ def render_turn(k, t, assets=None):
     st = t["steps"]
     when = ts(u["created_at"])
     lines = [f'<a id="p{k}"></a>', "", f"## p{k} · {when:%m-%d %H:%M}", ""]
-    txt = esc(text(user_text(u.get("content"))))
+    prompt_parts = [esc(text(user_text(u.get("content")))),
+                    *(media_markdown(m, assets) for m in u.get("media") or [])]
+    txt = "\n\n".join(part for part in prompt_parts if part)
     lines += ["> " + (ln + "  " if ln else "") for ln in txt.splitlines()] + [""]
-    for m in u.get("media") or []:
-        link = f"- 📎 [{os.path.basename(m.get('uri',''))}](file://{m.get('uri','')})"
-        lines.append(assets.display_links(link) if assets else link)
     final_i = None
     for i, d in enumerate(st):
-        if (d.get("type") == "PLANNER_RESPONSE" and d.get("content")
+        if (d.get("type") == "PLANNER_RESPONSE" and (d.get("content") or d.get("media"))
                 and not d.get("tool_calls") and d.get("phase") != "commentary"):
             final_i = i
     inner = []
@@ -126,6 +159,12 @@ def render_turn(k, t, assets=None):
                 inner.append(details(thought_label(st, i), esc(text(d["thinking"]))))
             if d.get("content"):
                 inner.append(text(d["content"]))
+            if assets:
+                for item in d.get("media") or []:
+                    if isinstance(item, dict):
+                        path = assets.media_path(item.get("uri", ""), item.get("mime_type", ""))
+                        if path:
+                            references.add(path)
             for tc in d.get("tool_calls") or []:
                 inner.append(details(tool_title(tc), tool_body(tc, "", assets)))
         elif ty == "ERROR_MESSAGE":
@@ -137,7 +176,9 @@ def render_turn(k, t, assets=None):
         status = {"working": "Working", "interrupted": "Interrupted"}.get(t.get("status"), "Worked")
         lines += ["", details(f"{status} for {dur}s · {nt} tools", "\n\n".join(inner) or "_(空)_")]
     if final_i is not None:
-        lines += ["", text(st[final_i]["content"].strip())]
+        final_parts = [text((st[final_i].get("content") or "").strip()),
+                       *(media_markdown(m, assets) for m in st[final_i].get("media") or [])]
+        lines += ["", "\n\n".join(part for part in final_parts if part)]
     if assets and references:
         lines.append(assets.links(references))
     lines += ["", "---", ""]
@@ -150,7 +191,7 @@ def assemble(sid, src, harness, header, turns, bodies):
     for k, t in enumerate(turns, 1):
         ut = user_text(t["user"].get("content"))
         first = ut.splitlines()[0][:60] if ut else ""
-        if first.startswith("!["):
+        if first.startswith("![") or (not first and t["user"].get("media")):
             first = "图像附件"
         idx.append(f"- [p{k}](#p{k}) {esc(first)}")
     head = (f"{header}\n\n# prompts · {sid[:8]}\n\n"

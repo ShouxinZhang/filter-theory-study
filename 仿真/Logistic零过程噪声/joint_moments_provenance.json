@@ -1,0 +1,13 @@
+{
+  "created": "2026-09-14T22:03:49.363523+08:00",
+  "uses_existing_initializations": true,
+  "paths": 64,
+  "repeats": 32,
+  "steps": 1000,
+  "off_diagonal_method": "direct prefix product accumulation with multivariate Welford centering",
+  "source_sha256": {
+    ".agents/.tmp/task/2026-09-14_logistic-square-q0-control/joint_moments.cpp": "3555c11a2b2f8d38864ed5db6d9d4bd9ced091c0c9ad5b0b23b3c979eff6148c",
+    ".agents/.tmp/task/2026-09-14_logistic-square-q0-control/run_joint_moments.sh": "7b4d5a55d0a52a2f19ae1e2898ca70197c2b4c0f4ca10367c05418806c05dc0e",
+    ".agents/.tmp/task/2026-09-14_logistic-square-q0-control/experiment.cpp": "4322d3e21370fcc65c132cd189ee6dece5881ebaeac523a778a2db25dda9919c"
+  }
+}

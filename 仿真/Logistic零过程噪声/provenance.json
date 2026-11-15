@@ -1,0 +1,28 @@
+{
+  "timestamp": "2026-09-14T21:49:40.655029+08:00",
+  "state": "4*x*(1-x)",
+  "observation": "x*x+normal(0,sqrt(R))",
+  "Q": 0,
+  "R": 0.1,
+  "N": 128,
+  "initial": "Uniform[0,1]",
+  "seed": 202609142122,
+  "paths": 64,
+  "steps": 1000,
+  "algorithm_repeats": 32,
+  "reference_grids": [
+    8192,
+    16384
+  ],
+  "control": ".agents/.tmp/task/2026-09-14_logistic-square-four-errors",
+  "source_sha256": {
+    ".agents/.tmp/task/2026-09-14_logistic-square-q0-control/experiment.cpp": "4322d3e21370fcc65c132cd189ee6dece5881ebaeac523a778a2db25dda9919c",
+    ".agents/.tmp/task/2026-09-14_logistic-square-q0-control/reference.cpp": "e568c11c5197285485f832d0a14347e696ade7c4642a70a8aa5afed575f52d6c",
+    ".agents/.tmp/task/2026-09-14_logistic-square-q0-control/run.sh": "efadb442a4477ac847a474689bb34363f05ba54fd084a99442d7ec4276574530",
+    "仿真/code/src/core/random.cpp": "4ff7ebb199420a2f6098c38cc7a72e101a4d54c1a872f523d464fbcde71fdf87",
+    "仿真/code/src/core/numerics.cpp": "8c76916615904c115da93ff20f227f72189422ec4ed9be8a74f2e2a27614b75b",
+    "仿真/code/src/filter/resampling.cpp": "b18fb97cab681db73299b33e96313c4ddecf17ca3656a464ac7410897c245f06",
+    "仿真/code/src/transport/monotone.cpp": "702ad2d183027863415b35bffad0933eda4d2ea38d954aaf7f5e0cd045ecd4e3",
+    "仿真/code/CMakeLists.txt": "126023f4baadfc61cb9caa5d67ead7b5650bf747d04494cefa48272ab461aac1"
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "dataset": {
+    "model": "gordon",
+    "steps": 32,
+    "trials": 3,
+    "seed": 81001
+  },
+  "algorithm_seed": 99001,
+  "algorithms": [
+    "ekf",
+    "bpf",
+    "enkf",
+    "etpf"
+  ],
+  "particles": [
+    32,
+    64
+  ],
+  "epsilons": [
+    0.1,
+    10
+  ],
+  "intervals": [
+    1,
+    4
+  ],
+  "solver": {
+    "tolerance": 1e-8,
+    "max_iterations": 300
+  },
+  "bootstrap": 300,
+  "snapshots": true,
+  "reference_n": 64,
+  "reference_epsilon": 10
+}

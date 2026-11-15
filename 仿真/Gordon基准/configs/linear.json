@@ -1,0 +1,35 @@
+{
+  "dataset": {
+    "model": "linear",
+    "steps": 50,
+    "trials": 20,
+    "seed": 52001
+  },
+  "algorithm_seed": 90001,
+  "algorithms": [
+    "kf",
+    "bpf",
+    "enkf",
+    "etpf"
+  ],
+  "particles": [
+    100,
+    500
+  ],
+  "epsilons": [
+    0.1,
+    1
+  ],
+  "intervals": [
+    1,
+    4
+  ],
+  "solver": {
+    "tolerance": 1e-8,
+    "max_iterations": 1000
+  },
+  "bootstrap": 1000,
+  "snapshots": false,
+  "reference_n": 500,
+  "reference_epsilon": 0.1
+}

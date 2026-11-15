@@ -174,10 +174,15 @@ class SyncTests(unittest.TestCase):
         self.assertEqual(store.display_links(source), expected)
         self.assertEqual(store.display_links(expected), expected)
         self.assertEqual((folder / unquote(urlsplit(relative).path)).resolve(), target)
-        # Also support raw Unicode and spaces commonly emitted by Antigravity.
+        # Also support raw Unicode, spaces, and inline code labels emitted by Antigravity.
         raw = f"[文档](file://{target.parent}/note (one).md)"
         self.assertNotIn("file:", store.display_links(raw))
         self.assertIn("note%20%28one%29.md", store.display_links(raw))
+        code_label = f"[`note (one) #2.md`]({url})"
+        self.assertEqual(store.display_links(code_label), f"[`note (one) #2.md`]({relative}#L71-L75)")
+        unclosed = f"x[0 and `[doc]({url})` plus [`doc.md`]({url})"
+        self.assertEqual(store.display_links(unclosed),
+                         f"x[0 and `[doc]({url})` plus [`doc.md`]({relative}#L71-L75)")
 
     def test_antigravity_adapter_pairs_outputs_without_mutating_records(self):
         records = [
@@ -543,6 +548,83 @@ class SyncTests(unittest.TestCase):
         self.assertIn("agent name: gemini-3.8-flash", header)
         self.assertIn("harness: antigravity", header)
         self.assertIn(f"conversation://{SID}", header)
+
+    def test_antigravity_user_tool_media_and_truncated_sidecar(self):
+        session_brain = self.brain / SID
+        uploaded = session_brain / ".user_uploaded/photo.jpg"
+        tool_img = session_brain / ".system_generated/logs/media/step_2_media_0.png"
+        tool_pdf = session_brain / ".system_generated/logs/media/step_3_media_0.pdf"
+        sidecar = session_brain / ".system_generated/steps/4/output.txt"
+        spoof = session_brain / ".system_generated/steps/999/output.txt"
+        for item in (uploaded, tool_img, tool_pdf, sidecar, spoof):
+            item.parent.mkdir(parents=True, exist_ok=True)
+        uploaded.write_bytes(b"\xff\xd8\xff\xe0user-jpeg")
+        tool_img.write_bytes(b"\x89PNG\r\n\x1a\ntool-png")
+        tool_pdf.write_bytes(b"%PDF-1.7\ntool-pdf")
+        full_stdout = "Command exited with code 0.\n\nCommand output:\n" + ("FULL_LINE\n" * 120)
+        sidecar.write_text(full_stdout, encoding="utf-8")
+        spoof.write_text("SPOOF_SECRET", encoding="utf-8")
+
+        path = session_brain / ".system_generated/logs/transcript_full.jsonl"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        truncated = (
+            "Created At: 2026-11-15T10:00:00+08:00\n"
+            "Completed At: 2026-11-15T10:00:01+08:00\n"
+            "The tool's output was truncated due to being too long. "
+            f"You can find the full output in a file at {sidecar.as_uri()}.\n\n"
+            "Here is a preview with the middle of the output truncated:\nPREVIEW_ONLY\n"
+        )
+        spoofed = (
+            "Created At: 2026-11-15T10:00:02+08:00\n"
+            "Completed At: 2026-11-15T10:00:03+08:00\n"
+            "The tool's output was truncated due to being too long. "
+            f"You can find the full output in a file at {spoof.as_uri()}.\n\n"
+            "Here is a preview with the middle of the output truncated:\nMISMATCHED_STEP_INDEX\n"
+        )
+        records = [
+            {"step_index": 0, "type": "USER_INPUT", "created_at": STAMP,
+             "content": "<USER_REQUEST></USER_REQUEST>",
+             "media": [{"mime_type": "image/png", "uri": str(uploaded)}]},
+            {"step_index": 1, "type": "PLANNER_RESPONSE", "created_at": STAMP, "tool_calls": [
+                {"name": "read_file", "args": {"Path": "/tmp/a.png"}},
+                {"name": "read_file", "args": {"Path": "/tmp/b.pdf"}},
+                {"name": "run_command", "args": {"CommandLine": "seq 120", "toolSummary": "Count"}},
+                {"name": "run_command", "args": {"CommandLine": "echo spoof", "toolSummary": "Spoof"}},
+            ]},
+            {"step_index": 2, "type": "GENERIC", "created_at": STAMP,
+             "content": "Showing binary file of type image/png",
+             "media": [{"mime_type": "image/png", "uri": tool_img.as_uri()}]},
+            {"step_index": 3, "type": "GENERIC", "created_at": STAMP,
+             "content": "Showing binary file of type application/pdf",
+             "media": [{"mime_type": "application/pdf", "uri": tool_pdf.as_uri()}]},
+            {"step_index": 4, "type": "GENERIC", "created_at": STAMP, "content": truncated},
+            {"step_index": 5, "type": "GENERIC", "created_at": STAMP, "content": spoofed},
+            {"step_index": 6, "type": "PLANNER_RESPONSE", "created_at": STAMP, "content": "all inspected"},
+        ]
+        path.write_text("".join(json.dumps(row) + "\n" for row in records), encoding="utf-8")
+
+        sync.sync_source(sync.Source(SID, "antigravity", path), subscribe=True)
+        folder = self.output / SID
+        text = (folder / "prompts.md").read_text(encoding="utf-8")
+        media_files = {p.suffix: p.read_bytes() for p in (folder / "assets/media").iterdir()}
+        self.assertEqual(media_files, {
+            ".jpg": b"\xff\xd8\xff\xe0user-jpeg",
+            ".png": b"\x89PNG\r\n\x1a\ntool-png",
+            ".pdf": b"%PDF-1.7\ntool-pdf",
+        })
+        self.assertIn("- [p1](#p1) 图像附件", text)
+        self.assertIn("> ![图像附件](assets/media/", text)
+        self.assertNotIn(".user_uploaded", text)
+        self.assertNotIn("file://file://", text)
+        for item in (folder / "assets/media").iterdir():
+            if item.suffix in {".png", ".pdf"}:
+                self.assertIn(f"- [附件 {item.name[:12]}](assets/media/{item.name})", text)
+        sidecars = list((folder / "assets/tool-output").iterdir())
+        self.assertEqual(len(sidecars), 1)
+        self.assertIn("FULL_LINE\n" * 120, sidecars[0].read_text(encoding="utf-8"))
+        self.assertNotIn("PREVIEW_ONLY", sidecars[0].read_text(encoding="utf-8"))
+        self.assertNotIn("SPOOF_SECRET", text)
+        self.assertIn("MISMATCHED_STEP_INDEX", text)
 
 
 if __name__ == "__main__":

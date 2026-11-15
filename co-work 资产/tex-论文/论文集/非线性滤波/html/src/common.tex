@@ -1,0 +1,24 @@
+% 所有 standalone 图/算法共用的导言区（build.py 经 TEXINPUTS 提供）。
+\usepackage{amsmath,amssymb}
+\usepackage{xeCJK}
+\setCJKmainfont{FandolSong-Regular.otf}[BoldFont=FandolSong-Bold.otf]
+\usepackage{xcolor}
+\definecolor{accent}{HTML}{1F6FB2}
+\usepackage{mathrsfs,pifont}
+\input{macros}
+% TeX 侧用 pifont 的原符号；MathJax 侧见 macros.tex
+\renewcommand{\optstar}{\text{\ding{75}}}
+
+\makeatletter
+% ---- 交叉引用：labels.tex 由 build.py 生成，编号以 HTML 侧为唯一来源 ----
+\begingroup\catcode`\#=12 \gdef\lbl@hash{#}\endgroup
+\newcommand{\lbl}[3]{% {key}{显示文本}{HTML id}
+  \expandafter\gdef\csname lbl@d@#1\endcsname{#2}%
+  \expandafter\gdef\csname lbl@i@#1\endcsname{#3}}
+\input{labels}
+% dvisvgm 将 html: special 转成 SVG <a>；内联到页面后即为页内跳转
+\newcommand{\hlink}[2]{\special{html:<a href="\lbl@hash#1">}#2\special{html:</a>}}
+\newcommand{\cref}[1]{\@ifundefined{lbl@d@#1}%
+  {\textbf{??}\typeout{UNDEFINED-REF: #1}}%
+  {\hlink{\csname lbl@i@#1\endcsname}{\textcolor{accent}{\csname lbl@d@#1\endcsname}}}}
+\makeatother

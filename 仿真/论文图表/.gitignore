@@ -1,0 +1,4 @@
+__pycache__/
+data/timing/*/
+figures/*.png
+figures/*.svg
