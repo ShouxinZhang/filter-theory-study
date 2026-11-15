@@ -19,10 +19,12 @@
   };
   const escHtml = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
   const escRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const ccIco = (d, sz = 14) =>
+    `<svg class="cc-ico" width="${sz}" height="${sz}" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
 
-  let docRoot, splitBtn, edPane, resizer, fileSelect, dirtyDot;
+  let docRoot, splitBtn, edPane, resizer, fileSelect, dirtyDot, saveBtn, edMenu, histPanel;
   let findBar, findInput, findCountEl, caseBtn, regexBtn, globalBox;
-  let autoSaveBtn, linkSyncBtn, statusLeft, statusRight;
+  let linkSyncChk, autoSaveChk, statusLeft, statusRight;
   let edScroll, edStage, edBackdrop, edTa;
   let aimBadge, errBanner;
 
@@ -39,6 +41,8 @@
   let syncRange = null; // { l1, l2 }
   let findState = { q: "", cs: false, rx: false, hits: [], idx: -1 };
   let autoSaveTimer = null;
+  let saveInFlight = false;
+  let saveQueued = false;
   let peerTimer = null;
   let hlClearTimer = null;
 
@@ -304,6 +308,7 @@
   function markDirty(dirty) {
     isDirty = dirty;
     if (dirtyDot) dirtyDot.classList.toggle("show", dirty);
+    if (saveBtn) saveBtn.classList.toggle("is-dirty", dirty);
   }
 
   function setStatus(msg) {
@@ -381,43 +386,57 @@
     return true;
   }
 
-  async function saveCurrentFile(forceOverwrite = false) {
+  async function saveCurrentFile(forceOverwrite = true) {
     if (!curFile || !edTa) return;
     clearTimeout(autoSaveTimer);
+    if (saveInFlight) {
+      saveQueued = true;
+      return;
+    }
+    saveInFlight = true;
+    const targetFile = curFile;
     const content = edTa.value;
     try {
-      const r = await fetch(`/__api/file?path=${encodeURIComponent(curFile)}`, {
+      const r = await fetch(`/__api/file?path=${encodeURIComponent(targetFile)}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ content, base_mtime_ns: baseMtime, force: forceOverwrite }),
       });
       const d = await r.json();
-      if (r.status === 409 && d.conflict) {
-        const useMine = window.confirm(
-          `文件 ${curFile} 在外部（如 VS Code）也发生了修改。\n点击「确定」用当前网页内容覆盖磁盘；点击「取消」加载磁盘最新版本。`
-        );
-        if (useMine) return saveCurrentFile(true);
-        diskContent = d.disk_content;
-        baseMtime = d.mtime_ns;
-        edTa.value = d.disk_content;
-        markDirty(false);
-        recomputeSearchHits();
-        renderBackdrop();
-        setStatus(`已载入外部版本：${curFile}`);
-        return;
-      }
       if (!r.ok || !d.ok) {
         setStatus(`保存失败：${d.error || r.status}`);
         return;
       }
-      diskContent = content;
-      baseMtime = d.mtime_ns;
-      lastSelfSavedMtime = d.mtime_ns;
-      markDirty(false);
-      setStatus(`已保存 ${curFile}（右侧实时渲染中…）`);
+      if (curFile === targetFile) {
+        diskContent = content;
+        baseMtime = d.mtime_ns;
+        lastSelfSavedMtime = d.mtime_ns;
+        if (edTa.value === content) markDirty(false);
+      }
+      setStatus(`已保存 ${targetFile}（右侧实时渲染中…）`);
     } catch (e) {
       setStatus(`保存出错：${e.message || e}`);
+    } finally {
+      saveInFlight = false;
+      if (saveQueued) {
+        saveQueued = false;
+        saveCurrentFile(true);
+      }
     }
+  }
+
+  function flushDirtyOnLeave() {
+    if (!isDirty || !curFile || !edTa || !autoSave) return;
+    clearTimeout(autoSaveTimer);
+    const content = edTa.value;
+    try {
+      fetch(`/__api/file?path=${encodeURIComponent(curFile)}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content, force: true }),
+        keepalive: true,
+      });
+    } catch {}
   }
 
   /* ---------------- 4. 类 SyncTeX 正反向精准匹配与配对高亮 ---------------- */
@@ -627,7 +646,7 @@
         aimedEl = info.el;
         aimedEl.classList.add("sync-aim");
       }
-      aimBadge.textContent = `📍 ${info.badge} · 单击定位`;
+      aimBadge.textContent = `${info.badge} · 单击定位`;
       aimBadge.style.left = `${Math.min(window.innerWidth - 240, e.clientX + 14)}px`;
       aimBadge.style.top = `${Math.min(window.innerHeight - 36, e.clientY + 16)}px`;
       aimBadge.classList.add("show");
@@ -767,16 +786,32 @@
     edPane = document.createElement("section");
     edPane.id = "ed-pane";
     edPane.setAttribute("aria-label", "Markdown 与 TeX 源码编辑面板");
+    const ICO = {
+      search: ccIco('<circle cx="7" cy="7" r="4.5"/><path d="m10.5 10.5 3 3"/>'),
+      globe: ccIco('<circle cx="8" cy="8" r="5.8"/><path d="M2.5 8h11M8 2.2c1.8 1.8 1.8 9.8 0 11.6M8 2.2c-1.8 1.8-1.8 9.8 0 11.6"/>'),
+      sync: ccIco('<path d="M2.5 8h8M7.5 5l3 3-3 3M13.5 3.5v9"/>'),
+      link: ccIco('<path d="M6.5 9.5 9.5 6.5M5.2 6.8l-1.4 1.4a2.4 2.4 0 0 0 3.4 3.4l1.4-1.4M10.8 9.2l1.4-1.4a2.4 2.4 0 0 0-3.4-3.4L7.4 5.8"/>'),
+      bolt: ccIco('<path d="M9 1.8 4.2 8.8H8L7 14.2l4.8-7H8L9 1.8Z"/>'),
+      history: ccIco('<path d="M3 8a5 5 0 1 0 1.4-3.5L3 6M3 2.8V6h3.2M8 5.2V8l2 1.2"/>'),
+      more: ccIco('<circle cx="3.5" cy="8" r="1" fill="currentColor" stroke="none"/><circle cx="8" cy="8" r="1" fill="currentColor" stroke="none"/><circle cx="12.5" cy="8" r="1" fill="currentColor" stroke="none"/>'),
+      save: ccIco('<path d="M3 8.5 6.2 11.5 13 4.5"/>'),
+    };
     edPane.innerHTML = `
       <div class="ed-topbar">
         <select class="ed-file-select" title="切换源文件"></select>
         <span class="ed-dirty-dot" title="有未保存更改">●</span>
-        <button type="button" class="ed-btn" data-ed="find" title="当前文件搜索 (Ctrl+F)">🔍 搜索</button>
-        <button type="button" class="ed-btn" data-ed="global-find" title="跨章节全文搜索 (Ctrl+Shift+F)">🌐 全局</button>
-        <button type="button" class="ed-btn" data-ed="sync-fwd" title="正向对齐到右侧渲染位置 (Ctrl+Alt+J / Ctrl+单击)">⇥ 对齐</button>
-        <button type="button" class="ed-btn" data-ed="link-sync" title="光标移动时实时联动高亮右侧对应句">🔗 联动</button>
-        <button type="button" class="ed-btn" data-ed="auto-save" title="停笔 350ms 自动写回磁盘并实时局部渲染">⚡ 自动存</button>
-        <button type="button" class="ed-btn" data-ed="save" title="立即保存 (Ctrl+S)">保存</button>
+        <button type="button" class="ed-btn" data-ed="find" title="当前文件搜索 (Ctrl+F)">${ICO.search}<span>搜索</span></button>
+        <button type="button" class="ed-btn" data-ed="more" title="更多操作与增量历史">${ICO.more}</button>
+        <button type="button" class="ed-btn" data-ed="save" title="立即保存 (Ctrl+S)">${ICO.save}<span>保存</span></button>
+        <div class="ed-menu" role="menu">
+          <button type="button" class="ed-menu-item" data-ed="global-find">${ICO.globe}<span>跨文件全文搜索</span><span class="ed-k">Ctrl+Shift+F</span></button>
+          <button type="button" class="ed-menu-item" data-ed="sync-fwd">${ICO.sync}<span>正向对齐到右侧</span><span class="ed-k">Ctrl+Alt+J</span></button>
+          <div class="ed-menu-sep"></div>
+          <button type="button" class="ed-menu-item" data-ed="link-sync">${ICO.link}<span>光标联动右侧指示</span><span class="ed-chk"></span></button>
+          <button type="button" class="ed-menu-item" data-ed="auto-save">${ICO.bolt}<span>自动保存 (360ms)</span><span class="ed-chk"></span></button>
+          <div class="ed-menu-sep"></div>
+          <button type="button" class="ed-menu-item" data-ed="history">${ICO.history}<span>增量变更历史 / 撤回</span></button>
+        </div>
       </div>
       <div class="ed-findbar">
         <input type="text" class="ed-find-input" placeholder="查找源码（Enter 下一个，Shift+Enter 上一个）…">
@@ -785,10 +820,11 @@
         <button type="button" class="ed-btn" data-find="next" title="下一个 (Enter)">▼</button>
         <button type="button" class="ed-btn" data-find="case" title="区分大小写">Aa</button>
         <button type="button" class="ed-btn" data-find="regex" title="正则表达式">.*</button>
-        <button type="button" class="ed-btn" data-find="all" title="跨全部文件搜索 (Ctrl+Shift+F)">搜全篇</button>
+        <button type="button" class="ed-btn" data-find="all" title="跨全部文件搜索 (Ctrl+Shift+F)">全篇</button>
         <button type="button" class="ed-btn" data-find="close" title="关闭搜索 (Esc)">✕</button>
       </div>
       <div class="ed-global-results"></div>
+      <div class="ed-history-panel"></div>
       <div class="ed-scroll">
         <div class="ed-stage">
           <div class="ed-backdrop" aria-hidden="true"></div>
@@ -810,14 +846,18 @@
 
     fileSelect = edPane.querySelector(".ed-file-select");
     dirtyDot = edPane.querySelector(".ed-dirty-dot");
+    saveBtn = edPane.querySelector('[data-ed="save"]');
+    edMenu = edPane.querySelector(".ed-menu");
+    const moreBtn = edPane.querySelector('[data-ed="more"]');
     findBar = edPane.querySelector(".ed-findbar");
     findInput = edPane.querySelector(".ed-find-input");
     findCountEl = edPane.querySelector(".ed-find-count");
     caseBtn = edPane.querySelector('[data-find="case"]');
     regexBtn = edPane.querySelector('[data-find="regex"]');
     globalBox = edPane.querySelector(".ed-global-results");
-    autoSaveBtn = edPane.querySelector('[data-ed="auto-save"]');
-    linkSyncBtn = edPane.querySelector('[data-ed="link-sync"]');
+    histPanel = edPane.querySelector(".ed-history-panel");
+    autoSaveChk = edMenu.querySelector('[data-ed="auto-save"] .ed-chk');
+    linkSyncChk = edMenu.querySelector('[data-ed="link-sync"] .ed-chk');
     statusLeft = edPane.querySelector(".ed-st-left");
     statusRight = edPane.querySelector(".ed-st-right");
     edScroll = edPane.querySelector(".ed-scroll");
@@ -825,25 +865,100 @@
     edBackdrop = edPane.querySelector(".ed-backdrop");
     edTa = edPane.querySelector(".ed-ta");
 
-    autoSaveBtn.classList.toggle("is-on", autoSave);
-    linkSyncBtn.classList.toggle("is-on", linkSync);
+    const syncMenuChecks = () => {
+      if (autoSaveChk) autoSaveChk.textContent = autoSave ? "✓" : "";
+      if (linkSyncChk) linkSyncChk.textContent = linkSync ? "✓" : "";
+    };
+    syncMenuChecks();
 
-    fileSelect.addEventListener("change", () => openFile(fileSelect.value));
+    const closeMenu = () => edMenu?.classList.remove("open");
+    moreBtn.onclick = (e) => {
+      e.stopPropagation();
+      edMenu.classList.toggle("open");
+    };
+    document.addEventListener("mousedown", (e) => {
+      if (edMenu?.classList.contains("open") && !edMenu.contains(e.target) && !moreBtn.contains(e.target)) {
+        closeMenu();
+      }
+    });
+
+    async function openHistoryPanel() {
+      if (!curFile || !histPanel) return;
+      if (histPanel.classList.contains("open")) {
+        histPanel.classList.remove("open");
+        return;
+      }
+      histPanel.innerHTML = `<div class="ed-hist-head"><span>加载增量记录中…</span></div>`;
+      histPanel.classList.add("open");
+      try {
+        const r = await fetch(`/__api/history?path=${encodeURIComponent(curFile)}`, { cache: "no-store" });
+        const d = await r.json();
+        const ops = d.ops || [];
+        const closeBtnHtml = `<button type="button" class="ed-btn" data-hist-close>✕</button>`;
+        if (!ops.length) {
+          histPanel.innerHTML = `<div class="ed-hist-head"><span>${escHtml(curFile)} 暂无增量修改记录</span>${closeBtnHtml}</div>`;
+        } else {
+          histPanel.innerHTML =
+            `<div class="ed-hist-head"><span>${escHtml(curFile)} 增量记录（SQLite WAL 仅存变更行）</span>${closeBtnHtml}</div>` +
+            ops
+              .map((op) => {
+                const t = new Date(op.ts * 1000).toLocaleTimeString([], { hour12: false });
+                const tag = op.source === "rollback" ? "回滚" : "保存";
+                return `<div class="ed-hit-item" data-op-id="${op.id}">`
+                  + `<span class="ed-hit-loc">${t} · ${tag}</span>`
+                  + `<span class="ed-hit-snip">${escHtml(op.summary)}</span>`
+                  + `<span class="ed-k">撤回至此步</span></div>`;
+              })
+              .join("");
+        }
+        histPanel.querySelector("[data-hist-close]")?.addEventListener("click", () => histPanel.classList.remove("open"));
+        histPanel.querySelectorAll("[data-op-id]").forEach((row) => {
+          row.addEventListener("click", async () => {
+            const opId = Number(row.dataset.opId);
+            const rr = await fetch("/__api/rollback", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ path: curFile, id: opId }),
+            });
+            const rd = await rr.json();
+            if (rr.ok && rd.ok) {
+              diskContent = rd.content;
+              baseMtime = rd.mtime_ns;
+              lastSelfSavedMtime = rd.mtime_ns;
+              edTa.value = rd.content;
+              markDirty(false);
+              recomputeSearchHits();
+              renderBackdrop();
+              histPanel.classList.remove("open");
+              setStatus(`已增量回滚 ${curFile}（可通过最新记录再次撤回）`);
+            }
+          });
+        });
+      } catch (e) {
+        histPanel.innerHTML = `<div class="ed-hist-head"><span>读取失败：${escHtml(String(e))}</span></div>`;
+      }
+    }
+
+    fileSelect.addEventListener("change", () => {
+      histPanel?.classList.remove("open");
+      openFile(fileSelect.value);
+    });
 
     edPane.querySelector('[data-ed="find"]').onclick = () => openFindBar(false);
-    edPane.querySelector('[data-ed="global-find"]').onclick = () => openFindBar(true);
-    edPane.querySelector('[data-ed="sync-fwd"]').onclick = () => triggerForwardSync();
-    edPane.querySelector('[data-ed="save"]').onclick = () => saveCurrentFile(false);
-    autoSaveBtn.onclick = () => {
+    edMenu.querySelector('[data-ed="global-find"]').onclick = () => { closeMenu(); openFindBar(true); };
+    edMenu.querySelector('[data-ed="sync-fwd"]').onclick = () => { closeMenu(); triggerForwardSync(); };
+    edPane.querySelector('[data-ed="save"]').onclick = () => saveCurrentFile(true);
+    edMenu.querySelector('[data-ed="history"]').onclick = () => { closeMenu(); openHistoryPanel(); };
+    edMenu.querySelector('[data-ed="auto-save"]').onclick = () => {
       autoSave = !autoSave;
       store.set("editor.autoSave", autoSave ? "1" : "0");
-      autoSaveBtn.classList.toggle("is-on", autoSave);
+      syncMenuChecks();
       setStatus(autoSave ? "已开启停笔自动保存" : "已切换为 Ctrl+S 手动保存");
     };
-    linkSyncBtn.onclick = () => {
+    edMenu.querySelector('[data-ed="link-sync"]').onclick = () => {
       linkSync = !linkSync;
       store.set("editor.linkSync", linkSync ? "1" : "0");
-      linkSyncBtn.classList.toggle("is-on", linkSync);
+      syncMenuChecks();
       updatePeerIndicator(linkSync);
     };
 
@@ -949,11 +1064,23 @@
       syncStageHeight();
     });
     window.addEventListener("resize", () => { if (isSplit) syncStageHeight(); });
+    window.addEventListener("pagehide", flushDirtyOnLeave);
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "hidden") flushDirtyOnLeave();
+    });
+    window.addEventListener("beforeunload", (e) => {
+      if (isDirty && !autoSave) {
+        e.preventDefault();
+        e.returnValue = "";
+      } else {
+        flushDirtyOnLeave();
+      }
+    });
 
     // 全局键盘快捷键
     document.addEventListener("keydown", (e) => {
       const mod = e.ctrlKey || e.metaKey;
-      if (mod && e.key === "\\") {
+      if ((mod && !e.altKey && !e.shiftKey && (e.code === "Backslash" || e.key === "\\")) || (e.altKey && !mod && !e.shiftKey && e.code === "Backslash")) {
         e.preventDefault();
         setSplitMode(!isSplit);
       } else if (mod && (e.key === "s" || e.key === "S") && isSplit) {
@@ -982,7 +1109,7 @@
       splitBtn = document.createElement("button");
       splitBtn.type = "button";
       splitBtn.dataset.role = "split";
-      splitBtn.textContent = "◫ 双栏";
+      splitBtn.innerHTML = `${ccIco('<rect x="2" y="2.5" width="12" height="11" rx="1.8"/><path d="M8 2.5v11"/>')}<span>双栏</span>`;
       splitBtn.title = "开启或关闭源码双栏编辑与对照模式（快捷键 Ctrl+\\）";
       splitBtn.classList.toggle("is-active", isSplit);
       splitBtn.onclick = () => setSplitMode(!isSplit);

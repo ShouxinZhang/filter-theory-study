@@ -13,8 +13,10 @@
 """
 from __future__ import annotations
 
+import difflib
 import json
 import re
+import sqlite3
 import threading
 import time
 from http import HTTPStatus
@@ -68,6 +70,77 @@ def _list_editable_files(src_dir: Path) -> list[dict[str, object]]:
         items.append(((grp, rel), {"path": rel, "size": st.st_size, "mtime_ns": st.st_mtime_ns}))
     items.sort(key=lambda x: x[0])
     return [x[1] for x in items]
+
+
+class _EditWAL:
+    """基于 SQLite + difflib 的增量差量事务日志，仅记录每次 update 的变更 hunk。"""
+
+    def __init__(self, db_path: Path):
+        self.db_path = db_path
+        self.lock = threading.Lock()
+        self.db_path.parent.mkdir(parents=True, exist_ok=True)
+        with self._conn() as c:
+            c.execute(
+                """CREATE TABLE IF NOT EXISTS edit_ops (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    ts REAL NOT NULL,
+                    path TEXT NOT NULL,
+                    source TEXT NOT NULL,
+                    ops_json TEXT NOT NULL,
+                    summary TEXT NOT NULL
+                )"""
+            )
+            c.execute("CREATE INDEX IF NOT EXISTS idx_edit_ops_path_id ON edit_ops(path, id DESC)")
+
+    def _conn(self) -> sqlite3.Connection:
+        return sqlite3.connect(self.db_path, timeout=5.0)
+
+    def record_delta(self, rel: str, old_txt: str, new_txt: str, source: str = "web") -> int | None:
+        if old_txt == new_txt:
+            return None
+        old_lines = old_txt.splitlines(keepends=True)
+        new_lines = new_txt.splitlines(keepends=True)
+        sm = difflib.SequenceMatcher(None, new_lines, old_lines)
+        ops: list[list[object]] = []
+        added = deleted = 0
+        for tag, i1, i2, j1, j2 in sm.get_opcodes():
+            if tag == "equal":
+                continue
+            added += i2 - i1
+            deleted += j2 - j1
+            ops.append([tag, i1, i2, old_lines[j1:j2]])
+        if not ops:
+            return None
+        summary = f"+{added} / -{deleted} 行"
+        with self.lock, self._conn() as c:
+            cur = c.execute(
+                "INSERT INTO edit_ops(ts, path, source, ops_json, summary) VALUES (?, ?, ?, ?, ?)",
+                (time.time(), rel, source, json.dumps(ops, ensure_ascii=False), summary),
+            )
+            return cur.lastrowid
+
+    def list_ops(self, rel: str, limit: int = 30) -> list[dict[str, object]]:
+        with self.lock, self._conn() as c:
+            rows = c.execute(
+                "SELECT id, ts, source, summary FROM edit_ops WHERE path = ? ORDER BY id DESC LIMIT ?",
+                (rel, limit),
+            ).fetchall()
+        return [{"id": r[0], "ts": r[1], "source": r[2], "summary": r[3]} for r in rows]
+
+    def rollback_to(self, rel: str, op_id: int, cur_txt: str) -> str | None:
+        with self.lock, self._conn() as c:
+            rows = c.execute(
+                "SELECT ops_json FROM edit_ops WHERE path = ? AND id >= ? ORDER BY id DESC",
+                (rel, op_id),
+            ).fetchall()
+        if not rows:
+            return None
+        lines = cur_txt.splitlines(keepends=True)
+        for (ops_raw,) in rows:
+            ops = json.loads(ops_raw)
+            for _tag, i1, i2, old_slice in reversed(ops):
+                lines[i1:i2] = old_slice
+        return "".join(lines)
 
 
 class LiveState:
@@ -192,6 +265,7 @@ def run_server(
 ) -> int:
     src_dir, build_dir, out_dir = src_dir.resolve(), build_dir.resolve(), out_dir.resolve()
     out_dir.mkdir(parents=True, exist_ok=True)
+    wal = _EditWAL(build_dir / "edits.db")
     state = LiveState(src_dir, build_dir, out_dir)
     threading.Thread(target=_watch_loop, args=(state, force_first), daemon=True).start()
 
@@ -264,6 +338,13 @@ def run_server(
                 rx = qs.get("regex", ["0"])[0] == "1"
                 return self._send_json(_search_files(src_dir, q, cs, rx))
 
+            if u.path == "/__api/history":
+                rel = qs.get("path", [""])[0]
+                fp = _safe_src_file(src_dir, rel)
+                if not fp:
+                    return self._send_json({"error": "非法路径"}, HTTPStatus.BAD_REQUEST)
+                return self._send_json({"path": rel, "ops": wal.list_ops(rel)})
+
             if u.path in ("/", "/index.html"):
                 idx = out_dir / "index.html"
                 if idx.exists():
@@ -318,10 +399,38 @@ def run_server(
                         HTTPStatus.CONFLICT,
                     )
 
+            old_txt = fp.read_text(encoding="utf-8", errors="replace")
+            if old_txt != content:
+                wal.record_delta(rel, old_txt, content, source="web")
+
             fp.write_text(content, encoding="utf-8")
             new_mtime = fp.stat().st_mtime_ns
             state.wakeup.set()
             return self._send_json({"ok": True, "path": rel, "mtime_ns": new_mtime})
+
+        def do_POST(self) -> None:
+            u = urlparse(self.path)
+            if u.path != "/__api/rollback":
+                return self._send_json({"error": "未知接口"}, HTTPStatus.NOT_FOUND)
+            try:
+                length = int(self.headers.get("Content-Length", "0"))
+                req = json.loads(self.rfile.read(length).decode("utf-8"))
+                rel = str(req["path"])
+                op_id = int(req["id"])
+            except Exception as e:
+                return self._send_json({"error": f"请求格式错误：{e}"}, HTTPStatus.BAD_REQUEST)
+            fp = _safe_src_file(src_dir, rel)
+            if not fp or not fp.is_file():
+                return self._send_json({"error": f"文件不存在：{rel}"}, HTTPStatus.NOT_FOUND)
+            cur_txt = fp.read_text(encoding="utf-8", errors="replace")
+            restored = wal.rollback_to(rel, op_id, cur_txt)
+            if restored is None:
+                return self._send_json({"error": "未找到对应增量记录"}, HTTPStatus.NOT_FOUND)
+            wal.record_delta(rel, cur_txt, restored, source="rollback")
+            fp.write_text(restored, encoding="utf-8")
+            new_mtime = fp.stat().st_mtime_ns
+            state.wakeup.set()
+            return self._send_json({"ok": True, "path": rel, "content": restored, "mtime_ns": new_mtime})
 
     srv = ThreadingHTTPServer((host, port), lambda *a: DevHandler(*a, directory=str(out_dir)))
     srv.daemon_threads = True

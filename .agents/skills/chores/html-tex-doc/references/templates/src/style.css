@@ -1,32 +1,42 @@
 /* ---------- 主题变量：auto 跟随系统；html[data-theme] 由 reader.js 设置以手动覆盖 ---------- */
 :root {
-  --fg: #1d1d1f; --bg: #fdfdfc; --muted: #6b6b70; --accent: #1f6fb2; --rule: #e3e3e0;
-  --card: #f5f5f2; --fig-fg: #1d1d1f; --shadow: 0 6px 28px rgba(0,0,0,.16);
-  --ed-bg: #f8f8f6; --ed-bar: #f0f0ec; --ed-gutter: #9a9aa2;
-  --hit-bg: rgba(234, 179, 8, 0.34); --hit-cur: rgba(234, 88, 12, 0.52);
-  --sync-bg: rgba(31, 111, 178, 0.16); --sync-border: #1f6fb2;
+  --fg: #1d1d1f; --bg: #fdfdfc; --muted: #6b6b70; --accent: #1f6fb2; --rule: rgba(0, 0, 0, .09);
+  --card: #f5f5f2; --fig-fg: #1d1d1f; --shadow: 0 10px 30px rgba(0,0,0,.14);
+  --ed-bg: #fafaf9; --ed-bar: #f3f3f1; --ed-gutter: #9a9aa2;
+  --menu-bg: #ffffff; --menu-hover: rgba(0, 0, 0, .055);
+  --hit-bg: rgba(234, 179, 8, 0.32); --hit-cur: rgba(234, 88, 12, 0.50);
+  --sync-bg: rgba(31, 111, 178, 0.14); --sync-border: #1f6fb2;
   --measure: 52rem;            /* 单栏正文最大宽度；拖拽手柄会改写此变量 */
   --split-left: 46vw;          /* 双栏模式左侧编辑器宽度 */
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --fg: #e2e2df; --bg: #17181a; --muted: #9a9aa0; --accent: #7ab8ee; --rule: #33353a;
-    --card: #212226; --fig-fg: #c9c9c4; --shadow: 0 6px 28px rgba(0,0,0,.6);
-    --ed-bg: #141518; --ed-bar: #1d1e22; --ed-gutter: #6d6f78;
-    --hit-bg: rgba(250, 204, 21, 0.28); --hit-cur: rgba(249, 115, 22, 0.55);
-    --sync-bg: rgba(122, 184, 238, 0.20); --sync-border: #7ab8ee;
+    --fg: #e5e5e2; --bg: #191919; --muted: #989896; --accent: #7ab8ee; --rule: rgba(255, 255, 255, .095);
+    --card: #212121; --fig-fg: #c9c9c4; --shadow: 0 12px 34px rgba(0,0,0,.58);
+    --ed-bg: #161616; --ed-bar: #1f1f1f; --ed-gutter: #666664;
+    --menu-bg: #262626; --menu-hover: rgba(255, 255, 255, .075);
+    --hit-bg: rgba(250, 204, 21, 0.26); --hit-cur: rgba(249, 115, 22, 0.52);
+    --sync-bg: rgba(122, 184, 238, 0.17); --sync-border: #7ab8ee;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --fg: #e2e2df; --bg: #17181a; --muted: #9a9aa0; --accent: #7ab8ee; --rule: #33353a;
-  --card: #212226; --fig-fg: #c9c9c4; --shadow: 0 6px 28px rgba(0,0,0,.6);
-  --ed-bg: #141518; --ed-bar: #1d1e22; --ed-gutter: #6d6f78;
-  --hit-bg: rgba(250, 204, 21, 0.28); --hit-cur: rgba(249, 115, 22, 0.55);
-  --sync-bg: rgba(122, 184, 238, 0.20); --sync-border: #7ab8ee;
+  --fg: #e5e5e2; --bg: #191919; --muted: #989896; --accent: #7ab8ee; --rule: rgba(255, 255, 255, .095);
+  --card: #212121; --fig-fg: #c9c9c4; --shadow: 0 12px 34px rgba(0,0,0,.58);
+  --ed-bg: #161616; --ed-bar: #1f1f1f; --ed-gutter: #666664;
+  --menu-bg: #262626; --menu-hover: rgba(255, 255, 255, .075);
+  --hit-bg: rgba(250, 204, 21, 0.26); --hit-cur: rgba(249, 115, 22, 0.52);
+  --sync-bg: rgba(122, 184, 238, 0.17); --sync-border: #7ab8ee;
   color-scheme: dark;
 }
+
+/* 细暗色自定义滚动条 */
+* { scrollbar-width: thin; scrollbar-color: rgba(128, 128, 128, .28) transparent; }
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(128, 128, 128, .28); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(128, 128, 128, .48); }
 
 html { background: var(--bg); color: var(--fg); }
 body {
@@ -168,16 +178,22 @@ body.resizing { user-select: none; cursor: col-resize; }
 }
 body.resizing .measure-badge { opacity: .85; }
 
-/* ---------- 右上角悬浮工具条 ---------- */
+/* ---------- 右上角悬浮工具条（Claude Code 风格胶囊组） ---------- */
 .reader-bar {
-  position: fixed; top: .75rem; right: .8rem; z-index: 36; display: flex; gap: .32rem;
-  font: .8rem/1 sans-serif;
+  position: fixed; top: .75rem; right: .9rem; z-index: 36; display: flex; align-items: center; gap: 2px;
+  padding: 3px; border-radius: 10px; border: 1px solid var(--rule);
+  background: color-mix(in srgb, var(--menu-bg) 88%, transparent);
+  backdrop-filter: blur(12px); box-shadow: 0 4px 16px rgba(0,0,0,.18);
+  font: 500 .78rem/1 -apple-system, BlinkMacSystemFont, "Noto Sans CJK SC", sans-serif;
 }
 .reader-bar button {
-  background: var(--card); color: var(--fg); border: 1px solid var(--rule); border-radius: 6px;
-  padding: .4rem .6rem; cursor: pointer; opacity: .86; backdrop-filter: blur(6px);
+  display: inline-flex; align-items: center; gap: .36rem;
+  background: transparent; color: var(--fg); border: 0; border-radius: 7px;
+  padding: .36rem .56rem; cursor: pointer; opacity: .78; transition: background-color .12s, opacity .12s, color .12s;
 }
-.reader-bar button:hover, .reader-bar button.is-active { opacity: 1; border-color: var(--accent); color: var(--accent); }
+.reader-bar button:hover { opacity: 1; background: var(--menu-hover); }
+.reader-bar button.is-active { opacity: 1; background: var(--sync-bg); color: var(--accent); }
+.cc-ico { flex: 0 0 auto; display: block; }
 
 /* ---------- 链接悬停预览卡片 ---------- */
 .xref-preview {
@@ -259,47 +275,76 @@ html[data-split="1"] main.doc-pane {
 html[data-split="1"] .measure-handle,
 html[data-split="1"] .reader-bar button[data-role="measure"] { display: none; }
 
-/* 编辑器顶部栏与搜索面板 */
+/* 编辑器顶部栏、Claude Code 悬浮动作菜单与增量历史面板 */
 .ed-topbar {
-  display: flex; align-items: center; gap: .38rem; padding: .42rem .6rem;
-  background: var(--ed-bar); border-bottom: 1px solid var(--rule); flex-wrap: wrap;
+  position: relative;
+  display: flex; align-items: center; gap: .28rem; padding: .42rem .55rem;
+  background: var(--ed-bar); border-bottom: 1px solid var(--rule); flex-wrap: nowrap;
 }
 .ed-file-select {
-  flex: 1; min-width: 9rem; max-width: 18rem; background: var(--bg); color: var(--fg);
-  border: 1px solid var(--rule); border-radius: 5px; padding: .26rem .45rem;
-  font: 600 .82rem/1.3 ui-monospace, SFMono-Regular, Menlo, monospace; cursor: pointer;
+  flex: 1; min-width: 7.5rem; max-width: 17rem; background: var(--menu-bg); color: var(--fg);
+  border: 1px solid var(--rule); border-radius: 7px; padding: .28rem .5rem;
+  font: 500 .8rem/1.3 ui-monospace, SFMono-Regular, Menlo, monospace; cursor: pointer; outline: none;
 }
-.ed-dirty-dot { color: #e67e22; font-weight: 700; display: none; }
+.ed-file-select:hover, .ed-file-select:focus { border-color: color-mix(in srgb, var(--fg) 22%, transparent); }
+.ed-dirty-dot { color: #e5993e; font-size: .72rem; display: none; margin-right: .1rem; }
 .ed-dirty-dot.show { display: inline; }
 .ed-btn {
-  background: var(--bg); color: var(--fg); border: 1px solid var(--rule); border-radius: 5px;
-  padding: .24rem .48rem; font: .78rem/1.25 sans-serif; cursor: pointer; white-space: nowrap;
+  display: inline-flex; align-items: center; gap: .32rem;
+  background: transparent; color: var(--muted); border: 0; border-radius: 7px;
+  padding: .3rem .52rem; font: 500 .78rem/1.25 -apple-system, BlinkMacSystemFont, "Noto Sans CJK SC", sans-serif;
+  cursor: pointer; white-space: nowrap; transition: background-color .12s, color .12s;
 }
-.ed-btn:hover { border-color: var(--accent); }
-.ed-btn.is-on { background: var(--sync-bg); border-color: var(--accent); color: var(--accent); font-weight: 600; }
+.ed-btn:hover { background: var(--menu-hover); color: var(--fg); }
+.ed-btn.is-on { background: var(--sync-bg); color: var(--accent); }
+.ed-btn.is-dirty { background: var(--sync-bg); color: var(--accent); }
+
+.ed-menu {
+  position: absolute; top: calc(100% + 4px); right: .55rem; z-index: 48;
+  min-width: 14.5rem; padding: 5px; display: none; flex-direction: column; gap: 1px;
+  background: var(--menu-bg); border: 1px solid var(--rule); border-radius: 12px;
+  box-shadow: var(--shadow);
+}
+.ed-menu.open { display: flex; }
+.ed-menu-item {
+  all: unset; box-sizing: border-box; width: 100%;
+  display: flex; align-items: center; gap: .58rem;
+  padding: .46rem .62rem; border-radius: 8px; cursor: pointer;
+  color: var(--fg); font: 400 .82rem/1.3 -apple-system, BlinkMacSystemFont, "Noto Sans CJK SC", sans-serif;
+  transition: background-color .1s;
+}
+.ed-menu-item:hover { background: var(--menu-hover); }
+.ed-menu-item .ed-k { margin-left: auto; font: 400 .72rem/1 ui-monospace, monospace; color: var(--muted); }
+.ed-menu-item .ed-chk { font-size: .75rem; color: var(--accent); margin-left: auto; }
+.ed-menu-sep { height: 1px; background: var(--rule); margin: 4px 6px; }
 
 .ed-findbar {
-  display: none; align-items: center; gap: .32rem; padding: .38rem .6rem;
+  display: none; align-items: center; gap: .26rem; padding: .38rem .55rem;
   background: var(--ed-bar); border-bottom: 1px solid var(--rule); flex-wrap: wrap;
 }
 .ed-findbar.open { display: flex; }
 .ed-find-input {
-  flex: 1; min-width: 8rem; background: var(--bg); color: var(--fg); border: 1px solid var(--rule);
-  border-radius: 5px; padding: .26rem .5rem; font: .82rem/1.3 ui-monospace, monospace; outline: none;
+  flex: 1; min-width: 8rem; background: var(--menu-bg); color: var(--fg); border: 1px solid var(--rule);
+  border-radius: 7px; padding: .28rem .52rem; font: .8rem/1.3 ui-monospace, monospace; outline: none;
 }
-.ed-find-input:focus { border-color: var(--accent); }
-.ed-find-count { font: .76rem/1 ui-monospace, monospace; color: var(--muted); min-width: 3.4rem; text-align: center; }
+.ed-find-input:focus { border-color: color-mix(in srgb, var(--fg) 26%, transparent); }
+.ed-find-count { font: .74rem/1 ui-monospace, monospace; color: var(--muted); min-width: 3.2rem; text-align: center; }
 
-.ed-global-results {
+.ed-global-results, .ed-history-panel {
   display: none; max-height: 36vh; overflow-y: auto; border-bottom: 1px solid var(--rule);
-  background: var(--bg); font-size: .8rem;
+  background: var(--menu-bg); font-size: .8rem;
 }
-.ed-global-results.open { display: block; }
+.ed-global-results.open, .ed-history-panel.open { display: block; }
+.ed-hist-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: .36rem .65rem; border-bottom: 1px solid var(--rule);
+  font: 500 .76rem/1.3 sans-serif; color: var(--muted);
+}
 .ed-hit-item {
-  padding: .3rem .65rem; border-bottom: 1px solid color-mix(in srgb, var(--rule) 55%, transparent);
-  cursor: pointer; display: flex; gap: .5rem; align-items: baseline;
+  padding: .34rem .65rem; border-bottom: 1px solid color-mix(in srgb, var(--rule) 65%, transparent);
+  cursor: pointer; display: flex; gap: .5rem; align-items: center;
 }
-.ed-hit-item:hover { background: var(--sync-bg); }
+.ed-hit-item:hover { background: var(--menu-hover); }
 .ed-hit-loc {
   flex: 0 0 auto; color: var(--accent); font: 600 .75rem/1.3 ui-monospace, monospace;
 }
