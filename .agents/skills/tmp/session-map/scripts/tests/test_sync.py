@@ -38,19 +38,15 @@ def message(role, text, **extra):
 
 class SyncTests(unittest.TestCase):
     def setUp(self):
-        task = sync.REPO / ".agents/.tmp/task" / sync.datetime.now(sync.TZ).strftime("%Y-%m")
-        task /= sync.datetime.now(sync.TZ).strftime("%Y-%m-%d") + "_session-map-codex"
-        for name in ("plans", "logs", "reports"):
-            (task / "docs" / name).mkdir(parents=True, exist_ok=True)
-        temporary_root = task / "outputs/test-data"
-        temporary_root.mkdir(parents=True, exist_ok=True)
-        self.temporary = tempfile.TemporaryDirectory(dir=temporary_root)
+        # System temp keeps test runs from leaving task folders in the repository.
+        self.temporary = tempfile.TemporaryDirectory(prefix="session-map-test-")
         self.addCleanup(self.temporary.cleanup)
         self.root = Path(self.temporary.name)
         self.codex_home = self.root / "codex"
         self.brain = self.root / "brain"
         self.output = self.root / "output"
-        for name, value in (("CODEX_HOME", self.codex_home), ("BRAIN", self.brain), ("SESS", self.output)):
+        for name, value in (("CODEX_HOME", self.codex_home), ("BRAIN", self.brain),
+                            ("CLAUDE_HOME", self.root / "claude"), ("SESS", self.output)):
             patcher = patch.object(sync if name == "SESS" else sources, name, value)
             patcher.start()
             self.addCleanup(patcher.stop)

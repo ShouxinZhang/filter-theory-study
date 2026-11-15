@@ -16,10 +16,8 @@ HEADER = "- agent name: source-model\n- harness: codex\n- session: 11111111\n- t
 
 class MemoryTests(unittest.TestCase):
     def setUp(self):
-        root = runtime.REPO / ".agents/.tmp/task" / runtime.datetime.now(runtime.TZ).strftime("%Y-%m")
-        root /= runtime.datetime.now(runtime.TZ).strftime("%Y-%m-%d") + "_session-memory/outputs/test-data"
-        root.mkdir(parents=True, exist_ok=True)
-        self.temp = tempfile.TemporaryDirectory(dir=root)
+        # System temp keeps test runs from leaving task folders in the repository.
+        self.temp = tempfile.TemporaryDirectory(prefix="session-map-test-")
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name)
         self.output = self.root / "sessions"

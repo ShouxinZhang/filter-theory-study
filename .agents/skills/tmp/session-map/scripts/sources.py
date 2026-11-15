@@ -8,16 +8,62 @@ from datetime import datetime
 from pathlib import Path
 
 import antigravity
+import claude
 import codex
-from models import Source, TZ
+from models import Restart, Source, TZ
 
 BRAIN = Path.home() / ".gemini/antigravity/brain"
 CODEX_HOME = Path(os.environ.get("CODEX_HOME", Path.home() / ".codex")).expanduser()
-ADAPTERS = {"codex": codex, "antigravity": antigravity}
+CLAUDE_HOME = Path(os.environ.get("CLAUDE_CONFIG_DIR", Path.home() / ".claude")).expanduser()
+ADAPTERS = {"codex": codex, "antigravity": antigravity, "claude-code": claude}
+
+
+HEAD_RECORDS = 2000
+BATCH_BYTES = 8 << 20
+
+
+def new_parser(harness, assets=None, **hints):
+    return ADAPTERS[harness].Parser(assets, **hints)
 
 
 def parse_turns(records, harness, assets=None):
     return list(ADAPTERS[harness].parse_turns(records, assets=assets))
+
+
+def read_batch(stream, path, line_number, limit=BATCH_BYTES):
+    """Read complete JSONL records from the stream position, at most about `limit` bytes.
+
+    Returns (records, consumed_bytes, consumed_lines, incomplete_tail, end_of_file).
+    Only an unfinished final line may be invalid; it is left unconsumed for a later read.
+    """
+    records, consumed, lines = [], 0, 0
+    while consumed < limit:
+        line = stream.readline()
+        if not line:
+            return records, consumed, lines, False, True
+        if line.strip():
+            try:
+                records.append(json.loads(line))
+            except (ValueError, UnicodeDecodeError):
+                if not line.endswith(b"\n"):
+                    return records, consumed, lines, True, True
+                raise ValueError(f"{path}:{line_number + lines + 1}: 无效 JSONL 记录") from None
+        consumed += len(line)
+        lines += 1
+    return records, consumed, lines, False, False
+
+
+def read_head(path, limit=HEAD_RECORDS):
+    """Read only the leading records needed to identify the harness and session."""
+    records, lines = [], 0
+    with path.open("rb") as stream:
+        while len(records) < limit:
+            batch, _, consumed, _, done = read_batch(stream, path, lines, limit=1)
+            records.extend(batch)
+            lines += consumed
+            if done or any(adapter.matches(batch) for adapter in ADAPTERS.values()):
+                break
+    return records
 
 
 def read_snapshot(src):
@@ -61,7 +107,8 @@ def source_signature(path):
 
 def current_session(harness):
     env_ids = {"codex": os.environ.get("CODEX_THREAD_ID"),
-               "antigravity": os.environ.get("ANTIGRAVITY_CONVERSATION_ID")}
+               "antigravity": os.environ.get("ANTIGRAVITY_CONVERSATION_ID"),
+               "claude-code": os.environ.get("CLAUDE_CODE_SESSION_ID")}
     matches = [(kind, sid) for kind, sid in env_ids.items() if sid and harness in {"auto", kind}]
     if len(matches) != 1:
         raise ValueError("无法唯一识别当前会话，请显式指定 --harness 和会话 ID")
@@ -70,7 +117,7 @@ def current_session(harness):
 
 def source_from_path(path, harness="auto", prefix=None):
     path = path.expanduser().resolve()
-    records = read_records(path)
+    records = read_head(path)
     actual = next((name for name, adapter in ADAPTERS.items() if adapter.matches(records)), None)
     if actual is None:
         raise ValueError(f"{path}: 未识别到会话元数据或 USER_INPUT")
@@ -100,7 +147,7 @@ def resolve_source(prefix, harness="auto", source_path=None, *, output_root):
         if path.is_file():
             return source_from_path(path, harness, prefix)
     candidates = []
-    roots = {"antigravity": BRAIN, "codex": CODEX_HOME}
+    roots = {"antigravity": BRAIN, "codex": CODEX_HOME, "claude-code": CLAUDE_HOME}
     for name, adapter in ADAPTERS.items():
         if harness in {"auto", name}:
             candidates.extend(adapter.find_paths(roots[name], prefix))
@@ -121,6 +168,10 @@ def attribution(source, repo):
     if source.harness == "codex":
         env["CODEX_THREAD_ID"] = source.sid
         command.extend(["--session-log", str(source.path)])
+    elif source.harness == "claude-code":
+        env["CLAUDE_CODE_SESSION_ID"] = source.sid
+        # Transcripts live at <config>/projects/<project>/<sid>.jsonl.
+        env["CLAUDE_CONFIG_DIR"] = str(source.path.parents[2])
     else:
         env["ANTIGRAVITY_CONVERSATION_ID"] = source.sid
         env["ANTIGRAVITY_APP_DATA_DIR"] = str(source.path.parents[4])

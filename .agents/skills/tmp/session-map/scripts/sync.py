@@ -15,7 +15,7 @@ def manage(argv):
     parser = argparse.ArgumentParser(prog=f'sync.py {command}', description='查询和管理会话订阅')
     parser.add_argument('--json', action='store_true', help='输出机器可读 JSON')
     parser.add_argument('--output-root', type=Path)
-    parser.add_argument('--harness', choices=('auto', 'codex', 'antigravity'), default='auto')
+    parser.add_argument('--harness', choices=('auto', 'codex', 'antigravity', 'claude-code'), default='auto')
     if command == 'list':
         parser.add_argument('--all', action='store_true', help='同时列出已退订的会话')
     else:
@@ -77,7 +77,7 @@ def main(argv=None):
         return manage(argv)
     ap = argparse.ArgumentParser(description='session-map 同步与监听工具；支持 list/show/subscribe/unsubscribe 子命令')
     ap.add_argument('sid', nargs='?', help='会话 ID 或前缀 (支持前 8 位)')
-    ap.add_argument('--harness', choices=('auto', 'antigravity', 'codex'), default='auto')
+    ap.add_argument('--harness', choices=('auto', 'antigravity', 'codex', 'claude-code'), default='auto')
     ap.add_argument('--current', action='store_true', help='从当前 harness 的会话环境变量取得 ID')
     ap.add_argument('--source', type=Path, help='显式指定本地 JSONL 日志')
     ap.add_argument('--output-root', type=Path, help='覆盖归档根目录，用于隔离测试或导出')

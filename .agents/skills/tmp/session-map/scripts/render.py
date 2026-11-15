@@ -144,7 +144,8 @@ def render_turn(k, t, assets=None):
     return "\n".join(lines)
 
 
-def render(sid, src, harness, header, turns, assets=None):
+def assemble(sid, src, harness, header, turns, bodies):
+    """Join already rendered turn bodies under the index; turns supply only their titles."""
     idx = []
     for k, t in enumerate(turns, 1):
         ut = user_text(t["user"].get("content"))
@@ -157,5 +158,9 @@ def render(sid, src, harness, header, turns, assets=None):
             f"<!-- 机械文件, sync.py 自动生成, 勿手改. "
             f"源: {src} · 同步状态见 .sync-state.json -->\n\n"
             + "\n".join(idx) + "\n\n---\n\n")
-    return head + "\n".join(render_turn(k, t, assets) for k, t in enumerate(turns, 1))
+    return head + "\n".join(bodies)
 
+
+def render(sid, src, harness, header, turns, assets=None):
+    return assemble(sid, src, harness, header, turns,
+                    [render_turn(k, t, assets) for k, t in enumerate(turns, 1)])

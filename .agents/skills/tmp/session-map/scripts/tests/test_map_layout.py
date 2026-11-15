@@ -11,10 +11,8 @@ from map_layout import ensure_map, map_path
 
 class MapLayoutTests(unittest.TestCase):
     def setUp(self):
-        repo = SCRIPTS.parents[4]
-        root = repo / '.agents/.tmp/task/2026-11/2026-11-12_map-skill/outputs/test-data'
-        root.mkdir(parents=True, exist_ok=True)
-        self.temp = tempfile.TemporaryDirectory(dir=root)
+        # System temp keeps test runs from leaving task folders in the repository.
+        self.temp = tempfile.TemporaryDirectory(prefix='session-map-test-')
         self.addCleanup(self.temp.cleanup)
         self.directory = Path(self.temp.name)
 

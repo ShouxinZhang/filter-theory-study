@@ -11,7 +11,7 @@ from datetime import datetime
 from pathlib import Path
 
 from assets import AssetStore
-from models import Source, TZ, ts
+from models import Restart, Source, TZ, pending, ts
 from memory import ensure_memory
 from map_layout import ensure_map, map_path
 from render import user_text
@@ -71,7 +71,107 @@ def subscribed(directory):
     return directory.is_dir() and not (directory / ".unsubscribed").exists()
 
 
-def sync_source(source, subscribe=False):
+GUARD_BYTES = 64
+HEADER_SECONDS = 60
+
+
+class Live:
+    """In-memory progress of one source: parser state, rendered turns, and read offset."""
+
+    def __init__(self, source, directory, hints=None):
+        self.source = source
+        self.hints = dict(hints or {})
+        self.assets = AssetStore(directory)
+        self.parser = sources.new_parser(source.harness, self.assets, **self.hints)
+        self.bodies, self.unsealed = [], set()
+        self.offset = self.lines = 0
+        self.guard, self.identity = b"", None
+        self.header, self.header_at = None, 0.0
+
+    def continues(self, stream):
+        """Whether the log is still the file this state was read from, only appended to."""
+        status = os.fstat(stream.fileno())
+        if self.identity is None:
+            self.identity = (status.st_dev, status.st_ino)
+            return True
+        if self.identity != (status.st_dev, status.st_ino) or status.st_size < self.offset:
+            return False
+        stream.seek(self.offset - len(self.guard))
+        return stream.read(len(self.guard)) == self.guard
+
+    def advance(self):
+        """Feed appended records, re-render changed turns, and release finished ones."""
+        with self.source.path.open("rb") as stream:
+            if not self.continues(stream):
+                raise Restart()
+            stream.seek(self.offset)
+            done = False
+            while not done:
+                records, consumed, lines, incomplete, done = sources.read_batch(
+                    stream, self.source.path, self.lines)
+                self.parser.feed(records)
+                self.refresh()
+                self.offset += consumed
+                self.lines += lines
+            start = max(0, self.offset - GUARD_BYTES)
+            stream.seek(start)
+            self.guard = stream.read(self.offset - start)
+        return incomplete
+
+    def refresh(self):
+        parser = self.parser
+        for index in sorted(parser.dirty):
+            body = renderer.render_turn(index + 1, parser.turns[index], self.assets)
+            if index < len(self.bodies):
+                self.bodies[index] = body
+            else:
+                self.bodies.append(body)
+                self.unsealed.add(index)
+        parser.dirty.clear()
+        if self.hints.get("seal", True):
+            # Rendered turns that can no longer change keep only their title.
+            last = len(parser.turns) - 1
+            for index in [i for i in self.unsealed if i != last and not pending(parser.turns[i])]:
+                parser.seal(index)
+                self.unsealed.discard(index)
+
+    def attribution(self):
+        if self.header is None or time.monotonic() - self.header_at > HEADER_SECONDS:
+            self.header, self.header_at = attribution(self.source), time.monotonic()
+        return self.header
+
+
+def advance(source, directory, cache):
+    """Return an up-to-date Live, reusing cached progress when the log only grew."""
+    live = cache.get(source.sid) if cache is not None else None
+    if live is not None and live.source != source:
+        live = None
+    hints = dict(live.hints) if live else {}
+    for _ in range(4):
+        live = live or Live(source, directory, hints)
+        try:
+            incomplete = live.advance()
+        except Restart as restart:
+            if cache is not None:
+                cache.pop(source.sid, None)
+            if restart.hints and all(hints.get(key) == value for key, value in restart.hints.items()):
+                break
+            hints.update(restart.hints)
+            live = None
+            continue
+        except BaseException:
+            # A partly fed parser is unusable; the next attempt rebuilds from the start.
+            if cache is not None:
+                cache.pop(source.sid, None)
+            raise
+        if cache is not None:
+            cache[source.sid] = live
+        return live, incomplete
+    raise ValueError(f"{source.path}: 无法稳定解析日志")
+
+
+def sync_source(source, subscribe=False, cache=None):
+    """Sync one source. With `cache`, later calls read only what was appended."""
     directory = SESS / source.sid
     directory.mkdir(parents=True, exist_ok=True)
     # Lock before reading to prevent a slow watcher overwriting a newer manual sync.
@@ -85,27 +185,37 @@ def sync_source(source, subscribe=False):
             saved = read_json(binding)
             if saved["harness"] != source.harness or saved["sid"] != source.sid:
                 raise ValueError(f"{directory} 已绑定到不同来源")
-        header = attribution(source)
         signature = source_signature(source.path)
-        records, incomplete_tail = read_snapshot(source.path)
-        content = render(source.sid, source.path, source.harness, header, records,
-                         assets=AssetStore(directory))
+        live, incomplete_tail = advance(source, directory, cache)
+        header = live.attribution()
+        turns = live.parser.turns
+        content = renderer.assemble(source.sid, source.path, source.harness, header, turns, live.bodies)
         write_prompts(directory / "prompts.md", content)
         source_metadata = {"sid": source.sid, "harness": source.harness, "path": str(source.path)}
         if saved != source_metadata:
             atomic_write(binding, json.dumps(source_metadata, ensure_ascii=False, indent=2) + "\n")
         ensure_map(directory, header, source.sid)
         ensure_memory(directory, header)
-        parsed = sources.parse_turns(records, source.harness)
-        title = user_text(parsed[0]["user"].get("content", "")) if parsed else ""
+        title = user_text(turns[0]["user"].get("content", "")) if turns else ""
         now = datetime.now(TZ).isoformat()
         state = {"source_signature": signature, "last_synced_at": now, "last_attempt_at": now,
                  "title": title.splitlines()[0][:120] if title else source.sid,
-                 "turn_count": len(parsed), "last_error": None, "incomplete_tail": incomplete_tail}
+                 "turn_count": len(turns), "last_error": None, "incomplete_tail": incomplete_tail}
         atomic_write(directory / ".sync-state.json", json.dumps(state, ensure_ascii=False, indent=2) + "\n")
         if subscribe:
             (directory / ".unsubscribed").unlink(missing_ok=True)
     return True
+
+
+def synced_signature(directory):
+    """Signature of the last complete sync, so a restarted watcher skips unchanged logs."""
+    try:
+        state = read_json(directory / ".sync-state.json")
+    except (OSError, ValueError):
+        return None
+    if state.get("last_error") or state.get("incomplete_tail") or not (directory / "prompts.md").exists():
+        return None
+    return state.get("source_signature")
 
 
 def sync(sid_or_prefix, harness="auto", source_path=None, subscribe=True):
@@ -130,7 +240,7 @@ def sync_all():
 
 def watch(interval):
     SESS.mkdir(parents=True, exist_ok=True)
-    seen, sources, errors, bindings = {}, {}, {}, {}
+    seen, sources, errors, bindings, cache = {}, {}, {}, {}, {}
     while True:
         heartbeat = {"pid": os.getpid(), "updated_at": datetime.now(TZ).isoformat(),
                      "interval_seconds": interval, "output_root": str(SESS)}
@@ -138,7 +248,10 @@ def watch(interval):
         for d in SESS.glob("*/"):
             if not subscribed(d):
                 seen.pop(d.name, None)
+                cache.pop(d.name, None)
                 continue
+            if d.name not in seen:
+                seen[d.name] = synced_signature(d)
             try:
                 source = sources.get(d.name)
                 binding = d / ".source.json"
@@ -149,7 +262,7 @@ def watch(interval):
                     bindings[d.name] = binding_stamp
                 signature = source_signature(source.path)
                 if seen.get(d.name) != signature or not (d / "prompts.md").exists():
-                    sync_source(source)
+                    sync_source(source, cache=cache)
                     seen[d.name] = signature
                     errors.pop(d.name, None)
             except (OSError, ValueError, KeyError) as error:
@@ -158,7 +271,7 @@ def watch(interval):
                     errors[d.name] = str(error)
                     record_sync_error(d, error)
         active = {d.name for d in SESS.iterdir() if d.is_dir()}
-        for mapping in (seen, sources, errors, bindings):
+        for mapping in (seen, sources, errors, bindings, cache):
             for sid in set(mapping) - active:
                 del mapping[sid]
         time.sleep(interval)
@@ -267,7 +380,7 @@ def unsubscribe(prefix):
 def install_service():
     SERVICE_PATH.parent.mkdir(parents=True, exist_ok=True)
     unit = f"""[Unit]
-Description=Antigravity and Codex Session Map Watcher ({REPO.name})
+Description=Session Map Watcher ({REPO.name})
 After=default.target
 
 [Service]

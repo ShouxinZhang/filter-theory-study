@@ -1,5 +1,7 @@
 """Adapt Antigravity transcripts into the shared user/steps turn structure."""
 
+from models import TurnParser
+
 
 def matches(records):
     return any(record.get("type") == "USER_INPUT" for record in records)
@@ -13,17 +15,39 @@ def find_paths(root, prefix):
     return root.glob(f"{prefix}*/.system_generated/logs/transcript_full.jsonl")
 
 
+class Parser(TurnParser):
+    """Keep raw steps per turn; pairing is redone only for turns that changed."""
+
+    def __init__(self, assets=None, **hints):
+        super().__init__(assets, **hints)
+        self.raw = []
+
+    def feed(self, records):
+        changed = set()
+        for record in records:
+            if record.get("type") == "USER_INPUT":
+                self.raw.append({"user": record, "steps": []})
+                changed.add(len(self.raw) - 1)
+            elif self.raw:
+                self.raw[-1]["steps"].append(record)
+                changed.add(len(self.raw) - 1)
+        for index in sorted(changed):
+            turn = {**normalize_turn(self.raw[index]), "index": index}
+            if index < len(self.turns):
+                self.touch(self.turns[index])
+                self.turns[index] = turn
+            else:
+                self.open_turn(turn)
+
+    def seal(self, index):
+        super().seal(index)
+        self.raw[index]["steps"] = []
+
+
 def parse_turns(steps, assets=None):
-    cur = None
-    for d in steps:
-        if d.get("type") == "USER_INPUT":
-            if cur:
-                yield normalize_turn(cur)
-            cur = {"user": d, "steps": []}
-        elif cur:
-            cur["steps"].append(d)
-    if cur:
-        yield normalize_turn(cur)
+    parser = Parser(assets)
+    parser.feed(steps)
+    return parser.turns
 
 
 def normalize_turn(turn):
