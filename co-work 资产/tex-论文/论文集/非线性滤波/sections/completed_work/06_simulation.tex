@@ -68,7 +68,7 @@ EKF 最快但误差最大；BPF 在该设置下兼具较低误差与计算成本
 \section{时序误差分析}
 \suppressfloats[t]
 
-表~\ref{cw:tab:sim-accuracy} 与图~\ref{cw:fig:sim-time} 显示，本组数据中 BPF 与 ETPF 精度接近，EnKF 略差。
+表~\ref{cw:tab:sim-accuracy} 与图~\ref{cw:fig:sim-time} 对比了观测间隔 $m\in\{1,2,4,8\}$ 下的滤波误差，图~\ref{cw:fig:sim-observation} 给出 $m=1$ 时首条轨迹的状态与观测序列。由于平方观测 $h(x)=x^2/20$ 关于原点偶对称，单步似然无法区分 $\pm\sqrt{20y_k}$ 两个反号分支，符号辨识依赖状态方程中的余弦驱动项跨步打破对称性；故图~\ref{cw:fig:sim-observation} 中当真值大幅跨越零点时（如 $k=10$ 附近），各集合方法的均值会出现短暂反号偏折，随后在数步内恢复跟踪。
 
 \begin{table}[htbp]
 \centering
@@ -80,6 +80,8 @@ EKF 最快但误差最大；BPF 在该设置下兼具较低误差与计算成本
 \par\vspace{3pt}
 \parbox{\wd0}{\wuhao\hspace*{\ccwd}注：表中给出全时域 RMSE $\downarrow$，括号内为 NRMSE $\downarrow$；上下标为整条轨迹 bootstrap（$1000$ 次）所得 95\% 区间相对中心值的偏移，按未舍入值标粗每列最优}
 \end{table}
+
+在四个观测间隔下，BPF 与 ETPF 的全时域 RMSE 始终接近（$m=1$ 时为 $4.65$ 对 $4.71$，$m=8$ 时均为 $8.14$），差值远小于轨迹 bootstrap 置信半宽；当 $m>1$ 时，图~\ref{cw:fig:sim-time} 呈现缺测步预测扩散、观测步更新回落的锯齿形态。EnKF 在各间隔下均比粒子方法高约 $3\%$--$10\%$，原因是预测集合横跨正负半轴时，偶对称观测削弱了状态与观测的样本协方差，使线性增益更新偏向两峰中间。EKF 则在所有间隔下失效（NRMSE 均超过 $157\%$）：单点导数 $H_k=\hat x_k^-/10$ 一旦落在反号分支便给出反向修正，靠近零点时又趋于退化；$m=4$ 恰好在 $k=20$ 触发严重发散（$\mathrm{RMSE}_{20}=311.55$），将全时域 RMSE 推高至 $40.85$，而 $m=8$ 避开该更新时刻后回落至 $16.67$。
 
 \begin{figure}[!htb]
 \centering
@@ -102,6 +104,8 @@ EKF 最快但误差最大；BPF 在该设置下兼具较低误差与计算成本
 \FloatBarrier
 \section{粒子数与正则强度及计算开销}
 
+固定 $m=1$ 考察粒子数 $N$、正则参数 $\varepsilon$ 与单步串行耗时（图~\ref{cw:fig:sim-ablation} 与表~\ref{cw:tab:sim-runtime}）。图~\ref{cw:fig:sim-ablation}（a）中，EnKF 在 $N\in\{100,250,500\}$ 下维持在 $5.09$--$5.12$，说明其误差主要受限于线性更新偏差而非样本量。BPF 随 $N$ 单调下降（$4.95\to 4.65$），ETPF（$\varepsilon=1$）在 $N=250$ 时取最低值 $4.57$，$N=500$ 时为 $4.71$：由于算法~\ref{cw:alg:bpf} 与~\ref{cw:alg:etpf} 在重采样前输出相同的加权均值 $X_k^-\bm w_k^+$，两者差异仅通过下一时刻状态传播体现，重心凸组合的轻微方差收缩与 $8$ 条轨迹的抽样波动共同导致了有限样本下的非单调表现。图~\ref{cw:fig:sim-ablation}（b）体现了 $\varepsilon$ 的数值折中（以 $N=500$ 为例）：$\varepsilon=10$ 收敛最快（未收敛率 $1.13\%$），但耦合矩阵趋向秩一乘积而过度收缩方差（RMSE 升至 $4.81$）；$\varepsilon\le 0.1$ 虽更接近精确输运，但 $1000$ 步 Sinkhorn 迭代的未收敛率超过 $78\%$，边际修正后的近似耦合偏离最优解（RMSE 回退至 $4.91$ 以上），故 $\varepsilon=1$ 在平滑偏差与截断误差间较为均衡。
+
 \begin{figure}[!htb]
 \centering
 \includegraphics[width=0.88\linewidth]{figs/completed_work/ablation_runtime.pdf}
@@ -113,7 +117,7 @@ EKF 最快但误差最大；BPF 在该设置下兼具较低误差与计算成本
 {\wuhao\parbox{\linewidth}{\centering（a）固定 $\varepsilon=1$ 比较 $N$；（b）比较 ETPF 的 $\varepsilon$；（c）固定 $\varepsilon=1$ 的串行单核每步耗时}}
 \end{figure}
 
-在所测试的三个粒子数量下，BPF 的 RMSE 随 $N$ 增大而下降；固定 $\varepsilon=1$ 时，ETPF 的 RMSE 未呈严格单调下降。该现象限于本组有限轨迹与参数设置，尚不能据此判断两者相对 Bayes 最优估计的渐近差距。在本次消融范围内，正则化强度 $\varepsilon$ 对相对误差的影响较小，其选择仍需结合计算开销和收敛情况。
+计算开销上（图~\ref{cw:fig:sim-ablation}（c）与表~\ref{cw:tab:sim-runtime}），当 $N$ 由 $100$ 增至 $500$ 时，BPF（$6.79\to 38.01\,\mu\mathrm{s}$）与 EnKF（$8.50\to 49.68\,\mu\mathrm{s}$）呈 $O(N)$ 增长；ETPF 则由 $0.95\,\mathrm{ms}$ 增至 $28.29\,\mathrm{ms}$（增幅 $29.9$ 倍，$N=500$ 时约为 BPF 的 $744$ 倍），耗时集中于每轮 $O(N^2)$ 的 Sinkhorn 矩阵缩放。图~\ref{cw:fig:sim-density} 的后验密度对比了四类近似的分布形态：$k=11$ 存在符号歧义时，BPF 与 ETPF 均保留双峰且主峰对齐真值，EKF 锁定于错误的负峰，EnKF 则将单峰铺在两峰之间的低密度区；$k=21$ 回归单峰后四者主峰一致，ETPF 方差（$4.41$）略窄于 BPF（$5.08$）。由于该基准的过程噪声较强（方差为 $10$），每步预测扩散足以打散复制粒子，BPF 已能以 $O(N)$ 开销达到相近精度。
 
 \begin{figure}[!htb]
 \centering
@@ -123,10 +127,6 @@ EKF 最快但误差最大；BPF 在该设置下兼具较低误差与计算成本
 \caption{首条轨迹的后验密度估计对比}
 \label{cw:fig:sim-density}
 \end{figure}
-
-图~\ref{cw:fig:sim-density} 中，$k=11$ 时 BPF 与 ETPF 均呈双峰，而 EKF 的高斯近似仅保留单峰。
-$k=21$ 时各估计的主峰位置接近，但峰宽仍有差异。
-在上述 Gordon 基准及当前参数设置下，ETPF 继承了 PF 的非高斯表示能力，但更高的计算开销未带来明显精度优势。
 
 % 先收束 Gordon 基准图表，避免混入后续 Logistic 实验。
 \FloatBarrier

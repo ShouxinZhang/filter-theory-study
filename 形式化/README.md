@@ -8,6 +8,12 @@
 - **数学库**: `mathlib4` `v4.36.0-rc2`（由 Lake 管理，源码与预编译缓存位于 `.lake/packages/mathlib`，可直接本地检索如 `Mathlib/Probability/Kernel/Posterior.lean`）
 - **MCP 服务**: `lean-lsp-mcp`（通过 `uvx lean-lsp-mcp` 启动，已接入本机 Antigravity MCP 配置）
 
+## 模块结构
+
+- [`FilterFormalization/Basic.lean`](FilterFormalization/Basic.lean)：基础推前-拉回积分对偶冒烟模块
+- [`FilterFormalization/Model.lean`](FilterFormalization/Model.lean)：一般非线性状态空间模型（式 `cw:eq:1`）、历史轨迹投影、机制转移核 `mechKernel` 与噪声独立性引理
+- [`FilterFormalization/Memorylessness.lean`](FilterFormalization/Memorylessness.lean)：无记忆性引理（引理 `cw:lem:markov` 及附录 A.1 一般情形）的三层完整形式化（任意可测空间集合条件概率 `condExp`、标准 Borel 正则条件分布核 `condDistrib`、关于 $\sigma$-有限参考测度的条件密度 `IsCondDensity` / `rnDeriv`）
+
 ## 常用命令
 
 在 `形式化/` 目录下执行：
