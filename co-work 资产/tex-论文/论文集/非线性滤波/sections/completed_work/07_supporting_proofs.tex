@@ -71,7 +71,7 @@ P_{X\mid Y;j,i}:=\mathbb P_{X\mid Y=y_j}(\{x_i\})=\Pi_{ij}/b_j.
 
 \section{Bayes 更新公式的证明}\label{cw:app:proofs}
 
-\begin{theorem}[Bayes 更新公式]\label{cw:thm:bayes}
+\begin{theorem}[Bayes 更新公式\cite{sarkka2013bayesian,cappe2005inference}]\label{cw:thm:bayes}
 
 在本文约定与模型条件下，对 $k\geq1$，给定历史观测 $y_{1:k-1}$ 并收到当前观测 $y_k$ 后，状态后验密度满足
 \begin{equation}\label{cw:eq:15}
@@ -85,6 +85,7 @@ P_{X\mid Y;j,i}:=\mathbb P_{X\mid Y=y_j}(\{x_i\})=\Pi_{ij}/b_j.
 \end{theorem}
 
 \begin{proof}
+为完整起见，下面给出自行推导的证明。
 
 先固定历史观测 $y_{1:k-1}$。收到 $y_k$ 后，要求的是在这些历史观测的基础上，再给定 $Y_k=y_k$ 时的状态密度。按条件密度公式，将条件联合密度除以新观测的条件边缘密度：
 \begin{equation}\label{cw:eq:16}

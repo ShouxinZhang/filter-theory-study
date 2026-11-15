@@ -1,13 +1,12 @@
 % XeLaTeX 由 HITSZ build 脚本调用，避免 program 注释绕过多遍编译配方。
 % !LW recipe = HITSZ build
-% 中期内容迁移形成的硕士论文工作稿；主入口只组织模块。
-\documentclass[type=master,fontset=fandol,mathfont=newtxmath]{hitszthesis}
+% 硕士学位论文工作稿；版式对齐深圳校区学术型硕士官方 LaTeX 范例（hithesisbook）。
+\documentclass[fontset=fandol,type=master,campus=harbin,chapterbold=false,tocblank=false]{hithesisbook}
 \input{preamble/packages}
 \input{preamble/fonts}
 \input{preamble/algorithms}
 \input{preamble/bibliography}
-\input{preamble/cover_layout}
-\input{config/options}
+\bibliographystyle{hithesis}
 \graphicspath{{figs/}{figs/completed_work/}}
 \begin{document}
 \frontmatter
@@ -21,10 +20,6 @@
 \input{sections/completed_work/06_simulation}
 \backmatter
 \input{back/conclusion}
-\ifIncludeAIStatement
-  \input{back/ai_statement}
-\fi
-\bibliographystyle{hithesis}
 \bibliography{references/startpaper,references/completed_work}
 \begin{appendix}
   \input{sections/completed_work/07_supporting_proofs}

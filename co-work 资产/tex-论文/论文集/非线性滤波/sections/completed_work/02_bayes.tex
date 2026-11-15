@@ -1,7 +1,7 @@
 % !TeX root = ../../main.tex
 \section{Bayes 滤波}\label{cw:sec:bayes}
 
-\begin{lemma}[无记忆性]\label{cw:lem:markov}
+\begin{lemma}[无记忆性\cite{sarkka2013bayesian,cappe2005inference}]\label{cw:lem:markov}
 在上述状态方程与噪声独立性条件下，给定 $X_{k-1}$ 后，$X_k$ 的条件分布不再依赖更早的状态与历史观测；给定 $X_k$ 后，$Y_k$ 的条件分布不再依赖过去的状态与观测。对 $k\geq1$ 有
 \begin{equation}\label{cw:eq:2}
 \begin{aligned}
@@ -15,7 +15,7 @@ $k=1$ 时历史观测为空。第一式给出状态的一阶 Markov 性，第二
 
 \end{lemma}
 \begin{proof}
-离散情形的证明及一般情形的推广说明见第~\ref{cw:app:markov-proof}~节。
+为完整起见，本文给出自行推导的证明：离散情形的证明及一般情形的推广说明见第~\ref{cw:app:markov-proof}~节。
 \end{proof}
 
 固定观测记录 $y_{1:k}=(y_1,\dots,y_k)^{\mathrm{T}}$，以 $p_{X_0}$ 初始化，$k=1$ 时不含历史观测条件。

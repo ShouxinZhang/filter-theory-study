@@ -1,7 +1,7 @@
 % !TeX root = ../../../main.tex
 % 模板原生算法样式；计算步骤与迁入源稿一致。
 \begin{algorithm}[H]
-\caption{BPF：预测、似然加权与独立重采样}\label{cw:alg:bpf}
+\caption{BPF 预测与似然加权及独立重采样}\label{cw:alg:bpf}
 \KwIn{初始密度 $p(x_0)$, 粒子数 $N$, 模型 $f$, 噪声分布 $\mathbb P_{N_x}$, 观测条件密度, 观测序列 $y_{1:T}$}
 \KwOut{后验均值估计 $\hat x_{1:T}$；每轮更新后的等权粒子 $\{x_k^{+,(j)}\}_{j=1}^N$}
 独立采样 $x_0^{+,(i)}\sim p(x_0)$, 权重均为 $1/N$, $i=1,\dots,N$\;

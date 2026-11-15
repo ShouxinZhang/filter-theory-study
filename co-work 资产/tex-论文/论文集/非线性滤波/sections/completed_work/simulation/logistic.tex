@@ -1,5 +1,5 @@
 % !TeX root = ../../../main.tex
-\section{零过程噪声 Logistic 模型：粒子贫化与稳健性}\label{cw:sec:sim-logistic}
+\section{零过程噪声下粒子贫化与稳健性}\label{cw:sec:sim-logistic}
 考虑确定性混沌状态演化与非线性观测：
 \begin{equation}\label{cw:eq:sim-logistic-model}
 \begin{aligned}
@@ -13,18 +13,25 @@ X_0\sim U[0,1],\quad N_{y,k}\sim\mathcal N(0,0.1).
 图~\ref{cw:fig:sim-logistic-robustness} 比较两种算法的误差与粒子多样性，四项误差统计见表~\ref{cw:tab:sim-logistic-errors}。
 
 \begin{table}[!htb]
-\centering\wuhao
-\caption{Logistic 模型的四项误差与实测总 MSE，第 $1$--$1000$ 步平均。}
+\centering
+\caption{Logistic 模型的四项误差与实测总 MSE}
 \label{cw:tab:sim-logistic-errors}
-\input{sections/completed_work/tables/logistic_error_table.tex}
+\vspace{0.5em}\wuhao
+\sbox0{\input{sections/completed_work/tables/logistic_error_table.tex}}%
+\usebox0
+\par\vspace{3pt}
+\parbox{\wd0}{\wuhao\hspace*{\ccwd}注：表中数值为第 $1$--$1000$ 步平均}
 \end{table}
 表\ref{cw:tab:sim-logistic-errors}评估了重采样后均值 $\hat X_k=X_k^+\mathbf1_N/N$，四项对应式~\eqref{cw:eq:four-errors}。理论分解是总体期望恒等式；表中各项为有限路径与重复运行的估计，Bayes 风险由数值参考后验近似，因此，四项之和与实测总 MSE 未必逐位相等。
 
 \begin{figure}[!htb]
 \centering
 \includegraphics[width=0.88\linewidth]{figs/completed_work/logistic_robustness.pdf}
-\caption{同一批运行的误差与粒子多样性。(a) 每 $20$ 步分段平均的 MSE 与 Bayes 参考风险；(b) 重采样后不同位置数的跨运行平均，横轴取对数以显示早期贫化。}
+\par\vspace{3pt}
+\caption{Logistic 模型同一批运行的误差与粒子多样性}
 \label{cw:fig:sim-logistic-robustness}
+\par\vspace{2pt}
+{\wuhao\parbox{0.92\linewidth}{\centering（a）每 $20$ 步分段平均的 MSE 与 Bayes 参考风险；（b）重采样后不同位置数的跨运行平均（对数横轴）}}
 \end{figure}
 % 学位论文版式中正常续排结论，避免旧的预留空间指令将短段落推到新页。
 BPF 的 $2048$ 次运行均贫化为单点；ETPF 在这批运行中没有单点贫化，末步平均保留 $69.67$ 个不同位置，总 MSE 较 BPF 降低 $70.9\%$。

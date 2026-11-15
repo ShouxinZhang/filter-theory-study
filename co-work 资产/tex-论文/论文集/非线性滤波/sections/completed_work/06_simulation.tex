@@ -6,7 +6,7 @@
 \centering
 \caption{运行环境}
 \label{cw:tab:sim-environment}
-\wuhao
+\vspace{0.5em}\wuhao
 \begin{tabular}{ll}
 \toprule[1.5pt]
 项目 & 配置 \\
@@ -48,10 +48,13 @@ X_0\sim\mathcal N(0,2),\ N_{x,k}\sim\mathcal N(0,10),\ N_{y,k}\sim\mathcal N(0,1
 
 \begin{table}[htbp]
 \centering
-\caption{精度与串行计算开销，$m=1,N=500$，ETPF 取 $\varepsilon=1$。时间为每条轨迹三次重复的中位数，再对 $8$ 条轨迹取均值 $\pm$ 样本标准差}
+\caption{Gordon 基准下的滤波精度与串行计算开销}
 \label{cw:tab:sim-runtime}
-\wuhao\setlength{\tabcolsep}{5pt}
-\input{sections/completed_work/tables/runtime_table.tex}
+\vspace{0.5em}\wuhao\setlength{\tabcolsep}{5pt}
+\sbox0{\input{sections/completed_work/tables/runtime_table.tex}}%
+\usebox0
+\par\vspace{3pt}
+\parbox{\wd0}{\wuhao\hspace*{\ccwd}注：取 $m=1$，$N=500$，ETPF 取 $\varepsilon=1$；时间为每条轨迹三次重复的中位数，再对 $8$ 条轨迹取均值 $\pm$ 样本标准差}
 \end{table}
 
 EKF 最快但误差最大；BPF 在该设置下兼具较低误差与计算成本。ETPF 每步约 $28.29$ ms，远高于 BPF 的 $38.01\,\mu$s。
@@ -69,34 +72,45 @@ EKF 最快但误差最大；BPF 在该设置下兼具较低误差与计算成本
 
 \begin{table}[htbp]
 \centering
-\caption{全时域 RMSE $\downarrow$，括号内为 NRMSE $\downarrow$。上下标为整条轨迹 bootstrap（$1000$ 次）所得 95\% 区间相对中心值的偏移；按未舍入值标粗每列最优。}
+\caption{不同观测间隔下的全时域滤波误差对比}
 \label{cw:tab:sim-accuracy}
-\wuhao\setlength{\tabcolsep}{7pt}
-\input{sections/completed_work/tables/accuracy_table.tex}
+\vspace{0.5em}\wuhao\setlength{\tabcolsep}{7pt}
+\sbox0{\input{sections/completed_work/tables/accuracy_table.tex}}%
+\usebox0
+\par\vspace{3pt}
+\parbox{\wd0}{\wuhao\hspace*{\ccwd}注：表中给出全时域 RMSE $\downarrow$，括号内为 NRMSE $\downarrow$；上下标为整条轨迹 bootstrap（$1000$ 次）所得 95\% 区间相对中心值的偏移，按未舍入值标粗每列最优}
 \end{table}
 
 \begin{figure}[!htb]
 \centering
 \includegraphics[width=0.84\linewidth]{figs/completed_work/rmse_time.pdf}
-\caption{逐时刻跨轨迹 RMSE，$N=500,\varepsilon=1$。各子图采用相同对数纵轴。}
+\par\vspace{3pt}
+{\wuhao 注：取 $N=500$，$\varepsilon=1$，各子图采用相同对数纵轴\par\vspace{2pt}}
+\caption{不同观测间隔下的逐时刻跨轨迹 RMSE}
 \label{cw:fig:sim-time}
 \end{figure}
 
 \begin{figure}[!htb]
 \centering
 \includegraphics[width=0.84\linewidth]{figs/completed_work/trajectory.pdf}
-\caption{首条轨迹的状态与观测，$m=1$；下图对照 $y_k$ 与 $x_k^2/20$。}
+\par\vspace{3pt}
+{\wuhao 注：取 $m=1$，下图对照观测值 $y_k$ 与无噪观测函数 $x_k^2/20$\par\vspace{2pt}}
+\caption{首条轨迹的状态与观测序列}
 \label{cw:fig:sim-observation}
 \end{figure}
 
 \FloatBarrier
-\section{粒子数，正则强度与计算开销}
+\section{粒子数与正则强度及计算开销}
 
 \begin{figure}[!htb]
 \centering
 \includegraphics[width=0.88\linewidth]{figs/completed_work/ablation_runtime.pdf}
-\caption{单因素切片均取 $m=1$。(a) 固定 $\varepsilon=1$ 比较 $N$；(b) 比较 ETPF 的 $\varepsilon$；(c) 相同冻结数据上的串行单核每步内核耗时，对 ETPF 固定 $\varepsilon=1$。}
+\par\vspace{3pt}
+{\wuhao 注：单因素切片均取 $m=1$\par\vspace{2pt}}
+\caption{粒子数与正则强度消融及每步内核耗时}
 \label{cw:fig:sim-ablation}
+\par\vspace{2pt}
+{\wuhao\parbox{\linewidth}{\centering（a）固定 $\varepsilon=1$ 比较 $N$；（b）比较 ETPF 的 $\varepsilon$；（c）固定 $\varepsilon=1$ 的串行单核每步耗时}}
 \end{figure}
 
 在所测试的三个粒子数量下，BPF 的 RMSE 随 $N$ 增大而下降；固定 $\varepsilon=1$ 时，ETPF 的 RMSE 未呈严格单调下降。该现象限于本组有限轨迹与参数设置，尚不能据此判断两者相对 Bayes 最优估计的渐近差距。在本次消融范围内，正则化强度 $\varepsilon$ 对相对误差的影响较小，其选择仍需结合计算开销和收敛情况。
@@ -104,7 +118,9 @@ EKF 最快但误差最大；BPF 在该设置下兼具较低误差与计算成本
 \begin{figure}[!htb]
 \centering
 \includegraphics[width=0.88\linewidth]{figs/completed_work/posterior_density.pdf}
-\caption{首条轨迹的后验密度估计，$m=1,N=500,\varepsilon=1$。}
+\par\vspace{3pt}
+{\wuhao 注：取 $m=1$，$N=500$，$\varepsilon=1$\par\vspace{2pt}}
+\caption{首条轨迹的后验密度估计对比}
 \label{cw:fig:sim-density}
 \end{figure}
 
