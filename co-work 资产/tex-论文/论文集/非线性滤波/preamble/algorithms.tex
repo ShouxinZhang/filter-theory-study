@@ -21,3 +21,11 @@
 \SetKwFor{For}{for}{do}{end}
 \SetKwIF{If}{ElseIf}{Else}{if}{then}{else if}{else}{end}
 \DontPrintSemicolon
+% 统一定理类环境编号为“章-序”连字符格式，与图表、公式及算法编号保持一致。
+\renewcommand{\theassumption}{\thechapter-\arabic{assumption}}
+\renewcommand{\thedefinition}{\thechapter-\arabic{definition}}
+\renewcommand{\theproposition}{\thechapter-\arabic{proposition}}
+\renewcommand{\thelemma}{\thechapter-\arabic{lemma}}
+\renewcommand{\thetheorem}{\thechapter-\arabic{theorem}}
+\renewcommand{\thecorollary}{\thechapter-\arabic{corollary}}
+\renewcommand{\theremark}{\thechapter-\arabic{remark}}

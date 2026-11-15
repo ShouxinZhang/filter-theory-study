@@ -1,14 +1,14 @@
 % !TeX root = ../../../main.tex
 \section{潜空间条件输运粒子滤波与更新机制分析}\label{cw:sec:ml-updates}
 
-在~\ref{cw:sec:ml-problem}~节的潜空间模型~\eqref{cw:eq:ml-model} 下，初始粒子取 $z_0^{+,(1..N)}\sim\mathbb P_Z$，预测步为 $z_k^{-,(i)}=z_{k-1}^{+,(i)}$，四类粒子更新做法如下：
+在第~\ref{cw:sec:ml-problem}~节的潜空间模型~\eqref{cw:eq:ml-model} 下，初始粒子取 $z_0^{+,(1..N)}\sim\mathbb P_Z$，预测步为 $z_k^{-,(i)}=z_{k-1}^{+,(i)}$，记潜空间粒子矩阵为 $Z_k^\pm:=z_k^{\pm,(1..N)}\in\mathbb R^{n_d\times N}$，四类粒子更新做法如下：
 \begin{itemize}[leftmargin=2em,topsep=3pt,itemsep=2pt,parsep=0pt]
 \item \textbf{BPF 与 ETPF：}按正态窗口似然计算权重
 \begin{equation}\label{cw:eq:ml-weights}
 w_k^{+,(i)}\propto\exp\!\left(-\frac{1}{2\sigma^2}\bigl\|y_k-\bm H_k\mathscr T_{\Leftarrow}(z_k^{-,(i)})\bigr\|^2\right),\qquad i=1,\dots,N,
 \end{equation}
 分别按算法~\ref{cw:alg:bpf} 作多项重采样，或按算法~\ref{cw:alg:etpf}、\ref{cw:alg:sinkhorn-basic} 作熵正则重心变换 $Z_k^+=NZ_k^-\bm\Pi_k$。
-\item \textbf{逐步在线 OTPF：}每步生成模拟观测 $y_k^{(i)}=\bm H_k\mathscr T_{\Leftarrow}(z_k^{-,(i)})+n_{y,k}^{(i)}$\cite{aljarrah2024brenier}，在线交替训练网络求解~\ref{cw:sec:ml-minimax}~节的极大极小问题~\eqref{cw:eq:ml-minimax}，令 $z_k^{+,(i)}=T_k(z_k^{-,(i)},y_k)$。
+\item \textbf{逐步在线 OTPF：}每步抽样 $n_{y,k}^{(i)}\sim\mathcal N(\bm 0,\sigma^2\bm I_{r^2})$ 生成模拟观测 $y_k^{(i)}=\bm H_k\mathscr T_{\Leftarrow}(z_k^{-,(i)})+n_{y,k}^{(i)}$\cite{aljarrah2024brenier}，在线交替训练网络求解第~\ref{cw:sec:ml-minimax}~节的极大极小问题~\eqref{cw:eq:ml-minimax}，令 $z_k^{+,(i)}=T_k(z_k^{-,(i)},y_k)$。
 \item \textbf{静态摊销 OTPF：}由命题~\ref{cw:lem:ml-static} 与式~\eqref{cw:eq:ml-amortized-pushforward}，离线在全体训练图像与随机步数 $k$ 上训练同一个映射 $T$，在线每步直接计算
 \begin{equation}\label{cw:eq:ml-amortized-update}
 z_k^{+,(i)}=T\bigl(z_0^{+,(i)},\bm m_k\odot y,\bm m_k\bigr),\qquad i=1,\dots,N,

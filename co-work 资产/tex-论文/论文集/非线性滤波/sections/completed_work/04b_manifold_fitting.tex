@@ -3,10 +3,10 @@
 
 当观测取值于高维向量空间 $\mathcal S_X=\mathbb R^{n_D}$ 时，直接在环境空间中实施似然加权或离散耦合输运会遭遇严重的维数灾难。实际物理或视觉信号往往并不充满整个环境空间，而是集中于某个自由度仅为 $n_d$（$n_d<n_D$）的低维子集 $\mathcal M\subseteq\mathcal S_X$ 附近。本节从经验模内积下的重构误差出发，给出压缩算子 $\mathscr T_{\Rightarrow}:\mathcal S_X\to\mathcal S_Z$（$\mathcal S_Z=\mathbb R^{n_d}$）与还原算子 $\mathscr T_{\Leftarrow}:\mathcal S_Z\to\mathcal S_X$ 的流形拟合框架，为第~\ref{cw:sec:algorithms}~章的潜空间输运滤波提供低维状态坐标与经验推前先验。
 
-设离线观测样本矩阵为 $x_{1..M}=(x_1,\dots,x_M)\in\mathbb R^{n_D\times M}$。在样本行排列空间上定义经验模内积 $\langle\bm U,\bm V\rangle_{\hat{\mathbb P}_M}:=\frac1M\bm U\bm V^{\mathrm T}\in\mathbb R^{n_D\times n_D}$ 及其诱导范数 $\|\bm U\|_{\hat{\mathbb P}_M}^2:=\operatorname{tr}\langle\bm U,\bm U\rangle_{\hat{\mathbb P}_M}$。对任意重构映射 $\mathscr R:\mathcal S_X\to\mathcal M$，记余映射为 $\mathscr R^{\perp}:=\mathscr I-\mathscr R$，则样本平均重构平方误差可统一表示为
+设离线观测样本矩阵为 $x_{1..M}=(x_1,\dots,x_M)\in\mathbb R^{n_D\times M}$，简记样本等权经验测度为 $\hat{\mathbb P}_M:=\hat{\mathbb P}_{M;X}$。在样本行排列空间上定义经验模内积 $\langle\bm U\mid\bm V\rangle_{\hat{\mathbb P}_M}:=\frac1M\bm U\bm V^{\mathrm T}\in\mathbb R^{n_D\times n_D}$ 及其诱导范数 $\|\bm U\|_{\hat{\mathbb P}_M}^2:=\operatorname{tr}\langle\bm U\mid\bm U\rangle_{\hat{\mathbb P}_M}$。记恒等算子为 $\mathscr I$；对任意重构映射 $\mathscr R:\mathcal S_X\to\mathcal M$，记余映射为 $\mathscr R^{\perp}:=\mathscr I-\mathscr R$，则样本平均重构平方误差可统一表示为
 \begin{equation}\label{cw:eq:manifold-emp-norm}
 \frac1M\sum_{i=1}^M\bigl\|x_i-\mathscr R(x_i)\bigr\|^2
-=\operatorname{tr}\bigl\langle\mathscr R^{\perp}(x_{1..M}),\mathscr R^{\perp}(x_{1..M})\bigr\rangle_{\hat{\mathbb P}_M}
+=\operatorname{tr}\bigl\langle\mathscr R^{\perp}(x_{1..M})\bigm|\mathscr R^{\perp}(x_{1..M})\bigr\rangle_{\hat{\mathbb P}_M}
 =\bigl\|\mathscr R^{\perp}(x_{1..M})\bigr\|_{\hat{\mathbb P}_M}^2.
 \end{equation}
 若不对 $\mathscr R$ 施加维数瓶颈而直接极小化式~\eqref{cw:eq:manifold-emp-norm}，最优解将平凡退化为恒等算子 $\mathscr I$。引入以 $\mathcal S_Z$ 为中介的压缩—还原复合结构 $\mathscr R=\mathscr T_{\Leftarrow}\circ\mathscr T_{\Rightarrow}$，即可将重构像集限制在至多 $n_d$ 个自由度的低维几何结构上。
@@ -16,13 +16,13 @@
 先考察 $\mathcal M$ 为 $n_d$ 维平直真子空间 $W<\mathcal S_X$ 的基础情形。此时压缩与还原算子均为线性映射，标准基下的表示矩阵分别记为 $\bm T_{\Rightarrow}\in\mathbb R^{n_d\times n_D}$ 与满列秩矩阵 $\bm T_{\Leftarrow}\in\mathbb R^{n_D\times n_d}$，像空间 $W:=\operatorname{im}(\mathscr T_{\Leftarrow})<\mathcal S_X$ 自然满足 $\operatorname{rank}(\bm T_{\Leftarrow}\bm T_{\Rightarrow})\le n_d$。记向 $W$ 的正交投影算子为 $\mathscr P_W$（矩阵表示为 $\bm P_W$），余投影为 $\mathscr P_W^{\perp}=\mathscr I-\mathscr P_W$（矩阵表示为 $\bm P_W^{\perp}=\bm I_{n_D}-\bm P_W$）。利用 $\operatorname{im}(\bm P_W^{\perp})\perp W$ 及迹的轮换性，重构误差可作正交分解：
 \begin{equation}\label{cw:eq:manifold-orth-decomp}
 \bigl\|(\bm I_{n_D}-\bm T_{\Leftarrow}\bm T_{\Rightarrow})x_{1..M}\bigr\|_{\hat{\mathbb P}_M}^2
-=\operatorname{tr}\bigl(\bm P_W^{\perp}\langle x_{1..M},x_{1..M}\rangle_{\hat{\mathbb P}_M}\bigr)
+=\operatorname{tr}\bigl(\bm P_W^{\perp}\langle x_{1..M}\mid x_{1..M}\rangle_{\hat{\mathbb P}_M}\bigr)
 +\bigl\|(\bm P_W-\bm T_{\Leftarrow}\bm T_{\Rightarrow})x_{1..M}\bigr\|_{\hat{\mathbb P}_M}^2.
 \end{equation}
 式~\eqref{cw:eq:manifold-orth-decomp} 右端首项仅依赖像子空间 $W$ 的选取，次项则度量复合映射偏离正交投影的程度。由此可直接导出线性压缩与子空间选取的闭式最优解，其完整推导见附录~\ref{cw:app:manifold}。
 
 \begin{proposition}[线性压缩还原的伴随闭式解与谱截断]\label{cw:prop:linear-manifold}
-设 $\mathscr T_{\Leftarrow}:\mathcal S_Z\to\mathcal S_X$ 为单射线性算子，$W=\operatorname{im}(\mathscr T_{\Leftarrow})$，$\mathscr T_{\Leftarrow}^{\star}:\mathcal S_X\to\mathcal S_Z$ 为其内积伴随算子。记样本二阶矩矩阵 $\langle x_{1..M},x_{1..M}\rangle_{\hat{\mathbb P}_M}$ 的特征值按降序排列为 $\lambda_1\ge\dots\ge\lambda_{n_D}\ge0$，相应规范正交特征向量族为 $u_{1..n_D}$。则：
+设 $\mathscr T_{\Leftarrow}:\mathcal S_Z\to\mathcal S_X$ 为单射线性算子，$W=\operatorname{im}(\mathscr T_{\Leftarrow})$，$\mathscr T_{\Leftarrow}^{\star}:\mathcal S_X\to\mathcal S_Z$ 为其内积伴随算子。记样本二阶矩矩阵 $\langle x_{1..M}\mid x_{1..M}\rangle_{\hat{\mathbb P}_M}$ 的特征值按降序排列为 $\lambda_1\ge\dots\ge\lambda_{n_D}\ge0$，相应规范正交特征向量族为 $u_{1..n_D}$。则：
 \begin{enumerate}[label=(\arabic*),leftmargin=2.2em,topsep=2pt,itemsep=2pt]
 \item 固定 $\mathscr T_{\Leftarrow}$ 时，最优压缩算子为 $\mathscr T_{\Rightarrow}^{\optstar}=(\mathscr T_{\Leftarrow}^{\star}\mathscr T_{\Leftarrow})^{-1}\mathscr T_{\Leftarrow}^{\star}$（标准实内积下矩阵形式为 $\bm T_{\Rightarrow}^{\optstar}=(\bm T_{\Leftarrow}^{\mathrm T}\bm T_{\Leftarrow})^{-1}\bm T_{\Leftarrow}^{\mathrm T}$），此时复合算子恰好还原正交投影 $\mathscr T_{\Leftarrow}\mathscr T_{\Rightarrow}^{\optstar}=\mathscr P_W$，使式~\eqref{cw:eq:manifold-orth-decomp} 次项归零；
 \item 在全体 $n_d$ 维真子空间 $W<\mathcal S_X$ 中，前 $n_d$ 个主特征向量张成的子空间 $W^{\optstar}=\operatorname{span}\{u_1,\dots,u_{n_d}\}$（对应 $\bm P_{W^{\optstar}}=\sum_{j=1}^{n_d}\bm P_{u_j}$，其中 $\bm P_{u_j}:=u_ju_j^{\mathrm T}$）使重构误差达到全局极小值 $\sum_{j=n_d+1}^{n_D}\lambda_j$，且当 $\lambda_{n_d}>\lambda_{n_d+1}$ 时最优子空间唯一。

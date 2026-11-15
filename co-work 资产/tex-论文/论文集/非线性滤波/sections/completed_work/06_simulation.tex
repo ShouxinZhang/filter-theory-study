@@ -30,11 +30,11 @@ GPU & NVIDIA GeForce RTX 5090 Laptop GPU，24 GiB 显存 \\
 X_0\sim\mathcal N(0,2),\ N_{x,k}\sim\mathcal N(0,10),\ N_{y,k}\sim\mathcal N(0,1).
 \end{aligned}
 \end{equation}
-高斯记号 $\mathcal N(\mu,\sigma^2)$ 的第二参数表示方差。状态每步演化，仅在 $k\in m\mathbb N$ 时提供观测，$m$ 表示观测间隔。
+正态分布记号 $\mathcal N(\mu,\sigma^2)$ 的第二参数表示方差。状态每步演化，仅在 $k\in m\mathbb N$ 时提供观测，$m$ 表示观测间隔。
 
 本次仿真实验中，不同算法与间隔复用同一批冻结真值和全量观测。
-实验中的 BPF 采用系统重采样\cite{doucet2001sequential}, ETPF 采用熵正则化输运；数值实现使用稳定化 Sinkhorn\cite{schmitzer2019stabilized} 与边际修正\cite{altschuler2017nearlinear}, 表中的结果对应这些实现。
-对照方法包括扩展 Kalman 滤波（EKF）\cite{bar2001estimation}、自举粒子滤波（BPF）\cite{gordon1993novel}、集合 Kalman 滤波（EnKF）\cite{evensen2003ensemble}及熵正则化集合变换粒子滤波（ETPF）\cite{reich2013nonparametric,cuturi2013sinkhorn}。
+实验中的 BPF 采用系统重采样\cite{doucet2001sequential}，ETPF 采用熵正则化输运；数值实现使用稳定化 Sinkhorn\cite{schmitzer2019stabilized} 与边际修正\cite{altschuler2017nearlinear}，表中的结果对应这些实现。
+对照方法包括扩展 Kalman 滤波（EKF）\cite{bar2001estimation}、自举粒子滤波（BPF）\cite{gordon1993novel}、集合 Kalman 滤波（EnKF）\cite{evensen2003ensemble}及熵正则化集合输运粒子滤波（ETPF）\cite{reich2013nonparametric,cuturi2013sinkhorn}。
 
 
 本实验取 $B=8$ 条轨迹，每条含 $K=100$ 个状态步。记第 $b$ 条轨迹的真值为 $x_k^{(b)}$，在线估计为 $\widehat x_k^{+,(b)}$；缺测步取预测均值。定义
@@ -134,3 +134,10 @@ EKF 最快但误差最大；BPF 在该设置下兼具较低误差与计算成本
 \input{sections/completed_work/simulation/logistic}
 \FloatBarrier
 \input{sections/completed_work/simulation/mnist_transport}
+
+\FloatBarrier
+\section{本章小结}
+
+本章在三类具有不同难点特征的任务上检验了前述理论与算法的实际表现。两组一维数值实验首先划清了离散耦合输运的适用边界：在过程噪声较强的 Gordon 模型中，状态转移自身的随机扩散已经足够替粒子集补充多样性，此时开销更低的自举粒子滤波（BPF）就能拿到与集合输运（ETPF）相当的精度，不必盲目付出 $O(N^2)$ 的耦合求解代价；但一旦进入零过程噪声的混沌 Logistic 系统，BPF 在全部实验中均迅速退化为单个点并彻底失去观测修正能力，而精确分位数 ETPF 依靠无复制的位置变换稳住了样本多样性，显著压低了跟踪误差。
+
+在 $784$ 维含噪手写数字逐窗口识别实验中，各种机制的差异进一步拉开。即使已经把观测压缩到了 $16$ 维潜空间，依赖似然权重的 BPF 与 ETPF 仍在最初几步就陷入少数粒子垄断权重的局面，后续窗口的观测信息难以扭转早期判断；逐步在线训练的条件输运映射摆脱了权重限制，识别率明显回升，但受限于有限粒子规模、跨步复合误差以及每步在线训练的时间开销；相比之下，静态摊销条件输运滤波利用离线学到的全局映射每步直接从初始粒子一步推向当前后验，不仅在识别准确率上逼近全图直接读出的上限，还将每步在线耗时压缩到了亚毫秒量级，验证了流形降维与一步摊销输运相结合的有效性。

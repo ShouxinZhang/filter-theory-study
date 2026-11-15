@@ -1,7 +1,7 @@
 % !TeX root = ../../main.tex
 \section{符号定义与说明}\label{cw:app:notation}
 
-\textbf{取值空间与密度导数：}随机变量 $X,Y$ 的取值空间分别记为 $\mathcal S_X,\mathcal S_Y$（上下文讨论单一空间且无歧义时简记为 $\mathcal S$），其上可测集合族记为 $\mathcal B(\mathcal S)$。有限维实向量空间上以体积测度为默认参考测度（状态空间上的体积测度记为 $v_X$），密度导数记为 $p_X(x)=\frac{\mathrm d\mathbb P_X}{\mathrm dv_X}(x)$，条件密度简写时记为 $p(x\mid y)=p_{X\mid Y}(x\mid y)$；一般测度间的密度导数记作 $\frac{\mathrm d\mu}{\mathrm d\nu}$，绝对连续记作 $\mu\ll\nu$。数学期望与概率带分布下标写作 $\mathbb E_{X\sim\mathbb P_X}[\cdot]$ 与 $\mathbb P_X(\cdot)$。
+\textbf{取值空间与密度导数：}随机变量 $X,Y$ 的取值空间分别记为 $\mathcal S_X,\mathcal S_Y$（上下文讨论单一空间且无歧义时简记为 $\mathcal S$），其上可测集合族记为 $\mathcal B(\mathcal S)$。有限维实向量空间上以体积测度为默认参考测度（状态空间上的体积测度记为 $v_X$），密度导数记为 $p_X(x)=\frac{\mathrm d\mathbb P_X}{\mathrm dv_X}(x)$，条件密度简写时记为 $p(x\mid y)=p_{X\mid Y}(x\mid y)$；一般测度间的密度导数记作 $\frac{\mathrm d\mu}{\mathrm d\nu}$，绝对连续记作 $\mu\ll\nu$。数学期望与概率带分布下标写作 $\mathbb E_{X\sim\mathbb P_X}[\cdot]$ 与 $\mathbb P_X(\cdot)$；正态分布记为 $\mathcal N(\bm\mu,\bm\Sigma)$（一维情形写作 $\mathcal N(\mu,\sigma^2)$，第二参数表示方差）。
 
 \textbf{概率单纯形与全一向量：}对正整数 $n$，$\mathbb R_+=[0,\infty)$，定义
 \begin{equation*}
@@ -32,14 +32,11 @@ X_{1..N}:=(X_1,\dots,X_N)\in\mathbb R^{d\times N},\qquad
 \mathbb P_{X_{1..N}}\text{ 为该样本族的联合分布}.
 \end{equation*}
 一般二元随机变量的联合分布记为 $\mathbb P_{(X,Y)}$。
-上标 $-$ 与 $+$ 分别表示预测与后验阶段。位置变换中的 $X_k$ 表示按列拼接的粒子实现矩阵，每列是一个 $n_x$ 维粒子：
+上标 $-$ 与 $+$ 分别表示预测与后验阶段。无上标的 $X_k$ 表示 $n_x$ 维状态随机向量；带阶段上标的 $X_k^\pm$ 表示按列拼接的粒子实现矩阵，每列是一个 $n_x$ 维粒子：
 \begin{equation*}
-\begin{aligned}
-&X_k:=x_k^{(1..N)}:=[x_k^{(1)},\dots,x_k^{(N)}]\in\mathbb R^{n_x\times N},\\
-&X_k^\pm:=x_k^{\pm,(1..N)}\in\mathbb R^{n_x\times N}.
-\end{aligned}
+X_k^\pm:=x_k^{\pm,(1..N)}:=[x_k^{\pm,(1)},\dots,x_k^{\pm,(N)}]\in\mathbb R^{n_x\times N}.
 \end{equation*}
-$(\bm T_k)_{ij}$ 表示源粒子 $i$ 对目标粒子 $j$ 的贡献系数，故 $X_k^+=X_k^-\bm T_k$，$\bm T_k=N\bm\Pi_k$。概率分布下标中的 $X_k$ 仍表示状态随机变量，由上下文区分。
+$(\bm T_k)_{ij}$ 表示源粒子 $i$ 对目标粒子 $j$ 的贡献系数，故 $X_k^+=X_k^-\bm T_k$，$\bm T_k=N\bm\Pi_k$。
 
 \textbf{推前、拉回与对偶配对：}对可测映射 $T:\mathcal S_X\to\mathcal S_Y$，
 \begin{equation*}
@@ -51,7 +48,7 @@ $(\bm T_k)_{ij}$ 表示源粒子 $i$ 对目标粒子 $j$ 的贡献系数，故 $
 \end{equation*}
 其中 $B\in\mathcal B(\mathcal S_Y)$，函数与测度的对偶配对尖括号须标明测度所在空间，积分对非负可测或相应可积函数使用。$\pi_i$ 表示取第 $i$ 个分量的坐标投影，$\mathbb P_X=X_*\mathbb P$。
 
-\textbf{核复合与测度-核乘积耦合：}对条件转移核 $\kappa:\mathcal S_X\to\mathcal M(\mathcal S_Y)$ 与测度 $\mu\in\mathcal M(\mathcal S_X)$，复合测度记作 $\kappa\circ_m\mu:=\int_{\mathcal S_X}\kappa(x)\,\mu(\mathrm dx)\in\mathcal M(\mathcal S_Y)$；测度-核乘积耦合记作 $\mu\otimes_m\kappa\in\mathcal M(\mathcal S_X\times\mathcal S_Y)$，由此联合分布写作 $\mathbb P_{(X,Y)}=\mathbb P_X\otimes_m\mathbb P_{Y\mid X}$，独立乘积测度 $\mu\otimes\nu$（如 $\mathbb P_X\otimes\mathbb P_Y$）为其特例。
+\textbf{核复合与测度-核乘积耦合：}对条件转移核 $\kappa:\mathcal S_X\to\mathcal M(\mathcal S_Y)$ 与测度 $\mu\in\mathcal M(\mathcal S_X)$，复合测度记作 $\kappa\circ_m\mu:=\int_{\mathcal S_X}\kappa(x)\,\mathrm d\mu(x)\in\mathcal M(\mathcal S_Y)$；测度-核乘积耦合记作 $\mu\otimes_m\kappa\in\mathcal M(\mathcal S_X\times\mathcal S_Y)$，由此联合分布写作 $\mathbb P_{(X,Y)}=\mathbb P_X\otimes_m\mathbb P_{Y\mid X}$，独立乘积测度 $\mu\otimes\nu$（如 $\mathbb P_X\otimes\mathbb P_Y$）为其特例。
 
 \textbf{联合概率矩阵与条件概率矩阵：}在正质量离散支撑上，记
 \begin{equation*}
@@ -68,7 +65,7 @@ P_{X\mid Y;j,i}:=\mathbb P_{X\mid Y=y_j}(\{x_i\})=\Pi_{ij}/b_j.
 
 \textbf{输运代价与熵正则化：}离散代价矩阵记为 $\bm C=(C_{ij})$，其中 $C_{ij}:=c(x_i,y_j)$。相对熵记为 $D_{\mathrm{KL}}(\mu\|\nu):=\int\log(\mathrm d\mu/\mathrm d\nu)\,\mathrm d\mu$（$\mu\ll\nu$ 时），否则为 $+\infty$；$\varepsilon>0$ 为熵正则化参数，$\tau>0$ 为边缘残差容差。
 
-\textbf{平方可积空间与正交投影：}取值于 $\mathbb R^{n_x}$ 的平方可积随机变量空间记为 $\mathcal H:=L^2(\Omega,\mathcal F,\mathbb P;\mathbb R^{n_x})$；闭线性子空间关系记为 $\mathcal W\leqslant\mathcal H$，向 $\mathcal W$ 的正交投影算子与余投影算子分别记为 $\mathscr P_{\mathcal W}$ 与 $\mathscr P_{\mathcal W}^{\perp}$。
+\textbf{平方可积空间与正交投影：}取值于 $\mathbb R^{n_x}$ 的平方可积随机变量空间记为 $\mathcal H:=L^2(\Omega,\mathcal F,\mathbb P;\mathbb R^{n_x})$，其诱导范数满足 $\|Z\|_{\mathcal H}^2:=\mathbb E[\|Z\|^2]$；闭线性子空间关系记为 $\mathcal W\leqslant\mathcal H$，向 $\mathcal W$ 的正交投影算子与余投影算子分别记为 $\mathscr P_{\mathcal W}$ 与 $\mathscr P_{\mathcal W}^{\perp}$。
 
 \textbf{参数空间、对偶伴随与压缩还原算子：}模型参数随机变量 $\bm\Theta$ 的取值空间记为 $\mathcal S_{\bm\Theta}$，参数实现记为 $\bm\theta\in\mathcal S_{\bm\Theta}$，含参条件密度记为 $p_{Y\mid(Z,\bm\Theta)}(y\mid z,\bm\theta)$。赋范或内积空间上的连续线性对偶与内积伴随算子统一记作上标 ${}^\star$，优化问题的最优解统一记作空心星上标 ${}^{\optstar}$（如 $\bm\theta^{\optstar},\mathscr T_{\Rightarrow}^{\optstar}$），以严格区分伴随运算与最优性。高维观测空间 $\mathcal S_X=\mathbb R^{n_D}$ 与低维潜空间 $\mathcal S_Z=\mathbb R^{n_d}$（$n_d<n_D$）之间的压缩算子与还原算子分别记为 $\mathscr T_{\Rightarrow}:\mathcal S_X\to\mathcal S_Z$ 与 $\mathscr T_{\Leftarrow}:\mathcal S_Z\to\mathcal S_X$，线性情形下二者在标准基下的表示矩阵记为 $\bm T_{\Rightarrow},\bm T_{\Leftarrow}$。
 

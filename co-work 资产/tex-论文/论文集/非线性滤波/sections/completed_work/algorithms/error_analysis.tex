@@ -3,7 +3,7 @@
 令 $\mathcal H=L^2(\Omega,\mathcal F,\mathbb P;\mathbb R^{n_x})$，概率空间包含真实系统与算法随机性。
 记 $\mathcal Y_k\leqslant\mathcal H$ 为所有关于 $\sigma(Y_{1:k})$ 可测的随机变量构成的闭子空间，
 $\mathscr P_{\mathcal Y_k}X_k$ 是利用全部历史观测的最优均方估计。
-本节记 $\hat X_k=X_k^+\mathbf1_N/N$ 为重采样后均值；算法~\ref{cw:alg:bpf} 与~\ref{cw:alg:etpf} 的在线输出 $X_k^-\bm w_k^+$ 是重采样前的加权均值。
+本节将粒子矩阵 $X_k^\pm$（其第 $i$ 列记为随机向量 $X_k^{\pm,(i)}$）与权重向量 $\bm w_k^+$ 均视为 $(\Omega,\mathcal F,\mathbb P)$ 上的随机变量，记 $\hat X_k=X_k^+\mathbf1_N/N$ 为重采样后均值；算法~\ref{cw:alg:bpf} 与~\ref{cw:alg:etpf} 的在线输出 $X_k^-\bm w_k^+$ 是重采样前的加权均值。
 
 \begin{theorem}[四项误差分解]\label{cw:thm:four-errors}
 假设所涉及随机变量平方可积，算法随机源与真实系统独立。
@@ -28,7 +28,7 @@ $\mathscr P_{\mathcal Y_k}X_k$ 是利用全部历史观测的最优均方估计�
 多项重采样 BPF 的最后一项可以直接计算：
 \begin{equation}\label{cw:eq:bpf-resampling-error}
 \|X_k^-\bm w_k^+-\hat X_k\|_{\mathcal H}^2
-=\frac1N\sum_{i=1}^N\left\|\sqrt{w_k^{+,(i)}}\bigl(x_k^{-,(i)}-X_k^-\bm w_k^+\bigr)\right\|_{\mathcal H}^2.
+=\frac1N\sum_{i=1}^N\left\|\sqrt{w_k^{+,(i)}}\bigl(X_k^{-,(i)}-X_k^-\bm w_k^+\bigr)\right\|_{\mathcal H}^2.
 \end{equation}
 ETPF 由 $\bm\Pi_k\mathbf1_N=\bm w_k^+$ 得到
 $X_k^+\mathbf1_N/N=X_k^-\bm\Pi_k\mathbf1_N=X_k^-\bm w_k^+$，因此最后一项为零。

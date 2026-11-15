@@ -80,10 +80,10 @@ $\mathbb P\bigl(\hat c_k(Y_{1:k})=C\bigr)=\mathbb E_{Y_{1:k}\sim\mathbb P_{Y_{1:
 即第 $k$ 步递推滤波后验等于以累积观测 $y_{1:k}$ 对初始先验 $\mathbb P_Z$ 作单次更新所得的后验分布。
 \end{proposition}
 \begin{proof}
-对 $k$ 归纳。$k=1$ 时由定理~\ref{cw:thm:bayes} 成立。设结论对 $k-1$ 成立；因 $Z_k=Z_{k-1}$，预测分布满足 $\mathbb P_{Z_k\mid Y_{1:k-1}=y_{1:k-1}}=\mathbb P_{Z_{k-1}\mid Y_{1:k-1}=y_{1:k-1}}$。在时刻 $k$ 应用条件独立性与密度导数链式法则，将该分布关于 $\mathbb P_Z$ 的密度导数乘以 $p_{Y_k\mid Z_k}(y_k\mid z)$ 并归一化，即得式~\eqref{cw:eq:ml-static}。
+因 $Z_k=Z_0\sim\mathbb P_Z$，由各时刻观测给定潜状态的条件独立性，给定 $Z_k=z$ 时累积观测 $Y_{1:k}$ 关于观测空间乘积体积测度的条件密度为 $p_{Y_{1:k}\mid Z_k}(y_{1:k}\mid z)=\prod_{j=1}^k p_{Y_j\mid Z_j}(y_j\mid z)$。对先验测度 $\mathbb P_Z$ 与该联合条件密度直接应用测度形式的 Bayes 条件化法则，并在分母有限且严格为正时归一化，即得式~\eqref{cw:eq:ml-static}。
 \end{proof}
 
-记 $y\in\mathbb R^{n_D}$ 为叠加全图观测噪声后的像素向量，$\bm m_k\in\{0,1\}^{n_D}$ 为标记前 $k$ 个窗口覆盖像素位置的二值掩码向量，则变长累积观测 $y_{1:k}$ 可统一嵌入定长空间表示为 $(\bm m_k\odot y,\bm m_k)$（未揭示区域置零，并由 $\bm m_k$ 区分未观测像素与零值背景）。结合命题~\ref{cw:lem:ml-static} 与式~\eqref{cw:eq:ml-joint-constraint}，只需构造单一的摊销条件输运映射 $T:\mathcal S_Z\times\mathbb R^{n_D}\times\{0,1\}^{n_D}\to\mathcal S_Z$，使其对一切时刻 $k\in\{1,\dots,K\}$ 满足一步推前关系
+当各观测窗口 $\{\bm H_j\}_{j=1}^K$ 覆盖的像素互不重叠时，记 $y\in\mathbb R^{n_D}$ 为叠加全图观测噪声后的像素向量，$\bm m_k\in\{0,1\}^{n_D}$ 为标记前 $k$ 个窗口覆盖像素位置的二值掩码向量，则变长累积观测 $y_{1:k}$ 可统一嵌入定长空间表示为 $(\bm m_k\odot y,\bm m_k)$（未揭示区域置零，并由 $\bm m_k$ 区分未观测像素与零值背景）。结合命题~\ref{cw:lem:ml-static} 与式~\eqref{cw:eq:ml-joint-constraint}，只需构造单一的摊销条件输运映射 $T:\mathcal S_Z\times\mathbb R^{n_D}\times\{0,1\}^{n_D}\to\mathcal S_Z$，使其对一切时刻 $k\in\{1,\dots,K\}$ 满足一步推前关系
 \begin{equation}\label{cw:eq:ml-amortized-pushforward}
 T(\cdot,\bm m_k\odot y,\bm m_k)_*\mathbb P_Z=\mathbb P_{Z_k\mid Y_{1:k}=y_{1:k}}.
 \end{equation}

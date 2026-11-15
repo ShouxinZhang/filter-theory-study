@@ -6,8 +6,8 @@
 固定观测记录，用 $-$ 与 $+$ 分别表示预测与后验，记
 \begin{equation}\label{cw:eq:5}
 \begin{aligned}
-&\mathbb{P}_{X_k}^-:=\mathbb{P}_{X_k\mid Y_{1:k-1}}(y_{1:k-1},\cdot),\\
-&\mathbb{P}_{X_k}^+:=\mathbb{P}_{X_k\mid Y_{1:k}}(y_{1:k},\cdot),\\
+&\mathbb{P}_{X_k}^-:=\mathbb{P}_{X_k\mid Y_{1:k-1}=y_{1:k-1}},\\
+&\mathbb{P}_{X_k}^+:=\mathbb{P}_{X_k\mid Y_{1:k}=y_{1:k}},\\
 &\mathbb{P}_{X_0}^+:=\mathbb{P}_{X_0}.
 \end{aligned}
 \end{equation}
@@ -67,14 +67,14 @@ x_k^{-,(i)}=f\bigl(x_{k-1}^{+,(i)},n_{x,k}^{(i)}\bigr).
 \end{equation}
 这一步用有限个点质量进一步近似前面得到的混合分布。给定旧粒子后，各层样本独立，但各自服从对应的转移分布。
 
-\textbf{更新：}$-$ 与 $+$ 分别表示使用当前观测前后的预测与后验阶段，此处只更新权重.
-对任意可测集合 $A$，将 Bayes 公式中的预测测度替换为等权经验测度，再用单点质量测度的积分性质展开；假设样本似然总和有限且严格为正，约去 $1/N$ 后得到后验近似：
+\textbf{更新：}$-$ 与 $+$ 分别表示使用当前观测前后的预测与后验阶段，此处只更新权重。
+对任意可测集合 $A$，将 Bayes 公式中的预测测度替换为等权经验测度，再用单点质量测度的积分性质展开；假设样本似然总和有限且严格为正，约去 $1/N$ 后得到加权后验近似：
 \begin{equation}\label{cw:eq:particle-update}
 \begin{aligned}
 &\mathbb{P}_{X_k}^+(A)\\
 ={}&\int_A\frac{p(y_k\mid x)p(x\mid y_{1:k-1})}{\displaystyle\int_{\mathcal{S}_X}p(y_k\mid z)p(z\mid y_{1:k-1})\,\mathrm{d}v_X(z)}\,\mathrm{d}v_X(x)\\
 ={}&\frac{\displaystyle\int_A p(y_k\mid x)\,\mathrm{d}\mathbb{P}_{X_k}^-(x)}{\displaystyle\int_{\mathcal{S}_X}p(y_k\mid x)\,\mathrm{d}\mathbb{P}_{X_k}^-(x)},\\
-\Rightarrow\quad &\hat{\mathbb{P}}_{N;X_k}^+(A):=\frac{\displaystyle\int_A p(y_k\mid x)\,\mathrm{d}\hat{\mathbb{P}}_{N;X_k}^-(x)}{\displaystyle\int_{\mathcal{S}_X}p(y_k\mid x)\,\mathrm{d}\hat{\mathbb{P}}_{N;X_k}^-(x)}\\
+\Rightarrow\quad &\hat{\mathbb{P}}_{N,\bm w_k^+;X_k}^+(A):=\frac{\displaystyle\int_A p(y_k\mid x)\,\mathrm{d}\hat{\mathbb{P}}_{N;X_k}^-(x)}{\displaystyle\int_{\mathcal{S}_X}p(y_k\mid x)\,\mathrm{d}\hat{\mathbb{P}}_{N;X_k}^-(x)}\\
 ={}&\sum_{i=1}^N w_k^{+,(i)}\delta_{x_k^{-,(i)}}(A),\\
 &w_k^{+,(i)}:=\frac{p(y_k\mid x_k^{-,(i)})}{\displaystyle\sum_{j=1}^N p(y_k\mid x_k^{-,(j)})},\;i=1..N.
 \end{aligned}
