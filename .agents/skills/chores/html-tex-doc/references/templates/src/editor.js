@@ -620,16 +620,16 @@
     document.body.appendChild(aimBadge);
 
     document.addEventListener("keydown", (e) => {
-      if (e.key === "Control" || e.key === "Meta") root.classList.add("ctrl-aiming");
+      if (e.key === "Control" || e.key === "Meta") docRoot?.classList.add("ctrl-aiming");
     });
     document.addEventListener("keyup", (e) => {
       if (e.key === "Control" || e.key === "Meta") {
-        root.classList.remove("ctrl-aiming");
+        docRoot?.classList.remove("ctrl-aiming");
         clearAim();
       }
     });
     window.addEventListener("blur", () => {
-      root.classList.remove("ctrl-aiming");
+      docRoot?.classList.remove("ctrl-aiming");
       clearAim();
     });
 
@@ -638,7 +638,7 @@
         if (aimedEl) clearAim();
         return;
       }
-      root.classList.add("ctrl-aiming");
+      docRoot?.classList.add("ctrl-aiming");
       const info = resolveRightTarget(e.target, e.shiftKey);
       if (!info) { clearAim(); return; }
       if (aimedEl !== info.el) {

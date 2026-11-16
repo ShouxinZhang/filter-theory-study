@@ -37,6 +37,16 @@
 - TeX 内部引用 HTML 编号 `\cref{key}`：构建器扫描全文生成 `build/labels.tex`（`\lbl{key}{显示名}{anchor-id}`）；`figs/*.tex` 或 `algs/*.tex` 中调用 `\cref{key}` 时由 `common.tex` 写入 `\special{html:<a href="#anchor-id">}`，经 `xelatex -no-pdf` + `dvisvgm` 保留为 SVG 内嵌超链接。
 - 深色自适应改色：TeX 图形仅需使用纯黑、`black!k` 灰阶、纯白与预定义 `accent`（`#1F6FB2`），构建器自动改写为 `currentColor` + 透明度、`var(--bg)` 与 `var(--accent)`。
 
+## 公式预渲染与缓存（`math_prerender.py` + `math_prerender.mjs`）
+
+- 时机：`build_project` 在编号、出图完成后，对正文 HTML 中的 `\(...\)` 与 `\[...\]` 做预渲染（跳过 `code`、`pre`、`script`、`style`、内联 `svg`），输出与浏览器内 MathJax 相同的 `<mjx-container jax="CHTML">` 标记；页面内嵌样式表，不再加载 MathJax 运行时。
+- 缓存键：`SHA-256(mathjax-full 版本, 输出配置, macros.tex 解析出的宏, 行内/行间, 公式源码)`，一个键一个文件，位于 `<build>/mathcache/`；样式表按前三项另存为 `css-<键>.css`。键的任一成分变化即不命中，不依赖文件修改时间；全部命中时不启动 Node。
+- 自足性：每条公式独立转换；样式表关闭“按用到的字形裁剪”（`adaptiveCSS: false`），因此命中缓存的公式不会缺样式，全量重算与全部命中两次产物逐字节一致。
+- 字号：浏览器内 MathJax 会按正文字体的 x 高度缩放公式，构建期不知道读者的字体，故样式里用 `var(--mjx-scale)`，由 `<main>` 之前的一行内联脚本量一次后写入；容器另带 `position: relative`，与浏览器内输出一致。
+- 回退：未找到 `node` 或未安装 `scripts/node_modules/mathjax-full` 时自动改用浏览器内 MathJax（CDN），构建日志会注明原因；`HTD_MATH` 取 `auto`（默认）、`browser`、`prerender`。
+- 热补丁：`/__raw` 返回的已是预渲染后的正文，`editor.js` 按顶层块替换即可；仅在回退模式下才调用 `MathJax.typesetPromise`。
+- 已知差异：预渲染页面没有 MathJax 的公式右键菜单；取公式源码请用 `Ctrl+Click` 反向定位。TeX 语法错误的公式在页面内以 MathJax 的报错标记显示，构建日志给出数量。
+
 ## 目录折叠与阅读器机制（`reader.js`）
 
 - 容器隔离契约：全部文档块包裹于 `<main id="doc-root" class="doc-pane">`，阅读器与编辑器浮层挂载于 `document.body` 顶层，互不污染子节点索引，保证热更新按块精确 diff。
@@ -51,7 +61,7 @@
 | 端点 | 方法 | 用途 |
 | --- | --- | --- |
 | `/__live?v=<ver>` | `GET` | 长轮询推送最新构建版本号 `v`、变更文件列表 `changed` 与编译错误 `err` |
-| `/__raw` | `GET` | 返回最新 `#doc-root` 内部 HTML 供前端按顶层块 diff + MathJax 局部重排 |
+| `/__raw` | `GET` | 返回最新 `#doc-root` 内部 HTML（公式已预渲染）供前端按顶层块 diff 替换 |
 | `/__api/files` | `GET` | 列出 `src/` 下可编辑源码文件（`*.md`、`doc.html`、`macros.tex`、`refs.bib`、`algs/*.tex`、`figs/*.tex`）与 `mtime_ns` |
 | `/__api/file?path=...` | `GET` / `PUT` | 读取或原子写回指定源码文件；`PUT` 校验 `base_mtime_ns`，若外部 IDE 已改盘则返回 `409 Conflict` 防止静默覆盖，写盘后通过 `threading.Event` 零延迟唤醒增量重编 |
 | `/__api/search?q=...` | `GET` | 跨文件全文/大小写/正则搜索，返回文件、行号、列区间与上下文摘要 |

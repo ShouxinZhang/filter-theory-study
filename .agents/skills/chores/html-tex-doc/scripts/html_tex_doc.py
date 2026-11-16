@@ -498,14 +498,47 @@ def build_project(
         return 1, "构建失败：\n- " + "\n- ".join(errors), ""
 
     macros_file = _resolve_asset(src_dir, "macros.tex")
+    macros = parse_macros(macros_file)
+
+    # 公式：优先构建期预渲染（带内容哈希缓存，浏览器端零排版）；不可用时回退到浏览器内 MathJax。
+    # HTD_MATH = auto（默认）| browser（强制回退）| prerender（不可用即报错）
+    import math_prerender
+
+    math_mode = os.environ.get("HTD_MATH", "auto")
+    math_css, math_note = None, ""
+    if math_mode != "browser":
+        why = math_prerender.available()
+        if why and math_mode == "prerender":
+            return 1, f"公式预渲染不可用：{why}", ""
+        if why:
+            math_note = f"\n    公式：浏览器内排版（{why}）"
+        else:
+            try:
+                body, math_css, st = math_prerender.prerender(body, macros, build_dir, out_dir)
+            except RuntimeError as e:
+                return 1, str(e), ""
+            math_note = f"\n    公式：预渲染 {st['total']} 处不同公式，缓存命中 {st['hit']}，新排版 {st['miss']}"
+            if st["errors"]:
+                math_note += f"，其中 {st['errors']} 处 TeX 报错（页面内以红字标出）"
+
+    if math_css is not None:
+        math_head = f'<style id="mjx-prerendered">{math_css}</style>'
+        math_boot = math_prerender.SCALE_SCRIPT + "\n"
+    else:
+        math_head = None
+        math_boot = ""
     config = {
         "tex": {
             "inlineMath": [["\\(", "\\)"]],
             "displayMath": [["\\[", "\\]"]],
-            "macros": parse_macros(macros_file),
+            "macros": macros,
             "tags": "none",
         }
     }
+    mathjax_browser = (
+        f"<script>window.MathJax = {json.dumps(config, ensure_ascii=False)};</script>\n"
+        '<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>'
+    )
     page = f"""<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -518,11 +551,10 @@ try {{ const t = localStorage.getItem("reader.theme"), m = localStorage.getItem(
   if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
   if (m) document.documentElement.style.setProperty("--measure", m + "px"); }} catch (e) {{}}</script>
 <script defer src="reader.js"></script>
-<script>window.MathJax = {json.dumps(config, ensure_ascii=False)};</script>
-<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+{math_head or mathjax_browser}
 </head>
 <body>
-<main id="doc-root" class="doc-pane">
+{math_boot}<main id="doc-root" class="doc-pane">
 {body}
 </main>
 </body>
@@ -537,7 +569,7 @@ try {{ const t = localStorage.getItem("reader.theme"), m = localStorage.getItem(
     kinds: dict[str, int] = {}
     for v in labels.values():
         kinds[v["kind"]] = kinds.get(v["kind"], 0) + 1
-    summary = f"OK  {out_dir / 'index.html'}\n    标签 {len(labels)} 个 {kinds}；内联 SVG {n_svg} 个"
+    summary = f"OK  {out_dir / 'index.html'}\n    标签 {len(labels)} 个 {kinds}；内联 SVG {n_svg} 个{math_note}"
     return 0, summary, body
 
 

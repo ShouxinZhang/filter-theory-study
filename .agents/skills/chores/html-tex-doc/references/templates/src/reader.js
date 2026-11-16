@@ -39,12 +39,22 @@
         const sign = side === "right" ? 1 : -1;
         document.body.classList.add("resizing");
         const fontPx = parseFloat(getComputedStyle(pane).fontSize) || 17;
+        // 栏宽变化会触发全文重排：把同一帧内的多次 pointermove 合并为一次
+        let pendingW = null, frame = 0;
+        const flush = () => {
+          frame = 0;
+          if (pendingW == null) return;
+          applyMeasure(pendingW);
+          badge.textContent = `${Math.round(pendingW)} px · 约 ${Math.round((pendingW - 64) / fontPx)} 字/行`;
+          pendingW = null;
+        };
         const move = (ev) => {
-          const w = Math.max(MIN_PX, Math.min(window.innerWidth, startW + 2 * sign * (ev.clientX - startX)));
-          applyMeasure(w);
-          badge.textContent = `${Math.round(w)} px · 约 ${Math.round((w - 64) / fontPx)} 字/行`;
+          pendingW = Math.max(MIN_PX, Math.min(window.innerWidth, startW + 2 * sign * (ev.clientX - startX)));
+          if (!frame) frame = requestAnimationFrame(flush);
         };
         const up = () => {
+          if (frame) cancelAnimationFrame(frame);
+          flush();
           document.body.classList.remove("resizing");
           h.removeEventListener("pointermove", move);
           const v = root.style.getPropertyValue("--measure");
@@ -382,7 +392,7 @@
   }
 
   function show(a) {
-    if (root.classList.contains("ctrl-aiming")) return;
+    if (getDocPane().classList.contains("ctrl-aiming")) return;
     const id = decodeURIComponent(hrefOf(a).slice(1));
     const content = buildPreview(id);
     if (!content) return;

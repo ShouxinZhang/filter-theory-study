@@ -1,0 +1,8 @@
+{
+  "name": "html-tex-doc-scripts",
+  "private": true,
+  "description": "html-tex-doc 构建期公式预渲染所需的 Node 依赖（node_modules 不入库）",
+  "dependencies": {
+    "mathjax-full": "3.2.2"
+  }
+}

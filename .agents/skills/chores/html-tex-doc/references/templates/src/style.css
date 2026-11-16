@@ -214,8 +214,8 @@ body.resizing .measure-badge { opacity: .85; }
 
 /* ---------- 类 SyncTeX 行级瞄准与正反向配对高亮 ---------- */
 span.sl { border-radius: 3px; transition: background-color .22s, box-shadow .22s; }
-html.ctrl-aiming main.doc-pane [data-file] { cursor: pointer; }
 .sync-aim {
+  cursor: pointer;
   outline: 1.5px dashed var(--sync-border) !important;
   outline-offset: 2px;
   background-color: color-mix(in srgb, var(--accent) 10%, transparent);

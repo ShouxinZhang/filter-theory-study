@@ -21,11 +21,15 @@ python3 $S build --src <src_dir> --build-dir <build_dir> --out <site_dir>
 
 # 启动实时预览与 Web 双栏编辑服务器（默认 http://127.0.0.1:18767）
 python3 $S serve <dir> [--port 18767]
+
+# 一次性安装公式预渲染依赖（需 Node；不装也能用，自动回退到浏览器内排版，仅加载变慢）
+npm install --prefix .agents/skills/chores/html-tex-doc/scripts
 ```
 
 ## 核心能力与快捷键
 
 - 同源编译：自动识别单文件 `src/doc.html` 或多文件 `src/*.md` + `refs.bib`，同源解析 `src/macros.tex`，注入双层源码锚点并增量编译 `figs/*.tex` 与 `algs/*.tex`。
+- 公式构建期预渲染：`build`/`serve` 在生成页面前用 Node 版 MathJax 把公式转成 CHTML，浏览器端零排版；结果按内容哈希缓存在 `<dir>/build/mathcache/`（可随时删除），字体随站点输出到 `mathjax-fonts/`，页面不再访问 CDN。环境变量 `HTD_MATH=browser` 强制回退到浏览器内排版，`HTD_MATH=prerender` 在依赖缺失时直接报错。
 - 目录折叠：正文内联目录卡支持整卡折叠与收起子节；右上角 `☰ 目录`（`Alt+T`）呼出带章节过滤与阅读进度联动（ScrollSpy）的浮动抽屉。
 - Web 双栏工作台（`serve` 模式）：点右上角 `◫ 双栏` 或按 `Ctrl+\` 开合左源码右渲染分屏；支持 `Ctrl+F` 页内搜索，`Ctrl+Shift+F` 跨文件搜索，`Ctrl+S` 保存与防抖热补丁。
 - 类 SyncTeX 双向高亮对齐：按住 `Ctrl`/`Cmd` 悬停右侧渲染区预览 `文件:行号`，`Ctrl+Click` 任意句子、公式、定理或算法框即跳至左侧精确源码行（对算法框按 `Ctrl+Shift+Click` 跳至 `.md` 调用处）；左侧点击行号栏、`Ctrl+Click` 或按 `Ctrl+Alt+J` 正向定位右侧段落并双端脉冲高亮。
