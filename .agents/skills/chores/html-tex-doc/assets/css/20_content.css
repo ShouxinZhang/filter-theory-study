@@ -1,0 +1,31 @@
+/* ---------- 公式、图、算法、表、命题、文献 ---------- */
+div.eq { margin: 1rem 0; overflow-x: auto; overflow-y: hidden; padding: .2rem .25rem; border-radius: var(--r-4); }
+div.eq.tight-top { margin-top: .25rem; }
+div.eq.tight-bot { margin-bottom: .25rem; }
+p.cont { margin-top: .25rem; text-indent: 0; }
+figure { margin: 1.8rem 0; text-align: center; border-radius: var(--r-4); }
+figcaption { font-size: .93rem; color: var(--muted); margin: .6rem auto 0; max-width: 42rem; text-align: left; }
+.caplabel { color: var(--fg); font-weight: 600; margin-right: .5em; }
+svg.texfig { max-width: 100%; height: auto; color: var(--fig-fg); }
+svg.texfig a { cursor: pointer; }
+svg.texfig a:hover { opacity: .7; }
+figure.fig img { max-width: 100%; height: auto; background: var(--paper); border-radius: var(--r-4); cursor: zoom-in; }
+/* 矢量图的固有尺寸只是导出时的 pt 数，直接按它显示会很小：铺满栏宽；位图保持原尺寸以免放大发虚 */
+figure.fig img[src$=".svg"] { width: 100%; }
+figure.alg { text-align: left; border-top: 2px solid var(--fg); border-bottom: 1px solid var(--fg); padding: .2rem 0 .6rem; }
+figure.alg figcaption { margin: 0 0 .5rem; padding-bottom: .3rem; border-bottom: 1px solid var(--fg); color: var(--fg); max-width: none; }
+figure.tbl { overflow-x: auto; }
+figure.tbl figcaption { margin: 0 auto .6rem; }
+table { border-collapse: collapse; margin: 0 auto; font-size: .95rem; }
+th, td { padding: .35rem .9rem; border-bottom: 1px solid var(--rule); }
+thead th { border-bottom: 2px solid var(--fg); }
+p.note { font-size: .88rem; color: var(--muted); margin: .4rem 0 0; text-align: center; }
+
+div.thm { background: var(--card); border-left: 3px solid var(--accent); padding: .4rem 1rem; margin: 1.4rem 0 .6rem; border-radius: 0 var(--r-4) var(--r-4) 0; }
+.thmhead { font-weight: 700; }
+div.proof { margin-bottom: 1.4rem; }
+p.qed { text-align: right; margin: -.6rem 0 0; }
+sup.cites { font-size: .72em; }
+ol.refs { font-size: .92rem; padding-left: 2.4em; }
+ol.refs li { margin: .25rem 0; }
+

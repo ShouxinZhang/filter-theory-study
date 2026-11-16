@@ -3,10 +3,11 @@
 ## 设计分工与三层解耦边界
 
 - 流式长卷与唯一编号源：HTML + MathJax 负责正文、章节、公式、图表、算法与定理的全局流式排版与顺序编号，彻底消除纸质断页留白与浮动体漂移。
-- 局部高难图形与伪代码独立矢量化：TikZ 图与 `algpseudocode` / `algorithm2e` 算法框各自作为独立 `standalone` `.tex` 编译为矢量 SVG 内联进 HTML，仅对变更过的单元做增量重编。
+- 局部高难图形与伪代码独立矢量化：TikZ 图与 `algpseudocode` / `algorithm2e` 算法框各自作为独立 `standalone` `.tex` 编译为矢量 SVG 内联进 HTML，仅对变更过的单元做增量重编（缓存键为图源、公共导言文件与该图 `\cref` 引用到的编号的内容哈希，不看文件修改时间）。
 - 三层架构解耦：
-  - `scripts/`（通用引擎）：`html_tex_doc.py`（`init` / `build` / `serve`）、`md_conv.py`（受控学术 Markdown 与 BibTeX 编译及行级源码锚点注入）、`dev_server.py`（长轮询热重载与双栏编辑 REST 服务），不含任何特定学校 `.cls` 硬编码。
-  - `references/templates/`（预设空白骨架）：`src/`（`basic` 单文件 HTML 骨架，同时承载公共 `common.tex`、`style.css`、`reader.js`、`editor.js`）与 `academic-md/src/`（多章受控 Markdown + `refs.bib` + `alg2e.tex` 骨架）。
+  - `scripts/`（通用引擎）：`html_tex_doc.py` 是薄入口（`init` / `build` / `serve`），实现在 `scripts/htd/` 包内：`numbering`（编号）、`texfig`（出图与内容哈希缓存）、`svgtheme`、`toc`、`render`、`build`、`assets`（运行时资源打包）、`mdsyntax` / `mdinline` / `mdconv`（受控 Markdown）、`bib`、`mathpre`（公式预渲染）、`cli`，以及 `server/`（`files`、`wal`、`search`、`watch`、`http`）；不含任何特定学校 `.cls` 硬编码。`scripts/tests/` 为测试，`scripts/perf/` 为性能测量工具。
+  - `assets/`（运行时资源，不复制进工程）：`css/`（`00_tokens.css` 是唯一出现颜色、字体栈、圆角、层级字面量的文件，其余分层只引用变量）、`js/core.js`（共用小工具）、`js/reader/`、`js/editor/`；构建时按文件名顺序拼接为单个 `style.css` / `reader.js` / `editor.js`。工程可用 `src/theme.css`（覆盖变量）与 `src/extra.css`（追加规则）定制；旧工程里整份的 `src/style.css` 等仍被尊重。
+  - `references/templates/`（预设空白骨架，只含内容）：`src/`（`basic` 单文件 HTML 骨架与公共 `common.tex`、`algcommon.tex`、`macros.tex`）与 `academic-md/src/`（多章受控 Markdown + `refs.bib` + `alg2e.tex` 骨架）。
   - `references/examples/`（双范式参考案例）：`linked-list/`（无外部 `.cls` 的原生算法笔记）与 `hithesis-adapter/`（外部 LaTeX `.cls` 学位论文通过项目侧薄脚本 `import_tex.py` 单向导出受控 Markdown 的接入范式）。
 
 ## 双输入源语法
@@ -37,7 +38,7 @@
 - TeX 内部引用 HTML 编号 `\cref{key}`：构建器扫描全文生成 `build/labels.tex`（`\lbl{key}{显示名}{anchor-id}`）；`figs/*.tex` 或 `algs/*.tex` 中调用 `\cref{key}` 时由 `common.tex` 写入 `\special{html:<a href="#anchor-id">}`，经 `xelatex -no-pdf` + `dvisvgm` 保留为 SVG 内嵌超链接。
 - 深色自适应改色：TeX 图形仅需使用纯黑、`black!k` 灰阶、纯白与预定义 `accent`（`#1F6FB2`），构建器自动改写为 `currentColor` + 透明度、`var(--bg)` 与 `var(--accent)`。
 
-## 公式预渲染与缓存（`math_prerender.py` + `math_prerender.mjs`）
+## 公式预渲染与缓存（`htd/mathpre.py` + `math_prerender.mjs`）
 
 - 时机：`build_project` 在编号、出图完成后，对正文 HTML 中的 `\(...\)` 与 `\[...\]` 做预渲染（跳过 `code`、`pre`、`script`、`style`、内联 `svg`），输出与浏览器内 MathJax 相同的 `<mjx-container jax="CHTML">` 标记；页面内嵌样式表，不再加载 MathJax 运行时。
 - 缓存键：`SHA-256(mathjax-full 版本, 输出配置, macros.tex 解析出的宏, 行内/行间, 公式源码)`，一个键一个文件，位于 `<build>/mathcache/`；样式表按前三项另存为 `css-<键>.css`。键的任一成分变化即不命中，不依赖文件修改时间；全部命中时不启动 Node。
@@ -47,14 +48,14 @@
 - 热补丁：`/__raw` 返回的已是预渲染后的正文，`editor.js` 按顶层块替换即可；仅在回退模式下才调用 `MathJax.typesetPromise`。
 - 已知差异：预渲染页面没有 MathJax 的公式右键菜单；取公式源码请用 `Ctrl+Click` 反向定位。TeX 语法错误的公式在页面内以 MathJax 的报错标记显示，构建日志给出数量。
 
-## 目录折叠与阅读器机制（`reader.js`）
+## 目录折叠与阅读器机制（`assets/js/reader/`）
 
 - 容器隔离契约：全部文档块包裹于 `<main id="doc-root" class="doc-pane">`，阅读器与编辑器浮层挂载于 `document.body` 顶层，互不污染子节点索引，保证热更新按块精确 diff。
 - 内联目录卡（`#doc-toc`）：支持点击标题栏整卡折叠/展开、`收起子节` / `展开全部` 一键切换，以及各章独立三角折叠按钮，折叠状态持久化于 `localStorage("reader.toc.collapsed")`。
 - 浮动目录抽屉（`☰ 目录` / `Alt+T`）：右上角常驻目录按钮，任意滚动位置一键展开侧边目录，内置章节关键字实时过滤框与 `IntersectionObserver` 当前阅读小节高亮（ScrollSpy）。
 - 栏宽与悬停预览：单栏模式下左右边缘拖拽无级调节 `--measure` 栏宽（双击或点 `↔ 宽度` 复位）；鼠标悬停于交叉引用、文献角标或 SVG 内部链接 0.28 秒弹出实时目标预览卡片。
 
-## Web 双栏工作台与双向高亮对齐（`dev_server.py` + `editor.js`）
+## Web 双栏工作台与双向高亮对齐（`htd/server/` + `assets/js/editor/`）
 
 ### 本地服务接口（仅 `127.0.0.1`）
 
@@ -70,7 +71,7 @@
 
 - 编译期双层锚点：
   - 块级锚点：`<h2..h4>`、`<p>`、`<li>`、`<tr>`、`<div class="eq|thm|proof">`、`<figure>` 自动携带 `data-file`、`data-l1`、`data-l2`（图与算法额外带 `data-tex`）。
-  - 行级锚点：`md_conv.py` 在段落与列表项换行处自动包裹 `<span class="sl" data-file="..." data-l="N">`，使多行源码段落在浏览器渲染流中具备逐行 DOM 映射；单行超长自然段则结合 `caretRangeFromPoint` 文本片段探测精确定位字符列。
+  - 行级锚点：`htd/mdinline.py` 在段落与列表项换行处自动包裹 `<span class="sl" data-file="..." data-l="N">`，使多行源码段落在浏览器渲染流中具备逐行 DOM 映射；单行超长自然段则结合 `caretRangeFromPoint` 文本片段探测精确定位字符列。
 - 交互组合键：
   - `◫ 双栏` 或 `Ctrl+\`（macOS 为 `Cmd+\`）：开合左源码右渲染分屏工作台，中间分隔条支持拖拽调宽。
   - 反向同步（右渲染 → 左源码）：按住 `Ctrl`/`Cmd` 悬停右侧正文实时显示虚线瞄准框与 `文件 : 行号` 浮标；`Ctrl+Click`（或 `Alt+Click`）任意正文句、公式、定理、表格行即自动展开左栏、切换对应文件、滚动至目标行并触发双端脉冲高亮。在算法/TikZ 图上 `Ctrl+Click` 直接打开对应 `.tex` 源码，按 `Ctrl+Shift+Click` 则跳回 `.md` / `.html` 调用处。

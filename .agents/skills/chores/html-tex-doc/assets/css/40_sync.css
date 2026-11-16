@@ -1,0 +1,33 @@
+/* ---------- 类 SyncTeX 行级瞄准与正反向配对高亮 ---------- */
+span.sl { border-radius: var(--r-3); transition: background-color .22s, box-shadow .22s; }
+.sync-aim {
+  cursor: pointer;
+  outline: 1.5px dashed var(--sync-border) !important;
+  outline-offset: 2px;
+  background-color: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+.sync-aim-badge {
+  position: fixed; z-index: var(--z-aim-badge); pointer-events: none; display: none;
+}
+.sync-aim-badge.show { display: block; }
+.sync-peer {
+  box-shadow: -3px 0 0 0 var(--sync-border);
+  background-color: color-mix(in srgb, var(--accent) 8%, transparent);
+}
+.sync-target-hl {
+  background-color: var(--sync-bg) !important;
+  box-shadow: 0 0 0 2px var(--sync-border);
+  border-radius: var(--r-4);
+  animation: syncPulse 1.8s ease-out;
+}
+@keyframes syncPulse {
+  0% { background-color: color-mix(in srgb, var(--accent) 34%, transparent); }
+  100% { background-color: var(--sync-bg); }
+}
+.live-new { animation: livenew 1.4s ease-out; }
+@keyframes livenew { from { background: color-mix(in srgb, var(--accent) 24%, transparent); } to { background: transparent; } }
+.live-err {
+  position: fixed; left: 0; right: 0; bottom: 0; margin: 0; max-height: 36vh; overflow: auto; z-index: var(--z-live-err);
+  background: var(--err-bg); color: var(--err-fg); padding: .75rem 1rem; font: 13px/1.5 var(--font-mono-ui); white-space: pre-wrap;
+}
+

@@ -1,0 +1,47 @@
+/* ---------- 文内可折叠目录卡片 & 侧边浮动目录抽屉（外观来自 08_components.css，这里只管布局与层级） ---------- */
+nav.toc {
+  background: var(--card); border: 1px solid var(--rule); border-radius: var(--r-8);
+  padding: .55rem .9rem; margin: 1.8rem 0; font-size: .94rem;
+}
+nav.toc .toc-head {
+  display: flex; align-items: center; justify-content: space-between; gap: .6rem;
+  font-family: var(--font-sans);
+}
+nav.toc .toc-toggle {
+  all: unset; cursor: pointer; display: inline-flex; align-items: center; gap: .45rem;
+  padding: .15rem .25rem; border-radius: var(--r-4); color: var(--fg); flex: 1;
+}
+nav.toc .toc-toggle:hover { color: var(--ui-muted); }
+nav.toc .toc-toggle-icon { display: inline-block; width: 1em; text-align: center; transition: transform .15s; }
+nav.toc.is-collapsed .toc-toggle-icon { transform: rotate(-90deg); }
+nav.toc .toc-meta { font-size: .82rem; color: var(--muted); font-weight: 400; margin-left: .2rem; }
+nav.toc .toc-actions { display: flex; gap: 2px; }
+nav.toc.is-collapsed .toc-actions,
+nav.toc.is-collapsed .toc-body { display: none; }
+nav.toc .toc-body { margin-top: .45rem; padding-top: .45rem; border-top: 1px solid var(--rule); }
+nav.toc ol, .toc-drawer ol { list-style: none; margin: 0; padding-left: 0; }
+nav.toc ol ol, .toc-drawer ol ol { padding-left: 1.35em; }
+.toc-row { display: flex; align-items: baseline; gap: .1rem; padding: 1px 0; }
+.toc-caret, .toc-caret-pad {
+  display: inline-block; width: 1.2rem; flex: 0 0 1.2rem; text-align: center; font-size: .8rem; color: var(--ui-faint);
+}
+.toc-caret { all: unset; width: 1.2rem; flex: 0 0 1.2rem; text-align: center; cursor: pointer; color: var(--ui-faint); font-size: .82rem; transition: transform .14s; }
+.toc-caret:hover { color: var(--ui-fg); }
+li.toc-branch.is-folded > .toc-row > .toc-caret { transform: rotate(-90deg); }
+li.toc-branch.is-folded > ol { display: none; }
+.toc-item { flex: 1; min-width: 0; }
+li[data-lv="1"] > .toc-row > .toc-item { font-weight: 600; }
+li[data-lv="3"] > .toc-row > .toc-item { font-size: .92em; }
+.toc-num { color: var(--ui-muted); margin-right: .48em; font-variant-numeric: tabular-nums; flex-shrink: 0; font-weight: 400; }
+.toc-txt { min-width: 0; overflow-wrap: anywhere; }
+
+.toc-drawer {
+  position: fixed; top: 3.1rem; right: .9rem; z-index: var(--z-toc-drawer);
+  width: min(23rem, calc(100vw - 1.8rem)); max-height: min(76vh, 42rem);
+  display: none; flex-direction: column; font-size: .86rem; line-height: 1.55;
+}
+.toc-drawer.open { display: flex; }
+.toc-drawer-head { gap: .3rem; padding: .5rem .55rem; border-bottom: 1px solid var(--ui-border); }
+.toc-drawer-filter { flex: 1; min-width: 0; }
+.toc-drawer-body { overflow-y: auto; padding: .45rem .5rem .6rem; }
+

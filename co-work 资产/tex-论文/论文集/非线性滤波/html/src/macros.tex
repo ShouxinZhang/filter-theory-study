@@ -1,4 +1,5 @@
 % 共享数学宏：TeX 侧（算法图）由 common.tex \input，HTML 侧注入 MathJax。
 % 约束：仅 \newcommand{\name}[n]{body} 形式，body 需同时兼容 TeX 与 MathJax。
 \newcommand{\bm}[1]{\boldsymbol{#1}}
-\newcommand{\optstar}{\text{✻}}
+% 与论文 preamble 的 \ding{75}（空心亮星 ✫，U+272B）一致；见仓库 习惯.md
+\newcommand{\optstar}{\text{✫}}

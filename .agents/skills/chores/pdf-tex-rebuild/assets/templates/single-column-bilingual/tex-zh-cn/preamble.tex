@@ -1,0 +1,40 @@
+\usepackage[margin=1in]{geometry}
+\usepackage{lmodern}
+\usepackage{fontspec}
+\IfFontExistsTF{TeX Gyre Pagella}{\setmainfont{TeX Gyre Pagella}}{\setmainfont{Latin Modern Roman}}
+\usepackage{microtype}
+\usepackage{mathtools}
+\usepackage{amssymb}
+\usepackage{bm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{caption}
+\usepackage{xcolor}
+\usepackage{titlesec}
+
+\definecolor{paperblue}{HTML}{1F4E79}
+\definecolor{softgray}{HTML}{6B7280}
+\usepackage[colorlinks=true,hypertexnames=false,linkcolor=paperblue,citecolor=paperblue,urlcolor=paperblue]{hyperref}
+
+\setlength{\parindent}{2em}
+\setlength{\parskip}{0.35em}
+\setlength{\emergencystretch}{2em}
+\setlist[itemize]{leftmargin=2em,itemsep=0.2em}
+\setlist[enumerate]{leftmargin=2.2em,itemsep=0.28em}
+\captionsetup{font=small,labelfont={bf,color=paperblue},labelsep=period}
+\titleformat{\section}{\Large\sffamily\bfseries\color{paperblue}}{\thesection}{0.75em}{}
+\titleformat{\subsection}{\large\sffamily\bfseries}{\thesubsection}{0.65em}{}
+\titlespacing*{\section}{0pt}{1.5em}{0.55em}
+\titlespacing*{\subsection}{0pt}{1.0em}{0.35em}
+
+\newcommand{\papercite}[2]{\hyperlink{paperref:#1}{#2}}
+\newcommand{\paperrefentry}[2]{\par\hangindent=1.5em\hangafter=1\hypertarget{paperref:#1}{#2}}
+\newcommand{\reconstructionnotice}{%
+  \begingroup\small\color{softgray}
+  \noindent\textbf{重建说明。}
+  本文档由 PDF 重建为可编辑的单栏 TeX，并非出版社官方源码。
+  \par\endgroup
+}

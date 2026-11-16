@@ -1,0 +1,46 @@
+/* ---------- 阅读器：单栏栏宽拖拽手柄 ---------- */
+.measure-handle {
+  position: fixed; top: 0; bottom: 0; width: 14px; z-index: var(--z-measure-handle); cursor: col-resize; touch-action: none;
+}
+.measure-handle.left { left: max(0px, calc(50vw - var(--measure) / 2 - 7px)); }
+.measure-handle.right { right: max(0px, calc(50vw - var(--measure) / 2 - 7px)); }
+.measure-handle::after {
+  content: ""; position: absolute; top: 0; bottom: 0; left: 6px; width: 2px;
+  background: var(--ui-fg); opacity: 0; transition: opacity .15s;
+}
+.measure-handle:hover::after, body.resizing .measure-handle::after { opacity: .45; }
+body.resizing { user-select: none; cursor: col-resize; }
+.measure-badge {
+  position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: var(--z-measure-badge);
+  font-size: .86rem; padding: .5rem .8rem; pointer-events: none; opacity: 0; transition: opacity .15s;
+}
+body.resizing .measure-badge { opacity: .85; }
+
+/* ---------- 右上角悬浮工具条 ---------- */
+.reader-bar { position: fixed; top: .75rem; right: .9rem; z-index: var(--z-reader-bar); }
+.cc-ico { flex: 0 0 auto; display: block; }
+
+/* ---------- 链接悬停预览卡片（外框是弹层组件，里面是正文，沿用正文字体） ---------- */
+.xref-preview {
+  position: fixed; z-index: var(--z-preview);
+  width: max-content; max-width: min(40rem, calc(100vw - 2rem)); max-height: min(60vh, 32rem); overflow: auto;
+  padding: .6rem 1rem; font: .92rem/1.7 var(--font-serif); color: var(--fg);
+  opacity: 0; pointer-events: none;
+}
+.xref-preview.show { opacity: 1; pointer-events: auto; }
+.xref-preview .pv-head { font: 500 var(--ui-size-sm)/1.4 var(--ui-font); color: var(--ui-muted); margin-bottom: .3rem; }
+.xref-preview figure, .xref-preview div.eq, .xref-preview div.thm { margin: .3rem 0; }
+.xref-preview h2, .xref-preview h3, .xref-preview h4 { margin: .2rem 0 .4rem; font-size: 1.05rem; border: 0; }
+.xref-preview :target { animation: none; }
+
+/* ---------- 插图点击放大 ---------- */
+.fig-zoom {
+  position: fixed; inset: 0; z-index: var(--z-fig-zoom); display: none; align-items: center; justify-content: center;
+  background: var(--ui-scrim); cursor: zoom-out;
+}
+.fig-zoom.open { display: flex; }
+.fig-zoom img {
+  width: min(96vw, calc(94vh * var(--ar, 1.6))); height: auto; max-height: 94vh;
+  background: var(--paper); border-radius: var(--ui-radius);
+}
+

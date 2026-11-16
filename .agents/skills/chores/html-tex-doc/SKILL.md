@@ -34,9 +34,19 @@ npm install --prefix .agents/skills/chores/html-tex-doc/scripts
 - Web 双栏工作台（`serve` 模式）：点右上角 `◫ 双栏` 或按 `Ctrl+\` 开合左源码右渲染分屏；支持 `Ctrl+F` 页内搜索，`Ctrl+Shift+F` 跨文件搜索，`Ctrl+S` 保存与防抖热补丁。
 - 类 SyncTeX 双向高亮对齐：按住 `Ctrl`/`Cmd` 悬停右侧渲染区预览 `文件:行号`，`Ctrl+Click` 任意句子、公式、定理或算法框即跳至左侧精确源码行（对算法框按 `Ctrl+Shift+Click` 跳至 `.md` 调用处）；左侧点击行号栏、`Ctrl+Click` 或按 `Ctrl+Alt+J` 正向定位右侧段落并双端脉冲高亮。
 
+## 开发与自检
+
+```bash
+python3 -m unittest discover -s .agents/skills/chores/html-tex-doc/scripts/tests     # 单元与回归测试
+node .agents/skills/chores/html-tex-doc/scripts/perf/cdp_debug.mjs <url> scroll       # 无头 Chrome 测量（HEADED=1 用真实窗口）
+```
+
+- 改样式：颜色、字体栈、圆角、层级只在 `assets/css/00_tokens.css` 定义；工程级定制写 `src/theme.css` 或 `src/extra.css`，不要复制整份样式。
+- 改前端脚本：按功能编辑 `assets/js/reader/*.js` 或 `assets/js/editor/*.js`，构建时自动拼接。
+
 ## 参考
 
 - [references/spec.md](references/spec.md): 受控 Markdown 与 HTML 标签语法、BibTeX、双层 SyncMap 协议、双栏 API 与阅读器细则。
-- [references/templates/src/](references/templates/src/) 与 [references/templates/academic-md/src/](references/templates/academic-md/src/): `basic` 与 `academic-md` 预设空白骨架。
+- [references/templates/src/](references/templates/src/) 与 [references/templates/academic-md/src/](references/templates/academic-md/src/): `basic` 与 `academic-md` 预设空白骨架（只含内容；运行时资源在 `assets/`）。
 - [references/examples/linked-list/README.md](references/examples/linked-list/README.md): 原生无 `.cls` 算法笔记完整示例（TikZ + `algpseudocode`）。
 - [references/examples/hithesis-adapter/README.md](references/examples/hithesis-adapter/README.md): 外部 `.cls` 学位论文（`hithesis`）薄适配器接入示例。

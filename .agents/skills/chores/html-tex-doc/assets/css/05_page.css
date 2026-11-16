@@ -1,0 +1,33 @@
+/* ---------- 页面骨架：滚动条、正文栏、标题、链接 ---------- */
+/* 细暗色自定义滚动条 */
+* { scrollbar-width: thin; scrollbar-color: var(--scroll-thumb) transparent; }
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: var(--r-pill); }
+::-webkit-scrollbar-thumb:hover { background: var(--scroll-thumb-hover); }
+
+html { background: var(--bg); color: var(--fg); }
+body {
+  margin: 0; padding: 0;
+  font: clamp(16px, .85rem + .3vw, 19px)/1.8 var(--font-serif);
+}
+main.doc-pane {
+  position: relative;
+  max-width: min(var(--measure), 100%); margin: 0 auto; padding: 2.5rem clamp(1rem, 4vw, 2.5rem) 5rem;
+  box-sizing: border-box;
+}
+
+h1, h2, h3, h4, p.h2 { font-family: var(--font-sans); line-height: 1.35; }
+h1 { font-size: 1.9rem; margin: 0; }
+h2, h3, h4 { scroll-margin-top: 2.4rem; }
+h2, p.h2 { font-size: 1.4rem; margin: 2.6rem 0 1rem; border-bottom: 1px solid var(--rule); padding-bottom: .3rem; font-weight: 600; }
+h3 { font-size: 1.15rem; margin-top: 1.8rem; }
+h4 { font-size: 1.02rem; margin-top: 1.4rem; }
+.secnum { color: var(--accent); margin-right: .6em; }
+.subtitle { color: var(--muted); margin: .3rem 0 0; }
+code { font-size: .9em; background: var(--card); padding: 0 .3em; border-radius: var(--r-3); }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+:target, .toc-jumped { scroll-margin-top: 2.4rem; animation: flash 1.4s ease-out; }
+@keyframes flash { from { background: color-mix(in srgb, var(--accent) 22%, transparent); } to { background: transparent; } }
+

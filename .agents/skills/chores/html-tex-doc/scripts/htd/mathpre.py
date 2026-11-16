@@ -1,12 +1,4 @@
-#!/usr/bin/env python3
-"""构建期公式预渲染：把正文 HTML 中的 \\(...\\) / \\[...\\] 换成 MathJax CHTML 标记，带内容哈希缓存。
-
-- 大开销只算一次：每条公式以 SHA-256(MathJax 版本, 输出配置, 宏定义, 行内/行间, 源码) 为键存入
-  <build>/mathcache/<键>.html；键的任一成分变化即不命中，不依赖文件修改时间，目录可随时删除。
-- 全部命中时不启动 Node；有未命中时把它们一次性交给 math_prerender.mjs。
-- 依赖：node 与 scripts/node_modules/mathjax-full（npm install --prefix <scripts 目录>）。
-  不可用时 available() 返回原因，调用方回退到浏览器内 MathJax。
-"""
+"""构建期公式预渲染（内容哈希缓存）；Node 侧见 scripts/math_prerender.mjs。"""
 from __future__ import annotations
 
 import hashlib
@@ -16,18 +8,29 @@ import shutil
 import subprocess
 from pathlib import Path
 
-SCRIPTS_DIR = Path(__file__).resolve().parent
+from .paths import SCRIPTS_DIR
+
 NODE_SCRIPT = SCRIPTS_DIR / "math_prerender.mjs"
+
+
 MJ_PKG = SCRIPTS_DIR / "node_modules" / "mathjax-full"
+
+
 FONT_DIR_NAME = "mathjax-fonts"
+
 
 # 不进入数学扫描的片段（与浏览器内 MathJax 的 skipHtmlTags 一致，另加内联 SVG）
 PROTECTED = re.compile(r"<(code|pre|script|style|svg)\b.*?</\1>", re.S)
+
+
 MATH = re.compile(r"\\\[(.+?)\\\]|\\\((.+?)\\\)", re.S)
+
 
 # 与浏览器内 MathJax 的输出保持一致：容器 position: relative；字号按正文字体的 x 高度缩放
 # （构建期不知道读者实际使用的字体，故由 SCALE_SCRIPT 在首帧前量一次写入 --mjx-scale）。
 EXTRA_CSS = 'mjx-container[jax="CHTML"]{position:relative;font-size:var(--mjx-scale,113.1%)}'
+
+
 SCALE_SCRIPT = (
     '<script>(()=>{const s=document.createElement("span");'
     's.style.cssText="position:absolute;visibility:hidden;height:1ex;width:1em";'
