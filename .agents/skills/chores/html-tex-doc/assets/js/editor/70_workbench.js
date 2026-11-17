@@ -1,5 +1,6 @@
   /* ---------------- 7. 构建双栏 DOM 与快捷键绑定 ---------------- */
   async function setSplitMode(enable) {
+    window.HTD.skipOffscreen?.();   // 开合双栏会改变正文栏宽：先让屏幕外的块跳过重排
     isSplit = enable;
     store.set("editor.splitOpen", enable ? "1" : "0");
     if (enable) {

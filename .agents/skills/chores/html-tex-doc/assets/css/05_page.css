@@ -17,6 +17,17 @@ main.doc-pane {
   box-sizing: border-box;
 }
 
+/* 屏幕外的顶层块跳过布局与绘制：开合双栏、改栏宽、切主题这类"全文重排"只算视口附近。
+   这个类由 reader.js 在页面加载完成几秒后才加上，而不是一开始就生效，原因有二：
+   其一，届时每个块都已渲染过一次，auto 记住的是真实高度，滚动条长度不会漂移；
+   其二，浏览器在加载后约 1 秒会整页提取一次内容（Chrome 的 AIPageContentAgent），
+   若此前已跳过屏幕外的块，这次提取要补做全部布局，表现为一次约 230ms 的卡顿。 */
+/* contain-intrinsic-size 从一开始就写上：浏览器只为带这个属性的元素记录"上次渲染的尺寸" */
+main.doc-pane > * { contain-intrinsic-size: auto 9rem; }
+/* 证明块与列表除外：它们子元素的外边距会穿过父块与相邻内容合并，一旦被"包含"就不再合并，
+   版面会多出约 10px 的间距——为保持外观逐像素不变，这几类块不参与跳过。 */
+main.doc-pane.skip-offscreen > :not(.proof, ol, ul) { content-visibility: auto; overflow-clip-margin: 12px; }
+
 h1, h2, h3, h4, p.h2 { font-family: var(--font-sans); line-height: 1.35; }
 h1 { font-size: 1.9rem; margin: 0; }
 h2, h3, h4 { scroll-margin-top: 2.4rem; }
