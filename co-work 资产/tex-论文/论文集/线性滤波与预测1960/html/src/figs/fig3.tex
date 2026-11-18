@@ -1,0 +1,55 @@
+% 图 3：线性最优滤波器的矩阵框图（执行 K-10 两步联动订正）
+\documentclass[tikz,border=4pt]{standalone}
+\input{common}
+\input{kalman-style}
+\begin{document}
+\begin{tikzpicture}[kalman]
+  % ---------- 主通路 ----------
+  \coordinate (in) at (0,0);
+  \node[sum]   (s1) at (1.4,0) {$\Sigma$};
+  \node[block] (D)  [right=18mm of s1] {$\bm{\Delta}^{\optstar}(t)$};
+  \node[sum]   (s2) [right=10mm of D] {$\Sigma$};
+  \coordinate  (br0) at ($(s2.east)+(21mm,0)$);         % 预测支路引出点 (x*(t+1|t))
+  \node[tri]   (z)  [right=9mm of br0] {\TXTdelay};
+  \coordinate  (br) at ($(z.east)+(20mm,0)$);           % 先验状态分支点 (x*(t|t-1))
+  \node[block] (M)  [right=10mm of br] {$\bm{M}(t)$};
+  \coordinate  (br2) at ($(M.east)+(8mm,0)$);           % 输出分支点
+  \coordinate  (out) at ($(br2)+(12mm,0)$);
+  \sumsigns{s1}
+  \sumsigns{s2}
+
+  \draw[sig]  (in) node[left,lbl]{$\bm{y}(t)$} -- (s1);
+  \draw[sig]  (s1) -- node[above,lbl]{$\tilde{\bm{y}}(t\mid t-1)$} (D);
+  \draw[sig]  (D) -- (s2);
+  \draw[edge] (s2) -- node[above,lbl,pos=0.5]{$\bm{x}^{\optstar}(t+1\mid t)$} (br0);
+  \draw[sig]  (br0) -- (z.west);
+  \draw[edge] (z.east) -- node[above,lbl,pos=0.5]{$\bm{x}^{\optstar}(t\mid t-1)$} (br);
+  \draw[sig]  (br) -- (M);
+  \draw[edge] (M) -- (br2);
+  \draw[sig]  (br2) -- (out) node[right,lbl]{$\bar{\bm{y}}(t\mid t-1)$};
+  \node[dot] at (br0) {};
+  \node[dot] at (br) {};
+  \node[dot] at (br2) {};
+
+  % ---------- 状态转移反馈 ----------
+  \node[block] (Phi) at ($(z)!0.5!(br)+(0,-15mm)$) {$\bm{\Phi}(t+1;t)$};
+  \draw[sig] (br) |- (Phi);
+  \draw[sig] (Phi) -| node[pos=0.28,below,lbl]{$\bm{x}^{\optstar}(t+1\mid t-1)$} (s2);
+
+  % ---------- 多步预测输出（自延迟器前 br0 引出） ----------
+  \node[block] (Phis) at ($(M)+(0,17.5mm)$) {$\bm{\Phi}(t+s;t+1)$};
+  \draw[sig] (br0) |- (Phis);
+  \draw[sig] (Phis.east) -- (Phis.east -| out) node[right,lbl]{$\bm{x}^{\optstar}(t+s\mid t)$};
+
+  % ---------- 新息负反馈 ----------
+  \node[block] (mI) at ($(Phi)+(0,-15mm)$) {$-\bm{I}$};
+  \draw[sig] (br2) |- (mI);
+  \draw[sig] (mI) -| (s1);
+
+  % ---------- 随机过程模型虚线框 ----------
+  \begin{scope}[on background layer]
+    \node[frame, inner xsep=5mm, inner ysep=4mm, fit=(s2)(z)(Phi)(M)] (model) {};
+  \end{scope}
+  \node[framelbl, anchor=south west] at (model.north west) {\TXTmodel};
+\end{tikzpicture}
+\end{document}

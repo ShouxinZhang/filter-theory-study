@@ -1,13 +1,14 @@
 """把编号、图、目录、交叉引用落到正文 HTML。"""
 from __future__ import annotations
 
-import re
 from pathlib import Path
+import re
 
 from .numbering import REF, _keep_loc, attrs
 from .svgtheme import inline_svg
 from .texfig import compile_tex
 from .toc import _build_toc_html
+
 
 def parse_macros(path: Path) -> dict[str, object]:
     if not path.exists():
@@ -43,7 +44,6 @@ def render(
 
     doc = re.sub(r"<(h[23])\b([^>]*)>(.*?)</\1>", sec_fn, doc, flags=re.S)
 
-    # 收集 h2 / h3 / h4[id] 生成完整三级目录树
     toc: list[tuple[int, str, str, str]] = []
     for hm in re.finditer(r'<(h[234])\b([^>]*)><span class="secnum">(.*?)</span>(.*?)</\1>', doc, flags=re.S):
         tag, ha, num, raw_title = hm.group(1), attrs(hm.group(2)), hm.group(3), hm.group(4)
@@ -69,16 +69,20 @@ def render(
     doc = re.sub(r'<div class="eq([^"]*)"([^>]*)>(.*?)</div>', eq_fn, doc, flags=re.S)
 
     def thm_open_fn(m: re.Match[str]) -> str:
-        a, gap, p_open = attrs(m.group(1)), m.group(2), m.group(3)
+        a = attrs(f"{m.group(1)} {m.group(3)}")
+        extra_cls, gap, p_open = m.group(2), m.group(4), m.group(5)
         if "data-label" not in a:
             return m.group(0)
         L = labels[a["data-label"]]
         title = f"（{a['data-title']}）" if a.get("data-title") else ""
-        head = f'<span class="thmhead">{L["text"]}</span><span class="thmtitle">{title}</span>　'
         loc = _keep_loc(a)
-        return f'<div class="thm" id="{L["id"]}"{loc}>{gap}{p_open}{head}'
+        if p_open:
+            head = f'<span class="thmhead">{L["text"]}</span><span class="thmtitle">{title}</span>　'
+            return f'<div class="thm{extra_cls}" id="{L["id"]}"{loc}>{gap}{p_open}{head}'
+        lead = f'<p class="thm-lead"><span class="thmhead">{L["text"]}</span><span class="thmtitle">{title}</span></p>'
+        return f'<div class="thm{extra_cls}" id="{L["id"]}"{loc}>{gap or chr(10)}{lead}{gap}'
 
-    doc = re.sub(r'<div class="thm"([^>]*)>(\s*)(<p\b[^>]*>)', thm_open_fn, doc, flags=re.S)
+    doc = re.sub(r'<div\b([^>]*?)\bclass="thm([^"]*)"([^>]*)>(\s*)(<p\b[^>]*>)?', thm_open_fn, doc, flags=re.S)
 
     def fig_fn(m: re.Match[str]) -> str:
         nonlocal n_svg
@@ -108,11 +112,12 @@ def render(
         doc = doc.replace("<!--TOC-->", "")
 
     def ref_fn(m: re.Match[str]) -> str:
-        key = m.group(1)
+        key, mod = m.group(1), m.group(2)
         if key not in labels:
             errors.append(f"HTML 侧未定义引用：{key}")
             return '<span class="xref-missing">??</span>'
         L = labels[key]
-        return f'<a class="xref" href="#{L["id"]}">{L["num"] if m.group(2) else L["text"]}</a>'
+        disp = L["text"] if mod is None else (L["num"] if mod == "n" else mod)
+        return f'<a class="xref" href="#{L["id"]}">{disp}</a>'
 
     return REF.sub(ref_fn, doc), n_svg

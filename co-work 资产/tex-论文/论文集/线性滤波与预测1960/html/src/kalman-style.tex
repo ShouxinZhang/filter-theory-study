@@ -1,0 +1,37 @@
+% Kalman (1960) 图 1–4 共享样式（原生适配 html-tex-doc 深浅色自适应规范色）。
+% 用法：\documentclass[tikz,border=4pt]{standalone} 后 \input{common} 再 \input{kalman-style}。
+\usepackage{bm,pifont}
+\usetikzlibrary{positioning,fit,calc,arrows.meta,backgrounds,shapes.geometric}
+
+% 最优解空心亮星上标（与正文 ✫ 一致）
+\newcommand{\optstar}{\text{\ding{75}}}
+
+% 深浅色自适应规范色（配合 htd/svgtheme.py）：
+% black -> currentColor；black!6 -> currentColor (opacity≈0.059)；
+% white -> var(--bg)；accent (#1F6FB2) -> var(--accent)。
+\colorlet{edge}{black}
+\colorlet{blk}{black!6}
+
+\tikzset{
+  kalman/.style={font=\small, >={Stealth[length=2.4mm]}, line width=0.7pt, draw=edge},
+  block/.style={draw=edge, fill=blk, rounded corners=1.5pt,
+                minimum height=8mm, minimum width=13mm, inner sep=3pt, text=edge},
+  sum/.style={draw=edge, fill=white, circle, minimum size=6.5mm, inner sep=0pt, text=edge},
+  tri/.style={draw=edge, fill=blk, isosceles triangle, isosceles triangle apex angle=60,
+              shape border rotate=0, inner sep=1pt, minimum height=13mm,
+              font=\footnotesize, align=center, text=edge},
+  sig/.style={->, edge},
+  lbl/.style={font=\footnotesize, text=edge},
+  dot/.style={circle, fill=edge, inner sep=1.1pt},
+  frame/.style={draw=accent, dashed, rounded corners=3pt, line width=0.6pt},
+  framelbl/.style={lbl, text=accent, font=\scriptsize, anchor=south},
+}
+
+% 求和节点两个输入侧 (左/下) 的 + 号，置于圆外
+\newcommand{\sumsigns}[1]{%
+  \node[font=\scriptsize, text=edge] at ($(#1.west)+(-0.12,0.16)$) {$+$};
+  \node[font=\scriptsize, text=edge] at ($(#1.south)+(-0.16,-0.12)$) {$+$};}
+
+\newcommand{\TXTdelay}{单位\\延迟}
+\newcommand{\TXTmodel}{随机过程模型}
+\newcommand{\TXTplant}{被控物理系统}

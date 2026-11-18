@@ -2,12 +2,25 @@
 from __future__ import annotations
 
 import html
-import re
 from pathlib import Path
+import re
 from .bib import parse_bib
+from .mdblocks import apply_footnotes, is_pipe_table_start, render_pipe_table
 from .mdinline import MarkdownInline
-from .mdsyntax import BOX_OPEN, FENCE_CLOSE, FENCE_OPEN, HEAD, ITEM, MD_FIG, RAW, _inject_attr
+from .mdsyntax import BOX_OPEN, FENCE_CLOSE, FENCE_OPEN, FOOTNOTE_DEF, HEAD, ITEM, MD_FIG, PIPE_ROW, RAW, _inject_attr
 from .workspace import INCLUDE_RE, parse_frontmatter, resolve_in_src
+
+_THM_MAP = {
+    "theorem": "定理",
+    "lemma": "引理",
+    "proposition": "命题",
+    "definition": "定义",
+    "corollary": "推论",
+    "assumption": "假设",
+    "problem": "问题",
+    "remark": "评注",
+    "example": "算例",
+}
 
 
 class MarkdownCompiler(MarkdownInline):
@@ -16,7 +29,6 @@ class MarkdownCompiler(MarkdownInline):
         off = start_line - 1
         out: list[str] = []
         para: list[tuple[int, str]] = []
-        # stack entries: (kind_type, open_line, out_index, base_tag_prefix)
         stack: list[tuple[str, int, int, str]] = []
         prefix = ""
         next_cont = False
@@ -25,9 +37,9 @@ class MarkdownCompiler(MarkdownInline):
 
         def is_cont_text(raw: str) -> bool:
             s = raw.strip()
-            if not s or s == ":::" or s == "---":
+            if not s or s in (":::", "---"):
                 return False
-            return not any(p.match(s) for p in (FENCE_OPEN, HEAD, BOX_OPEN, MD_FIG, ITEM, RAW))
+            return not any(p.match(s) for p in (FENCE_OPEN, HEAD, BOX_OPEN, MD_FIG, ITEM, RAW, PIPE_ROW, FOOTNOTE_DEF))
 
         def flush() -> None:
             nonlocal prefix, next_cont
@@ -70,6 +82,8 @@ class MarkdownCompiler(MarkdownInline):
             if not line.strip():
                 flush()
                 next_cont = False
+            elif line.strip() == "---" and not para:
+                out.append(f'<hr data-file="{ef}" data-l="{ln}" data-l1="{ln}" data-l2="{ln}">')
             elif line.strip() == ":::":
                 flush()
                 if not stack:
@@ -82,47 +96,64 @@ class MarkdownCompiler(MarkdownInline):
                 out.append("</div>")
             elif m := BOX_OPEN.match(line):
                 flush()
-                kind, label, title = m.group(1), m.group(2), m.group(3).strip()
+                kind, label, raw_num, title = m.group(1), m.group(2), m.group(3), m.group(4).strip()
                 idx = len(out)
                 if kind in ("证明", "proof"):
                     stack.append(("proof", ln, idx, '<div class="proof"'))
                     out.append('<div class="proof">')
                     prefix = f"<em>{self.inline(title) if title else '证明'}.</em> "
                 else:
-                    thm_map = {
-                        "theorem": "定理",
-                        "lemma": "引理",
-                        "proposition": "命题",
-                        "definition": "定义",
-                        "corollary": "推论",
-                        "assumption": "假设",
-                        "remark": "注",
-                    }
-                    disp_kind = thm_map.get(kind.lower(), kind)
+                    kl = kind.lower()
+                    disp_kind = _THM_MAP.get(kl, kind)
+                    cls = "thm"
+                    if kl in ("评注", "remark"):
+                        cls = "thm thm--remark"
+                    elif kl in ("算例", "例", "example"):
+                        cls = "thm thm--example"
                     if not label:
                         self.auto += 1
                         label = f"thm:auto-{self.auto}"
-                    t = f' data-title="{html.escape(title, quote=True)}"' if title else ""
-                    head_prefix = f'<div class="thm" data-kind="{html.escape(disp_kind, quote=True)}" data-label="{html.escape(label, quote=True)}"{t}'
+                    num_val = raw_num.strip("\"'") if raw_num else ""
+                    n_attr = f' data-num="{html.escape(num_val, quote=True)}"' if num_val else ""
+                    t_attr = f' data-title="{html.escape(title, quote=True)}"' if title else ""
+                    head_prefix = (
+                        f'<div class="{cls}" data-kind="{html.escape(disp_kind, quote=True)}"'
+                        f' data-label="{html.escape(label, quote=True)}"{n_attr}{t_attr}'
+                    )
                     stack.append(("thm", ln, idx, head_prefix))
                     out.append(head_prefix + ">")
+            elif m := FOOTNOTE_DEF.match(line.strip()):
+                flush()
+                fid, fbody = m.group(1), [m.group(2).strip()]
+                while i + 1 < len(lines) and lines[i + 1].startswith(("  ", "\t")) and not FOOTNOTE_DEF.match(lines[i + 1].strip()):
+                    i += 1
+                    fbody.append(lines[i].strip())
+                self.footnotes[fid] = self.inline(" ".join(fbody))
+            elif is_pipe_table_start(lines, i):
+                flush()
+                j = i + 2
+                while j < len(lines) and PIPE_ROW.match(lines[j]):
+                    j += 1
+                tbl_pairs = [(off + k + 1, lines[k].rstrip()) for k in range(i, j)]
+                out.append(render_pipe_table(self, tbl_pairs, fname))
+                i = j
+                continue
             elif (m := HEAD.match(line)) and not para:
                 lv = len(m.group(1))
                 self.sec = self.sec[: lv - 1] + [self.sec[lv - 1] + 1] + [0] * (3 - lv)
                 loc = f'data-file="{ef}" data-l="{ln}" data-l1="{ln}" data-l2="{ln}"'
                 if lv == 3:
                     num = ".".join(map(str, self.sec))
-                    anchor = re.sub(r"[^\w-]", "-", m.group(3) or f"sub-{num}")
+                    anc = re.sub(r"[^\w-]", "-", m.group(3) or f"sub-{num}")
                     if m.group(3):
-                        self.sub[m.group(3)] = (num, anchor)
-                    out.append(f'<h4 id="{anchor}" {loc}><span class="secnum">{num}</span>{self.inline(m.group(2))}</h4>')
+                        self.sub[m.group(3)] = (num, anc)
+                    out.append(f'<h4 id="{anc}" {loc}><span class="secnum">{num}</span>{self.inline(m.group(2))}</h4>')
                 else:
                     lab = f' data-label="{html.escape(m.group(3), quote=True)}"' if m.group(3) else ""
                     out.append(f"<h{lv + 1}{lab} {loc}>{self.inline(m.group(2))}</h{lv + 1}>")
             elif (m := MD_FIG.match(line)) and not para:
                 out.append(self._md_figure(m, fname, ln))
             elif not para and (RAW.match(line) or ITEM.match(line)):
-                # 若以 <!-- 开头且多行注释，扫描至 -->；普通块扫描至空行
                 if line.lstrip().startswith("<!--") and "-->" not in line:
                     j = i + 1
                     while j < len(lines) and "-->" not in lines[j]:
@@ -187,6 +218,11 @@ def _compile_included_file(conv: MarkdownCompiler, inc_path: Path, rel_posix: st
     return conv.convert("\n".join(cleaned), rel_posix)
 
 
+def _finalize_doc(conv: MarkdownCompiler, parts: list[str]) -> str:
+    doc = apply_footnotes(conv, "\n".join(parts))
+    return conv.link_subsections(doc).replace("<!--REFS-->", conv.refs_html())
+
+
 def compile_markdown_dir(src_dir: Path) -> tuple[str, list[str]]:
     """将 src_dir 下的 main.md（或旧式 *.md）与文献库编译为完整 doc.html 字符串与错误列表。"""
     root = src_dir.resolve()
@@ -197,12 +233,14 @@ def compile_markdown_dir(src_dir: Path) -> tuple[str, list[str]]:
         bib = parse_bib(bib_path.read_text(encoding="utf-8")) if bib_path.exists() else {}
         conv = MarkdownCompiler(bib)
         parts = [conv.convert(f.read_text(encoding="utf-8"), f.name) for f in md_files]
-        doc = conv.link_subsections("\n".join(parts)).replace("<!--REFS-->", conv.refs_html())
-        return doc, conv.errors
+        return _finalize_doc(conv, parts), conv.errors
 
     fm, body, start_ln = parse_frontmatter(main_path.read_text(encoding="utf-8"))
     pre_errors: list[str] = []
     bib_rel = fm.get("bib") or "refs.bib"
+    bib_order = fm.get("bib_order") or None
+    if bib_order not in (None, "file", "cite"):
+        pre_errors.append(f"main.md: 未知 bib_order：{bib_order}")
     bib_res = resolve_in_src(root, bib_rel)
     bib = {}
     if bib_res is None:
@@ -212,7 +250,7 @@ def compile_markdown_dir(src_dir: Path) -> tuple[str, list[str]]:
     elif fm.get("bib") and bib_rel != "refs.bib":
         pre_errors.append(f"main.md: bib 文件不存在：{bib_rel}")
 
-    conv = MarkdownCompiler(bib)
+    conv = MarkdownCompiler(bib, bib_order=bib_order)
     conv.errors.extend(pre_errors)
     parts: list[str] = []
     chunk: list[str] = []
@@ -245,5 +283,4 @@ def compile_markdown_dir(src_dir: Path) -> tuple[str, list[str]]:
             parts.append(_compile_included_file(conv, resolved[0], resolved[1]))
 
     flush_chunk()
-    doc = conv.link_subsections("\n".join(parts)).replace("<!--REFS-->", conv.refs_html())
-    return doc, conv.errors
+    return _finalize_doc(conv, parts), conv.errors

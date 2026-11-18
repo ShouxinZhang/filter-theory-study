@@ -1,24 +1,28 @@
-"""受控 Markdown 的行内层：公式、引用、文献、带源码锚点的行与列表项。"""
+"""受控 Markdown 的行内层：公式、斜体、脚注、引用、文献、带源码锚点的行与列表项。"""
 from __future__ import annotations
 
 import html
 import re
 from .bib import fmt_ref
 from .mdsyntax import FENCE_CLOSE, FENCE_OPEN, MATH, esc
-from .numbering import anchor
+from .numbering import REF
 
 
 class MarkdownInline:
-    def __init__(self, bib: dict[str, dict[str, str]] | None = None):
+    def __init__(self, bib: dict[str, dict[str, str]] | None = None, bib_order: str | None = None):
         self.bib = bib or {}
-        self.cites: list[str] = []
+        self.bib_order = bib_order
+        self.cites: list[str] = list(self.bib.keys()) if bib_order == "file" else []
+        self.footnotes: dict[str, str] = {}
+        self.fn_refs: list[str] = []
+        self._fn_seen: set[str] = set()
         self.errors: list[str] = []
         self.auto = 0
         self.sec = [0, 0, 0]
         self.sub: dict[str, tuple[str, str]] = {}
 
     def _cite(self, m: re.Match[str]) -> str:
-        out = []
+        items: list[tuple[int, str]] = []
         for k in re.split(r"\s*[,;]\s*@?", m.group(1).strip()):
             if not k:
                 continue
@@ -27,8 +31,36 @@ class MarkdownInline:
                 continue
             if k not in self.cites:
                 self.cites.append(k)
-            out.append(f'<a class="cite" href="#ref-{k}">{self.cites.index(k) + 1}</a>')
-        return '<sup class="cites">[' + ",".join(out) + "]</sup>" if out else m.group(0)
+            items.append((self.cites.index(k) + 1, k))
+        if not items:
+            return m.group(0)
+
+        def _link(idx: int, key: str) -> str:
+            return f'<a class="cite" href="#ref-{key}">{idx}</a>'
+
+        if self.bib_order != "file":
+            return '<sup class="cites">[' + ",".join(_link(idx, k) for idx, k in items) + "]</sup>"
+        runs: list[list[tuple[int, str]]] = [[items[0]]]
+        for idx, k in items[1:]:
+            if idx == runs[-1][-1][0] + 1:
+                runs[-1].append((idx, k))
+            else:
+                runs.append([(idx, k)])
+        parts: list[str] = []
+        for r in runs:
+            if len(r) >= 3:
+                parts.append(f"{_link(*r[0])}–{_link(*r[-1])}")
+            else:
+                parts.extend(_link(idx, k) for idx, k in r)
+        return '<sup class="cites">[' + ",".join(parts) + "]</sup>"
+
+    def _fn_ref(self, m: re.Match[str]) -> str:
+        fid = m.group(1)
+        self.fn_refs.append(fid)
+        efid = html.escape(fid, quote=True)
+        id_attr = "" if fid in self._fn_seen else f' id="fnref-{efid}"'
+        self._fn_seen.add(fid)
+        return f'<sup class="fnref"><a class="xref" href="#fn-{efid}"{id_attr}>[{efid}]</a></sup>'
 
     def inline(self, s: str) -> str:
         """单块行内转换（保持换行符个数不变，供逐源行切分使用）。"""
@@ -51,7 +83,9 @@ class MarkdownInline:
             s,
             flags=re.S,
         )
+        s = re.sub(r"(?<!\*)\*([^*\n]+?)\*(?!\*)", r"<em>\1</em>", s)
         s = re.sub(r"\[@([^\]]+)\]", self._cite, s)
+        s = re.sub(r"\[\^([\w-]+)\](?!:)", self._fn_ref, s)
         return re.sub(r"\x00M(\d+)\x00", lambda m: stash[int(m.group(1))], s)
 
     def render_lines_with_spans(self, pairs: list[tuple[int, str]], fname: str, prefix: str = "") -> str:
@@ -128,12 +162,14 @@ class MarkdownInline:
 
     def link_subsections(self, doc: str) -> str:
         def fn(m: re.Match[str]) -> str:
-            if m.group(1) not in self.sub:
+            key, mod = m.group(1), m.group(2)
+            if key not in self.sub:
                 return m.group(0)
-            num, anchor = self.sub[m.group(1)]
-            return f'<a class="xref" href="#{anchor}">{num if m.group(2) else f"第 {num} 节"}</a>'
+            num, anc = self.sub[key]
+            disp = f"第 {num} 节" if mod is None else (num if mod == "n" else mod)
+            return f'<a class="xref" href="#{anc}">{disp}</a>'
 
-        return re.sub(r"\{@([\w:.-]+)(\|n)?\}", fn, doc)
+        return REF.sub(fn, doc)
 
     def refs_html(self) -> str:
         if not self.cites:

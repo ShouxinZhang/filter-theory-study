@@ -1,4 +1,4 @@
-/* ---------- 公式、图、算法、表、命题、文献 ---------- */
+/* ---------- 公式、图、算法、表、命题、评注、文献、脚注 ---------- */
 div.eq { margin: 1rem 0; overflow-x: auto; overflow-y: hidden; padding: .2rem .25rem; border-radius: var(--r-4); }
 div.eq.tight-top { margin-top: .25rem; }
 div.eq.tight-bot { margin-bottom: .25rem; }
@@ -20,12 +20,19 @@ table { border-collapse: collapse; margin: 0 auto; font-size: .95rem; }
 th, td { padding: .35rem .9rem; border-bottom: 1px solid var(--rule); }
 thead th { border-bottom: 2px solid var(--fg); }
 p.note { font-size: .88rem; color: var(--muted); margin: .4rem 0 0; text-align: center; }
+hr { border: 0; border-top: 1px solid var(--rule); margin: 1.6rem 0; }
 
 div.thm { background: var(--card); border-left: 3px solid var(--accent); padding: .4rem 1rem; margin: 1.4rem 0 .6rem; border-radius: 0 var(--r-4) var(--r-4) 0; }
+div.thm.thm--remark, div.thm.thm--example { background: transparent; border-left: 2px solid var(--rule); padding: .15rem 0 .15rem .95rem; margin: 1.1rem 0; border-radius: 0; }
+p.thm-lead { margin: .25rem 0 .35rem; text-indent: 0; }
 .thmhead { font-weight: 700; }
 div.proof { margin-bottom: 1.4rem; }
 p.qed { text-align: right; margin: -.6rem 0 0; }
-sup.cites { font-size: .72em; }
+sup.cites, sup.fnref { font-size: .72em; line-height: 0; }
 ol.refs { font-size: .92rem; padding-left: 2.4em; }
 ol.refs li { margin: .25rem 0; }
-
+section.footnotes { margin-top: 2.2rem; padding-top: .8rem; border-top: 1px solid var(--rule); font-size: .9rem; color: var(--muted); }
+.fn-list { margin: 0; padding-left: 1.8em; }
+.fn-list li { margin: .3rem 0; }
+.fn-back { margin-left: .25em; font-size: .88em; }
+.xref-preview > div > li { list-style: none; }

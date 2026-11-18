@@ -1,0 +1,38 @@
+% 图 4：最优控制器的矩阵框图
+\documentclass[tikz,border=4pt]{standalone}
+\input{common}
+\input{kalman-style}
+\begin{document}
+\begin{tikzpicture}[kalman]
+  \coordinate (in) at (-1.2,0);                            % u*(t) 汇入点
+  \node[block] (M)  at (1.6,0) {$\hat{\bm{M}}(t)$};
+  \node[sum]   (s)  [right=10mm of M] {$\Sigma$};
+  \node[tri]   (z)  [right=18mm of s] {\TXTdelay};
+  \coordinate  (br) at ($(z.east)+(17mm,0)$);
+  \node[block] (D)  [right=22mm of br] {${\hat{\bm{\Delta}}}^{\optstar}(t)$};
+  \sumsigns{s}
+
+  \draw[sig] (in) -- node[above,lbl,pos=0.3]{$\bm{u}^{\optstar}(t)$} (M);
+  \draw[sig] (M) -- (s);
+  \draw[sig] (s) -- node[above,lbl]{$\bm{x}(t+1)$} (z.west);
+  \draw[edge] (z.east) -- (br);
+  \draw[sig] (br) -- node[above,lbl,pos=0.6]{$\bm{x}(t)$} (D);
+  \node[dot] at (br) {};
+
+  % 状态转移反馈
+  \node[block] (Phi) at ($(z)!0.5!(br)+(0,-15mm)$) {$\hat{\bm{\Phi}}(t+1;t)$};
+  \draw[sig] (br) |- (Phi);
+  \draw[sig] (Phi) -| (s);
+
+  % 控制反馈：Delta^* -> -I -> M^
+  \node[block] (mI) at ($(Phi)+(0,-15mm)$) {$-\bm{I}$};
+  \draw[sig] (D.east) -- ++(6mm,0) |- (mI);
+  \draw[edge] (mI) -| ($(in)+(-6mm,0)$) -- (in);
+
+  % 被控物理系统虚线框
+  \begin{scope}[on background layer]
+    \node[frame, inner xsep=5mm, inner ysep=4mm, fit=(M)(s)(z)(Phi)(br)] (plant) {};
+  \end{scope}
+  \node[framelbl] at (plant.north) {\TXTplant};
+\end{tikzpicture}
+\end{document}

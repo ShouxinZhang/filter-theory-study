@@ -1,0 +1,29 @@
+% 图 1：一般线性连续动态系统的矩阵框图
+\documentclass[tikz,border=4pt]{standalone}
+\input{common}
+\input{kalman-style}
+\begin{document}
+\begin{tikzpicture}[kalman]
+  \coordinate (in) at (0,0);
+  \node[block] (D)  at (1.6,0) {$\bm{D}(t)$};
+  \node[sum]   (s)  [right=10mm of D] {$\Sigma$};
+  \node[tri]   (I)  [right=16mm of s] {$\displaystyle\int$};
+  \coordinate  (br) at ($(I.east)+(22mm,0)$);
+  \node[block] (M)  [right=10mm of br] {$\bm{M}(t)$};
+  \coordinate  (out) at ($(M.east)+(12mm,0)$);
+  \sumsigns{s}
+
+  \draw[sig] (in) node[left,lbl]{$\bm{u}(t)$} -- (D);
+  \draw[sig] (D) -- (s);
+  \draw[sig] (s) -- node[above,lbl]{$\dot{\bm{x}}(t)$} (I.west);
+  \draw[edge] (I.east) -- node[above,lbl]{$\bm{x}(t)$} (br);
+  \draw[sig] (br) -- (M);
+  \draw[sig] (M) -- (out) node[right,lbl]{$\bm{y}(t)$};
+  \node[dot] at (br) {};
+
+  % 反馈：x -> F(t) -> Sigma
+  \node[block] (F) at ($(I)+(0,-15mm)$) {$\bm{F}(t)$};
+  \draw[sig] (br) |- (F);
+  \draw[sig] (F) -| (s);
+\end{tikzpicture}
+\end{document}

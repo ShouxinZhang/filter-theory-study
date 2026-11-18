@@ -1,0 +1,29 @@
+% 图 2：一般线性离散动态系统的矩阵框图
+\documentclass[tikz,border=4pt]{standalone}
+\input{common}
+\input{kalman-style}
+\begin{document}
+\begin{tikzpicture}[kalman]
+  \coordinate (in) at (0,0);
+  \node[block] (D)  at (1.6,0) {$\bm{\Delta}(t)$};
+  \node[sum]   (s)  [right=10mm of D] {$\Sigma$};
+  \node[tri]   (z)  [right=18mm of s] {\TXTdelay};
+  \coordinate  (br) at ($(z.east)+(22mm,0)$);
+  \node[block] (M)  [right=10mm of br] {$\bm{M}(t)$};
+  \coordinate  (out) at ($(M.east)+(12mm,0)$);
+  \sumsigns{s}
+
+  \draw[sig] (in) node[left,lbl]{$\bm{u}(t)$} -- (D);
+  \draw[sig] (D) -- (s);
+  \draw[sig] (s) -- node[above,lbl]{$\bm{x}(t+1)$} (z.west);
+  \draw[edge] (z.east) -- node[above,lbl]{$\bm{x}(t)$} (br);
+  \draw[sig] (br) -- (M);
+  \draw[sig] (M) -- (out) node[right,lbl]{$\bm{y}(t)$};
+  \node[dot] at (br) {};
+
+  % 反馈：x -> Phi(t+1; t) -> Sigma
+  \node[block] (Phi) at ($(z)+(0,-15mm)$) {$\bm{\Phi}(t+1;t)$};
+  \draw[sig] (br) |- (Phi);
+  \draw[sig] (Phi) -| (s);
+\end{tikzpicture}
+\end{document}

@@ -1,0 +1,137 @@
+% 章节 04：原刊参考文献与随机过程基础附录
+\section{参考文献}\label{sec:refs}
+
+\bibliography{html/src/refs}
+
+% <!-- p.11 -->
+
+% 附录：概率分布、正交过程与正态随机过程基本性质
+\section{附录：随机过程基本概念}\label{sec:appendix}
+
+为便于读者参阅，此处以尽可能简明扼要的方式回顾有关概率与随机过程的若干初等定义与基本事实；若需更深入全面的论述，可参阅 Laning 与 Battin\cite{r05} 或 Doob\cite{r15}。
+
+\emph{随机变量}是其取值取决于随机事件结果的函数。随机变量的\emph{取值}可以是任何适当的数学对象，如实数，复数或向量等。为简便起见，本附录主要考察实值随机变量，但这并不构成实质性限制。以下用 $x, y, \dots$ 表示随机变量，用 $\xi, \eta, \dots$ 表示其具体取值。随机变量的和，积以及确定性函数仍为随机变量。
+
+随机变量 $x$ 可通过规定其小于或等于任意实常数 $\xi$ 的概率来显式定义，用符号表示为
+\begin{equation*}
+\mathbb{P}(x \leq \xi) = F_x(\xi), \;\; F_x(-\infty) = 0, \;\; F_x(+\infty) = 1
+\end{equation*}
+其中 $F_x(\xi)$ 称为随机变量 $x$ 的\emph{概率分布函数}。当 $F_x(\xi)$ 关于 $\xi$ 可微时，导数 $p_x(\xi) = \mathrm{d}F_x(\xi) / \mathrm{d}\xi$ 称为 $x$ 的\emph{概率密度函数}。
+
+随机变量 $x$ 的任意确定性函数 $g(x)$ 的\emph{期望值}（\emph{数学期望}，\emph{统计平均}，\emph{系综平均}或\emph{均值}等均为常见同义词）定义为
+\begin{equation}\label{eq:40}
+\mathbb{E}_{x \sim \mathbb{P}_x}[g(x)] = \mathbb{E}[g(x)] = \int_{-\infty}^{\infty} g(\xi)\,\mathrm{d}F_x(\xi) = \int_{-\infty}^{\infty} g(\xi)p_x(\xi)\,\mathrm{d}\xi
+\end{equation}
+在固定环境概率空间下可略去分布下标简记为 $\mathbb{E}[g(x)]$（原文常省略期望符号后的方括号，本译本按统一规范予以保留）。由随机变量构成的有限或无穷序列
+\begin{equation}\label{eq:41}
+\{x(t)\} = \dots, x(-1), x(0), x(1), \dots
+\end{equation}
+称为\emph{离散}（或\emph{离散参数}）\emph{随机过程}。随机过程 \eqref{eq:41} 的一组特定观测实现值
+\begin{equation*}
+\dots, \xi(-1), \xi(0), \xi(1), \dots
+\end{equation*}
+称为该过程的一个\emph{实现}（或\emph{样本函数}）。直观地说，随机过程就是一族引入时间指标加以排列的随机变量集合。
+
+若对一切 $t \neq s$ 满足
+\begin{equation*}
+\mathbb{E}[x(t)x(s)] = \mathbb{E}[x(t)]\mathbb{E}[x(s)]
+\end{equation*}
+则称该随机过程是\emph{不相关的}。若进一步对一切 $t \neq s$ 满足
+\begin{equation*}
+\mathbb{E}[x(t)x(s)] = 0
+\end{equation*}
+则称该随机过程是\emph{正交的}。任何不相关随机过程均可通过中心化替换 $\mathring{x}(t) := x(t) - \mathbb{E}[x(t)]$（已改用圆圈上标以避免与转置符号冲突，见\hyperref[sec:k22]{校勘记 K-22}）化为一个正交随机过程，因为当 $t \neq s$ 时有
+\begin{equation*}
+\begin{aligned}
+&\mathbb{E}[\mathring{x}(t)\mathring{x}(s)] = \mathbb{E}\bigl[(x(t) - \mathbb{E}[x(t)])(x(s) - \mathbb{E}[x(s)])\bigr] \\
+= &\mathbb{E}[x(t)x(s)] - \mathbb{E}[x(t)]\mathbb{E}[x(s)] = 0
+\end{aligned}
+\end{equation*}
+
+值得熟记的是，若随机过程正交，则对两两互异的时刻 $t_1, t_2, \dots$ 有
+\begin{equation*}
+\mathbb{E}\bigl[(x(t_1) + x(t_2) + \cdots)^2\bigr] = \mathbb{E}[x^2(t_1)] + \mathbb{E}[x^2(t_2)] + \cdots
+\end{equation*}
+
+若 $\bm{x}$ 是以标量随机变量 $x_1, \dots, x_n$ 为分量的向量值随机变量，则矩阵
+\begin{equation}\label{eq:42}
+\begin{aligned}
+&\bigl[\mathbb{E}\bigl[(x_i - \mathbb{E}[x_i])(x_j - \mathbb{E}[x_j])\bigr]\bigr] = \mathbb{E}\bigl[(\bm{x} - \mathbb{E}[\bm{x}])(\bm{x}^{\mathrm{T}} - \mathbb{E}[\bm{x}^{\mathrm{T}}])\bigr] \\
+= &\operatorname{cov}(\bm{x})
+\end{aligned}
+\end{equation}
+称为随机向量 $\bm{x}$ 的\emph{协方差矩阵}。
+
+随机过程可通过规定任意有限个两两互异时刻 $t_1, \dots, t_n$ 上形如 $x(t_1) \leq \xi_1, \dots, x(t_n) \leq \xi_n$ 的事件同时发生的联合概率来显式刻画，即
+\begin{equation}\label{eq:43}
+\mathbb{P}\bigl(x(t_1) \leq \xi_1, \dots, x(t_n) \leq \xi_n\bigr) = F_{x(t_1),\dots,x(t_n)}(\xi_1, \dots, \xi_n)
+\end{equation}
+其中 $F_{x(t_1),\dots,x(t_n)}$ 称为随机变量 $x(t_1), \dots, x(t_n)$ 的\emph{联合概率分布函数}。只要所需的偏导数存在，其\emph{联合概率密度函数}即为（已校订偏导下标与分母记号，见\hyperref[sec:k22]{校勘记 K-22} 与\hyperref[sec:l-all]{L-30}）
+\begin{equation*}
+p_{x(t_1),\dots,x(t_n)}(\xi_1, \dots, \xi_n) = \frac{\partial^n F_{x(t_1),\dots,x(t_n)}(\xi_1, \dots, \xi_n)}{\partial\xi_1 \cdots \partial\xi_n}
+\end{equation*}
+
+关于 $n$ 个随机变量的任意确定性函数的期望值 $\mathbb{E}\bigl[g(x(t_1), \dots, x(t_n))\bigr]$ 由与式~\eqref{eq:40} 类似的 $n$ 重积分定义。
+
+若对任意有限个两两互异的时刻 $t_1, \dots, t_n$，联合分布函数 \eqref{eq:43} 恒等于各一阶边缘分布函数的乘积
+\begin{equation*}
+\mathbb{P}(x(t_1) \leq \xi_1) \cdots \mathbb{P}(x(t_n) \leq \xi_n)
+\end{equation*}
+则称该随机过程是\emph{相互独立的}。若一组随机变量相互独立，则它们显然也是不相关的；但反之一般不成立。对于多于两个随机变量的集合而言，仅满足任意一对随机变量两两独立，并不足以保证整组随机变量联合独立。
+
+在许多问题中，需要考察在给定随机变量 $x(t_1), \dots, x(t_n)$ 已实际取得观测值 $\xi_1, \dots, \xi_n$ 的条件下，随机变量 $x(t_{n+1})$ 的概率分布。当分母边缘密度严格为正时，该条件分布记作
+\begin{equation}\label{eq:44}
+\begin{aligned}
+&\mathbb{P}\bigl(x(t_{n+1}) \leq \xi_{n+1} \mid x(t_1) = \xi_1, \dots, x(t_n) = \xi_n\bigr) \\
+= &\frac{\displaystyle\int_{-\infty}^{\xi_{n+1}} p_{x(t_1),\dots,x(t_{n+1})}(\xi_1, \dots, \xi_{n+1})\,\mathrm{d}\xi_{n+1}}{p_{x(t_1),\dots,x(t_n)}(\xi_1, \dots, \xi_n)}
+\end{aligned}
+\end{equation}
+这称为给定 $x(t_1), \dots, x(t_n)$ 时 $x(t_{n+1})$ 的\emph{条件概率分布函数}。\emph{条件数学期望}
+\begin{equation*}
+\mathbb{E}\bigl[g\bigl(x(t_{n+1})\bigr) \mid x(t_1), \dots, x(t_n)\bigr]
+\end{equation*}
+可仿照式~\eqref{eq:40} 定义。条件数学期望本身是一个随机变量，由此立得全期望恒等式
+\begin{equation*}
+\mathbb{E}\Bigl[\mathbb{E}\bigl[g\bigl(x(t_{n+1})\bigr) \mid x(t_1), \dots, x(t_n)\bigr]\Bigr] = \mathbb{E}\bigl[g\bigl(x(t_{n+1})\bigr)\bigr]
+\end{equation*}
+
+在本文所关心的全部情形中，均无需显式求取形如式~\eqref{eq:40} 或式~\eqref{eq:44} 的积分，而只需用到数学期望的概念与基本运算律。
+
+若随机变量 $x$ 的概率密度函数为
+\begin{equation*}
+p_x(\xi) = \frac{1}{\bigl(2\pi\,\mathbb{E}[(x - \mathbb{E}[x])^2]\bigr)^{1/2}} \exp\left[-\frac{1}{2}\frac{(\xi - \mathbb{E}[x])^2}{\mathbb{E}[(x - \mathbb{E}[x])^2]}\right]
+\end{equation*}
+即熟知的钟形曲线，则称随机变量 $x$ 是\emph{正态的}（或\emph{服从正态分布}）。类似地，若 $n$ 维随机向量 $\bm{x}$ 的概率密度函数为
+\begin{equation*}
+p_{\bm{x}}(\bm{\xi}) = \frac{1}{(2\pi)^{n/2}\bigl(\det(\bm{C})\bigr)^{1/2}} \exp\left[-\frac{1}{2}(\bm{\xi} - \mathbb{E}[\bm{x}])^{\mathrm{T}}\bm{C}^{-1}(\bm{\xi} - \mathbb{E}[\bm{x}])\right]
+\end{equation*}
+其中 $\bm{C}^{-1}$ 为式~\eqref{eq:42} 所定义的随机向量 $\bm{x}$ 的协方差矩阵 $\bm{C}$ 之逆，则称随机向量 $\bm{x}$ 是\emph{正态的}。\emph{正态随机过程}（任意有限维联合分布均为正态分布的随机过程）可按同样方式定义。
+
+正态随机变量与正态随机过程之所以具有极其重要的地位，主要归因于如下基本性质（已校订补全条件分布与零均值联合正态前提，见\hyperref[sec:k23]{校勘记 K-23}）：
+
+% 定理 5：正态随机过程的核心封闭性与唯一性定理
+\begin{theorem}\label{thm:5}
+
+(\emph{A}) 正态随机过程上的线性泛函为正态随机变量；同时，正态随机过程的任意有限维条件概率分布仍为正态分布，其条件均值是给定观测变量的仿射函数（零均值情形下为线性函数），故条件数学期望亦为正态随机变量。
+
+(\emph{B}) 同一正态随机过程上的不相关随机变量（特别地，零均值情形下的正交随机变量）相互独立。
+
+(\emph{C}) 给定任意具有均值函数 $\mathbb{E}[x(t)]$ 与半正定中心协方差函数 $\operatorname{cov}\bigl(x(t), x(s)\bigr)$（或相容二阶混合矩 $\mathbb{E}[x(t)x(s)]$）的随机过程，必存在唯一一个具有相同均值与协方差结构的正态随机过程。
+
+\end{theorem}
+
+本论文由美国机械工程师学会（ASME）仪器与调节器分会推荐，并于 1959 年 3 月 29 日至 4 月 2 日举行的仪器与调节器会议上宣读。
+
+注：论文中所阐述的观点与见解仅代表作者个人意见，不代表学会立场。手稿于 1959 年 2 月 24 日由 ASME 总部收悉，论文编号 59-IRD-11。原载 \emph{Transactions of the ASME, Journal of Basic Engineering}，第 82 卷 D 辑，第 35–45 页，1960 年。
+
+\htdfntext{1}{本研究部分受美国空军科学研究局（U. S. Air Force Office of Scientific Research）资助，合同编号 AF 49 (638)-382。}
+
+\htdfntext{2}{机构地址：马里兰州巴尔的摩市 Bellona 大道 7212 号（7212 Bellona Ave., Baltimore, Md.）。}
+
+\htdfntext{3}{方括号内的数字表示文末参考文献编号。}
+
+\htdfntext{4}{当然，一般而言这些任务或许能由非线性滤波器完成得更好；但就目前而言，无论在理论上还是实践上，人们对于如何求取此类非线性滤波器仍几乎一无所知。}
+
+\htdfntext{5}{概率分布之所以呈正态性，是因为宏观随机效应可视作极大量微观随机效应叠加的结果；在相当普遍的条件下，无论微观效应本身的统计特性如何，此类聚合效应的分布均趋向于正态分布。在此背景下，独立性假设的物理动因在于微观现象的变化速率往往远快于宏观现象，因而在宏观时间尺度上，原生随机源表现为统计相互独立。}
+
+% <!--FOOTNOTES-->

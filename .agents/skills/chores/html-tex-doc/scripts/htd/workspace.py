@@ -17,6 +17,7 @@ class PaperMeta:
     title: str | None = None
     macros: str | None = None
     bib: str | None = None
+    bib_order: str | None = None
     entry: str | None = None
 
 
@@ -101,6 +102,7 @@ def read_paper_meta(src_dir: Path) -> PaperMeta:
         title = fm.get("title") or None
         macros = fm.get("macros") or None
         bib = fm.get("bib") or None
+        bib_order = fm.get("bib_order") or None
         if not title:
             title = _extract_comment_title(body)
         if not title:
@@ -119,7 +121,7 @@ def read_paper_meta(src_dir: Path) -> PaperMeta:
                 except OSError:
                     title = None
                 break
-        return PaperMeta(title=title, macros=macros, bib=bib, entry="main.md")
+        return PaperMeta(title=title, macros=macros, bib=bib, bib_order=bib_order, entry="main.md")
 
     md_files = sorted(p for p in root.glob("*.md") if p.is_file())
     if md_files:

@@ -2,19 +2,16 @@
 from __future__ import annotations
 
 import html
-import re
 from pathlib import Path
+import re
 
 FORMATS = {"sec": "第 {n} 节", "eq": "式 ({n})", "fig": "图 {n}", "alg": "算法 {n}", "tbl": "表 {n}"}
 
-
 OPEN_TAG = re.compile(r"<(h2|h3|div|figure)\b([^>]*)>")
-
 
 ATTR = re.compile(r'([\w-]+)="([^"]*)"')
 
-
-REF = re.compile(r"\{@([\w:.-]+)(\|n)?\}")
+REF = re.compile(r"\{@([\w:.-]+)(?:\|([^}]+))?\}")
 
 
 def attrs(s: str) -> dict[str, str]:
@@ -34,15 +31,15 @@ def anchor(key: str) -> str:
 
 
 def classify(tag: str, a: dict[str, str]) -> str | None:
-    cls = a.get("class", "")
+    cls_tokens = a.get("class", "").split()
     if tag in ("h2", "h3"):
         return "sec"
-    if tag == "div" and "eq" in cls.split():
+    if tag == "div" and "eq" in cls_tokens:
         return "eq" if "data-label" in a else None
-    if tag == "div" and cls == "thm":
+    if tag == "div" and "thm" in cls_tokens:
         return "thm"
-    if tag == "figure" and cls in ("fig", "alg", "tbl"):
-        return cls
+    if tag == "figure" and a.get("class", "") in ("fig", "alg", "tbl"):
+        return a["class"]
     return None
 
 
@@ -82,8 +79,11 @@ def number(doc: str, errors: list[str]) -> dict[str, dict[str, str]]:
             text = FORMATS["sec"].format(n=num)
         elif kind == "thm":
             k = a.get("data-kind", "定理")
-            counters[k] = counters.get(k, 0) + 1
-            num = str(counters[k])
+            if a.get("data-num"):
+                num = a["data-num"]
+            else:
+                counters[k] = counters.get(k, 0) + 1
+                num = str(counters[k])
             text = f"{k} {num}"
         else:
             counters[kind] = counters.get(kind, 0) + 1

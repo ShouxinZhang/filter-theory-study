@@ -60,6 +60,8 @@ def build_project(
 
     build_dir.mkdir(parents=True, exist_ok=True)
     out_dir.mkdir(parents=True, exist_ok=True)
+    if src_dir.parent == build_dir.parent and not (gi := src_dir.parent / ".gitignore").exists():
+        gi.write_text("/build/\n/outputs/\n__pycache__/\n", encoding="utf-8")
 
     title_m = re.search(r"<!--\s*title:\s*(.*?)\s*-->", raw)
     title = meta.title or (title_m.group(1) if title_m else "文档")

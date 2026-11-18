@@ -1,0 +1,277 @@
+% 章节 03：最优估计与最优调节的对偶性及解析算例
+\section{对偶问题}\label{sec:dual}
+
+现在考察另一个在概念上与最优估计截然不同的问题，即无噪声调节器问题。在最简单的情形下，该问题表述如下：
+
+% 问题 II：无噪声线性二次最优调节器问题定义
+\begin{problemn}{II}\label{prob:II}
+
+考察动态系统
+\begin{equation}\label{eq:33}
+\bm{x}(t + 1) = \hat{\bm{\Phi}}(t + 1; t)\bm{x}(t) + \hat{\bm{M}}(t)\bm{u}(t)
+\end{equation}
+其中 $\bm{x}(t)$ 为 $n$ 维状态向量，$\bm{u}(t)$ 为 $m$ 维控制向量（$m \leq n$），$\hat{\bm{\Phi}}$ 与 $\hat{\bm{M}}$ 分别为 $n \times n$ 与 $n \times m$ 矩阵，其元素均为时间的确定性（非随机）函数。给定时刻 $t$ 的任意状态 $\bm{x}(t)$，要求寻找控制向量序列 $\bm{u}(t), \dots, \bm{u}(T)$，使如下性能指标达到最小：
+\begin{equation*}
+V[\bm{x}(t)] = \sum_{\tau=t}^{T+1} \bm{x}^{\mathrm{T}}(\tau)\hat{\bm{Q}}(\tau)\bm{x}(\tau)
+\end{equation*}
+其中 $\hat{\bm{Q}}(t)$ 为正定矩阵，其元素为时间的确定性函数。参见图~\ref{fig:2}，只需令其中 $\bm{\Delta} = \hat{\bm{M}}$ 且 $\bm{M} = \bm{I}$。
+
+\end{problemn}
+
+概率论考量在问题~\ref{prob:II} 中不起任何作用；此处隐含假定在每一采样时刻 $t, t + 1, \dots, T$ 均可精确测量每一个状态变量。按惯例称 $T \geq t$ 为\emph{终端时刻}（允许取无穷大）。
+
+无噪声调节器问题的首个一般解由作者在文献\cite{r18} 中给出，其主要结论是：最优控制向量 $\bm{u}^{\text{✫}}(t)$ 是状态 $\bm{x}(t)$ 的时变线性函数。经记号替换后，文献\cite{r18} 附录中的公式（另见文献\cite{r23}）可写作如下形式：
+\begin{equation}\label{eq:34}
+\bm{u}^{\text{✫}}(t) = -\hat{\bm{\Delta}}^{\text{✫}}(t)\bm{x}(t)
+\end{equation}
+
+在式~\eqref{eq:34} 给出的最优控制律作用下，系统的“闭环”动态方程为（见图~\ref{fig:4}）
+\begin{equation*}
+\bm{x}(t + 1) = \hat{\bm{\Phi}}^{\text{✫}}(t + 1; t)\bm{x}(t)
+\end{equation*}
+且时刻 $t$ 处的最小性能指标由下式给出：
+\begin{equation*}
+V^{\text{✫}}[\bm{x}(t)] = \bm{x}^{\mathrm{T}}(t)\hat{\bm{P}}^{\text{✫}}(t - 1)\bm{x}(t)
+\end{equation*}
+当 $t \leq T$ 时，矩阵 $\hat{\bm{\Delta}}^{\text{✫}}(t)$，$\hat{\bm{\Phi}}^{\text{✫}}(t + 1; t)$ 与 $\hat{\bm{P}}^{\text{✫}}(t)$ 由如下逆向递推关系确定：
+\begin{equation}\label{eq:35}
+\hat{\bm{\Delta}}^{\text{✫}}(t) = \bigl[\hat{\bm{M}}^{\mathrm{T}}(t)\hat{\bm{P}}^{\text{✫}}(t)\hat{\bm{M}}(t)\bigr]^{-1}\hat{\bm{M}}^{\mathrm{T}}(t)\hat{\bm{P}}^{\text{✫}}(t)\hat{\bm{\Phi}}(t + 1; t)
+\end{equation}
+\begin{equation}\label{eq:36}
+\hat{\bm{\Phi}}^{\text{✫}}(t + 1; t) = \hat{\bm{\Phi}}(t + 1; t) - \hat{\bm{M}}(t)\hat{\bm{\Delta}}^{\text{✫}}(t)
+\end{equation}
+\begin{equation}\label{eq:37}
+\hat{\bm{P}}^{\text{✫}}(t - 1) = \hat{\bm{\Phi}}^{\mathrm{T}}(t + 1; t)\hat{\bm{P}}^{\text{✫}}(t)\hat{\bm{\Phi}}^{\text{✫}}(t + 1; t) + \hat{\bm{Q}}(t)
+\end{equation}
+终端初值须设定为 $\hat{\bm{P}}^{\text{✫}}(T) = \hat{\bm{Q}}(T + 1)$。
+
+\htdfig{figs/fig4.tex}{fig:4}{最优控制器的矩阵框图}
+
+将方程~\eqref{eq:35}–\eqref{eq:37} 与方程~\eqref{eq:28}–\eqref{eq:30} 对照，并将图~\ref{fig:3} 与图~\ref{fig:4} 对照，可以发现若干饶有兴味的对应性质，现以如下定理精确表述：
+
+% 定理 4：最优估计问题 I 与最优调节问题 II 的对偶定理
+\begin{theorem}[对偶定理]\label{thm:4}
+
+问题~\ref{prob:I} 与问题~\ref{prob:II} 在如下意义下互为对偶（已校订补全方程整体转置步骤，见\hyperref[sec:k17]{校勘记 K-17}）：
+
+设整数步长 $\tau \geq 0$。将式 \eqref{eq:28}–\eqref{eq:30} 中每一个以 $t = t_0 + \tau$ 索引的矩阵 $\bm{X}(t_0 + \tau)$ 替换为对偶系统在反向时刻 $T - \tau$ 处的转置矩阵 $\hat{\bm{X}}^{\mathrm{T}}(T - \tau)$（其中一步状态转移矩阵替换为 $\hat{\bm{\Phi}}^{\mathrm{T}}(T - \tau + 1; T - \tau)$，步进后的协方差矩阵 $\bm{P}^{\text{✫}}(t_0 + \tau + 1)$ 替换为 $\hat{\bm{P}}^{\text{✫}}(T - \tau - 1)^{\mathrm{T}}$），再对所得每一条矩阵方程两边同时取整体转置，即得式 \eqref{eq:35}–\eqref{eq:37}。反之，将式 \eqref{eq:35}–\eqref{eq:37} 中每一个以 $T - \tau$ 索引的矩阵 $\hat{\bm{X}}(T - \tau)$ 按对应时标规则替换为 $\bm{X}^{\mathrm{T}}(t_0 + \tau)$，再对所得每一条矩阵方程两边同时取整体转置，即得式 \eqref{eq:28}–\eqref{eq:30}。
+
+\end{theorem}
+
+\begin{proof}
+
+直接执行上述代换并取整体转置（同时利用协方差与权重矩阵的对称性）即可验证。为便于查阅，两个问题之间的各项对偶关系详列于表~\ref{tab:1}。
+
+\end{proof}
+
+\begin{table}[htbp]
+\centering
+\renewcommand{\arraystretch}{1.25}
+\caption{问题 I 与问题 II 的对偶关系}\label{tab:1}
+\begin{tabularx}{\textwidth}{cXX}
+\toprule
+序号 & 问题~\ref{prob:I} & 问题~\ref{prob:II} \\
+\midrule
+1 & $\bm{x}(t)$：随机过程的（不可直接完整观测的）状态变量。 & $\bm{x}(t)$：待调节被控对象的（可精确观测的）状态变量。 \\
+2 & $\bm{y}(t)$：观测随机变量。 & $\bm{u}(t)$：控制变量。 \\
+3 & $t_0$：首次观测时刻。 & $T$：末次控制作用时刻。 \\
+4 & $\bm{\Phi}(t_0 + \tau + 1; t_0 + \tau)$：状态转移矩阵。 & $\hat{\bm{\Phi}}(T - \tau + 1; T - \tau)$：状态转移矩阵。 \\
+5 & $\bm{P}^{\text{✫}}(t_0 + \tau)$：最优估计误差的协方差矩阵。 & $\hat{\bm{P}}^{\text{✫}}(T - \tau)$：最优调节下性能指标二次型的矩阵。 \\
+6 & $\bm{\Delta}^{\text{✫}}(t_0 + \tau)$：最优估计中对观测的新息加权矩阵。 & $\hat{\bm{\Delta}}^{\text{✫}}(T - \tau)$：最优控制中对状态的反馈加权矩阵。 \\
+7 & $\bm{\Phi}^{\text{✫}}(t_0 + \tau + 1; t_0 + \tau)$：最优估计误差的状态转移矩阵。 & $\hat{\bm{\Phi}}^{\text{✫}}(T - \tau + 1; T - \tau)$：最优调节下的闭环状态转移矩阵。 \\
+8 & $\bm{M}(t_0 + \tau)$：状态对观测的作用矩阵。 & $\hat{\bm{M}}(T - \tau)$：控制向量对状态的作用矩阵。 \\
+9 & $\bm{Q}(t_0 + \tau)$：随机激励的协方差矩阵。 & $\hat{\bm{Q}}(T - \tau)$：定义误差性能准则二次型的矩阵。 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{remarkn}{(n)}\label{rem:n}
+
+问题~\ref{prob:I} 与问题~\ref{prob:II} 之间对偶性的\emph{数学}意义在于：两个问题的求解均归结为求解扮演因果协方差积分方程角色的二次协方差递推方程~\eqref{eq:32}。
+
+\end{remarkn}
+
+\begin{remarkn}{(o)}\label{rem:o}
+
+这一对偶性的\emph{物理}意义耐人寻味：为何观测与控制会是一对对偶量？
+
+% <!-- p.9 -->
+
+近期研究\cite{r29} 表明，\hyperref[thm:4]{对偶定理}的本质在于输出端约束（在问题~\ref{prob:I} 中由矩阵 $\bm{M}(t)$ 表征）与输入端约束（在问题~\ref{prob:II} 中由矩阵 $\hat{\bm{M}}(t)$ 表征）之间的对偶性。
+
+\end{remarkn}
+
+\begin{remarkn}{(p)}\label{rem:p}
+
+将经典频域谱分解滤波方法应用于无噪声调节器问题求解的做法早已为人熟知，参见 Newton，Gould 与 Kaiser 新近出版的教材\cite{r27}。然而，这两个问题之间的内在联系，尤其是上述对偶关系，此前似从未被精确表述过。
+
+\end{remarkn}
+
+\begin{remarkn}{(q)}\label{rem:q}
+
+如评注~\ref{rem:i} 所述，\hyperref[thm:4]{对偶定理}为深入发展线性最小均方滤波器的理论研究（区别于单纯计算）提供了强有力的工具，相关内容将另文发表\cite{r29}。
+
+\end{remarkn}
+
+\section{应用}\label{sec:app}
+
+定理~\ref{thm:3} 所体现的求解线性最优估计问题新途径的威力，在问题数据以数值形式给出时表现得最为明显。此时只需直接执行式 \eqref{eq:28}–\eqref{eq:30} 所要求的递推数值运算即可。针对若干具有实际工程价值的算例所作的数值计算结果将另文发表。
+
+当要求以解析闭式求取解答时，递推迭代 \eqref{eq:28}–\eqref{eq:30} 可能会导出相当繁琐的代数表达式；但在少数情形下，$\bm{\Delta}^{\text{✫}}$ 与 $\bm{\Phi}^{\text{✫}}$ 可化为“闭式”表达。此处不拟讨论如何（以及在何种条件下能够）求得此类闭式解，仅给出两个典型算例以展示此类解析结果的基本形态。
+
+\begin{example}\label{ex:1}
+
+考察\hyperref[sec:opt]{“最优估计”一节}所提及的信号分离问题。设 $x_1(t)$ 为有用信号，$x_2(t)$ 为测量噪声，假定动态模型为：
+\begin{equation*}
+\begin{aligned}
+&x_1(t + 1) = \phi_{11}(t + 1; t)x_1(t) + u_1(t) \\
+&x_2(t + 1) = u_2(t) \\
+&y_1(t) = x_1(t) + x_2(t)
+\end{aligned}
+\end{equation*}
+
+待求解估计问题的具体参数给定如下：
+
+\begin{itemize}
+\item (1) $t_1 = t + 1$，$t_0 = 0$；
+\item (2) $\mathbb{E}[x_1^2(0)] = 0$，即 $x_1(0) = 0$（同时隐含初始白噪声满足 $\mathbb{E}[x_2^2(0)] = b^2$，$\mathbb{E}[x_1(0)x_2(0)] = 0$）；
+\item (3) 对一切 $t$，$\mathbb{E}[u_1^2(t)] = a^2$，$\mathbb{E}[u_2^2(t)] = b^2$，$\mathbb{E}[u_1(t)u_2(t)] = 0$；
+\item (4) $\phi_{11}(t + 1; t) = \phi_{11} = \text{常数}$。
+\end{itemize}
+
+简单验算表明，对一切 $t \geq t_0$，满足差分方程~\eqref{eq:28}–\eqref{eq:30} 的各矩阵如下（已校订闭环转移矩阵右上元，见\hyperref[sec:k18]{校勘记 K-18}）：
+\begin{equation*}
+\bm{\Delta}^{\text{✫}}(t) = \begin{bmatrix} \phi_{11}C(t) \\ 0 \end{bmatrix}
+\end{equation*}
+\begin{equation*}
+\bm{\Phi}^{\text{✫}}(t + 1; t) = \begin{bmatrix} \phi_{11}[1 - C(t)] & -\phi_{11}C(t) \\ 0 & 0 \end{bmatrix}
+\end{equation*}
+\begin{equation*}
+\bm{P}^{\text{✫}}(t + 1) = \begin{bmatrix} a^2 + \phi_{11}^2 b^2 C(t) & 0 \\ 0 & b^2 \end{bmatrix}
+\end{equation*}
+其中当 $t \geq 0$ 时，标量函数 $C(t)$ 满足非线性递推方程
+\begin{equation}\label{eq:38}
+C(t + 1) = 1 - \frac{b^2}{a^2 + b^2 + \phi_{11}^2 b^2 C(t)}
+\end{equation}
+
+由于假定了 $x_1(0) = 0$，利用 $y_1(0)$ 的测量值既无法预测 $x_1(1)$，也无法预测 $x_2(1)$。因此时刻 $t = 0$ 的测量毫无用处，这表明应设定初值 $C(0) = 0$。这一初值条件配合迭代关系 \eqref{eq:38} 完全确定了函数 $C(t)$。此处非线性差分方程~\eqref{eq:38} 所起的作用与因果协方差积分方程相同。
+
+若 $b^2 / a^2 \ll 1$，则 $C(t) \approx 1$，此时本质上退化为直接由最新观测外推的纯预测。若 $b^2 / a^2 \gg 1$，则 $C(t) \approx 0$，此时估计 $x_1^{\text{✫}}(t + 1 \mid t)$ 主要依赖先验估计 $x_1^{\text{✫}}(t \mid t - 1)$，而对测量值 $y_1(t)$ 仅赋予极小权重；这恰与测量数据噪声极强时的物理预期一致。
+
+在任何情形下，对一切时刻恒有 $x_2^{\text{✫}}(t \mid t - 1) = 0$——独立白噪声显然是无法提前预测的！这意味着在状态估计器式~\eqref{eq:21} 的实现中（但非误差方程~\eqref{eq:23} 中，见\hyperref[sec:k18]{校勘记 K-18}），作用在 $x_2^{\text{✫}}(t \mid t - 1)$ 上的矩阵元素 $\phi_{12}^{\text{✫}}$ 可等效置零省去。因此该最优一步预测器是一个一阶动态系统，参见评注~\ref{rem:j}。
+
+若欲求取定常线性最小均方滤波器，只需在式~\eqref{eq:38} 两边令 $t \to \infty$，求解关于 $C(\infty)$ 的二次方程即可。
+
+\end{example}
+
+\begin{example}\label{ex:2}
+
+若干粒子于时刻 $t_0 = 0$ 以随机初速度离开原点；在 $t = 0$ 之后，每个粒子各自以恒定（但未知）的速度作匀速运动。假定对其中一个粒子的位置进行测量，且测量数据受到平稳加性时间相关噪声的污染。试问在最新一次测量时刻，该粒子位置与速度的最优估计是什么？
+
+设 $x_1(t)$ 为粒子的位置，$x_2(t)$ 为粒子的速度，$x_3(t)$ 为相关测量噪声。该问题可由如下动态模型表征：
+\begin{equation*}
+\begin{aligned}
+&x_1(t + 1) = x_1(t) + x_2(t) \\
+&x_2(t + 1) = x_2(t) \\
+&x_3(t + 1) = \phi_{33}(t + 1; t)x_3(t) + u_3(t) \\
+&y_1(t) = x_1(t) + x_3(t)
+\end{aligned}
+\end{equation*}
+并附有如下初始与统计条件（已校订补全初始噪声条件，见\hyperref[sec:k19]{校勘记 K-19}）：
+
+\begin{itemize}
+\item (1) $t_1 = t$，$t_0 = 0$；
+\item (2) $\mathbb{E}[x_1^2(0)] = \mathbb{E}[x_2(0)] = 0$，$\mathbb{E}[x_2^2(0)] = a^2 > 0$，且初始噪声满足 $\mathbb{E}[x_3(0)] = 0$，$\mathbb{E}[x_3^2(0)] = \sigma_3^2 > 0$（对 $|\phi_{33}| < 1$ 的平稳相关噪声有 $\sigma_3^2 = b^2 / (1 - \phi_{33}^2)$），各初值与激励序列相互正交；
+\item (3) $\mathbb{E}[u_3(t)] = 0$，$\mathbb{E}[u_3^2(t)] = b^2 > 0$；
+\item (4) $\phi_{33}(t + 1; t) = \phi_{33} = \text{常数}$。
+\end{itemize}
+
+依据定理~\ref{thm:3}，当拍滤波估计 $\bm{x}^{\text{✫}}(t \mid t)$ 可借助动态系统 \eqref{eq:31}（取 $s = 0$）算出。
+
+首先求解粒子位置与速度的一步超前预测问题。由初值关系容易算得（已校订 $\bm{\Delta}^{\text{✫}}(0)$ 第三分量，见\hyperref[sec:k19]{校勘记 K-19}）：
+\begin{equation*}
+\begin{aligned}
+&\bm{P}^{\text{✫}}(1) = \begin{bmatrix} a^2 & a^2 & 0 \\ a^2 & a^2 & 0 \\ 0 & 0 & b^2 \end{bmatrix} \\
+&\bm{\Delta}^{\text{✫}}(0) = \begin{bmatrix} 0 \\ 0 \\ \phi_{33} \end{bmatrix}
+\end{aligned}
+\end{equation*}
+随后将其代入方程~\eqref{eq:28}–\eqref{eq:30} 即可归纳核验：对一切 $t \geq 1$，一步预测误差 $\tilde{\bm{x}}(t \mid t - 1)$ 的协方差矩阵精确表达式为
+\begin{equation*}
+\bm{P}^{\text{✫}}(t) = \frac{b^2}{C_1(t - 1)} \begin{bmatrix} t^2 & t & -\phi_{33}t(t - 1) \\ t & 1 & -\phi_{33}(t - 1) \\ -\phi_{33}t(t - 1) & -\phi_{33}(t - 1) & \phi_{33}^2(t - 1)^2 + C_1(t - 1) \end{bmatrix}
+\end{equation*}
+其中对 $t \geq 1$ 定义辅助序列 $C_1(t)$ 如下：
+\begin{equation*}
+\begin{aligned}
+&C_1(0) = b^2 / a^2 \\
+&C_1(t) = C_1(t - 1) + [t - \phi_{33}(t - 1)]^2
+\end{aligned}
+\end{equation*}
+
+值得注意的是，当 $\phi_{33}$ 依赖于时间 $t$ 时，上述推导方法依然有效（算例~\ref{ex:1} 中亦然）。在对这类问题的传统处理中，平稳噪声与非平稳噪声两种情形之间表面上\emph{似乎}存在本质鸿沟；传统理论所造成的这一误导印象，实则源于求解因果协方差积分方程时所采用的特殊方法。
+
+对 $t \geq 1$ 引入简记
+\begin{equation*}
+\begin{aligned}
+&C_2(0) = 0 \\
+&C_2(t) = t - \phi_{33}(t - 1)
+\end{aligned}
+\end{equation*}
+并注意到预测误差协方差与当拍滤波误差协方差满足关系
+\begin{equation*}
+\begin{aligned}
+&\operatorname{cov}\bigl(\tilde{\bm{x}}(t + 1 \mid t)\bigr) = \bm{P}^{\text{✫}}(t + 1) \\
+= &\bm{\Phi}(t + 1; t)\operatorname{cov}\bigl(\tilde{\bm{x}}(t \mid t)\bigr)\bm{\Phi}^{\mathrm{T}}(t + 1; t) + \bm{Q}(t)
+\end{aligned}
+\end{equation*}
+% <!-- p.10 -->
+
+经简单代数计算即可求得方程~\eqref{eq:31}（取 $s = 0$）中出现的各系数矩阵以及当拍误差 $\tilde{\bm{x}}(t \mid t)$ 的协方差矩阵。对一切 $t \geq 0$，有（已校订状态自递推矩阵左端右因子时标与右端第一行第二列元素，见\hyperref[sec:k20]{校勘记 K-20}）：
+\begin{equation*}
+\bm{\Phi}(t; t + 1)\bm{\Delta}^{\text{✫}}(t) = \frac{1}{C_1(t)} \begin{bmatrix} tC_2(t) \\ C_2(t) \\ C_1(t) - tC_2(t) \end{bmatrix}
+\end{equation*}
+\begin{equation*}
+\begin{aligned}
+&\bm{\Phi}(t; t + 1)\bm{\Phi}^{\text{✫}}(t + 1; t)\bm{\Phi}(t; t - 1) \\
+= &\frac{1}{C_1(t)} \begin{bmatrix} C_1(t) - tC_2(t) & C_1(t) - tC_2(t) & -\phi_{33}tC_2(t) \\ -C_2(t) & C_1(t) - C_2(t) & -\phi_{33}C_2(t) \\ -C_1(t) + tC_2(t) & -C_1(t) + tC_2(t) & +\phi_{33}tC_2(t) \end{bmatrix}
+\end{aligned}
+\end{equation*}
+以及
+\begin{equation*}
+\operatorname{cov}\bigl(\tilde{\bm{x}}(t \mid t)\bigr) = \mathbb{E}\bigl[\tilde{\bm{x}}(t \mid t)\tilde{\bm{x}}^{\mathrm{T}}(t \mid t)\bigr] = \frac{b^2}{C_1(t)} \begin{bmatrix} t^2 & t & -t^2 \\ t & 1 & -t \\ -t^2 & -t & t^2 \end{bmatrix}
+\end{equation*}
+
+为深入理解该滤波系统的渐近特性，考察大量观测数据下的极限情形 $t \to \infty$。当 $t \gg 1$ 时，$C_1(t)$ 近似服从微分方程
+\begin{equation*}
+\frac{\mathrm{d}C_1(t)}{\mathrm{d}t} \approx C_2^2(t)
+\end{equation*}
+由此积分求得当 $t \gg 1$ 时的渐近式：
+\begin{equation}\label{eq:39}
+C_1(t) \approx \frac{1}{3}(1 - \phi_{33})^2 t^3 + \phi_{33}(1 - \phi_{33})t^2 + \phi_{33}^2 t + \frac{b^2}{a^2}
+\end{equation}
+利用式~\eqref{eq:39}，当 $t \gg 1$（且 $\phi_{33} \neq 1$）时进一步得到：
+\begin{equation*}
+\begin{aligned}
+&\bm{\Phi}^{-1}\bm{\Phi}^{\text{✫}}\bm{\Phi} \approx \begin{bmatrix} 1 & 1 & 0 \\ 0 & 1 & 0 \\ -1 & -1 & 0 \end{bmatrix} \\
+&\bm{\Phi}^{-1}\bm{\Delta}^{\text{✫}} \approx \begin{bmatrix} 0 \\ 0 \\ 1 \end{bmatrix}
+\end{aligned}
+\end{equation*}
+
+由此可见，当观测次数趋于无穷大时，更新位置与速度估计 $x_1^{\text{✫}}(t + 1 \mid t + 1)$ 及 $x_2^{\text{✫}}(t + 1 \mid t + 1)$ 几乎完全依赖先前的状态估计 $x_1^{\text{✫}}(t \mid t)$ 与 $x_2^{\text{✫}}(t \mid t)$；而最新观测值几乎完全用于估计当拍测量噪声（已校订删去观测值上误加的星号，见\hyperref[sec:k21]{校勘记 K-21}）：
+\begin{equation*}
+x_3^{\text{✫}}(t \mid t) \approx y_1(t) - x_1^{\text{✫}}(t \mid t)
+\end{equation*}
+
+这一结果自然在预料之中，因为该问题本质上类似于对不断增多的观测点进行直线拟合。
+
+作为对上述结果合理性的第二项检验，注意到 $t \gg 1$ 的密集观测极限本质上等价于基于连续时间观测的估计。令 $\phi_{33} = 0$，当 $t \gg 1$ 时有
+\begin{equation*}
+\mathbb{E}\bigl[\tilde{x}_1^2(t \mid t)\bigr] \approx \frac{a^2 b^2 t^2}{b^2 + a^2 t^3 / 3}
+\end{equation*}
+
+这与 Shinbrot\cite{r11} 的算例 1 以及 Solodovnikov\cite{r14} 的算例 2 在有限观测时长连续时间数据条件下采用截然不同方法处理线性最优估计问题所得的结果完全一致。
+
+\end{example}
+
+\section{结论}\label{sec:conc}
+
+本文从“状态”观点出发重新表述并求解了线性最优估计问题。一方面，这一方法带来了高度一般化的统一处理框架，涵盖了采用其他传统方法求解时面临重重困难的各类情形；另一方面，本文揭示了线性最优估计问题与控制理论中其他核心问题之间的紧密联系。如何进一步发掘并拓展这些内在联系，仍有大量工作留待完成。

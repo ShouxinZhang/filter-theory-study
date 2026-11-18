@@ -1,0 +1,89 @@
+% Kalman (1960) 中文校订版父级 LaTeX 导言区配置
+\usepackage[margin=2.4cm]{geometry}
+\setlength{\emergencystretch}{2em}
+\usepackage{amsmath,amssymb,amsthm,mathrsfs,bm}
+\usepackage{booktabs,tabularx,array}
+\usepackage{pifont,newunicodechar}
+\usepackage{xcolor}
+\definecolor{accent}{HTML}{1F6FB2}
+\usepackage{tikz}
+\usepackage{standalone}
+\usepackage{etoolbox}
+
+\input{html/src/kalman-style}
+\newunicodechar{✫}{\ding{75}}
+
+\usepackage[colorlinks=true,linkcolor=accent,citecolor=accent,urlcolor=accent,
+            pdftitle={线性滤波与预测问题的一种新方法},
+            pdfauthor={R. E. Kalman}]{hyperref}
+
+\renewcommand{\proofname}{证明}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{定理}
+\newtheorem{corollary}{推论}
+\newtheorem{htdtheoremn}{定理}
+
+\theoremstyle{definition}
+\newtheorem{example}{算例}
+\newtheorem{htdproblemn}{问题}
+\newtheorem{htdremarkn}{评注}
+
+\NewDocumentEnvironment{theoremn}{m o}{%
+  \renewcommand{\thehtdtheoremn}{#1}%
+  \IfValueTF{#2}{\begin{htdtheoremn}[#2]}{\begin{htdtheoremn}}%
+}{\end{htdtheoremn}}
+
+\NewDocumentEnvironment{problemn}{m o}{%
+  \renewcommand{\thehtdproblemn}{#1}%
+  \IfValueTF{#2}{\begin{htdproblemn}[#2]}{\begin{htdproblemn}}%
+}{\end{htdproblemn}}
+
+\NewDocumentEnvironment{remarkn}{m o}{%
+  \renewcommand{\thehtdremarkn}{#1}%
+  \IfValueTF{#2}{\begin{htdremarkn}[#2]}{\begin{htdremarkn}}%
+}{\end{htdremarkn}}
+
+\makeatletter
+\newsavebox{\htd@figbox}
+\newcommand{\htdfig}[3]{%
+  \begin{figure}[htbp]
+    \centering
+    \filename@parse{html/src/#1}%
+    \begin{lrbox}{\htd@figbox}%
+      \includestandalone{\filename@area\filename@base}%
+    \end{lrbox}%
+    \ifdim\wd\htd@figbox>\linewidth
+      \resizebox{\linewidth}{!}{\usebox{\htd@figbox}}%
+    \else
+      \usebox{\htd@figbox}%
+    \fi
+    \caption{#3}\label{#2}%
+  \end{figure}%
+}
+
+\patchcmd{\thebibliography}{\section*{\refname}}{}{}{}
+\makeatother
+
+\newenvironment{htdtable}[1]{%
+  \par\medskip\noindent
+  \renewcommand{\arraystretch}{1.25}%
+  \tabularx{\textwidth}{#1}%
+}{%
+  \endtabularx
+  \par\medskip
+}
+
+\DeclareRobustCommand{\htdfnmark}[1]{%
+  \hypertarget{htdfnref:#1}{}\textsuperscript{\hyperlink{htdfn:#1}{[#1]}}%
+}
+\newcommand{\htdfntext}[2]{%
+  \par\smallskip\noindent
+  \hypertarget{htdfn:#1}{\hyperlink{htdfnref:#1}{\textsuperscript{[#1]}}}~{\small #2}\par
+}
+
+\bibliographystyle{unsrt}
+\AtBeginDocument{%
+  \nocite{r01,r02,r03,r04,r05,r06,r07,r08,r09,r10,r11,r12,r13,r14,r15,%
+          r16,r17,r18,r19,r20,r21,r22,r23,r24,r25,r26,r27,r28,r29}%
+}
