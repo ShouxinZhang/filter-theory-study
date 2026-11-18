@@ -31,6 +31,7 @@ html[data-split="1"] .reader-bar button[data-role="measure"] { display: none; }
 
 /* 编辑器顶部栏、动作菜单、查找栏、搜索结果与历史面板（外观来自 08_components.css） */
 .ed-topbar { position: relative; gap: .2rem; padding: .4rem .5rem; background: var(--ui-bg); border-bottom: 1px solid var(--ui-border); flex-wrap: nowrap; }
+html[data-in-shell="1"][data-split="1"] .ed-topbar { padding-left: 2.75rem; }
 .ed-file-select { flex: 1; min-width: 7.5rem; max-width: 17rem; font-weight: 500; }
 .ed-dirty-dot { color: var(--warn); font-size: .72rem; display: none; margin-right: .1rem; }
 .ed-dirty-dot.show { display: inline; }

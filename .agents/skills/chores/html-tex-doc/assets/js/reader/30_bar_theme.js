@@ -9,7 +9,16 @@
   };
   const applyTheme = (t) => { t === "auto" ? root.removeAttribute("data-theme") : root.setAttribute("data-theme", t); };
   let theme = THEMES.includes(store.get("reader.theme")) ? store.get("reader.theme") : "auto";
+  let themeBtn;
   applyTheme(theme);
+
+  window.addEventListener("storage", (e) => {
+    if (e.key && e.key !== "reader.theme") return;
+    const v = store.get("reader.theme");
+    theme = THEMES.includes(v) ? v : "auto";
+    applyTheme(theme);
+    if (themeBtn) themeBtn.innerHTML = THEME_LABEL[theme];
+  });
 
   function setupBar() {
     const bar = document.createElement("div");
@@ -23,14 +32,14 @@
     tocBtn.title = "展开或收起浮动章节目录（快捷键 Alt+T）";
     tocBtn.onclick = () => toggleDrawer();
 
-    const tBtn = document.createElement("button");
-    tBtn.type = "button";
-    tBtn.dataset.role = "theme";
-    tBtn.innerHTML = THEME_LABEL[theme];
-    tBtn.title = "切换主题：自动（跟随系统）/ 浅色 / 深色";
-    tBtn.onclick = () => {
+    themeBtn = document.createElement("button");
+    themeBtn.type = "button";
+    themeBtn.dataset.role = "theme";
+    themeBtn.innerHTML = THEME_LABEL[theme];
+    themeBtn.title = "切换主题：自动（跟随系统）/ 浅色 / 深色";
+    themeBtn.onclick = () => {
       theme = THEMES[(THEMES.indexOf(theme) + 1) % THEMES.length];
-      applyTheme(theme); store.set("reader.theme", theme); tBtn.innerHTML = THEME_LABEL[theme];
+      applyTheme(theme); store.set("reader.theme", theme); themeBtn.innerHTML = THEME_LABEL[theme];
     };
 
     const wBtn = document.createElement("button");
@@ -40,8 +49,7 @@
     wBtn.title = "恢复自适应栏宽（也可拖拽正文两侧边缘调整）";
     wBtn.onclick = resetMeasure;
 
-    for (const b of [tocBtn, tBtn, wBtn]) b.className = "ui-btn";
-    bar.append(tocBtn, tBtn, wBtn);
+    for (const b of [tocBtn, themeBtn, wBtn]) b.className = "ui-btn";
+    bar.append(tocBtn, themeBtn, wBtn);
     document.body.appendChild(bar);
   }
-

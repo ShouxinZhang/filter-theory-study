@@ -1,18 +1,19 @@
-"""受控学术 Markdown → 带源码锚点的 HTML（块级状态机）。"""
+"""受控学术 Markdown → 带源码锚点的 HTML（块级状态机与 main.md 工作区编译）。"""
 from __future__ import annotations
 
 import html
 import re
 from pathlib import Path
 from .bib import parse_bib
-from .mdsyntax import BOX_OPEN, FENCE_CLOSE, FENCE_OPEN, HEAD, ITEM, MD_FIG, RAW, _inject_attr
-from .numbering import anchor
 from .mdinline import MarkdownInline
+from .mdsyntax import BOX_OPEN, FENCE_CLOSE, FENCE_OPEN, HEAD, ITEM, MD_FIG, RAW, _inject_attr
+from .workspace import INCLUDE_RE, parse_frontmatter, resolve_in_src
 
 
 class MarkdownCompiler(MarkdownInline):
-    def convert(self, text: str, fname: str) -> str:
+    def convert(self, text: str, fname: str, start_line: int = 1) -> str:
         ef = html.escape(fname, quote=True)
+        off = start_line - 1
         out: list[str] = []
         para: list[tuple[int, str]] = []
         # stack entries: (kind_type, open_line, out_index, base_tag_prefix)
@@ -40,7 +41,7 @@ class MarkdownCompiler(MarkdownInline):
                 para.clear()
 
         while i < len(lines):
-            ln = i + 1
+            ln = off + i + 1
             line = lines[i].rstrip()
             if m := FENCE_OPEN.match(line):
                 tight_top = bool(para)
@@ -55,9 +56,9 @@ class MarkdownCompiler(MarkdownInline):
                     j += 1
                 if j == len(lines):
                     self.errors.append(f"{fname}:{ln} 行间公式 $$ 未闭合")
-                    end_ln = len(lines)
+                    end_ln = off + len(lines)
                 else:
-                    end_ln = j + 1
+                    end_ln = off + j + 1
                 tight_bot = j + 1 < len(lines) and is_cont_text(lines[j + 1])
                 next_cont = tight_bot
                 eq_cls = " ".join(c for c, flag in (("tight-top", tight_top), ("tight-bot", tight_bot)) if flag)
@@ -134,7 +135,7 @@ class MarkdownCompiler(MarkdownInline):
                 j = i
                 while j < len(lines) and lines[j].strip():
                     j += 1
-                block_pairs = [(k + 1, lines[k].rstrip()) for k in range(i, j)]
+                block_pairs = [(off + k + 1, lines[k].rstrip()) for k in range(i, j)]
                 l1, l2 = block_pairs[0][0], block_pairs[-1][0]
 
                 if RAW.match(line):
@@ -170,17 +171,79 @@ class MarkdownCompiler(MarkdownInline):
         if stack:
             self.errors.append(f"{fname} 末尾有未闭合的 ::: 块")
             for _, open_ln, idx, tag_head in reversed(stack):
-                out[idx] = f'{tag_head} data-file="{ef}" data-l1="{open_ln}" data-l2="{len(lines)}">'
+                out[idx] = f'{tag_head} data-file="{ef}" data-l1="{open_ln}" data-l2="{off + len(lines)}">'
                 out.append("</div>")
         return "\n".join(out)
 
 
+def _compile_included_file(conv: MarkdownCompiler, inc_path: Path, rel_posix: str) -> str:
+    cleaned: list[str] = []
+    for idx, line in enumerate(inc_path.read_text(encoding="utf-8").split("\n")):
+        if nm := INCLUDE_RE.match(line):
+            conv.errors.append(f"{rel_posix}:{idx + 1} 不支持嵌套 include：{nm.group(1)}")
+            cleaned.append("")
+        else:
+            cleaned.append(line)
+    return conv.convert("\n".join(cleaned), rel_posix)
+
+
 def compile_markdown_dir(src_dir: Path) -> tuple[str, list[str]]:
-    """将 src_dir 下的 *.md (+ 可选 refs.bib) 编译为完整 doc.html 字符串与错误列表。"""
-    md_files = sorted(src_dir.glob("*.md"))
-    bib_path = src_dir / "refs.bib"
-    bib = parse_bib(bib_path.read_text(encoding="utf-8")) if bib_path.exists() else {}
+    """将 src_dir 下的 main.md（或旧式 *.md）与文献库编译为完整 doc.html 字符串与错误列表。"""
+    root = src_dir.resolve()
+    main_path = root / "main.md"
+    if not main_path.is_file():
+        md_files = sorted(src_dir.glob("*.md"))
+        bib_path = src_dir / "refs.bib"
+        bib = parse_bib(bib_path.read_text(encoding="utf-8")) if bib_path.exists() else {}
+        conv = MarkdownCompiler(bib)
+        parts = [conv.convert(f.read_text(encoding="utf-8"), f.name) for f in md_files]
+        doc = conv.link_subsections("\n".join(parts)).replace("<!--REFS-->", conv.refs_html())
+        return doc, conv.errors
+
+    fm, body, start_ln = parse_frontmatter(main_path.read_text(encoding="utf-8"))
+    pre_errors: list[str] = []
+    bib_rel = fm.get("bib") or "refs.bib"
+    bib_res = resolve_in_src(root, bib_rel)
+    bib = {}
+    if bib_res is None:
+        pre_errors.append(f"main.md: bib 路径越界：{bib_rel}")
+    elif bib_res[0].is_file():
+        bib = parse_bib(bib_res[0].read_text(encoding="utf-8"))
+    elif fm.get("bib") and bib_rel != "refs.bib":
+        pre_errors.append(f"main.md: bib 文件不存在：{bib_rel}")
+
     conv = MarkdownCompiler(bib)
-    parts = [conv.convert(f.read_text(encoding="utf-8"), f.name) for f in md_files]
+    conv.errors.extend(pre_errors)
+    parts: list[str] = []
+    chunk: list[str] = []
+    chunk_start = start_ln
+
+    def flush_chunk() -> None:
+        if any(s.strip() for s in chunk):
+            rendered = conv.convert("\n".join(chunk), "main.md", start_line=chunk_start)
+            if rendered:
+                parts.append(rendered)
+        chunk.clear()
+
+    for idx, line in enumerate(body.split("\n")):
+        ln = start_ln + idx
+        if not (m := INCLUDE_RE.match(line)):
+            if not chunk:
+                chunk_start = ln
+            chunk.append(line)
+            continue
+        flush_chunk()
+        raw_rel = m.group(1)
+        resolved = resolve_in_src(root, raw_rel)
+        if resolved is None:
+            conv.errors.append(f"main.md:{ln} include 路径越界：{raw_rel}")
+        elif resolved[0] == main_path:
+            conv.errors.append(f"main.md:{ln} 不能自包含 main.md")
+        elif not resolved[0].is_file():
+            conv.errors.append(f"main.md:{ln} include 文件不存在：{raw_rel}")
+        else:
+            parts.append(_compile_included_file(conv, resolved[0], resolved[1]))
+
+    flush_chunk()
     doc = conv.link_subsections("\n".join(parts)).replace("<!--REFS-->", conv.refs_html())
     return doc, conv.errors

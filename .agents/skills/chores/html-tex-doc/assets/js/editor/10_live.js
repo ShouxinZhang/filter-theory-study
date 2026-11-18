@@ -5,7 +5,7 @@
     Array.from(new DOMParser().parseFromString(htmlText, "text/html").body.children).map((e) => e.outerHTML);
 
   async function fetchRawChildren() {
-    const res = await fetch("/__raw", { cache: "no-store" });
+    const res = await fetch(api("__raw"), { cache: "no-store" });
     return parseHtmlChildren(await res.text());
   }
 
@@ -97,7 +97,7 @@
   async function liveLoop() {
     for (;;) {
       try {
-        const res = await fetch(`/__live?v=${liveVer}`, { cache: "no-store" });
+        const res = await fetch(api(`__live?v=${liveVer}`), { cache: "no-store" });
         const data = await res.json();
         if (data.v === liveVer) continue;
         const isFirst = liveVer < 0;
@@ -122,7 +122,7 @@
 
   async function syncExternalFileIfClean() {
     try {
-      const r = await fetch(`/__api/file?path=${encodeURIComponent(curFile)}`, { cache: "no-store" });
+      const r = await fetch(api(`__api/file?path=${encodeURIComponent(curFile)}`), { cache: "no-store" });
       if (!r.ok) return;
       const d = await r.json();
       if (d.mtime_ns === baseMtime || d.mtime_ns === lastSelfSavedMtime) return;
@@ -140,4 +140,3 @@
       }
     } catch {}
   }
-

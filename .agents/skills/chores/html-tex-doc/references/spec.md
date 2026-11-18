@@ -5,20 +5,21 @@
 - 流式长卷与唯一编号源：HTML + MathJax 负责正文、章节、公式、图表、算法与定理的全局流式排版与顺序编号，彻底消除纸质断页留白与浮动体漂移。
 - 局部高难图形与伪代码独立矢量化：TikZ 图与 `algpseudocode` / `algorithm2e` 算法框各自作为独立 `standalone` `.tex` 编译为矢量 SVG 内联进 HTML，仅对变更过的单元做增量重编（缓存键为图源、公共导言文件与该图 `\cref` 引用到的编号的内容哈希，不看文件修改时间）。
 - 三层架构解耦：
-  - `scripts/`（通用引擎）：`html_tex_doc.py` 是薄入口（`init` / `build` / `serve`），实现在 `scripts/htd/` 包内：`numbering`（编号）、`texfig`（出图与内容哈希缓存）、`svgtheme`、`toc`、`render`、`build`、`assets`（运行时资源打包）、`mdsyntax` / `mdinline` / `mdconv`（受控 Markdown）、`bib`、`mathpre`（公式预渲染）、`cli`，以及 `server/`（`files`、`wal`、`search`、`watch`、`http`）；不含任何特定学校 `.cls` 硬编码。`scripts/tests/` 为测试，`scripts/perf/` 为性能测量工具。
-  - `assets/`（运行时资源，不复制进工程）：`css/`（`00_tokens.css` 是唯一出现颜色、字体栈、圆角、层级字面量的文件，其余分层只引用变量）、`js/core.js`（共用小工具）、`js/reader/`、`js/editor/`；构建时按文件名顺序拼接为单个 `style.css` / `reader.js` / `editor.js`。工程可用 `src/theme.css`（覆盖变量）与 `src/extra.css`（追加规则）定制；旧工程里整份的 `src/style.css` 等仍被尊重。
+  - `scripts/`（通用引擎）：`html_tex_doc.py` 是薄入口（`init` / `build` / `serve`），实现在 `scripts/htd/` 包内：`workspace`（`main.md` 前置块与论文库自动发现）、`numbering`（编号）、`texfig`（出图与内容哈希缓存）、`svgtheme`、`toc`、`render`、`build`、`assets`（运行时资源打包）、`mdsyntax` / `mdinline` / `mdconv`（受控 Markdown 与单层 `include`）、`bib`、`mathpre`（公式预渲染）、`cli`，以及 `server/`（`files`、`wal`、`search`、`watch`、`project`、`http`）；不含任何特定学校 `.cls` 硬编码。`scripts/tests/` 为测试，`scripts/perf/` 为性能测量工具。
+  - `assets/`（运行时资源，不复制进工程）：`css/`（`00_tokens.css` 是唯一出现颜色、字体栈、圆角、层级字面量的文件，其余分层含 `css/shell/60_shell.css` 只引用变量）、`js/core.js`（共用小工具、路由前缀 `HTD.api` 与按论文前缀隔离的 `HTD.store`）、`js/reader/`、`js/editor/`、`js/shell/`；构建与服务按文件名顺序拼接为 `style.css` / `reader.js` / `editor.js` / `shell.css` / `shell.js`。工程可用 `src/theme.css`（覆盖变量）与 `src/extra.css`（追加规则）定制；旧工程里整份的 `src/style.css` 等仍被尊重。
   - `references/templates/`（预设空白骨架，只含内容）：`src/`（`basic` 单文件 HTML 骨架与公共 `common.tex`、`algcommon.tex`、`macros.tex`）与 `academic-md/src/`（多章受控 Markdown + `refs.bib` + `alg2e.tex` 骨架）。
   - `references/examples/`（双范式参考案例）：`linked-list/`（无外部 `.cls` 的原生算法笔记）与 `hithesis-adapter/`（外部 LaTeX `.cls` 学位论文通过项目侧薄脚本 `import_tex.py` 单向导出受控 Markdown 的接入范式）。
 
 ## 双输入源语法
 
-构建器按 `src/` 目录内容自动选择输入管线：若存在 `src/*.md` 则按文件名排序编译拼接（支持 `src/refs.bib` 文献库与 `src/figs/*.svg` 静态图同步），否则读取 `src/doc.html`。
+构建器按 `src/` 目录内容自动选择输入管线：优先读取 `src/main.md`（解析前置块 `title`、`macros`、`bib` 并按 `<!--include 相对路径.md-->` 顺序拼接，支持 `chapters/*.md` 子目录与在 `main.md` 内穿插正文）；若无 `main.md` 但存在 `src/*.md`，则按文件名排序编译拼接；否则读取 `src/doc.html`。
 
-### 受控学术 Markdown 语法（`src/*.md`）
+### 受控学术 Markdown 语法（`src/main.md` 与 `src/*.md`）
 
 | 语法元素 | 写法示例 | 编译产物与说明 |
 | --- | --- | --- |
-| 文档标题 | `<!-- title: 文档标题 -->` | 决定页面 `<title>` |
+| 工作区入口与包含 | `src/main.md` 顶部 `---` 前置块（`title`、`macros`、`bib`）+ `<!--include 01_绪论.md-->` | 单层按序包含（禁止越界、自包含与嵌套 `include`），保留各文件独立源码行号锚点 |
+| 文档标题（旧式） | `<!-- title: 文档标题 -->` | 无 `main.md` 前置块 `title` 时的回退页面 `<title>` |
 | 自动目录与文献表 | `<!--TOC-->`、`<!--REFS-->` | 分别展开为可折叠三级目录卡片与按首次引用顺序排列的 `<ol class="refs">` |
 | 章节标题 | `# 章 {#sec:ch1}`、`## 节 {#sec:s1}`、`### 小节`、`#### 四级标题` | `#`~`###` 自动转为 `<h2>`~`<h4>`（`<h2>`/`<h3>` 自动编号并进入目录，`{#key}` 可选） |
 | 无编号大节标题 | `<p class="h2">摘要</p>` | 保持章节字号与底边线，但不参与章节计数 |
@@ -66,6 +67,8 @@
 | `/__api/files` | `GET` | 列出 `src/` 下可编辑源码文件（`*.md`、`doc.html`、`macros.tex`、`refs.bib`、`algs/*.tex`、`figs/*.tex`）与 `mtime_ns` |
 | `/__api/file?path=...` | `GET` / `PUT` | 读取或原子写回指定源码文件；`PUT` 校验 `base_mtime_ns`，若外部 IDE 已改盘则返回 `409 Conflict` 防止静默覆盖，写盘后通过 `threading.Event` 零延迟唤醒增量重编 |
 | `/__api/search?q=...` | `GET` | 跨文件全文/大小写/正则搜索，返回文件、行号、列区间与上下文摘要 |
+| `/__api/papers` | `GET` / `POST` | （仅 `--library` 模式）动态列出两层目录内发现的全部论文及驻留状态，或用 `academic-md` 模板新建论文目录并立即启动 |
+| `/p/<slug>/...` | `GET` / `PUT` / `POST` | （仅 `--library` 模式）单篇论文隔离路由前缀；首次访问时惰性触发构建与文件监听，内存中注入 `__HTD_BASE__` 与 `__HTD_PAPER__` 而保持磁盘 `index.html` 纯净 |
 
 ### 双层 SyncMap 源码对齐协议与快捷键
 

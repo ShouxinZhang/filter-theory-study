@@ -32,7 +32,9 @@ def _list_editable_files(src_dir: Path) -> list[dict[str, object]]:
         if p.suffix.lower() not in EDITABLE_EXTS:
             continue
         rel = p.relative_to(root).as_posix()
-        if rel == "style.css":
+        if rel == "main.md":
+            grp = -1
+        elif rel == "style.css":
             grp = 4
         elif p.suffix == ".md":
             grp = 0

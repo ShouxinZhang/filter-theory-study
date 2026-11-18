@@ -7,6 +7,7 @@ from pathlib import Path
 
 from ..build import build_project
 
+
 class LiveState:
     def __init__(self, src_dir: Path, build_dir: Path, out_dir: Path):
         self.src_dir = src_dir.resolve()
@@ -14,6 +15,7 @@ class LiveState:
         self.out_dir = out_dir.resolve()
         self.cond = threading.Condition()
         self.wakeup = threading.Event()
+        self.stopped = False
         self.v = 0
         self.err = ""
         self.body_html = ""
@@ -31,10 +33,17 @@ class LiveState:
         return out
 
 
-def _watch_loop(state: LiveState, force_first: bool) -> None:
+def _watch_loop(
+    state: LiveState,
+    force_first: bool = False,
+    stop_event: threading.Event | None = None,
+    label: str = "",
+) -> None:
     prev: dict[str, int] | None = None
     first = True
-    while True:
+    prefix = f"[{label}] " if label else ""
+    while not (stop_event and stop_event.is_set()) and not state.stopped:
+        state.wakeup.clear()
         cur = state.snapshot_mtimes()
         if prev is None or cur != prev:
             changed = [] if prev is None else sorted(k for k, v in cur.items() if prev.get(k) != v)
@@ -61,9 +70,10 @@ def _watch_loop(state: LiveState, force_first: bool) -> None:
             dt = (time.time() - t0) * 1000
             stamp = time.strftime("%H:%M:%S")
             if err:
-                print(f"[{stamp}] 构建失败（{dt:.0f} ms）\n{err}", flush=True)
+                print(f"[{stamp}] {prefix}构建失败（{dt:.0f} ms）\n{err}", flush=True)
             else:
                 ch_info = f" [{', '.join(changed[:3])}]" if changed else ""
-                print(f"[{stamp}] 已刷新 v={state.v}（{dt:.0f} ms）{ch_info}", flush=True)
+                print(f"[{stamp}] {prefix}已刷新 v={state.v}（{dt:.0f} ms）{ch_info}", flush=True)
+        if (stop_event and stop_event.is_set()) or state.stopped:
+            break
         state.wakeup.wait(timeout=0.25)
-        state.wakeup.clear()

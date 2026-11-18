@@ -1,0 +1,100 @@
+/* ---------- 多论文工作区外壳：左上常驻 Home 开关 + 210px 固定侧边栏 + 全屏零重排叠放舞台（全引用 00_tokens.css） ---------- */
+* { scrollbar-width: thin; scrollbar-color: var(--scroll-thumb) transparent; }
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: var(--r-pill); }
+::-webkit-scrollbar-thumb:hover { background: var(--scroll-thumb-hover); }
+
+html, body, #sh-app {
+  margin: 0; padding: 0; width: 100vw; height: 100vh; overflow: hidden;
+  background: var(--bg); color: var(--fg); font: 400 var(--ui-size)/1.5 var(--ui-font);
+}
+
+/* 左上角常驻 Home 开关：展开与收起两态坐标恒定不变，严禁加 transition 以保证 0 延迟 */
+.sh-toggle {
+  position: fixed; top: 6px; left: 8px; width: var(--shell-btn-sz); height: var(--shell-btn-sz);
+  padding: 0; justify-content: center; z-index: var(--z-shell-toggle);
+  border-radius: var(--ui-radius); background: var(--ui-surface); border: 1px solid var(--ui-border);
+  color: var(--ui-muted); transition: none;
+}
+.sh-toggle:hover { background: var(--ui-hover); color: var(--ui-fg); }
+.sh-toggle.is-open { background: var(--ui-active); border-color: transparent; color: var(--ui-fg); }
+
+/* 左侧 210px 可读垂直标签栏：固定独立层，visibility 瞬时显隐，绝不改变舞台与 iframe 宽度 */
+.sh-rail {
+  position: fixed; left: 0; top: 0; bottom: 0; width: var(--shell-side-w);
+  display: flex; flex-direction: column; padding: 6px 8px 8px; box-sizing: border-box;
+  background: var(--ui-bg); border-right: 1px solid var(--ui-border); box-shadow: var(--ui-shadow);
+  z-index: var(--z-shell-rail); user-select: none;
+}
+.sh-rail.is-collapsed { visibility: hidden; pointer-events: none; box-shadow: none; }
+.sh-rail .ui-btn, .sh-rail .ui-row { transition: none; }
+
+.sh-head {
+  display: flex; align-items: center; justify-content: space-between; gap: .4rem;
+  height: var(--shell-btn-sz); padding-left: calc(var(--shell-btn-sz) + 6px); padding-right: 2px;
+  flex: 0 0 auto;
+}
+.sh-lib-name {
+  font-weight: 600; color: var(--ui-fg); font-size: var(--ui-size);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.sh-lib-cnt { font-family: var(--font-mono-ui); flex: 0 0 auto; }
+
+.sh-new-row {
+  margin: 6px 0 4px; padding: .42rem .58rem; gap: .48rem; flex: 0 0 auto;
+  background: var(--ui-active); color: var(--ui-fg); font-weight: 500;
+}
+.sh-new-row:hover { background: var(--ui-hover); }
+.sh-rail-sep { margin: 4px 2px; flex: 0 0 auto; }
+
+.sh-tabs {
+  flex: 1; min-height: 0; width: 100%; overflow-y: auto; overflow-x: hidden;
+  display: flex; flex-direction: column; gap: 2px; padding: 2px 0;
+}
+.sh-tab { padding: .4rem .56rem; gap: .46rem; min-width: 0; }
+.sh-tab-title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: left; }
+.sh-dot {
+  width: 5px; height: 5px; flex: 0 0 5px; border-radius: var(--r-pill);
+  background: transparent;
+}
+.sh-tab.is-alive .sh-dot { background: var(--ui-faint); }
+.sh-tab.is-current.is-alive .sh-dot { background: var(--ui-fg); }
+
+/* 右侧全屏舞台：恒定 100vw x 100vh，使用 visibility 显隐，严禁 display: none 重建布局树 */
+.sh-stage { position: relative; width: 100vw; height: 100vh; overflow: hidden; background: var(--bg); }
+.sh-frame {
+  position: absolute; inset: 0; width: 100%; height: 100%; border: 0; margin: 0; padding: 0;
+  background: var(--bg);
+  visibility: hidden; pointer-events: none; z-index: var(--z-shell-idle);
+}
+.sh-frame.is-active {
+  visibility: visible; pointer-events: auto; z-index: var(--z-shell-frame);
+}
+
+.sh-loading, .sh-empty-wrap {
+  position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .7rem;
+  background: var(--bg); color: var(--ui-muted);
+  visibility: hidden; pointer-events: none; z-index: var(--z-shell-idle);
+}
+.sh-loading.is-active, .sh-empty-wrap.is-active { visibility: visible; pointer-events: auto; z-index: var(--z-shell-frame); }
+.sh-empty-btn { border: 1px solid var(--ui-border); background: var(--ui-surface); color: var(--ui-fg); transition: none; }
+
+/* 侧边栏右侧悬停提示卡片与新建论文弹层 */
+.sh-tip {
+  position: fixed; left: calc(var(--shell-side-w) + 6px); top: 8px; max-width: 22rem;
+  padding: .36rem .58rem; z-index: var(--z-shell-pop); pointer-events: none; visibility: hidden;
+}
+.sh-tip.is-open { visibility: visible; }
+.sh-tip-title { font-weight: 500; color: var(--ui-fg); line-height: 1.35; word-break: break-word; }
+.sh-tip-sub { font-family: var(--font-mono-ui); margin-top: 1px; word-break: break-all; }
+
+.sh-pop {
+  position: fixed; left: 8px; top: 84px; width: calc(var(--shell-side-w) - 16px); min-width: 15.5rem;
+  padding: .68rem; z-index: var(--z-shell-pop); display: none; flex-direction: column; gap: .46rem;
+}
+.sh-pop.is-open { display: flex; }
+.sh-pop-title { font-weight: 600; color: var(--ui-fg); font-size: var(--ui-size); }
+.sh-input { width: 100%; }
+.sh-err { color: var(--warn); word-break: break-word; }
+.sh-pop-foot { display: flex; justify-content: flex-end; gap: .36rem; margin-top: .1rem; }

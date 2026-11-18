@@ -13,7 +13,8 @@
   if (!window.__HTML_TEX_LIVE__) return;
 
   const root = document.documentElement;
-  const { store, escHtml, ico: ccIco } = window.HTD;
+  const { api, paper, store, escHtml, ico: ccIco } = window.HTD;
+  if (paper) root.setAttribute("data-in-shell", "1");
   const escRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
   let docRoot, splitBtn, edPane, resizer, fileSelect, dirtyDot, saveBtn, edMenu, histPanel;
@@ -41,4 +42,3 @@
   let saveQueued = false;
   let peerTimer = null;
   let hlClearTimer = null;
-

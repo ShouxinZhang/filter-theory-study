@@ -8,11 +8,12 @@ import re
 import shutil
 from pathlib import Path
 
+from .assets import write_site_assets
 from .mdconv import compile_markdown_dir
 from .numbering import auto_label_sections, number, write_labels_tex
-from .assets import write_site_assets
 from .paths import _resolve_asset
 from .render import parse_macros, render
+from .workspace import read_paper_meta, resolve_in_src
 
 STATIC_FIG_EXTS = {".svg", ".png", ".jpg", ".jpeg", ".webp", ".gif"}
 
@@ -42,16 +43,14 @@ def build_project(
             return 2, f"缺少依赖工具：{tool}（需安装 TeX Live / dvisvgm）", ""
 
     src_dir, build_dir, out_dir = src_dir.resolve(), build_dir.resolve(), out_dir.resolve()
-    md_files = sorted(src_dir.glob("*.md"))
+    meta = read_paper_meta(src_dir)
     doc_path = src_dir / "doc.html"
 
     errors: list[str] = []
-    if md_files:
-        from .mdconv import compile_markdown_dir
-
+    if meta.entry in ("main.md", "*.md"):
         raw, md_errs = compile_markdown_dir(src_dir)
         errors.extend(md_errs)
-    elif doc_path.exists():
+    elif meta.entry == "doc.html":
         raw = doc_path.read_text(encoding="utf-8")
     else:
         return 1, f"在 {src_dir} 中既未找到 *.md 也未找到 doc.html", ""
@@ -63,7 +62,7 @@ def build_project(
     out_dir.mkdir(parents=True, exist_ok=True)
 
     title_m = re.search(r"<!--\s*title:\s*(.*?)\s*-->", raw)
-    title = title_m.group(1) if title_m else "文档"
+    title = meta.title or (title_m.group(1) if title_m else "文档")
     doc = re.sub(r"<!--(?!TEX-->|TOC-->).*?-->", "", raw, flags=re.S)
 
     doc = auto_label_sections(doc)
@@ -73,7 +72,10 @@ def build_project(
     if errors:
         return 1, "构建失败：\n- " + "\n- ".join(errors), ""
 
-    macros_file = _resolve_asset(src_dir, "macros.tex")
+    macros_rel = meta.macros or "macros.tex"
+    if resolve_in_src(src_dir, macros_rel) is None:
+        return 1, f"构建失败：\n- macros 路径越界：{macros_rel}", ""
+    macros_file = _resolve_asset(src_dir, macros_rel)
     macros = parse_macros(macros_file)
 
     # 公式：优先构建期预渲染（带内容哈希缓存，浏览器端零排版）；不可用时回退到浏览器内 MathJax。

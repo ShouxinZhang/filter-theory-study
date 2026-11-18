@@ -128,7 +128,7 @@
       histPanel.innerHTML = `<div class="ed-hist-head"><span>加载增量记录中…</span></div>`;
       histPanel.classList.add("open");
       try {
-        const r = await fetch(`/__api/history?path=${encodeURIComponent(curFile)}`, { cache: "no-store" });
+        const r = await fetch(api(`__api/history?path=${encodeURIComponent(curFile)}`), { cache: "no-store" });
         const d = await r.json();
         const ops = d.ops || [];
         const closeBtnHtml = `<button type="button" class="ed-btn ui-btn" data-hist-close>✕</button>`;
@@ -152,7 +152,7 @@
         histPanel.querySelectorAll("[data-op-id]").forEach((row) => {
           row.addEventListener("click", async () => {
             const opId = Number(row.dataset.opId);
-            const rr = await fetch("/__api/rollback", {
+            const rr = await fetch(api("__api/rollback"), {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ path: curFile, id: opId }),
@@ -358,4 +358,3 @@
     attach();
     setTimeout(attach, 30);
   }
-

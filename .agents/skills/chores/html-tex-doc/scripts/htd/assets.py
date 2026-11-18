@@ -1,4 +1,4 @@
-"""运行时资源打包：把 assets/ 下按文件名排序的分段拼成单个 style.css / reader.js / editor.js。
+"""运行时资源打包：把 assets/ 下按文件名排序的分段拼成单个 style.css / reader.js / editor.js / shell.css / shell.js。
 
 不引入打包工具：纯文本拼接，产物可直接被 file:// 页面引用。工程级定制的优先级：
   1. 工程 src/ 里存在同名整份文件（旧工程的做法）时原样使用；
@@ -6,6 +6,7 @@
 """
 from __future__ import annotations
 
+import html
 from pathlib import Path
 
 from .paths import ASSETS_DIR
@@ -14,6 +15,8 @@ _PARTS = {
     "style.css": ["css/*.css"],
     "reader.js": ["js/core.js", "js/reader/*.js"],
     "editor.js": ["js/core.js", "js/editor/*.js"],
+    "shell.css": ["css/00_tokens.css", "css/08_components.css", "css/shell/*.css"],
+    "shell.js": ["js/core.js", "js/shell/*.js"],
 }
 _PROJECT_CSS = ("theme.css", "extra.css")
 
@@ -39,3 +42,22 @@ def bundle(name: str, src_dir: Path | None = None) -> str:
 def write_site_assets(src_dir: Path, out_dir: Path) -> None:
     for name in ("style.css", "reader.js"):
         (out_dir / name).write_text(bundle(name, src_dir), encoding="utf-8")
+
+
+def render_shell_html(title: str = "论文工作区") -> str:
+    esc = html.escape(title)
+    return f"""<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{esc}</title>
+<link rel="icon" href="data:,">
+<script>try {{ const t = localStorage.getItem("reader.theme");
+  if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t); }} catch (e) {{}}</script>
+<link rel="stylesheet" href="/__shell.css">
+<script defer src="/__shell.js"></script>
+</head>
+<body><div id="sh-app"></div></body>
+</html>
+"""

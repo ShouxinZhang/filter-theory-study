@@ -50,7 +50,7 @@
     if (!q) return;
     globalBox.classList.add("open");
     globalBox.innerHTML = `<div class="ed-hit-item ui-row"><span class="ed-hit-snip">正在搜索全工程源文件…</span></div>`;
-    const url = `/__api/search?q=${encodeURIComponent(q)}&case=${findState.cs ? 1 : 0}&regex=${findState.rx ? 1 : 0}`;
+    const url = api(`__api/search?q=${encodeURIComponent(q)}&case=${findState.cs ? 1 : 0}&regex=${findState.rx ? 1 : 0}`);
     try {
       const r = await fetch(url, { cache: "no-store" });
       const d = await r.json();
@@ -83,4 +83,3 @@
       globalBox.innerHTML = `<div class="ed-hit-item ui-row"><span class="ed-hit-snip">搜索出错：${escHtml(String(e))}</span></div>`;
     }
   }
-

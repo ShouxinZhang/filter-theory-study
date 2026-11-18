@@ -17,7 +17,7 @@
   }
 
   async function refreshFilesList() {
-    const r = await fetch("/__api/files", { cache: "no-store" });
+    const r = await fetch(api("__api/files"), { cache: "no-store" });
     const d = await r.json();
     filesMeta = d.files || [];
     if (!fileSelect) return;
@@ -40,7 +40,7 @@
       await saveCurrentFile(false);
     }
     if (curFile !== relPath) {
-      const r = await fetch(`/__api/file?path=${encodeURIComponent(relPath)}`, { cache: "no-store" });
+      const r = await fetch(api(`__api/file?path=${encodeURIComponent(relPath)}`), { cache: "no-store" });
       if (!r.ok) {
         setStatus(`无法打开文件：${relPath}`);
         return false;
@@ -91,7 +91,7 @@
     const targetFile = curFile;
     const content = edTa.value;
     try {
-      const r = await fetch(`/__api/file?path=${encodeURIComponent(targetFile)}`, {
+      const r = await fetch(api(`__api/file?path=${encodeURIComponent(targetFile)}`), {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ content, base_mtime_ns: baseMtime, force: forceOverwrite }),
@@ -124,7 +124,7 @@
     clearTimeout(autoSaveTimer);
     const content = edTa.value;
     try {
-      fetch(`/__api/file?path=${encodeURIComponent(curFile)}`, {
+      fetch(api(`__api/file?path=${encodeURIComponent(curFile)}`), {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ content, force: true }),
@@ -132,4 +132,3 @@
       });
     } catch {}
   }
-

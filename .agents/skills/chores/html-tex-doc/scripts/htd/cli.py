@@ -2,38 +2,26 @@
 from __future__ import annotations
 
 import argparse
-import html
-import shutil
 import sys
 from pathlib import Path
 
 from .build import build_project
-from .paths import TEMPLATE_ACADEMIC, TEMPLATE_BASIC
-from .server.http import run_server
+from .server.http import run_library_server, run_server
+from .server.project import init_project
+
 
 def cmd_init(args: argparse.Namespace) -> int:
     preset = getattr(args, "preset", "basic") or "basic"
-    tpl = TEMPLATE_ACADEMIC if preset == "academic-md" else TEMPLATE_BASIC
-    if not tpl.exists():
-        print(f"找不到预设模板目录：{tpl}", file=sys.stderr)
+    try:
+        dest = init_project(
+            Path(args.dir),
+            title=getattr(args, "title", None),
+            preset=preset,
+            force=bool(getattr(args, "force", False)),
+        )
+    except (ValueError, OSError) as e:
+        print(str(e), file=sys.stderr)
         return 1
-    dest = Path(args.dir).resolve() / "src"
-    if dest.exists() and any(dest.iterdir()) and not args.force:
-        print(f"目标已存在且非空：{dest}（如需覆盖请加 --force）", file=sys.stderr)
-        return 1
-    if dest.exists() and args.force:
-        shutil.rmtree(dest)
-    dest.parent.mkdir(parents=True, exist_ok=True)
-    shutil.copytree(tpl, dest)
-    if not (dest / "common.tex").exists() and (TEMPLATE_BASIC / "common.tex").exists():
-        shutil.copy(TEMPLATE_BASIC / "common.tex", dest / "common.tex")
-    if args.title:
-        for candidate in (dest / "doc.html", dest / "00_摘要.md", dest / "01_正文.md"):
-            if candidate.exists():
-                txt = candidate.read_text(encoding="utf-8")
-                txt = txt.replace("<!-- title: 文档标题 -->", f"<!-- title: {args.title} -->", 1)
-                txt = txt.replace("<h1>文档标题</h1>", f"<h1>{html.escape(args.title)}</h1>", 1)
-                candidate.write_text(txt, encoding="utf-8")
     print(f"已初始化混合文档骨架（preset={preset}）：{dest}")
     return 0
 
@@ -49,8 +37,15 @@ def cmd_build(args: argparse.Namespace) -> int:
 
 
 def cmd_serve(args: argparse.Namespace) -> int:
-    from .server.http import run_server
-
+    lib = getattr(args, "library", None)
+    force = bool(getattr(args, "force", False))
+    if lib is not None:
+        return run_library_server(
+            library_root=Path(lib).resolve(),
+            host=args.host,
+            port=args.port,
+            force_first=force,
+        )
     base = Path(args.dir).resolve()
     src_dir = Path(args.src).resolve() if getattr(args, "src", None) else base / "src"
     build_dir = Path(args.build_dir).resolve() if getattr(args, "build_dir", None) else base / "build"
@@ -61,7 +56,7 @@ def cmd_serve(args: argparse.Namespace) -> int:
         out_dir=out_dir,
         host=args.host,
         port=args.port,
-        force_first=bool(getattr(args, "force", False)),
+        force_first=force,
     )
 
 
@@ -86,6 +81,13 @@ def main() -> int:
 
     p_serve = sub.add_parser("serve", help="启动本地实时预览与 Web 双栏编辑服务器")
     p_serve.add_argument("dir", nargs="?", default=".", help="工程根目录（默认当前目录）")
+    p_serve.add_argument(
+        "--library",
+        nargs="?",
+        const="co-work 资产/tex-论文/论文集",
+        default=None,
+        help="以多论文工作区模式启动，可选指定论文库根目录（默认 co-work 资产/tex-论文/论文集）",
+    )
     p_serve.add_argument("--src", help="显式指定源码目录（默认 <dir>/src）")
     p_serve.add_argument("--build-dir", help="显式指定 TeX 中间构建目录（默认 <dir>/build）")
     p_serve.add_argument("--out", help="显式指定站点输出目录（默认 <dir>/outputs/site）")
