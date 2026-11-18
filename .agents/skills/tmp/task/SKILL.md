@@ -1,6 +1,6 @@
 ---
 name: task
-description: 在 .agents/.tmp/task/YYYY-MM/YYYY-MM-DD_任务名/ 下建立任务目录 (按月归档, 跨日沿用). 文档分 docs/plans/, docs/logs/ (一个用户 prompt 一份), docs/reports/ 三个子目录; 子代理工作区 tasks/<slug>/; 产出物在 outputs/ 下按类型分目录.
+description: 在 .agents/.tmp/task/YYYY-MM-DD_YYYY-MM-DD/YYYY-MM-DD_HH-mm_任务名/ 下建立任务目录 (与 .tmp/agent 同样按周归档, 跨日跨周沿用). 文档分 docs/plans/, docs/logs/ (一个用户 prompt 一份), docs/reports/ 三个子目录; 子代理工作区 tasks/<slug>/; 产出物在 outputs/ 下按类型分目录.
 ---
 
 # task
@@ -15,7 +15,8 @@ python3 $S -n <任务名> --log "<事件>"                  # 追加到活动 lo
 python3 $S -n <任务名> --plan "<标题>"                 # 新增一份计划 (计划实质变更时)
 python3 $S -n <任务名> --report "<标题>"               # 在主任务 docs/reports/ 新增一份总结报告
 python3 $S -n <任务名> --subtask "<slug>" --agent <a1> <a2> # 开启子代理前建子任务区及各子代理 docs/reports/
-python3 $S -n <任务名> --migrate                       # 旧版布局迁移
+python3 $S -n <任务名> --migrate                       # 旧版 docs 布局迁移
+python3 $S --relayout [--dry-run]                      # 旧 YYYY-MM 按日目录迁入周目录
 ```
 
 ## 目录

@@ -19,7 +19,7 @@ python3 $S --setup    # 打印一次性 sudoers 配置命令 (交给用户执行
 1. `--check` 查看是否有新版本; 有则 `--apply`.
 2. `--apply` 返回码 2 表示未完成免密配置: 把 `--setup` 的输出交给用户亲手执行, **不得索要或使用明文 sudo 密码**.
 3. 完成后提示用户重启 Antigravity; 当前会话所用的旧版本保留, 用于回滚.
-4. 按 tmp/task 规范在 `.agents/.tmp/task/YYYY-MM/<日期>_antigravity-update/docs/logs/` 记录一次升级.
+4. 按 tmp/task 规范在 `.agents/.tmp/task/YYYY-MM-DD_YYYY-MM-DD/YYYY-MM-DD_HH-mm_antigravity-update/docs/logs/` 记录一次升级.
 
 ## 约束
 

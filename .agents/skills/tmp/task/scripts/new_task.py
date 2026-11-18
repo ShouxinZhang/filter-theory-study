@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-"""创建或补全 .agents/.tmp/task/<YYYY-MM>/<YYYY-MM-DD_任务名>/ 任务目录及 docs/ 存档骨架.
+"""创建或补全 .agents/.tmp/task/<周日_周六>/<YYYY-MM-DD_HH-mm_任务名>/ 任务目录及 docs/ 存档骨架.
+
+周目录与 .tmp/agent 一致: 周日 00:00 至下周日 00:00 前 (Asia/Singapore), 名为 YYYY-MM-DD_YYYY-MM-DD.
 
 docs/ 下按类型分为三个子目录, 每类均可多份:
   plans/YYYY-MM-DD_HH-mm_<标题>.md    计划 (初始计划, 修订计划...)
@@ -17,13 +19,14 @@ docs/ 下按类型分为三个子目录, 每类均可多份:
   python3 new_task.py -n ocr-book --plan "修订: 改用 GPU"            # 追加一份计划
   python3 new_task.py -n ocr-book --report "基线对比"                # 追加一份报告
   python3 new_task.py -n ocr-book --subtask "math-review"            # 新建子任务区 (brief + 子日志)
-  python3 new_task.py -n ocr-book --migrate                          # 旧版布局迁移
+  python3 new_task.py -n ocr-book --migrate                          # 旧版 docs 布局迁移
+  python3 new_task.py --relayout [--dry-run]                         # 旧 YYYY-MM/YYYY-MM-DD_名 迁入周目录
 """
 import argparse
 import os
 import re
 import subprocess
-from datetime import datetime
+from datetime import date, datetime, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -52,21 +55,73 @@ def model_info(header: bool = False) -> str:
     return out or ("- agent name: unknown" if header else "unknown")
 
 
+DATE_RE = re.compile(r"^(\d{4}-\d{2}-\d{2})_(?:(\d{2}-\d{2})_)?(.+)$")
+
+
+def week_dir(d: date) -> str:
+    """d 所在周的目录名: <周日>_<周六>."""
+    sun = d - timedelta(days=(d.weekday() + 1) % 7)
+    return f"{sun:%Y-%m-%d}_{sun + timedelta(days=6):%Y-%m-%d}"
+
+
+def find_task(pattern: str):
+    """在周目录, 旧月目录及根目录下查找任务目录, 取名称排序最后者."""
+    hits = [p for p in TASK_ROOT.glob(f"*/{pattern}") if p.is_dir()]
+    hits += [p for p in TASK_ROOT.glob(pattern) if p.is_dir()]
+    return sorted(hits, key=lambda p: p.name)[-1] if hits else None
+
+
 def resolve_dir(name: str) -> Path:
-    """带日期前缀时直接定位 (优先 YYYY-MM 子目录); 否则优先匹配已有 YYYY-MM/????-??-??_任务名 (跨日续用原目录)."""
-    if re.match(r"^\d{4}-\d{2}-\d{2}_", name):
-        m = name[:7]
-        p_month = TASK_ROOT / m / name
-        if p_month.exists():
-            return p_month
-        p_flat = TASK_ROOT / name
-        if p_flat.exists():
-            return p_flat
-        return p_month
-    hits = sorted(TASK_ROOT.glob(f"????-??/????-??-??_{name}"))
-    if not hits:
-        hits = sorted(TASK_ROOT.glob(f"????-??-??_{name}"))
-    return hits[-1] if hits else TASK_ROOT / now('%Y-%m') / f"{now('%Y-%m-%d')}_{name}"
+    """带日期前缀时按日期 (可含 HH-mm) 定位; 否则匹配已有 *_任务名 (跨日跨周续用原目录); 均无则在当周新建."""
+    if m := DATE_RE.match(name):
+        dd, hm, rest = m.groups()
+        hit = find_task(name) or (None if hm else find_task(f"{dd}_??-??_{rest}"))
+        if hit:
+            return hit
+        d = date.fromisoformat(dd)
+        return TASK_ROOT / week_dir(d) / (name if hm else f"{dd}_{now('%H-%M')}_{rest}")
+    hit = find_task(f"????-??-??_??-??_{name}") or find_task(f"????-??-??_{name}")
+    if hit:
+        return hit
+    return TASK_ROOT / week_dir(datetime.now(TZ).date()) / f"{now('%Y-%m-%d_%H-%M')}_{name}"
+
+
+def first_stamp(d: Path, day: str):
+    """目录内与 day 同日的最早 plan/log 文件名时间戳 HH-mm."""
+    stamps = sorted(q.name[11:16] for k in ("plans", "logs") for q in (d / "docs" / k).glob(f"{day}_??-??_*.md"))
+    return stamps[0] if stamps else None
+
+
+def relayout(dry: bool):
+    """旧布局 YYYY-MM/YYYY-MM-DD[_HH-mm]_名 或根目录平铺 → <周目录>/YYYY-MM-DD_HH-mm_名."""
+    olds = [p for p in TASK_ROOT.glob("????-??/*") if p.is_dir()]
+    olds += [p for p in TASK_ROOT.glob("????-??-??_*") if p.is_dir() and not re.match(r"^\d{4}-\d{2}-\d{2}_\d{4}-", p.name)]
+    for src in sorted(olds, key=lambda p: p.name):
+        m = DATE_RE.match(src.name)
+        if not m:
+            print(f"skip (无日期前缀) {src.relative_to(TASK_ROOT)}")
+            continue
+        dd, hm, rest = m.groups()
+        basis = "目录名"
+        if not hm:
+            hm, basis = first_stamp(src, dd), "最早 plan/log"
+            if not hm:
+                mt = datetime.fromtimestamp(src.stat().st_mtime, TZ)
+                hm, basis = (mt.strftime("%H-%M"), "目录 mtime") if mt.strftime("%Y-%m-%d") == dd else ("00-00", "缺省 00-00")
+        dst = TASK_ROOT / week_dir(date.fromisoformat(dd)) / f"{dd}_{hm}_{rest}"
+        print(f"{src.relative_to(TASK_ROOT)}\t{dst.relative_to(TASK_ROOT)}\t{basis}")
+        if dry:
+            continue
+        if dst.exists():
+            print(f"  skip: 目标已存在")
+            continue
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        src.rename(dst)
+    if not dry:
+        for mdir in TASK_ROOT.glob("????-??"):
+            if mdir.is_dir() and not any(mdir.iterdir()):
+                mdir.rmdir()
+                print(f"removed empty {mdir.name}/")
 
 
 def slug(title: str) -> str:
@@ -152,7 +207,7 @@ def migrate(docs: Path):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("-n", "--name", required=True, help="任务名, 可带或不带日期前缀")
+    ap.add_argument("-n", "--name", help="任务名, 可带或不带日期前缀")
     ap.add_argument("-p", "--prompt", default="(待补充)", help="用户原始 prompt")
     ap.add_argument("--log-new", default=None, help="新的用户 prompt: 新建一份 log, 参数为 slug")
     ap.add_argument("--log", default=None, help="向最新一份 log 的时间线追加事件")
@@ -160,8 +215,14 @@ def main():
     ap.add_argument("--report", nargs="?", const="报告", default=None, help="新增一份报告, 可给标题")
     ap.add_argument("--subtask", default=None, help="新建子任务区 tasks/<slug>/")
     ap.add_argument("--agent", nargs="+", default=None, help="在子任务区下初始化子代理目录 agents/<name>/docs/reports/")
-    ap.add_argument("--migrate", action="store_true", help="旧版布局迁移")
+    ap.add_argument("--migrate", action="store_true", help="旧版 docs 布局迁移")
+    ap.add_argument("--relayout", action="store_true", help="旧 YYYY-MM 按日目录迁入周目录")
+    ap.add_argument("--dry-run", action="store_true", help="与 --relayout 同用: 仅打印映射")
     a = ap.parse_args()
+    if a.relayout:
+        return relayout(a.dry_run)
+    if not a.name:
+        ap.error("-n/--name 必填 (除 --relayout 外)")
 
     d = resolve_dir(a.name)
     docs = d / "docs"
