@@ -8,7 +8,7 @@ description: 免密静默升级 Antigravity (agy) 桌面应用: 查询最新版�
 ## 速查
 
 ```bash
-S=.agents/skills/chores/agy-update/scripts/agy_update.py
+S=.agents/skills/chores/dev-tool-maintenance/agy-update/scripts/agy_update.py
 python3 $S --check    # 对比当前 / 最新版本
 python3 $S --apply    # 免密安装最新版, 切换启动器, 清理更早版本
 python3 $S --setup    # 打印一次性 sudoers 配置命令 (交给用户执行)
