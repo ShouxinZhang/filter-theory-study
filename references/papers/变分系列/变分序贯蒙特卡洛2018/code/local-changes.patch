@@ -1,0 +1,13 @@
+diff --git a/lgss_example.py b/lgss_example.py
+index 0731e3c..9738ce2 100644
+--- a/lgss_example.py
++++ b/lgss_example.py
+@@ -5,7 +5,7 @@ import autograd.numpy as np
+ import autograd.numpy.random as npr
+ from autograd import grad
+ from autograd.misc.optimizers import adam
+-from variational_smc import *
++from references.papers.变分系列.变分序贯蒙特卡洛2018.code.variational_smc import *
+ 
+ def init_model_params(Dx, Dy, alpha, r, obs, rs = npr.RandomState(0)):
+     mu0 = np.zeros(Dx)
