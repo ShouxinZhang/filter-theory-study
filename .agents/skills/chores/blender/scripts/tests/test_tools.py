@@ -2,6 +2,7 @@
 import hashlib
 import io
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -10,14 +11,15 @@ import tempfile
 import unittest
 
 SCRIPTS = Path(__file__).resolve().parents[1]
-REPO = SCRIPTS.parents[4]
+# 默认使用系统临时目录; 需保留现场时可用 BLENDER_SKILL_TEST_DIR 指定父目录.
+TEST_DIR = os.environ.get('BLENDER_SKILL_TEST_DIR')
 
 
 class ToolsTests(unittest.TestCase):
     def setUp(self):
-        root = REPO / '.agents/.tmp/task/2026-11/2026-11-12_blender-skill/outputs/tests'
-        root.mkdir(parents=True, exist_ok=True)
-        self.temp = tempfile.TemporaryDirectory(dir=root)
+        if TEST_DIR:
+            Path(TEST_DIR).mkdir(parents=True, exist_ok=True)
+        self.temp = tempfile.TemporaryDirectory(dir=TEST_DIR)
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name)
 
