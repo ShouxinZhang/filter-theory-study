@@ -1,0 +1,27 @@
+{
+  "name": "editorial-academic",
+  "description": "Fused editorial data chart style with html-tex-doc light/dark CSS tokens, New Century + SimSun prose, and Latin Modern Math.",
+  "width": 880,
+  "height": 480,
+  "card_radius": 8,
+  "pdf_background": "#FAF9F5",
+  "margins": {
+    "left": 74,
+    "right": 28,
+    "bottom": 54
+  },
+  "legend": {
+    "row_height": 20,
+    "cjk_px": 13.5,
+    "ascii_px": 7.4
+  },
+  "palette": {
+    "primary": "var(--ec-primary)",
+    "secondary": "var(--ec-secondary)",
+    "accent": "var(--ec-accent)",
+    "aux": "var(--ec-aux)",
+    "fg": "var(--ec-fg)",
+    "card": "var(--ec-card)",
+    "muted": "var(--ec-muted)"
+  }
+}

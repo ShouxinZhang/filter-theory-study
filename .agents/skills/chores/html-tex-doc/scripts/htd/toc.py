@@ -1,8 +1,9 @@
 """可折叠目录卡片的 HTML 生成。"""
 from __future__ import annotations
 
-def _build_toc_html(toc: list[tuple[int, str, str, str]]) -> str:
+def _build_toc_html(toc: list[tuple[int, str, str, str]], lang: str = "zh") -> str:
     """将 [(level 1|2|3, id, num, title), ...] 构建为支持整卡折叠与分章折叠的目录 HTML。"""
+    is_en = (lang or "").lower().startswith("en")
     nodes: list[dict[str, object]] = []
     stack: list[dict[str, object]] = []
     for lv, id_, num, title in toc:
@@ -40,10 +41,14 @@ def _build_toc_html(toc: list[tuple[int, str, str, str]]) -> str:
         return "".join(out)
 
     has_sub = any(lv > 1 for lv, _, _, _ in toc)
+    fold_lbl = "Collapse" if is_en else "收起子节"
+    exp_lbl = "Expand all" if is_en else "展开全部"
+    toc_lbl = "Contents" if is_en else "目录"
+    meta_lbl = f"{len(toc)} sections" if is_en else f"共 {len(toc)} 节"
     sub_btns = (
         '<div class="toc-actions">'
-        '<button type="button" class="toc-sub-btn ui-btn ui-btn--sm" data-toc-act="fold-sub" title="仅显示顶层章节">收起子节</button>'
-        '<button type="button" class="toc-sub-btn ui-btn ui-btn--sm" data-toc-act="expand-all" title="展开全部层级">展开全部</button>'
+        f'<button type="button" class="toc-sub-btn ui-btn ui-btn--sm" data-toc-act="fold-sub" title="仅显示顶层章节">{fold_lbl}</button>'
+        f'<button type="button" class="toc-sub-btn ui-btn ui-btn--sm" data-toc-act="expand-all" title="展开全部层级">{exp_lbl}</button>'
         "</div>"
         if has_sub
         else ""
@@ -53,8 +58,8 @@ def _build_toc_html(toc: list[tuple[int, str, str, str]]) -> str:
         '<div class="toc-head">'
         '<button type="button" class="toc-toggle" aria-expanded="true" title="点击折叠或展开目录卡片">'
         '<span class="toc-toggle-icon">▾</span>'
-        "<strong>目录</strong>"
-        f'<span class="toc-meta">共 {len(toc)} 节</span>'
+        f"<strong>{toc_lbl}</strong>"
+        f'<span class="toc-meta">{meta_lbl}</span>'
         "</button>"
         f"{sub_btns}"
         "</div>"

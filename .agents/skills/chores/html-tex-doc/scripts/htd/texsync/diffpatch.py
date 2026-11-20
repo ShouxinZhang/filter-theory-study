@@ -1,8 +1,8 @@
-"""最小差异回写引擎（patch_tex）、切片结构守卫（SyncPair）与导入/导出 CLI。"""
+"""最小差异回写引擎（patch_tex）、嵌套子文件切片与导入/导出 CLI。"""
 from __future__ import annotations
 
 import argparse
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 import difflib
 import os
@@ -13,35 +13,29 @@ import tempfile
 from .codec import Unit, conv_list_items, parse_md_units, parse_tex_units, tex_to_md
 from .inline import KALMAN_SPEC, SyncSpec, patch_paragraph_minimal
 
-_MANUAL_KINDS = frozenset({"html_table", "figure", "env_open", "env_close"})
+_MANUAL_KINDS = frozenset({"html_table", "figure", "algorithm", "tex_input", "env_open", "env_close"})
+_FLOAT_KINDS = frozenset({"algorithm", "figure", "html_table"})
+_TEX_FILE_TAG_RE = re.compile(r"<!--(/?tex-file\b.*?)-->", re.S)
 
 
 @dataclass
 class PatchResult:
-    ok: bool
-    patched_tex: str
-    diff_text: str
-    manual_items: list[str]
-    roundtrip_mismatch: str | None = None
+    ok: bool; patched_tex: str; diff_text: str; manual_items: list[str]; roundtrip_mismatch: str | None = None
 
 
 @dataclass(frozen=True)
 class SyncPair:
-    tex_path: Path | str
-    md_path: Path | str
-    md_slice: tuple[str, str] | None = None
-    expected_md_frame: tuple[str, str] | str | Path | None = None
+    tex_path: Path | str; md_path: Path | str; md_slice: tuple[str, str] | None = None; expected_md_frame: tuple[str, str] | str | Path | None = None
 
 
 def _desc_unit(u: Unit) -> str:
-    names = {"html_table": "编号表格", "figure": "浮动图", "env_open": "环境开启", "env_close": "环境闭合"}
+    names = {"html_table": "编号表格", "figure": "浮动图", "algorithm": "算法浮动体", "tex_input": "子文件输入", "env_open": "环境开启", "env_close": "环境闭合"}
     return f"{names.get(u.kind, u.kind)} ({u.meta or u.md_text.splitlines()[0][:24]})"
 
 
 def patch_list_minimal(orig_tex: str, new_md: str, spec: SyncSpec = KALMAN_SPEC) -> str:
     olines = orig_tex.split("\n")
-    orig_items = conv_list_items(olines[1:-1], spec, is_tex=True)
-    new_items = conv_list_items(new_md.split("\n"), spec, is_tex=False)
+    orig_items, new_items = conv_list_items(olines[1:-1], spec, is_tex=True), conv_list_items(new_md.split("\n"), spec, is_tex=False)
     ind = m.group(1) if (orig_items and (m := re.match(r"^(\s*)\\item", orig_items[0][0]))) else ""
     sm = difflib.SequenceMatcher(None, [m for _, m in orig_items], [m for m, _ in new_items], autojunk=False)
     out: list[str] = []
@@ -50,15 +44,11 @@ def patch_list_minimal(orig_tex: str, new_md: str, spec: SyncSpec = KALMAN_SPEC)
             out.extend(orig_items[k][0] for k in range(i1, i2))
         elif tag == "replace" and (i2 - i1) == (j2 - j1):
             for (ot, _), (nm, nt) in zip(orig_items[i1:i2], new_items[j1:j2]):
-                if "\n" not in ot and "\n" not in nm and (om := re.match(r"^(\s*\\item\s+)(.*)$", ot)):
-                    out.append(om.group(1) + patch_paragraph_minimal(om.group(2), re.sub(r"^-\s+", "", nm, count=1), spec))
-                else:
-                    out.append(ind + nt)
+                out.append((om.group(1) + patch_paragraph_minimal(om.group(2), re.sub(r"^-\s+", "", nm, count=1), spec)) if ("\n" not in ot and "\n" not in nm and (om := re.match(r"^(\s*\\item\s+)(.*)$", ot))) else (ind + nt))
         elif tag in ("replace", "insert"):
             out.extend(ind + nt for _, nt in new_items[j1:j2])
     cand = f"{olines[0]}\n" + "\n".join(out) + f"\n{olines[-1]}"
-    cand_md = "\n".join(m for _, m in conv_list_items(cand.split("\n")[1:-1], spec, is_tex=True))
-    return cand if cand_md == new_md else (r"\begin{itemize}" + "\n" + "\n".join(t for _, t in new_items) + "\n" + r"\end{itemize}")
+    return cand if "\n".join(m for _, m in conv_list_items(cand.split("\n")[1:-1], spec, is_tex=True)) == new_md else (r"\begin{itemize}" + "\n" + "\n".join(t for _, t in new_items) + "\n" + r"\end{itemize}")
 
 
 def _first_mismatch(rt_md: str, new_md: str, pfx: str, spec: SyncSpec) -> str:
@@ -70,36 +60,26 @@ def _first_mismatch(rt_md: str, new_md: str, pfx: str, spec: SyncSpec) -> str:
     return f"{pfx}L{ln} 回写往返块数或末尾换行不一致 ({len(rt_u)} vs {len(nw_u)})"
 
 
-def patch_tex(orig_tex: str, new_md: str, spec: SyncSpec = KALMAN_SPEC, filename: str = "") -> PatchResult:
+def patch_tex(orig_tex: str, new_md: str, spec: SyncSpec = KALMAN_SPEC, filename: str = "", *, float_inputs: Mapping[str, Unit] | None = None) -> PatchResult:
     pfx = f"{filename}:" if filename else ""
-    orig_u, new_u = parse_tex_units(orig_tex, spec), parse_md_units(new_md, spec)
+    orig_u, new_u = parse_tex_units(orig_tex, spec, float_inputs=float_inputs), parse_md_units(new_md, spec)
     sm = difflib.SequenceMatcher(None, [(u.kind, u.md_text, u.meta) for u in orig_u], [(u.kind, u.md_text, u.meta) for u in new_u], autojunk=False)
-    chunks: list[tuple[str, str, str]] = []
-    manual: list[str] = []
-
+    chunks, manual = [], []
     for tag, i1, i2, j1, j2 in sm.get_opcodes():
         if tag == "equal":
             chunks.extend((ou.leading_comments, ou.tex_text, nu.trailing_sep) for ou, nu in zip(orig_u[i1:i2], new_u[j1:j2]))
         elif tag == "delete":
-            for ou in orig_u[i1:i2]:
-                if ou.kind in _MANUAL_KINDS:
-                    manual.append(f"{pfx}L{ou.line} 删除 {_desc_unit(ou)}，需人工处理")
-                    chunks.append((ou.leading_comments, ou.tex_text, ou.trailing_sep or "\n\n"))
+            for ou in (u for u in orig_u[i1:i2] if u.kind in _MANUAL_KINDS):
+                manual.append(f"{pfx}L{ou.line} 删除 {_desc_unit(ou)}，需人工处理"); chunks.append((ou.leading_comments, ou.tex_text, ou.trailing_sep or "\n\n"))
         elif tag == "insert":
             for nu in new_u[j1:j2]:
-                if nu.kind in _MANUAL_KINDS:
-                    manual.append(f"{pfx}L{nu.line} 新增 {_desc_unit(nu)}，需人工处理")
-                else:
-                    chunks.append(("", nu.tex_text, nu.trailing_sep))
+                manual.append(f"{pfx}L{nu.line} 新增 {_desc_unit(nu)}，需人工处理") if nu.kind in _MANUAL_KINDS else chunks.append(("", nu.tex_text, nu.trailing_sep))
         elif tag == "replace":
             osub, nsub = orig_u[i1:i2], new_u[j1:j2]
             if len(osub) == 1 and len(nsub) == 1 and osub[0].kind == nsub[0].kind and osub[0].kind in _MANUAL_KINDS:
-                manual.append(f"{pfx}L{osub[0].line} 修改 {_desc_unit(osub[0])}，需人工处理")
-                chunks.append((osub[0].leading_comments, osub[0].tex_text, nsub[0].trailing_sep))
-                continue
+                manual.append(f"{pfx}L{osub[0].line} 修改 {_desc_unit(osub[0])}，需人工处理"); chunks.append((osub[0].leading_comments, osub[0].tex_text, nsub[0].trailing_sep)); continue
             for ou in (u for u in osub if u.kind in _MANUAL_KINDS):
-                manual.append(f"{pfx}L{ou.line} 修改或删除 {_desc_unit(ou)}，需人工处理")
-                chunks.append((ou.leading_comments, ou.tex_text, ou.trailing_sep or "\n\n"))
+                manual.append(f"{pfx}L{ou.line} 修改或删除 {_desc_unit(ou)}，需人工处理"); chunks.append((ou.leading_comments, ou.tex_text, ou.trailing_sep or "\n\n"))
             for nu in (u for u in nsub if u.kind in _MANUAL_KINDS):
                 manual.append(f"{pfx}L{nu.line} 新增或修改 {_desc_unit(nu)}，需人工处理")
             ow, nw = [u for u in osub if u.kind not in _MANUAL_KINDS], [u for u in nsub if u.kind not in _MANUAL_KINDS]
@@ -109,20 +89,68 @@ def patch_tex(orig_tex: str, new_md: str, spec: SyncSpec = KALMAN_SPEC, filename
                 for ni, nu in enumerate(nw):
                     cands = [(difflib.SequenceMatcher(None, ou.md_text, nu.md_text, autojunk=False).ratio(), oi) for oi, ou in enumerate(ow) if oi not in used_o and ou.kind == nu.kind]
                     if cands and max(cands)[0] >= 0.35:
-                        _, best_i = max(cands)
-                        paired[ni] = best_i; used_o.add(best_i)
+                        paired[ni] = max(cands)[1]; used_o.add(paired[ni])
             for ni, nu in enumerate(nw):
                 ou = ow[paired[ni]] if ni in paired else None
                 body = patch_paragraph_minimal(ou.tex_text, nu.md_text, spec) if (ou and nu.kind == "para" and ou.kind == "para") else (patch_list_minimal(ou.tex_text, nu.md_text, spec) if (ou and nu.kind == "list" and ou.kind == "list") else nu.tex_text)
                 chunks.append((ou.leading_comments if ou else "", body, nu.trailing_sep))
-
     raw_body = "".join(c[0] + c[1] + c[2] for c in chunks)
     patched = (raw_body + ("\n" if new_md.endswith("\n") else "")) if (raw_body or new_md) else ""
     lbl = filename or "tex"
-    diff_txt = "".join(difflib.unified_diff(orig_tex.splitlines(keepends=True), patched.splitlines(keepends=True), fromfile=f"a/{lbl}", tofile=f"b/{lbl}"))
-    rt_md = tex_to_md(patched, spec)
+    diff_txt = "" if orig_tex == patched else "".join(difflib.unified_diff(orig_tex.splitlines(keepends=True), patched.splitlines(keepends=True), fromfile=f"a/{lbl}", tofile=f"b/{lbl}"))
+    rt_md = (("".join(u.md_text + u.trailing_sep for u in orig_u) + ("\n" if orig_tex.endswith("\n") else "")) if orig_tex else "") if orig_tex == patched else tex_to_md(patched, spec, float_inputs=float_inputs)
     mismatch = _first_mismatch(rt_md, new_md, pfx, spec) if rt_md != new_md else None
     return PatchResult(ok=(not manual and mismatch is None), patched_tex=patched, diff_text=diff_txt, manual_items=manual, roundtrip_mismatch=mismatch)
+
+
+def resolve_tex_input(raw_arg: str, cur_dir: Path, tex_root: Path) -> Path | None:
+    rel = raw_arg if raw_arg.endswith(".tex") else f"{raw_arg}.tex"
+    return next((c for b in (tex_root, cur_dir) if (c := b / rel).is_file()), None)
+
+
+def extract_tex_file_blocks(md_text: str, filename: str) -> tuple[list[tuple[str, str, int, int]], list[str]]:
+    blocks, stack, errs = [], [], []
+    for m in _TEX_FILE_TAG_RE.finditer(md_text):
+        ln, body = md_text[: m.start()].count("\n") + 1, m.group(1).strip()
+        if om := re.match(r"^tex-file:\s*(.+)$", body):
+            stack.append((om.group(1).strip(), m.start(), m.end(), ln))
+        elif body == "/tex-file":
+            if not stack:
+                errs.append(f"{filename}:L{ln} 未配对的 <!--/tex-file--> 定界注释，需人工处理")
+            else:
+                rel, s0, e0, _ = stack.pop()
+                if not stack:
+                    blocks.append((rel, md_text[e0 : m.start()], s0, m.end()))
+        else:
+            errs.append(f"{filename}:L{ln} 畸形子文件定界注释 <!--{body}-->，需人工处理")
+    errs.extend(f"{filename}:L{oln} 缺少闭合 <!--/tex-file--> 定界注释 ({rel})，需人工处理" for rel, _, _, oln in stack)
+    return blocks, errs
+
+
+def patch_tex_hierarchy(tex_path: Path, new_md: str, tex_root: Path, spec: SyncSpec = KALMAN_SPEC, md_name: str = "", _seen: frozenset[Path] = frozenset()) -> list[tuple[Path, PatchResult]]:
+    orig_tex = tex_path.read_text(encoding="utf-8")
+    rel_lbl = tex_path.resolve().relative_to(tex_root.resolve()).as_posix() if tex_path.resolve().is_relative_to(tex_root.resolve()) else tex_path.name
+    if r"\input" not in orig_tex and "<!--tex-file" not in new_md and "<!--/tex-file" not in new_md:
+        return [(tex_path, patch_tex(orig_tex, new_md, spec, filename=rel_lbl))]
+    float_inputs, exp_subs = {}, []
+    for u in parse_tex_units(orig_tex, spec):
+        if u.kind == "tex_input" and (sp := resolve_tex_input(u.meta, tex_path.parent, tex_root)) and sp.resolve() not in _seen:
+            su = parse_tex_units(sp.read_text(encoding="utf-8"), spec)
+            float_inputs.__setitem__(u.meta, su[0]) if (len(su) == 1 and su[0].kind in _FLOAT_KINDS) else exp_subs.append((u.meta, sp.resolve().relative_to(tex_root.resolve()).as_posix(), sp))
+    blocks, errs = extract_tex_file_blocks(new_md, md_name or rel_lbl)
+    if errs or [b[0] for b in blocks] != [s[1] for s in exp_subs]:
+        msg = errs or [f"{md_name or rel_lbl}:L1 子文件定界注释缺失、未配对或顺序错乱（期望 {[s[1] for s in exp_subs]}，实际 {[b[0] for b in blocks]}），需人工处理"]
+        return [(tex_path, PatchResult(False, orig_tex, "", msg))]
+    if not exp_subs and not float_inputs:
+        return [(tex_path, patch_tex(orig_tex, new_md, spec, filename=rel_lbl))]
+    virt_md = new_md
+    for (raw_arg, _, _), (_, _, s0, e1) in reversed(list(zip(exp_subs, blocks))):
+        virt_md = virt_md[:s0] + f"<!--tex-input: {raw_arg}-->" + virt_md[e1:]
+    out = [(tex_path, patch_tex(orig_tex, virt_md, spec, filename=rel_lbl, float_inputs=float_inputs))]
+    for (_, _, sp), (_, inner_md, _, _) in zip(exp_subs, blocks):
+        sub_orig, core = sp.read_text(encoding="utf-8"), inner_md.strip("\n")
+        out.extend(patch_tex_hierarchy(sp, (core + ("\n" if sub_orig.endswith("\n") else "")) if core else "", tex_root, spec, md_name=md_name or rel_lbl, _seen=_seen | {tex_path.resolve()}))
+    return out
 
 
 def _split_slice(text: str, md_slice: tuple[str, str]) -> tuple[str, str, str, str, str] | None:
@@ -161,12 +189,12 @@ def check_pair_export(pair: SyncPair, spec: SyncSpec = KALMAN_SPEC) -> PatchResu
             frame_errs.append(f"{md_p.name}:L{_diff_line(tail, exp_tail, t_ln)} main.md 结构尾部（TOC/include 列表）已改动，需人工处理")
     res = patch_tex(orig_tex, core + ("\n" if orig_tex.endswith("\n") else ""), spec, filename=tex_p.name)
     if frame_errs:
-        res.manual_items = frame_errs + res.manual_items
-        res.ok = False
+        res.manual_items = frame_errs + res.manual_items; res.ok = False
     return res
 
 
 def _atomic_write(path: Path, content: str) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
     fd, tmp_name = tempfile.mkstemp(prefix=f".{path.name}.", dir=str(path.parent))
     try:
         with os.fdopen(fd, "w", encoding="utf-8") as fh:
@@ -215,8 +243,7 @@ def run_import_cli(pairs: Sequence[SyncPair | tuple[Path | str, Path | str]], sp
         conv, cur = tex_to_md(tp.read_text(encoding="utf-8"), spec), (mp.read_text(encoding="utf-8") if mp.exists() else "")
         if p.md_slice is not None:
             if (parts := _split_slice(cur, p.md_slice)) is None:
-                print(f"[错误] {mp.name}: 缺少切片边界 {p.md_slice[0]}..{p.md_slice[1]}", file=sys.stderr)
-                return 1
+                print(f"[错误] {mp.name}: 缺少切片边界 {p.md_slice[0]}..{p.md_slice[1]}", file=sys.stderr); return 1
             head, lead, _, trail, tail = parts
             new_md = f"{head}{lead or chr(10)*2}{conv.strip(chr(10))}{trail or chr(10)*2}{tail}"
         else:

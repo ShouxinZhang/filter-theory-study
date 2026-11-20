@@ -98,13 +98,14 @@ class MarkdownCompiler(MarkdownInline):
                 flush()
                 kind, label, raw_num, title = m.group(1), m.group(2), m.group(3), m.group(4).strip()
                 idx = len(out)
-                if kind in ("证明", "proof"):
+                if kind in ("证明", "proof", "Proof"):
                     stack.append(("proof", ln, idx, '<div class="proof"'))
                     out.append('<div class="proof">')
-                    prefix = f"<em>{self.inline(title) if title else '证明'}.</em> "
+                    def_prf = "Proof" if self.lang == "en" else "证明"
+                    prefix = f"<em>{self.inline(title) if title else def_prf}.</em> "
                 else:
                     kl = kind.lower()
-                    disp_kind = _THM_MAP.get(kl, kind)
+                    disp_kind = kind.capitalize() if (self.lang == "en" and kl in _THM_MAP) else _THM_MAP.get(kl, kind)
                     cls = "thm"
                     if kl in ("评注", "remark"):
                         cls = "thm thm--remark"
@@ -250,7 +251,7 @@ def compile_markdown_dir(src_dir: Path) -> tuple[str, list[str]]:
     elif fm.get("bib") and bib_rel != "refs.bib":
         pre_errors.append(f"main.md: bib 文件不存在：{bib_rel}")
 
-    conv = MarkdownCompiler(bib, bib_order=bib_order)
+    conv = MarkdownCompiler(bib, bib_order=bib_order, lang=fm.get("lang"))
     conv.errors.extend(pre_errors)
     parts: list[str] = []
     chunk: list[str] = []

@@ -33,6 +33,7 @@
 ### 原生 HTML 语法（`src/doc.html`）
 
 - 章节 `<h2 data-label="sec:x">`、公式 `<div class="eq" data-label="eq:x">\[ ... \]</div>`、图表 `<figure class="fig|alg" data-label="..." data-tex="figs/x.tex"><!--TEX--><figcaption>...</figcaption></figure>`、表格 `<figure class="tbl" data-label="tab:x">`、命题 `<div class="thm" data-kind="命题" data-label="prop:x" data-title="简称">` 均使用 HTML 文档出现顺序作为唯一编号源。
+- 论文版式硬规范：正文内不插入 `<!--TOC-->` 内联目录卡（由右上角 `☰ 目录` 抽屉统一承担）；摘要前须显式写出 `<p class="h2">摘要</p>`（英文版 `<p class="h2">Abstract</p>`）；译校、符号对照、数值复现与审核细节统一置于文末附录，不得放在摘要与正文引言之间。
 
 ## TeX 侧共享宏与反向交叉引用
 

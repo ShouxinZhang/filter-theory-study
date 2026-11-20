@@ -1,0 +1,20 @@
+.ec-svg {
+  /* Bridge html-tex-doc page theme variables with editorial light fallbacks */
+  --ec-card: var(--card, #FAF9F5);
+  --ec-fg: var(--fg, #141413);
+  --ec-muted: var(--muted, #73726C);
+  --ec-rule: var(--rule, #D1CFC5);
+  --ec-border: var(--ui-border, #E2E0D8);
+
+  /* Semantic series palette */
+  --ec-primary: #629987;
+  --ec-secondary: #EB6834;
+  --ec-accent: #6A9BCC;
+  --ec-aux: #827DBD;
+
+  /* Typography: New Century + standard Songti + OpenType Math */
+  --ec-font-prose: "C059", "New Century Schoolbook", "TeX Gyre Schola",
+    "SimSun", "宋体", "Songti SC", "Noto Serif CJK SC", "Source Han Serif SC",
+    Georgia, serif;
+  --ec-font-math: "Latin Modern Math", "TeX Gyre Schola Math", "STIXGeneral", serif;
+}

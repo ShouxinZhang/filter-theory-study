@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-14 -14 28 28">
+  <circle cx="0" cy="0" r="11.5" fill="var(--ec-card, #FAF9F5)" stroke="var(--ec-fg, #141413)" stroke-width="2.1" opacity="0.95"/>
+  <line x1="-8.5" y1="0" x2="8.5" y2="0" stroke="var(--ec-fg, #141413)" stroke-width="3.0"/>
+  <line x1="0" y1="-8.5" x2="0" y2="8.5" stroke="var(--ec-fg, #141413)" stroke-width="3.0"/>
+</svg>

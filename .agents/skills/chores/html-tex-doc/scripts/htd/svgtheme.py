@@ -71,3 +71,16 @@ def inline_svg(svg: str, prefix: str, label: str, titles: dict[str, str]) -> str
     )
     svg = theme_colors(svg)
     return svg.replace("<svg ", f'<svg class="texfig" role="img" aria-label="{html.escape(label)}" ', 1)
+
+
+def inline_data_svg(svg: str, prefix: str, label: str) -> str:
+    """将带 data-htd-inline 的自包含数据图 SVG 内联进页面（隔离内部 id，保留其科研色板与 CSS 变量）。"""
+    svg = re.sub(r"<\?xml.*?\?>|<!DOCTYPE.*?>|<!--.*?-->", "", svg, flags=re.S).strip()
+    ids = set(re.findall(r"""\bid=['"]([^'"]+)['"]""", svg))
+    svg = re.sub(r"""\bid=(['"])([^'"]+)\1""", lambda m: f"id={m[1]}{prefix}-{m[2]}{m[1]}", svg)
+    svg = re.sub(r"url\(#([^)]+)\)", lambda m: f"url(#{prefix + '-' + m[1] if m[1] in ids else m[1]})", svg)
+    return svg.replace(
+        "<svg ",
+        f'<svg role="img" aria-label="{html.escape(label)}" style="width:100%;max-width:100%;height:auto;display:block;margin:0 auto" ',
+        1,
+    )

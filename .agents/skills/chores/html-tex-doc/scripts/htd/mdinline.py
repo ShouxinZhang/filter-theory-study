@@ -9,9 +9,10 @@ from .numbering import REF
 
 
 class MarkdownInline:
-    def __init__(self, bib: dict[str, dict[str, str]] | None = None, bib_order: str | None = None):
+    def __init__(self, bib: dict[str, dict[str, str]] | None = None, bib_order: str | None = None, lang: str | None = None):
         self.bib = bib or {}
         self.bib_order = bib_order
+        self.lang = "en" if (lang or "").lower().startswith("en") else "zh"
         self.cites: list[str] = list(self.bib.keys()) if bib_order == "file" else []
         self.footnotes: dict[str, str] = {}
         self.fn_refs: list[str] = []
@@ -166,7 +167,8 @@ class MarkdownInline:
             if key not in self.sub:
                 return m.group(0)
             num, anc = self.sub[key]
-            disp = f"第 {num} 节" if mod is None else (num if mod == "n" else mod)
+            sec_s = f"Section {num}" if self.lang == "en" else f"第 {num} 节"
+            disp = sec_s if mod is None else (num if mod == "n" else mod)
             return f'<a class="xref" href="#{anc}">{disp}</a>'
 
         return REF.sub(fn, doc)

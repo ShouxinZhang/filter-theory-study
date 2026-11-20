@@ -67,10 +67,11 @@ def build_project(
     title = meta.title or (title_m.group(1) if title_m else "文档")
     doc = re.sub(r"<!--(?!TEX-->|TOC-->).*?-->", "", raw, flags=re.S)
 
+    lang = meta.lang or "zh"
     doc = auto_label_sections(doc)
-    labels = number(doc, errors)
+    labels = number(doc, errors, lang=lang)
     write_labels_tex(labels, build_dir)
-    body, n_svg = render(doc, labels, src_dir, build_dir, force, errors)
+    body, n_svg = render(doc, labels, src_dir, build_dir, force, errors, lang=lang)
     if errors:
         return 1, "构建失败：\n- " + "\n- ".join(errors), ""
 

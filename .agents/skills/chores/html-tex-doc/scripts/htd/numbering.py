@@ -6,6 +6,7 @@ from pathlib import Path
 import re
 
 FORMATS = {"sec": "第 {n} 节", "eq": "式 ({n})", "fig": "图 {n}", "alg": "算法 {n}", "tbl": "表 {n}"}
+FORMATS_EN = {"sec": "Section {n}", "eq": "Eq. ({n})", "fig": "Fig. {n}", "alg": "Algorithm {n}", "tbl": "Table {n}"}
 
 OPEN_TAG = re.compile(r"<(h2|h3|div|figure)\b([^>]*)>")
 
@@ -56,7 +57,9 @@ def auto_label_sections(doc: str) -> str:
     return OPEN_TAG.sub(fn, doc)
 
 
-def number(doc: str, errors: list[str]) -> dict[str, dict[str, str]]:
+def number(doc: str, errors: list[str], lang: str = "zh") -> dict[str, dict[str, str]]:
+    is_en = (lang or "").lower().startswith("en")
+    fmts = FORMATS_EN if is_en else FORMATS
     labels: dict[str, dict[str, str]] = {}
     sec = [0, 0]
     counters: dict[str, int] = {}
@@ -76,9 +79,9 @@ def number(doc: str, errors: list[str]) -> dict[str, dict[str, str]]:
             else:
                 sec[1] += 1
                 num = f"{sec[0]}.{sec[1]}"
-            text = FORMATS["sec"].format(n=num)
+            text = fmts["sec"].format(n=num)
         elif kind == "thm":
-            k = a.get("data-kind", "定理")
+            k = a.get("data-kind", "Theorem" if is_en else "定理")
             if a.get("data-num"):
                 num = a["data-num"]
             else:
@@ -88,7 +91,7 @@ def number(doc: str, errors: list[str]) -> dict[str, dict[str, str]]:
         else:
             counters[kind] = counters.get(kind, 0) + 1
             num = str(counters[kind])
-            text = FORMATS[kind].format(n=num)
+            text = fmts[kind].format(n=num)
         if key in labels:
             errors.append(f"重复标签：{key}")
         labels[key] = {"kind": kind, "num": num, "id": anchor(key), "text": text}

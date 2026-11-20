@@ -1,10 +1,11 @@
 """行内双向转换（F_inline / G_inline）、花括号配对解析与按句最小替换。"""
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass
 import difflib
 import re
-
+from typing import Any
 
 @dataclass(frozen=True)
 class SyncSpec:
@@ -18,27 +19,42 @@ class SyncSpec:
     proof_env: tuple[str, str] = ("proof", "证明")
     bib_tex: str = r"\bibliography{html/src/refs}"
     colspecs: tuple[tuple[int, str], ...] = ((2, "lX"), (3, r"p{0.24\textwidth}p{0.19\textwidth}X"))
+    heading_cmds: tuple[str, str, str] = ("section", "subsection", "subsubsection")
 
     def colspec_for(self, ncols: int) -> str:
         return dict(self.colspecs).get(ncols, "l" * max(0, ncols - 1) + "X")
 
+    def to_dict(self) -> dict[str, Any]:
+        return {"ref_templates": [list(x) for x in self.ref_templates], "auto_envs": [list(x) for x in self.auto_envs], "num_envs": [list(x) for x in self.num_envs], "proof_env": list(self.proof_env), "bib_tex": self.bib_tex, "colspecs": [[k, v] for k, v in self.colspecs], "heading_cmds": list(self.heading_cmds)}
+
+    @classmethod
+    def from_dict(cls, d: Mapping[str, Any]) -> SyncSpec:
+        b = cls()
+        hc = [str(x) for x in d["heading_cmds"]] if "heading_cmds" in d else list(b.heading_cmds)
+        return cls(
+            tuple((str(x), str(y), str(z)) for x, y, z in d["ref_templates"]) if "ref_templates" in d else b.ref_templates,
+            tuple((str(x), str(y)) for x, y in d["auto_envs"]) if "auto_envs" in d else b.auto_envs,
+            tuple((str(x), str(y)) for x, y in d["num_envs"]) if "num_envs" in d else b.num_envs,
+            (str(d["proof_env"][0]), str(d["proof_env"][1])) if "proof_env" in d else b.proof_env,
+            str(d.get("bib_tex", b.bib_tex)),
+            tuple((int(k), str(v)) for k, v in d["colspecs"]) if "colspecs" in d else b.colspecs,
+            (hc[0], hc[1], hc[2]),
+        )
 
 KALMAN_SPEC = SyncSpec()
+BOOK_SPEC = SyncSpec(
+    ref_templates=KALMAN_SPEC.ref_templates + (("alg:", r"算法~\ref{", ""), ("prop:", r"命题~\ref{", ""), ("lem:", r"引理~\ref{", ""), ("def:", r"定义~\ref{", ""), ("ass:", r"假设~\ref{", ""), ("ch:", r"第~\ref{", "~章")),
+    auto_envs=KALMAN_SPEC.auto_envs + (("proposition", "命题"), ("lemma", "引理"), ("definition", "定义"), ("assumption", "假设"), ("remark", "注")),
+    heading_cmds=("chapter", "section", "subsection"),
+)
+EN_SPEC = SyncSpec(ref_templates=(("eq:", r"Eq.~\eqref{", ""), ("thm:", r"Theorem~\ref{", ""), ("cor:", r"Corollary~\ref{", ""), ("prop:", r"Proposition~\ref{", ""), ("lem:", r"Lemma~\ref{", ""), ("def:", r"Definition~\ref{", ""), ("ass:", r"Assumption~\ref{", ""), ("prob:", r"Problem~\ref{", ""), ("rem:", r"Remark~\ref{", ""), ("ex:", r"Example~\ref{", ""), ("alg:", r"Algorithm~\ref{", ""), ("fig:", r"Fig.~\ref{", ""), ("tab:", r"Table~\ref{", ""), ("sec:", r"Section~\ref{", "")), auto_envs=(("theorem", "Theorem"), ("corollary", "Corollary"), ("proposition", "Proposition"), ("lemma", "Lemma"), ("definition", "Definition"), ("assumption", "Assumption"), ("example", "Example"), ("remark", "Remark")), num_envs=(("theoremn", "Theorem"), ("problemn", "Problem"), ("remarkn", "Remark")), proof_env=("proof", "Proof"))
 _PLACEHOLDER_RE = re.compile(r"\x00S(\d+)\x00")
 _MD_XREF_RE = re.compile(r"\{@([\w:.-]+)(?:\|([^}\n]+))?\}")
+_MD_URL_RE = re.compile(r'<a\s+href="([^"\n]+)">\1</a>')
 _CLOSERS = frozenset("”’）)】』》\"'")
-_TEX_CMDS = (
-    (r"\eqref{", "({{@{0}|n}})", False), (r"\ref{", "{{@{0}|n}}", False),
-    (r"\cite{", "[@{0}]", False), (r"\htdfnmark{", "[^{0}]", False),
-    (r"\textbf{", "**{0}**", True), (r"\emph{", "*{0}*", True),
-)
-_MD_PATS = (
-    (re.compile(r"\(\{@(eq:[\w:.-]+)\|n\}\)"), r"\eqref{{{0}}}", False),
-    (re.compile(r"\[@([^\]]+)\]"), r"\cite{{{0}}}", False),
-    (re.compile(r"\[\^([\w-]+)\](?!:)"), r"\htdfnmark{{{0}}}", False),
-    (re.compile(r"\*\*(.+?)\*\*", re.S), r"\textbf{{{0}}}", True),
-)
-
+_TEX_CMDS = ((r"\eqref{", "({{@{0}|n}})", False), (r"\ref{", "{{@{0}|n}}", False), (r"\cite{", "[@{0}]", False), (r"\htdfnmark{", "[^{0}]", False), (r"\textbf{", "**{0}**", True), (r"\emph{", "*{0}*", True))
+_MD_PATS = ((re.compile(r"\(\{@((?:[\w.-]+:)?eq:[\w:.-]+)\|n\}\)"), r"\eqref{{{0}}}", False), (re.compile(r"\[@([^\]]+)\]"), r"\cite{{{0}}}", False), (re.compile(r"\[\^([\w-]+)\](?!:)"), r"\htdfnmark{{{0}}}", False), (re.compile(r"\*\*(.+?)\*\*", re.S), r"\textbf{{{0}}}", True))
+_pf_ok = lambda key, pf: key.startswith(pf) or f":{pf}" in key
 
 def grab_braced(s: str, pos: int) -> tuple[str, int] | None:
     if pos < 0 or pos >= len(s) or s[pos] != "{":
@@ -47,10 +63,8 @@ def grab_braced(s: str, pos: int) -> tuple[str, int] | None:
     while i < len(s) and depth > 0:
         if s[i] == "\\" and i + 1 < len(s):
             i += 2; continue
-        depth += 1 if s[i] == "{" else (-1 if s[i] == "}" else 0)
-        i += 1
+        depth += 1 if s[i] == "{" else (-1 if s[i] == "}" else 0); i += 1
     return (s[pos + 1 : i - 1], i) if depth == 0 else None
-
 
 def grab_bracketed(s: str, pos: int) -> tuple[str, int] | None:
     if pos < 0 or pos >= len(s) or s[pos] != "[":
@@ -66,11 +80,10 @@ def grab_bracketed(s: str, pos: int) -> tuple[str, int] | None:
         i += 1
     return (s[pos + 1 : i - 1], i) if b_d == 0 else None
 
-
 def strip_tex_comment(line: str) -> str:
     i = 0
     while i < len(line):
-        if line.startswith(r"\texttt{", i) and (res := grab_braced(line, i + 7)):
+        if (line.startswith(r"\texttt{", i) and (res := grab_braced(line, i + 7))) or (line.startswith(r"\url{", i) and (res := grab_braced(line, i + 4))):
             i = res[1]
         elif line[i] == "\\" and i + 1 < len(line):
             i += 2
@@ -80,14 +93,17 @@ def strip_tex_comment(line: str) -> str:
             i += 1
     return line
 
-
 def _stash_protected(s: str, *, is_tex: bool) -> tuple[str, list[str]]:
     stash, buf, i, n = [], [], 0, len(s)
     while i < n:
         if is_tex and s.startswith(r"\texttt{", i) and (res := grab_braced(s, i + 7)):
             stash.append(f"`{res[0]}`"); buf.append(f"\x00S{len(stash) - 1}\x00"); i = res[1]
+        elif is_tex and s.startswith(r"\url{", i) and (res := grab_braced(s, i + 4)):
+            stash.append(f'<a href="{res[0]}">{res[0]}</a>'); buf.append(f"\x00S{len(stash) - 1}\x00"); i = res[1]
         elif not is_tex and s[i] == "`" and (j := s.find("`", i + 1)) != -1 and "\n" not in s[i + 1 : j]:
             stash.append(rf"\texttt{{{s[i + 1 : j]}}}"); buf.append(f"\x00S{len(stash) - 1}\x00"); i = j + 1
+        elif not is_tex and (um := _MD_URL_RE.match(s, i)):
+            stash.append(rf"\url{{{um.group(1)}}}"); buf.append(f"\x00S{len(stash) - 1}\x00"); i = um.end()
         elif s[i] == "\\" and i + 1 < n and s[i + 1] in ("$%&_#{}\\" if is_tex else "$"):
             buf.append(s[i : i + 2]); i += 2
         elif s[i] == "$" and (i + 1 >= n or s[i + 1] != "$"):
@@ -102,14 +118,18 @@ def _stash_protected(s: str, *, is_tex: bool) -> tuple[str, list[str]]:
             buf.append(s[i]); i += 1
     return "".join(buf), stash
 
-
 def _tex_body_to_md(text: str, spec: SyncSpec) -> str:
-    out, i, n = [], 0, len(text)
+    out, i, n, trig = [], 0, len(text), frozenset(op[0] for _, op, _ in spec.ref_templates) | frozenset("\\~")
     while i < n:
+        if text[i] not in trig:
+            j = i + 1
+            while j < n and text[j] not in trig:
+                j += 1
+            out.append(text[i:j]); i = j; continue
         ref_hit = next(
             ((res[0], res[1] + len(sf)) for pf, op, sf in spec.ref_templates
              if not (i > 0 and op.startswith("式~") and text[i - 1] in "公等原上下形系达开近根定通")
-             and text.startswith(op, i) and (res := grab_braced(text, i + len(op) - 1)) and res[0].startswith(pf) and text.startswith(sf, res[1])),
+             and text.startswith(op, i) and (res := grab_braced(text, i + len(op) - 1)) and _pf_ok(res[0], pf) and text.startswith(sf, res[1])),
             None,
         )
         if ref_hit:
@@ -118,6 +138,8 @@ def _tex_body_to_md(text: str, spec: SyncSpec) -> str:
             out.append(f"{{@{br[0]}|{_tex_body_to_md(cr[0], spec)}}}"); i = cr[1]
         elif hit := next(((fmt, rec, cr) for cmd, fmt, rec in _TEX_CMDS if text.startswith(cmd, i) and (cr := grab_braced(text, i + len(cmd) - 1))), None):
             out.append(hit[0].format(_tex_body_to_md(hit[2][0], spec) if hit[1] else hit[2][0])); i = hit[2][1]
+        elif text.startswith(r"\enspace", i) and (i + 8 == n or not text[i + 8].isalpha()):
+            j = i + 8; out.append(" "); i = j + (2 if text.startswith("{}", j) else (1 if j < n and text[j] == " " else 0))
         elif text.startswith((r"\_", r"\&", r"\%", r"\#"), i):
             out.append(text[i + 1]); i += 2
         elif text.startswith(r"\~{}", i):
@@ -126,50 +148,44 @@ def _tex_body_to_md(text: str, spec: SyncSpec) -> str:
             out.append(" " if text[i] == "~" else text[i]); i += 1
     return "".join(out)
 
-
 def tex_inline_to_md(s: str, spec: SyncSpec = KALMAN_SPEC) -> str:
     lines = [ln for ln in s.split("\n") if not re.match(r"^\s*%", ln)] if "\n" in s else [s]
     protected, stash = _stash_protected("\n".join(strip_tex_comment(ln) for ln in lines), is_tex=True)
     return _PLACEHOLDER_RE.sub(lambda m: stash[int(m.group(1))], _tex_body_to_md(protected, spec))
 
-
 def _find_single_star(text: str, start: int) -> int:
     j = start
     while j < len(text) and text[j] != "\n":
         if text.startswith("**", j):
-            eb = text.find("**", j + 2)
-            j = eb + 2 if eb != -1 else j + 2
+            eb = text.find("**", j + 2); j = eb + 2 if eb != -1 else j + 2
         elif text[j] == "*":
             return j
         else:
             j += 1
     return -1
 
-
 def _md_body_to_tex(text: str, spec: SyncSpec) -> str:
     out, i, n = [], 0, len(text)
     while i < n:
+        if text[i] not in "([{*^_&%#":
+            j = i + 1
+            while j < n and text[j] not in "([{*^_&%#":
+                j += 1
+            out.append(text[i:j]); i = j; continue
         if hit := next(((m, fmt, rec) for rx, fmt, rec in _MD_PATS if (m := rx.match(text, i))), None):
-            m, fmt, rec = hit
-            out.append(fmt.format(_md_body_to_tex(m.group(1), spec) if rec else m.group(1))); i = m.end()
+            m, fmt, rec = hit; out.append(fmt.format(_md_body_to_tex(m.group(1), spec) if rec else m.group(1))); i = m.end()
         elif m := _MD_XREF_RE.match(text, i):
             key, mod = m.group(1), m.group(2)
-            if mod is None:
-                out.append(next((f"{op}{key}}}{sf}" for pf, op, sf in spec.ref_templates if key.startswith(pf)), rf"\ref{{{key}}}"))
-            else:
-                out.append(rf"\ref{{{key}}}" if mod == "n" else rf"\hyperref[{key}]{{{_md_body_to_tex(mod, spec)}}}")
-            i = m.end()
+            out.append(next((f"{op}{key}}}{sf}" for pf, op, sf in spec.ref_templates if _pf_ok(key, pf)), rf"\ref{{{key}}}") if mod is None else (rf"\ref{{{key}}}" if mod == "n" else rf"\hyperref[{key}]{{{_md_body_to_tex(mod, spec)}}}")); i = m.end()
         elif text[i] == "*" and (i == 0 or text[i - 1] != "*") and (j := _find_single_star(text, i + 1)) > i + 1:
             out.append(rf"\emph{{{_md_body_to_tex(text[i + 1 : j], spec)}}}"); i = j + 1
         else:
             out.append(("\\" + text[i]) if text[i] in "_&%#" else text[i]); i += 1
     return "".join(out)
 
-
 def md_inline_to_tex(s: str, spec: SyncSpec = KALMAN_SPEC) -> str:
     protected, stash = _stash_protected(s, is_tex=False)
     return _PLACEHOLDER_RE.sub(lambda m: stash[int(m.group(1))], _md_body_to_tex(protected, spec))
-
 
 def split_sentences(text: str, *, is_tex: bool = False) -> list[str]:
     if not text:
@@ -180,13 +196,14 @@ def split_sentences(text: str, *, is_tex: bool = False) -> list[str]:
         if ch == "\\" and i + 1 < n and not in_code:
             i += 2; continue
         if is_tex and not in_math and not in_code and ch == "%":
-            nl = text.find("\n", i)
-            i = n if nl == -1 else nl + 1; continue
+            nl = text.find("\n", i); i = n if nl == -1 else nl + 1; continue
         if not in_math and ch == "`":
             in_code, i = not in_code, i + 1; continue
         if not in_code and ch == "$" and (i + 1 >= n or text[i + 1] != "$"):
             in_math, i = not in_math, i + 1; continue
         if not (in_math or in_code):
+            if not is_tex and c_d == 0 and b_d == 0 and (um := _MD_URL_RE.match(text, i)):
+                i = um.end(); continue
             if not is_tex and c_d == 0 and b_d == 0 and ch == "*":
                 if text.startswith("**", i) and (eb := text.find("**", i + 2)) != -1:
                     i = eb + 2; continue
@@ -208,7 +225,6 @@ def split_sentences(text: str, *, is_tex: bool = False) -> list[str]:
                     sents.append(text[start:j]); start = i = j; continue
         i += 1
     return [*sents, text[start:]] if start < n else sents
-
 
 def patch_paragraph_minimal(orig_tex: str, new_md: str, spec: SyncSpec = KALMAN_SPEC) -> str:
     if tex_inline_to_md(orig_tex, spec) == new_md:

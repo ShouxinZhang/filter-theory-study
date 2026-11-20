@@ -5,7 +5,7 @@ from pathlib import Path
 import re
 
 from .numbering import REF, _keep_loc, attrs
-from .svgtheme import inline_svg
+from .svgtheme import inline_data_svg, inline_svg
 from .texfig import compile_tex
 from .toc import _build_toc_html
 
@@ -32,7 +32,9 @@ def render(
     build_dir: Path,
     force: bool,
     errors: list[str],
+    lang: str = "zh",
 ) -> tuple[str, int]:
+    is_en = (lang or "").lower().startswith("en")
     n_svg = 0
     titles_by_id = {v["id"]: v["text"] for v in labels.values()}
 
@@ -74,10 +76,11 @@ def render(
         if "data-label" not in a:
             return m.group(0)
         L = labels[a["data-label"]]
-        title = f"（{a['data-title']}）" if a.get("data-title") else ""
+        title = (f" ({a['data-title']})" if is_en else f"（{a['data-title']}）") if a.get("data-title") else ""
         loc = _keep_loc(a)
         if p_open:
-            head = f'<span class="thmhead">{L["text"]}</span><span class="thmtitle">{title}</span>　'
+            sep = "&emsp;" if is_en else "　"
+            head = f'<span class="thmhead">{L["text"]}</span><span class="thmtitle">{title}</span>{sep}'
             return f'<div class="thm{extra_cls}" id="{L["id"]}"{loc}>{gap}{p_open}{head}'
         lead = f'<p class="thm-lead"><span class="thmhead">{L["text"]}</span><span class="thmtitle">{title}</span></p>'
         return f'<div class="thm{extra_cls}" id="{L["id"]}"{loc}>{gap or chr(10)}{lead}{gap}'
@@ -101,13 +104,20 @@ def render(
             if svg:
                 n_svg += 1
                 body = body.replace("<!--TEX-->", inline_svg(svg, L["id"], L["text"], titles_by_id))
+        elif cls == "fig" and (im := re.search(r'<img\s+src="([^"]+\.svg)"[^>]*>', body)):
+            svg_p = (src_dir / im.group(1)).resolve()
+            if svg_p.is_file() and svg_p.is_relative_to(src_dir.resolve()):
+                raw_svg = svg_p.read_text(encoding="utf-8")
+                if 'data-htd-inline="1"' in raw_svg:
+                    n_svg += 1
+                    body = body[: im.start()] + inline_data_svg(raw_svg, L["id"], L["text"]) + body[im.end() :]
         loc = _keep_loc(a, include_tex=True)
         return f'<figure class="{cls}" id="{L["id"]}"{loc}>{body}</figure>'
 
     doc = re.sub(r'<figure class="(fig|alg|tbl)"([^>]*)>(.*?)</figure>', fig_fn, doc, flags=re.S)
 
     if "<!--TOC-->" in doc and toc:
-        doc = doc.replace("<!--TOC-->", _build_toc_html(toc))
+        doc = doc.replace("<!--TOC-->", _build_toc_html(toc, lang=lang))
     else:
         doc = doc.replace("<!--TOC-->", "")
 

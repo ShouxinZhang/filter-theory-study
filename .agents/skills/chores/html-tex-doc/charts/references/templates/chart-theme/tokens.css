@@ -1,0 +1,18 @@
+.ec-svg {
+  /* Replace fallbacks or bridge custom CSS variables */
+  --ec-card: var(--card, #FAF9F5);
+  --ec-fg: var(--fg, #141413);
+  --ec-muted: var(--muted, #73726C);
+  --ec-rule: var(--rule, #D1CFC5);
+  --ec-border: var(--ui-border, #E2E0D8);
+
+  /* Semantic series colors */
+  --ec-primary: #2B6CB0;
+  --ec-secondary: #C53030;
+  --ec-accent: #2F855A;
+  --ec-aux: #6B46C1;
+
+  /* Typography */
+  --ec-font-prose: "C059", "New Century Schoolbook", "SimSun", "Noto Serif CJK SC", Georgia, serif;
+  --ec-font-math: "Latin Modern Math", "TeX Gyre Schola Math", "STIXGeneral", serif;
+}
