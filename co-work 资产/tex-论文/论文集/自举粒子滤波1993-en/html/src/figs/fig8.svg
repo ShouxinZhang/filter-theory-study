@@ -1,0 +1,218 @@
+<svg xmlns="http://www.w3.org/2000/svg" data-htd-inline="1" viewBox="0 0 880 480" width="880" height="480" class="ec-svg">
+  <style>
+.ec-svg {
+  font-family: var(--ec-font-prose);
+  font-feature-settings: "pnum" on, "lnum" on, "liga" on;
+}
+.ec-card-bg {
+  fill: var(--ec-card);
+  stroke: var(--ec-border);
+  stroke-width: 1;
+}
+.ec-title {
+  fill: var(--ec-fg);
+  font-size: 17px;
+  font-weight: 600;
+}
+.ec-subtitle {
+  fill: var(--ec-muted);
+  font-size: 12.8px;
+}
+.ec-grid {
+  stroke: var(--ec-rule);
+  stroke-width: 1;
+}
+.ec-grid-subtle {
+  stroke: var(--ec-rule);
+  stroke-width: 0.8;
+  stroke-dasharray: 3 4;
+  opacity: 0.7;
+}
+.ec-axis {
+  stroke: var(--ec-fg);
+  stroke-width: 1.15;
+}
+.ec-tick {
+  fill: var(--ec-muted);
+  font-family: var(--ec-font-math);
+  font-size: 12px;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.ec-axis-label {
+  fill: var(--ec-fg);
+  font-size: 13.5px;
+  font-weight: 400;
+}
+.ec-line {
+  fill: none;
+  stroke-width: 2.3;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.ec-line-thin {
+  fill: none;
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.ec-line-dashed {
+  stroke-dasharray: 7 5;
+}
+.ec-band-edge {
+  fill: none;
+  stroke-width: 1.15;
+  stroke-dasharray: 4 3.5;
+  opacity: 0.85;
+}
+.ec-ref-line {
+  stroke: var(--ec-fg);
+  stroke-width: 1.3;
+  stroke-dasharray: 5 4;
+  opacity: 0.85;
+}
+.ec-annot {
+  fill: var(--ec-fg);
+  font-size: 12.5px;
+  font-weight: 400;
+  paint-order: stroke;
+  stroke: var(--ec-card);
+  stroke-width: 4;
+  stroke-linejoin: round;
+}
+.ec-annot-muted {
+  fill: var(--ec-muted);
+  font-size: 12px;
+  paint-order: stroke;
+  stroke: var(--ec-card);
+  stroke-width: 4;
+  stroke-linejoin: round;
+}
+.ec-legend-text {
+  fill: var(--ec-fg);
+  font-size: 13px;
+  font-weight: 400;
+}
+.ec-math-fg {
+  color: var(--ec-fg);
+}
+.ec-math-muted {
+  color: var(--ec-muted);
+}
+.ec-m-var,
+.ec-m-num {
+  font-family: var(--ec-font-math);
+  font-style: normal;
+  font-weight: 400;
+}
+.ec-m-sub,
+.ec-m-sub-i {
+  font-family: var(--ec-font-math);
+  font-style: normal;
+  font-size: 74%;
+  baseline-shift: sub;
+  font-weight: 400;
+}
+.ec-s-primary { stroke: var(--ec-primary); }
+.ec-s-secondary { stroke: var(--ec-secondary); }
+.ec-s-accent { stroke: var(--ec-accent); }
+.ec-s-aux { stroke: var(--ec-aux); }
+.ec-s-fg { stroke: var(--ec-fg); }
+.ec-f-primary { fill: var(--ec-primary); }
+.ec-f-secondary { fill: var(--ec-secondary); }
+.ec-f-accent { fill: var(--ec-accent); }
+.ec-f-aux { fill: var(--ec-aux); }
+.ec-f-fg { fill: var(--ec-fg); }
+.ec-svg {
+  /* Bridge html-tex-doc page theme variables with editorial light fallbacks */
+  --ec-card: var(--card, #FAF9F5);
+  --ec-fg: var(--fg, #141413);
+  --ec-muted: var(--muted, #73726C);
+  --ec-rule: var(--rule, #D1CFC5);
+  --ec-border: var(--ui-border, #E2E0D8);
+
+  /* Semantic series palette */
+  --ec-primary: #629987;
+  --ec-secondary: #EB6834;
+  --ec-accent: #6A9BCC;
+  --ec-aux: #827DBD;
+
+  /* Typography: New Century + standard Songti + OpenType Math */
+  --ec-font-prose: "C059", "New Century Schoolbook", "TeX Gyre Schola",
+    "SimSun", "宋体", "Songti SC", "Noto Serif CJK SC", "Source Han Serif SC",
+    Georgia, serif;
+  --ec-font-math: "Latin Modern Math", "TeX Gyre Schola Math", "STIXGeneral", serif;
+}
+  </style>
+  <defs><clipPath id="ec-clip-060fd163"><rect x="74.0" y="93.0" width="778.0" height="333.0"/></clipPath><symbol id="ec-glyph-triangle" viewBox="-12 -12 24 24"><polygon points="0.00,-10.00 -8.66,6.50 8.66,6.50"
+           fill="var(--ec-glyph-fill, var(--ec-card, #FAF9F5))"
+           stroke="currentColor" stroke-width="3.0" stroke-linejoin="round"/></symbol></defs>
+  <rect class="ec-card-bg" width="880" height="480" rx="8"/>
+  <g class="ec-math-fg"><text class="ec-title" x="28.00" y="30.00">Bootstrap Filter </text><svg x="168.42" y="21.50" width="11.00" height="8.71" viewBox="0 -442 572 453" overflow="visible"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D465" d="M52 289Q59 331 106 386T222 442Q257 442 286 424T329 379Q371 442 430 442Q467 442 494 420T522 361Q522 332 508 314T481 292T458 288Q439 288 427 299T415 328Q415 374 465 391Q454 404 425 404Q412 404 406 402Q368 386 350 336Q290 115 290 78Q290 50 306 38T341 26Q378 26 414 59T463 140Q466 150 469 151T485 153H489Q504 153 504 145Q504 144 502 134Q486 77 440 33T333 -11Q263 -11 227 52Q186 -10 133 -10H127Q78 -10 57 16T35 71Q35 103 54 123T99 143Q142 143 142 101Q142 81 130 66T107 46T94 41L91 40Q91 39 97 36T113 29T132 26Q168 26 194 71Q203 87 217 139T245 247T261 313Q266 340 266 352Q266 380 251 392T217 404Q177 404 142 372T93 290Q91 281 88 280T72 278H58Q52 284 52 289Z"></path></g></g></g></svg><text class="ec-title" x="179.42" y="30.00">-Position Estimate</text></g>
+  <g class="ec-math-muted"><text class="ec-subtitle" x="28.00" y="50.00">Posterior mean and 95% interval for </text><svg x="252.51" y="43.60" width="14.82" height="8.68" viewBox="0 -442 1023.4 599.8" overflow="visible"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="msub"><g data-mml-node="mi"><path data-c="1D465" d="M52 289Q59 331 106 386T222 442Q257 442 286 424T329 379Q371 442 430 442Q467 442 494 420T522 361Q522 332 508 314T481 292T458 288Q439 288 427 299T415 328Q415 374 465 391Q454 404 425 404Q412 404 406 402Q368 386 350 336Q290 115 290 78Q290 50 306 38T341 26Q378 26 414 59T463 140Q466 150 469 151T485 153H489Q504 153 504 145Q504 144 502 134Q486 77 440 33T333 -11Q263 -11 227 52Q186 -10 133 -10H127Q78 -10 57 16T35 71Q35 103 54 123T99 143Q142 143 142 101Q142 81 130 66T107 46T94 41L91 40Q91 39 97 36T113 29T132 26Q168 26 194 71Q203 87 217 139T245 247T261 313Q266 340 266 352Q266 380 251 392T217 404Q177 404 142 372T93 290Q91 281 88 280T72 278H58Q52 284 52 289Z"></path></g><g data-mml-node="mi" transform="translate(605,-150) scale(0.707)"><path data-c="1D458" d="M121 647Q121 657 125 670T137 683Q138 683 209 688T282 694Q294 694 294 686Q294 679 244 477Q194 279 194 272Q213 282 223 291Q247 309 292 354T362 415Q402 442 438 442Q468 442 485 423T503 369Q503 344 496 327T477 302T456 291T438 288Q418 288 406 299T394 328Q394 353 410 369T442 390L458 393Q446 405 434 405H430Q398 402 367 380T294 316T228 255Q230 254 243 252T267 246T293 238T320 224T342 206T359 180T365 147Q365 130 360 106T354 66Q354 26 381 26Q429 26 459 145Q461 153 479 153H483Q499 153 499 144Q499 139 496 130Q455 -11 378 -11Q333 -11 305 15T277 90Q277 108 280 121T283 145Q283 167 269 183T234 206T200 217T182 220H180Q168 178 159 139T145 81T136 44T129 20T122 7T111 -2Q98 -11 83 -11Q66 -11 57 -1T48 16Q48 26 85 176T158 471L195 616Q196 629 188 632T149 637H144Q134 637 131 637T124 640T121 647Z"></path></g></g></g></g></svg><text class="ec-subtitle" x="267.33" y="50.00"> · Coverage 24/24</text></g>
+  <line x1="28.0" y1="69.0" x2="46.0" y2="69.0" stroke="var(--ec-primary)" stroke-width="2.4" stroke-linecap="round"/>
+  <text class="ec-legend-text" x="52.0" y="73.0">Bootstrap filter mean</text>
+  <rect x="210.8" y="63.0" width="18" height="11" rx="2" fill="var(--ec-primary)" fill-opacity="0.22" stroke="var(--ec-primary)" stroke-width="1"/>
+  <text class="ec-legend-text" x="234.8" y="73.0">95% probability interval</text>
+  <use href="#ec-glyph-triangle" x="407.06" y="63.50" width="11.00" height="11.00" style="color:var(--ec-fg);--ec-glyph-fill:var(--ec-card)"/>
+  <g class="ec-math-fg"><text class="ec-legend-text" x="427.56" y="73.00">True </text><svg x="459.28" y="66.50" width="15.05" height="8.82" viewBox="0 -442 1023.4 599.8" overflow="visible"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="msub"><g data-mml-node="mi"><path data-c="1D465" d="M52 289Q59 331 106 386T222 442Q257 442 286 424T329 379Q371 442 430 442Q467 442 494 420T522 361Q522 332 508 314T481 292T458 288Q439 288 427 299T415 328Q415 374 465 391Q454 404 425 404Q412 404 406 402Q368 386 350 336Q290 115 290 78Q290 50 306 38T341 26Q378 26 414 59T463 140Q466 150 469 151T485 153H489Q504 153 504 145Q504 144 502 134Q486 77 440 33T333 -11Q263 -11 227 52Q186 -10 133 -10H127Q78 -10 57 16T35 71Q35 103 54 123T99 143Q142 143 142 101Q142 81 130 66T107 46T94 41L91 40Q91 39 97 36T113 29T132 26Q168 26 194 71Q203 87 217 139T245 247T261 313Q266 340 266 352Q266 380 251 392T217 404Q177 404 142 372T93 290Q91 281 88 280T72 278H58Q52 284 52 289Z"></path></g><g data-mml-node="mi" transform="translate(605,-150) scale(0.707)"><path data-c="1D458" d="M121 647Q121 657 125 670T137 683Q138 683 209 688T282 694Q294 694 294 686Q294 679 244 477Q194 279 194 272Q213 282 223 291Q247 309 292 354T362 415Q402 442 438 442Q468 442 485 423T503 369Q503 344 496 327T477 302T456 291T438 288Q418 288 406 299T394 328Q394 353 410 369T442 390L458 393Q446 405 434 405H430Q398 402 367 380T294 316T228 255Q230 254 243 252T267 246T293 238T320 224T342 206T359 180T365 147Q365 130 360 106T354 66Q354 26 381 26Q429 26 459 145Q461 153 479 153H483Q499 153 499 144Q499 139 496 130Q455 -11 378 -11Q333 -11 305 15T277 90Q277 108 280 121T283 145Q283 167 269 183T234 206T200 217T182 220H180Q168 178 159 139T145 81T136 44T129 20T122 7T111 -2Q98 -11 83 -11Q66 -11 57 -1T48 16Q48 26 85 176T158 471L195 616Q196 629 188 632T149 637H144Q134 637 131 637T124 640T121 647Z"></path></g></g></g></g></svg></g>
+  <line class="ec-grid" x1="74.0" x2="852.0" y1="403.80" y2="403.80"/>
+  <text class="ec-tick" x="65.0" y="403.80" dy="0.35em" text-anchor="end">-0.1</text>
+  <line class="ec-grid" x1="74.0" x2="852.0" y1="348.30" y2="348.30"/>
+  <text class="ec-tick" x="65.0" y="348.30" dy="0.35em" text-anchor="end">-0.05</text>
+  <line class="ec-grid" x1="74.0" x2="852.0" y1="292.80" y2="292.80"/>
+  <text class="ec-tick" x="65.0" y="292.80" dy="0.35em" text-anchor="end">0</text>
+  <line class="ec-grid" x1="74.0" x2="852.0" y1="237.30" y2="237.30"/>
+  <text class="ec-tick" x="65.0" y="237.30" dy="0.35em" text-anchor="end">0.05</text>
+  <line class="ec-grid" x1="74.0" x2="852.0" y1="181.80" y2="181.80"/>
+  <text class="ec-tick" x="65.0" y="181.80" dy="0.35em" text-anchor="end">0.1</text>
+  <line class="ec-grid" x1="74.0" x2="852.0" y1="126.30" y2="126.30"/>
+  <text class="ec-tick" x="65.0" y="126.30" dy="0.35em" text-anchor="end">0.15</text>
+  <g clip-path="url(#ec-clip-060fd163)">
+  <path d="M74.00,311.67L107.83,314.00L141.65,318.83L175.48,316.91L209.30,314.52L243.13,313.04L276.96,314.28L310.78,316.14L344.61,308.22L378.43,302.56L412.26,292.82L446.09,280.44L479.91,265.88L513.74,253.65L547.57,243.16L581.39,230.87L615.22,222.56L649.04,208.41L682.87,198.03L716.70,188.76L750.52,175.31L784.35,161.97L818.17,148.09L852.00,131.90L852.00,199.83L818.17,207.45L784.35,215.15L750.52,224.09L716.70,231.65L682.87,236.63L649.04,242.67L615.22,250.70L581.39,255.84L547.57,262.83L513.74,270.39L479.91,280.01L446.09,289.36L412.26,298.95L378.43,349.61L344.61,365.45L310.78,379.75L276.96,383.01L243.13,389.00L209.30,388.76L175.48,392.29L141.65,391.81L107.83,394.08L74.00,396.52Z" fill="var(--ec-primary)" fill-opacity="0.19"/>
+  <path class="ec-band-edge" stroke="var(--ec-primary)" d="M74.00,311.67L107.83,314.00L141.65,318.83L175.48,316.91L209.30,314.52L243.13,313.04L276.96,314.28L310.78,316.14L344.61,308.22L378.43,302.56L412.26,292.82L446.09,280.44L479.91,265.88L513.74,253.65L547.57,243.16L581.39,230.87L615.22,222.56L649.04,208.41L682.87,198.03L716.70,188.76L750.52,175.31L784.35,161.97L818.17,148.09L852.00,131.90"/>
+  <path class="ec-band-edge" stroke="var(--ec-primary)" d="M74.00,396.52L107.83,394.08L141.65,391.81L175.48,392.29L209.30,388.76L243.13,389.00L276.96,383.01L310.78,379.75L344.61,365.45L378.43,349.61L412.26,298.95L446.09,289.36L479.91,280.01L513.74,270.39L547.57,262.83L581.39,255.84L615.22,250.70L649.04,242.67L682.87,236.63L716.70,231.65L750.52,224.09L784.35,215.15L818.17,207.45L852.00,199.83"/>
+  <path class="ec-line" stroke="var(--ec-primary)" d="M74.00,347.42L107.83,352.66L141.65,356.30L175.48,354.83L209.30,355.99L243.13,357.52L276.96,356.75L310.78,355.89L344.61,340.74L378.43,326.01L412.26,295.06L446.09,285.34L479.91,274.06L513.74,264.26L547.57,255.84L581.39,246.94L615.22,240.85L649.04,230.32L682.87,221.51L716.70,214.63L750.52,204.33L784.35,193.37L818.17,182.95L852.00,172.25"/>
+  <use href="#ec-glyph-triangle" x="69.50" y="343.80" width="9.00" height="9.00" style="color:var(--ec-fg);--ec-glyph-fill:var(--ec-card)"/>
+  <use href="#ec-glyph-triangle" x="103.33" y="342.48" width="9.00" height="9.00" style="color:var(--ec-fg);--ec-glyph-fill:var(--ec-card)"/>
+  <use href="#ec-glyph-triangle" x="137.15" y="340.87" width="9.00" height="9.00" style="color:var(--ec-fg);--ec-glyph-fill:var(--ec-card)"/>
+  <use href="#ec-glyph-triangle" x="170.98" y="338.47" width="9.00" height="9.00" style="color:var(--ec-fg);--ec-glyph-fill:var(--ec-card)"/>
+  <use href="#ec-glyph-triangle" x="204.80" y="333.87" width="9.00" height="9.00" style="color:var(--ec-fg);--ec-glyph-fill:var(--ec-card)"/>
+  <use href="#ec-glyph-triangle" x="238.63" y="327.86" width="9.00" height="9.00" style="color:var(--ec-fg);--ec-glyph-fill:var(--ec-card)"/>
+  <use href="#ec-glyph-triangle" x="272.46" y="322.10" width="9.00" height="9.00" style="color:var(--ec-fg);--ec-glyph-fill:var(--ec-card)"/>
+  <use href="#ec-glyph-triangle" x="306.28" y="316.27" width="9.00" height="9.00" style="color:var(--ec-fg);--ec-glyph-fill:var(--ec-card)"/>
+  <use href="#ec-glyph-triangle" x="340.11" y="309.19" width="9.00" height="9.00" style="color:var(--ec-fg);--ec-glyph-fill:var(--ec-card)"/>
+  <use href="#ec-glyph-triangle" x="373.93" y="300.28" width="9.00" height="9.00" style="color:var(--ec-fg);--ec-glyph-fill:var(--ec-card)"/>
+  <use href="#ec-glyph-triangle" x="407.76" y="290.16" width="9.00" height="9.00" style="color:var(--ec-fg);--ec-glyph-fill:var(--ec-card)"/>
+  <use href="#ec-glyph-triangle" x="441.59" y="279.38" width="9.00" height="9.00" style="color:var(--ec-fg);--ec-glyph-fill:var(--ec-card)"/>
+  <use href="#ec-glyph-triangle" x="475.41" y="268.83" width="9.00" height="9.00" style="color:var(--ec-fg);--ec-glyph-fill:var(--ec-card)"/>
+  <use href="#ec-glyph-triangle" x="509.24" y="259.06" width="9.00" height="9.00" style="color:var(--ec-fg);--ec-glyph-fill:var(--ec-card)"/>
+  <use href="#ec-glyph-triangle" x="543.07" y="249.76" width="9.00" height="9.00" style="color:var(--ec-fg);--ec-glyph-fill:var(--ec-card)"/>
+  <use href="#ec-glyph-triangle" x="576.89" y="240.95" width="9.00" height="9.00" style="color:var(--ec-fg);--ec-glyph-fill:var(--ec-card)"/>
+  <use href="#ec-glyph-triangle" x="610.72" y="232.77" width="9.00" height="9.00" style="color:var(--ec-fg);--ec-glyph-fill:var(--ec-card)"/>
+  <use href="#ec-glyph-triangle" x="644.54" y="225.09" width="9.00" height="9.00" style="color:var(--ec-fg);--ec-glyph-fill:var(--ec-card)"/>
+  <use href="#ec-glyph-triangle" x="678.37" y="216.92" width="9.00" height="9.00" style="color:var(--ec-fg);--ec-glyph-fill:var(--ec-card)"/>
+  <use href="#ec-glyph-triangle" x="712.20" y="208.20" width="9.00" height="9.00" style="color:var(--ec-fg);--ec-glyph-fill:var(--ec-card)"/>
+  <use href="#ec-glyph-triangle" x="746.02" y="199.48" width="9.00" height="9.00" style="color:var(--ec-fg);--ec-glyph-fill:var(--ec-card)"/>
+  <use href="#ec-glyph-triangle" x="779.85" y="190.30" width="9.00" height="9.00" style="color:var(--ec-fg);--ec-glyph-fill:var(--ec-card)"/>
+  <use href="#ec-glyph-triangle" x="813.67" y="180.71" width="9.00" height="9.00" style="color:var(--ec-fg);--ec-glyph-fill:var(--ec-card)"/>
+  <use href="#ec-glyph-triangle" x="847.50" y="170.81" width="9.00" height="9.00" style="color:var(--ec-fg);--ec-glyph-fill:var(--ec-card)"/>
+  </g>
+  <line class="ec-axis" x1="74.0" x2="74.0" y1="93.0" y2="426.0"/>
+  <line class="ec-axis" x1="74.0" x2="852.0" y1="426.0" y2="426.0"/>
+  <line class="ec-axis" x1="74.00" x2="74.00" y1="426.0" y2="430.5"/>
+  <text class="ec-tick" x="74.00" y="445.0" text-anchor="middle">1</text>
+  <line class="ec-axis" x1="175.48" x2="175.48" y1="426.0" y2="430.5"/>
+  <text class="ec-tick" x="175.48" y="445.0" text-anchor="middle">4</text>
+  <line class="ec-axis" x1="310.78" x2="310.78" y1="426.0" y2="430.5"/>
+  <text class="ec-tick" x="310.78" y="445.0" text-anchor="middle">8</text>
+  <line class="ec-axis" x1="446.09" x2="446.09" y1="426.0" y2="430.5"/>
+  <text class="ec-tick" x="446.09" y="445.0" text-anchor="middle">12</text>
+  <line class="ec-axis" x1="581.39" x2="581.39" y1="426.0" y2="430.5"/>
+  <text class="ec-tick" x="581.39" y="445.0" text-anchor="middle">16</text>
+  <line class="ec-axis" x1="716.70" x2="716.70" y1="426.0" y2="430.5"/>
+  <text class="ec-tick" x="716.70" y="445.0" text-anchor="middle">20</text>
+  <line class="ec-axis" x1="852.00" x2="852.00" y1="426.0" y2="430.5"/>
+  <text class="ec-tick" x="852.00" y="445.0" text-anchor="middle">24</text>
+  <g class="ec-math-fg"><text class="ec-axis-label" x="425.68" y="467.00">Time step </text><svg x="492.37" y="456.40" width="7.96" height="10.77" viewBox="0 -694 521 705" overflow="visible"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D458" d="M121 647Q121 657 125 670T137 683Q138 683 209 688T282 694Q294 694 294 686Q294 679 244 477Q194 279 194 272Q213 282 223 291Q247 309 292 354T362 415Q402 442 438 442Q468 442 485 423T503 369Q503 344 496 327T477 302T456 291T438 288Q418 288 406 299T394 328Q394 353 410 369T442 390L458 393Q446 405 434 405H430Q398 402 367 380T294 316T228 255Q230 254 243 252T267 246T293 238T320 224T342 206T359 180T365 147Q365 130 360 106T354 66Q354 26 381 26Q429 26 459 145Q461 153 479 153H483Q499 153 499 144Q499 139 496 130Q455 -11 378 -11Q333 -11 305 15T277 90Q277 108 280 121T283 145Q283 167 269 183T234 206T200 217T182 220H180Q168 178 159 139T145 81T136 44T129 20T122 7T111 -2Q98 -11 83 -11Q66 -11 57 -1T48 16Q48 26 85 176T158 471L195 616Q196 629 188 632T149 637H144Q134 637 131 637T124 640T121 647Z"></path></g></g></g></svg></g>
+  <g class="ec-math-fg" transform="translate(20, 259.5) rotate(-90)"><svg x="-36.16" y="-6.75" width="15.63" height="9.16" viewBox="0 -442 1023.4 599.8" overflow="visible"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="msub"><g data-mml-node="mi"><path data-c="1D465" d="M52 289Q59 331 106 386T222 442Q257 442 286 424T329 379Q371 442 430 442Q467 442 494 420T522 361Q522 332 508 314T481 292T458 288Q439 288 427 299T415 328Q415 374 465 391Q454 404 425 404Q412 404 406 402Q368 386 350 336Q290 115 290 78Q290 50 306 38T341 26Q378 26 414 59T463 140Q466 150 469 151T485 153H489Q504 153 504 145Q504 144 502 134Q486 77 440 33T333 -11Q263 -11 227 52Q186 -10 133 -10H127Q78 -10 57 16T35 71Q35 103 54 123T99 143Q142 143 142 101Q142 81 130 66T107 46T94 41L91 40Q91 39 97 36T113 29T132 26Q168 26 194 71Q203 87 217 139T245 247T261 313Q266 340 266 352Q266 380 251 392T217 404Q177 404 142 372T93 290Q91 281 88 280T72 278H58Q52 284 52 289Z"></path></g><g data-mml-node="mi" transform="translate(605,-150) scale(0.707)"><path data-c="1D458" d="M121 647Q121 657 125 670T137 683Q138 683 209 688T282 694Q294 694 294 686Q294 679 244 477Q194 279 194 272Q213 282 223 291Q247 309 292 354T362 415Q402 442 438 442Q468 442 485 423T503 369Q503 344 496 327T477 302T456 291T438 288Q418 288 406 299T394 328Q394 353 410 369T442 390L458 393Q446 405 434 405H430Q398 402 367 380T294 316T228 255Q230 254 243 252T267 246T293 238T320 224T342 206T359 180T365 147Q365 130 360 106T354 66Q354 26 381 26Q429 26 459 145Q461 153 479 153H483Q499 153 499 144Q499 139 496 130Q455 -11 378 -11Q333 -11 305 15T277 90Q277 108 280 121T283 145Q283 167 269 183T234 206T200 217T182 220H180Q168 178 159 139T145 81T136 44T129 20T122 7T111 -2Q98 -11 83 -11Q66 -11 57 -1T48 16Q48 26 85 176T158 471L195 616Q196 629 188 632T149 637H144Q134 637 131 637T124 640T121 647Z"></path></g></g></g></g></svg><text class="ec-axis-label" x="-20.54" y="0.00"> position</text></g>
+</svg>

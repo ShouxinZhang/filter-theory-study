@@ -1,0 +1,40 @@
+\section{递推条件状态估计}\label{sec:bayes}
+
+本文考察离散时间动态状态估计问题。设状态向量 $\bm{x}_k \in \mathbb{R}^n$ 按如下系统状态方程演化：
+\begin{equation}\label{eq:1}
+\bm{x}_{k+1} = \bm{f}_k(\bm{x}_k, \bm{w}_k)
+\end{equation}
+其中 $\bm{f}_k : \mathbb{R}^n \times \mathbb{R}^m \to \mathbb{R}^n$ 为系统状态转移函数，$\bm{w}_k \in \mathbb{R}^m$ 为零均值白噪声序列，且与过去及当前状态相互独立。假设系统噪声 $\bm{w}_k$ 的概率密度函数已知。在各离散时刻，可获得观测向量 $\bm{y}_k \in \mathbb{R}^p$，其与状态向量通过如下观测方程相联系：
+\begin{equation}\label{eq:2}
+\bm{y}_k = \bm{h}_k(\bm{x}_k, \bm{v}_k)
+\end{equation}
+其中 $\bm{h}_k : \mathbb{R}^n \times \mathbb{R}^r \to \mathbb{R}^p$ 为观测函数，$\bm{v}_k \in \mathbb{R}^r$ 为另一零均值白噪声序列，其概率密度函数已知，且与过去及当前状态以及系统噪声序列均相互独立。假设状态向量的初始概率密度函数 $p(\bm{x}_1 \mid D_0) \equiv p(\bm{x}_1)$ 已知，且对所有 $i = 1, \dots, k$，函数形式 $\bm{f}_i$ 与 $\bm{h}_i$ 均为已知。记时刻 $k$ 可用的全部观测信息集合为 $D_k = \{\bm{y}_i : i = 1, \dots, k\}$。
+
+估计目标是在给定全部可用观测信息 $D_k$ 的条件下，构造当前状态 $\bm{x}_k$ 的后验概率密度函数 $p(\bm{x}_k \mid D_k)$。原则上，该条件密度可通过\emph{预测}与\emph{更新}两个阶段递推求得。假设时刻 $k - 1$ 的后验概率密度函数 $p(\bm{x}_{k-1} \mid D_{k-1})$ 已知，则利用系统转移模型可得时刻 $k$ 状态的单步先验概率密度函数：
+\begin{equation}\label{eq:3}
+p(\bm{x}_k \mid D_{k-1}) = \int p(\bm{x}_k \mid \bm{x}_{k-1})\,p(\bm{x}_{k-1} \mid D_{k-1})\,\mathrm{d}\bm{x}_{k-1}
+\end{equation}
+这里，刻画状态演化的条件转移密度 $p(\bm{x}_k \mid \bm{x}_{k-1})$ 构成一个无后效转移模型（原称 Markov model），由系统方程 \eqref{eq:1} 与过程噪声 $\bm{w}_{k-1}$ 的已知统计特性完全确定：
+\begin{equation*}
+p(\bm{x}_k \mid \bm{x}_{k-1}) = \int p(\bm{x}_k \mid \bm{x}_{k-1}, \bm{w}_{k-1})\,p(\bm{w}_{k-1} \mid \bm{x}_{k-1})\,\mathrm{d}\bm{w}_{k-1}
+\end{equation*}
+由噪声独立性假设 $p(\bm{w}_{k-1} \mid \bm{x}_{k-1}) = p(\bm{w}_{k-1})$，进一步可得
+\begin{equation}\label{eq:4}
+p(\bm{x}_k \mid \bm{x}_{k-1}) = \int \delta\bigl(\bm{x}_k - \bm{f}_{k-1}(\bm{x}_{k-1}, \bm{w}_{k-1})\bigr)\,p(\bm{w}_{k-1})\,\mathrm{d}\bm{w}_{k-1}
+\end{equation}
+其中 $\delta(\cdot)$ 表示单位点质量广义函数（原称 Dirac delta function）。此处出现点质量核的原因在于：一旦 $\bm{x}_{k-1}$ 与 $\bm{w}_{k-1}$ 给定，下一时刻状态 $\bm{x}_k$ 即由式 \eqref{eq:1} 所示的纯确定性映射唯一决定。随后在时刻 $k$ 获取新观测 $\bm{y}_k$，即可借助条件后验更新法则对先验密度加以修正：
+\begin{equation}\label{eq:5}
+p(\bm{x}_k \mid D_k) = \frac{p(\bm{y}_k \mid \bm{x}_k)\,p(\bm{x}_k \mid D_{k-1})}{p(\bm{y}_k \mid D_{k-1})}
+\end{equation}
+其中归一化常数分母为
+\begin{equation}\label{eq:6}
+p(\bm{y}_k \mid D_{k-1}) = \int p(\bm{y}_k \mid \bm{x}_k)\,p(\bm{x}_k \mid D_{k-1})\,\mathrm{d}\bm{x}_k
+\end{equation}
+给定状态 $\bm{x}_k$ 时观测 $\bm{y}_k$ 的条件概率密度函数（即似然函数）$p(\bm{y}_k \mid \bm{x}_k)$ 由观测模型 \eqref{eq:2} 与观测噪声 $\bm{v}_k$ 的已知统计特性确定：
+\begin{equation}\label{eq:7}
+p(\bm{y}_k \mid \bm{x}_k) = \int \delta\bigl(\bm{y}_k - \bm{h}_k(\bm{x}_k, \bm{v}_k)\bigr)\,p(\bm{v}_k)\,\mathrm{d}\bm{v}_k
+\end{equation}
+
+在更新方程式~\eqref{eq:5} 中，当前观测 $\bm{y}_k$ 被用于修正由前一时刻向前传播得到的预测先验密度，从而产生所需的后验状态分布。
+
+式~\eqref{eq:3} 与式~\eqref{eq:5} 所构成的递推关系给出了条件概率递推估计问题的形式解。然而，针对该形式解的解析闭式求解仅适用于极为狭小且受限的系统与观测模型族，其中最具代表性的是线性最小方差递推滤波器：它要求 $\bm{f}_k$ 与 $\bm{h}_k$ 均为线性映射，且 $\bm{w}_k$ 与 $\bm{v}_k$ 为方差已知的加性正态白噪声（例如参见文献 \cite{r15,r16}）。从实际工程建模的角度来看，此类强假设在大量应用场景中并不成立。因此，亟需一种通用的数值实现方法，使建模者得以依据物理现实而非解析便利性来构造状态与观测模型。

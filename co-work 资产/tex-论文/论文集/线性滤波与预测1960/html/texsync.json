@@ -1,0 +1,137 @@
+{
+  "version": 1,
+  "tex_root": "..",
+  "main_tex": "main.tex",
+  "spec": {
+    "ref_templates": [
+      [
+        "eq:",
+        "式~\\eqref{",
+        ""
+      ],
+      [
+        "thm:",
+        "定理~\\ref{",
+        ""
+      ],
+      [
+        "cor:",
+        "推论~\\ref{",
+        ""
+      ],
+      [
+        "prob:",
+        "问题~\\ref{",
+        ""
+      ],
+      [
+        "rem:",
+        "评注~\\ref{",
+        ""
+      ],
+      [
+        "ex:",
+        "算例~\\ref{",
+        ""
+      ],
+      [
+        "fig:",
+        "图~\\ref{",
+        ""
+      ],
+      [
+        "tab:",
+        "表~\\ref{",
+        ""
+      ],
+      [
+        "sec:",
+        "第~\\ref{",
+        "~节"
+      ]
+    ],
+    "auto_envs": [
+      [
+        "theorem",
+        "定理"
+      ],
+      [
+        "corollary",
+        "推论"
+      ],
+      [
+        "example",
+        "算例"
+      ]
+    ],
+    "num_envs": [
+      [
+        "theoremn",
+        "定理"
+      ],
+      [
+        "problemn",
+        "问题"
+      ],
+      [
+        "remarkn",
+        "评注"
+      ]
+    ],
+    "proof_env": [
+      "proof",
+      "证明"
+    ],
+    "bib_tex": "\\bibliography{html/src/refs}",
+    "colspecs": [
+      [
+        2,
+        "lX"
+      ],
+      [
+        3,
+        "p{0.24\\textwidth}p{0.19\\textwidth}X"
+      ]
+    ],
+    "heading_cmds": [
+      "section",
+      "subsection",
+      "subsubsection"
+    ]
+  },
+  "pairs": [
+    {
+      "tex": "sections/abstract.tex",
+      "md": "src/main.md",
+      "md_slice": [
+        "</header>",
+        "<!--TOC-->"
+      ],
+      "guard_main_tex": "main.tex"
+    },
+    {
+      "tex": "sections/00_导读与符号约定.tex",
+      "md": "src/00_导读与符号约定.md"
+    },
+    {
+      "tex": "sections/01_最优估计与正交投影.tex",
+      "md": "src/01_最优估计与正交投影.md"
+    },
+    {
+      "tex": "sections/02_随机过程模型与滤波解.tex",
+      "md": "src/02_随机过程模型与滤波解.md"
+    },
+    {
+      "tex": "sections/03_对偶问题与应用算例.tex",
+      "md": "src/03_对偶问题与应用算例.md"
+    },
+    {
+      "tex": "sections/04_参考文献与附录.tex",
+      "md": "src/04_参考文献与附录.md"
+    },
+    {
+      "tex": "sections/05_校勘记.tex",
+      "md": "src/05_校勘记.md"
+    }
+  ]
+}

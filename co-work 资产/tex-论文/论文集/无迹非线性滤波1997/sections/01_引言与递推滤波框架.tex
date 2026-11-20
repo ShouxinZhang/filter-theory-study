@@ -1,0 +1,53 @@
+\section{引言与递推滤波框架}\label{sec:intro}
+
+\subsection{问题背景}\label{sec:background}
+
+在导航制导、目标追踪、机器人定位与过程控制等诸多工程领域，离散时间随机动态系统的状态估计处于核心地位 \cite{r02,r03}。在线性系统与二阶矩意义下，线性最小均方递推滤波器 \cite{r01} 给出了最优的状态估计解：它仅通过维护状态的一阶矩（均值向量）与二阶矩（协方差矩阵），便能在每个观测到达时以封闭代数形式完成最优线性更新。
+
+然而，实际物理系统在状态演化方程或传感器观测方程中普遍存在显著非线性。考虑如下离散时间非线性状态空间模型：
+\begin{equation}\label{eq:1}
+\bm{x}_{k+1} = \bm{f}(\bm{x}_k, \bm{u}_k, \bm{w}_k, k)
+\end{equation}
+\begin{equation}\label{eq:2}
+\bm{z}_k = \bm{h}(\bm{x}_k, \bm{u}_k, \bm{v}_k, k)
+\end{equation}
+其中 $\bm{x}_k \in \mathbb{R}^n$ 为时刻 $k$ 的系统状态向量，$\bm{u}_k$ 为已知控制输入，$\bm{z}_k \in \mathbb{R}^m$ 为观测向量；过程噪声 $\bm{w}_k$ 与观测噪声 $\bm{v}_k$ 为相互独立且零均值的白噪声序列，其协方差矩阵分别为 $\bm{Q}_k$ 与 $\bm{R}_k$。非线性向量函数 $\bm{f}(\cdot)$ 与 $\bm{h}(\cdot)$ 可以是任意光滑乃至分段连续的映射。
+
+\subsection{线性最小均方更新结构}\label{sec:lmmse}
+
+即便系统本身是非线性的，只要我们能够在每个时间步准确计算出以下四个统计量：
+
+\begin{itemize}
+\item 一步状态预测均值 $\hat{\bm{x}}_{k\mid k-1}$ 与预测协方差 $\bm{P}_{k\mid k-1}$；
+\item 一步观测预测均值 $\hat{\bm{z}}_{k\mid k-1}$；
+\item 新息协方差矩阵 $\bm{P}_{\bm{\nu}\bm{\nu}}$ 与状态-观测互协方差矩阵 $\bm{P}_{\bm{x}\bm{z}}$；
+\end{itemize}
+
+那么保持线性更新结构的最小均方误差估计器便具有如下统一形式：
+\begin{equation}\label{eq:3}
+\hat{\bm{x}}_k^{+} = \hat{\bm{x}}_k^{-} + \bm{W}_k \bigl(\bm{z}_k - \hat{\bm{z}}_k^{-}\bigr)
+\end{equation}
+\begin{equation}\label{eq:4}
+\bm{P}_k^{+} = \bm{P}_k^{-} - \bm{W}_k \bm{P}_{\bm{\nu}\bm{\nu}} \bm{W}_k^{\mathrm{T}}
+\end{equation}
+其中最优线性滤波增益矩阵由互协方差与新息协方差唯一确定：
+\begin{equation}\label{eq:5}
+\bm{W}_k = \bm{P}_{\bm{x}\bm{z}} \bm{P}_{\bm{\nu}\bm{\nu}}^{-1}
+\end{equation}
+这里依照统一记号约定，用上标 $-$ 与 $+$ 分别表示同一步的先验预测值与后验更新值。由此可见，非线性递推滤波的核心难点完全归结为一个共性子问题：\textbf{已知随机向量 $\bm{x}$ 的均值 $\bar{\bm{x}}$ 与协方差 $\bm{P}_{\bm{x}\bm{x}}$，如何高精度地估计非线性变换 $\bm{y} = \bm{g}(\bm{x})$ 之后的均值 $\bar{\bm{y}}$ 与协方差 $\bm{P}_{\bm{y}\bm{y}}$？}
+
+\subsection{一阶线性化滤波的根本局限}\label{sec:ekf-limits}
+
+工程界长期以来解决该子问题的标准方案是一阶线性化滤波器（通常将非线性函数在当前均值点 $\bar{\bm{x}}$ 处做一阶多变量幂级数展开并截断高阶项）：
+\begin{equation}\label{eq:6}
+\bm{g}(\bm{x}) \approx \bm{g}(\bar{\bm{x}}) + \frac{\mathrm{d}\bm{g}}{\mathrm{d}\bm{x}^{\mathrm{T}}}(\bar{\bm{x}})(\bm{x} - \bar{\bm{x}})
+\end{equation}
+由此得到的一阶近似均值与协方差为 $\bar{\bm{y}}_{\text{lin}} = \bm{g}(\bar{\bm{x}})$ 与 $\bm{P}_{\bm{y}\bm{y},\text{lin}} = \bm{J}_{\bm{g}} \bm{P}_{\bm{x}\bm{x}} \bm{J}_{\bm{g}}^{\mathrm{T}}$，其中 $\bm{J}_{\bm{g}} = \frac{\mathrm{d}\bm{g}}{\mathrm{d}\bm{x}^{\mathrm{T}}}(\bar{\bm{x}})$ 为一阶偏导数矩阵。该方法存在三方面难以克服的缺陷 \cite{r04,r05}：
+
+\begin{itemize}
+\item \textbf{一阶截断偏差与协方差失真}：仅在局部非线性极弱或先验不确定性极小时线性化才近似成立。一旦状态不确定性跨越函数的显著弯曲区域，一阶近似会系统性低估均值偏移并压缩协方差，导致滤波增益过度自信、估计不一致乃至严重发散。
+\item \textbf{解析求导困难且易错}：对复杂物理动力学（如带大气阻力与引力耦合的高超声速弹道方程）推导解析一阶偏导数矩阵既费时又极易引入实现错误；对非光滑或黑盒仿真模型甚至不存在解析导数。
+\item \textbf{高阶截断滤波代价高昂}：若进一步引入二阶截断滤波器 \cite{r05}，不仅需要推导和存储三维二阶偏导数张量，算法复杂度与实现难度都会急剧攀升。
+\end{itemize}
+
+为从根本上突破一阶线性化的瓶颈，下文引入基于确定性采样点传播的无迹变换 \cite{r04,r08}。

@@ -1,0 +1,165 @@
+{
+  "version": 1,
+  "tex_root": "..",
+  "main_tex": "main.tex",
+  "spec": {
+    "ref_templates": [
+      [
+        "eq:",
+        "Eq.~\\eqref{",
+        ""
+      ],
+      [
+        "thm:",
+        "Theorem~\\ref{",
+        ""
+      ],
+      [
+        "cor:",
+        "Corollary~\\ref{",
+        ""
+      ],
+      [
+        "prop:",
+        "Proposition~\\ref{",
+        ""
+      ],
+      [
+        "lem:",
+        "Lemma~\\ref{",
+        ""
+      ],
+      [
+        "def:",
+        "Definition~\\ref{",
+        ""
+      ],
+      [
+        "ass:",
+        "Assumption~\\ref{",
+        ""
+      ],
+      [
+        "prob:",
+        "Problem~\\ref{",
+        ""
+      ],
+      [
+        "rem:",
+        "Remark~\\ref{",
+        ""
+      ],
+      [
+        "ex:",
+        "Example~\\ref{",
+        ""
+      ],
+      [
+        "alg:",
+        "Algorithm~\\ref{",
+        ""
+      ],
+      [
+        "fig:",
+        "Fig.~\\ref{",
+        ""
+      ],
+      [
+        "tab:",
+        "Table~\\ref{",
+        ""
+      ],
+      [
+        "sec:",
+        "Section~\\ref{",
+        ""
+      ]
+    ],
+    "auto_envs": [
+      [
+        "theorem",
+        "Theorem"
+      ],
+      [
+        "corollary",
+        "Corollary"
+      ],
+      [
+        "proposition",
+        "Proposition"
+      ],
+      [
+        "lemma",
+        "Lemma"
+      ],
+      [
+        "definition",
+        "Definition"
+      ],
+      [
+        "assumption",
+        "Assumption"
+      ],
+      [
+        "example",
+        "Example"
+      ],
+      [
+        "remark",
+        "Remark"
+      ]
+    ],
+    "num_envs": [
+      [
+        "theoremn",
+        "Theorem"
+      ],
+      [
+        "problemn",
+        "Problem"
+      ],
+      [
+        "remarkn",
+        "Remark"
+      ]
+    ],
+    "proof_env": [
+      "proof",
+      "Proof"
+    ],
+    "bib_tex": "\\bibliography{html/src/refs}",
+    "colspecs": [
+      [
+        2,
+        "lX"
+      ],
+      [
+        3,
+        "p{0.24\\textwidth}p{0.19\\textwidth}X"
+      ]
+    ],
+    "heading_cmds": [
+      "section",
+      "subsection",
+      "subsubsection"
+    ]
+  },
+  "pairs": [
+    {
+      "tex": "sections/01_introduction_and_bayesian.tex",
+      "md": "src/01_introduction_and_bayesian.md"
+    },
+    {
+      "tex": "sections/02_bootstrap_filter.tex",
+      "md": "src/02_bootstrap_filter.md"
+    },
+    {
+      "tex": "sections/03_simulations.tex",
+      "md": "src/03_simulations.md"
+    },
+    {
+      "tex": "sections/04_conclusions_and_refs.tex",
+      "md": "src/04_conclusions_and_refs.md"
+    }
+  ]
+}

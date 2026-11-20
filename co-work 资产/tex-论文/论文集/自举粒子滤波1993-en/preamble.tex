@@ -1,0 +1,111 @@
+% 通用 ctexart 父级 LaTeX 导言区配置（由 html-tex-doc 提供）
+\usepackage[margin=2.4cm]{geometry}
+\setlength{\emergencystretch}{2em}
+\usepackage{amsmath,amssymb,amsthm,mathrsfs,bm}
+\usepackage{booktabs,tabularx,array,graphicx}
+\usepackage{pifont,newunicodechar}
+\usepackage{xcolor}
+\definecolor{accent}{HTML}{1F6FB2}
+\usepackage{tikz}
+\usepackage{standalone}
+\usepackage{etoolbox}
+
+\IfFileExists{html/src/kalman-style.tex}{\input{html/src/kalman-style}}{%
+  \usetikzlibrary{positioning,fit,calc,arrows.meta,backgrounds,shapes.geometric}%
+}
+\IfFileExists{html/src/alg2e.tex}{\input{html/src/alg2e}}{%
+  \IfFileExists{html/src/algcommon.tex}{\usepackage{algorithm}\input{html/src/algcommon}}{}%
+}
+\makeatletter
+\IfFileExists{html/src/macros.tex}{%
+  \let\htd@orig@newcommand\newcommand
+  \let\newcommand\providecommand
+  \input{html/src/macros}%
+  \let\newcommand\htd@orig@newcommand
+}{}
+\makeatother
+\newunicodechar{✫}{\ding{75}}
+
+\usepackage[colorlinks=true,linkcolor=accent,citecolor=accent,urlcolor=accent]{hyperref}
+\providecommand{\cref}[1]{\ref{#1}}
+
+\renewcommand{\proofname}{Proof}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}{Corollary}
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{htdtheoremn}{Theorem}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\newtheorem{assumption}{Assumption}
+\newtheorem{example}{Example}
+\newtheorem{remark}{Remark}
+\newtheorem{htdproblemn}{Problem}
+\newtheorem{htdremarkn}{Remark}
+
+\NewDocumentEnvironment{theoremn}{m o}{%
+  \renewcommand{\thehtdtheoremn}{#1}%
+  \IfValueTF{#2}{\begin{htdtheoremn}[#2]}{\begin{htdtheoremn}}%
+}{\end{htdtheoremn}}
+
+\NewDocumentEnvironment{problemn}{m o}{%
+  \renewcommand{\thehtdproblemn}{#1}%
+  \IfValueTF{#2}{\begin{htdproblemn}[#2]}{\begin{htdproblemn}}%
+}{\end{htdproblemn}}
+
+\NewDocumentEnvironment{remarkn}{m o}{%
+  \renewcommand{\thehtdremarkn}{#1}%
+  \IfValueTF{#2}{\begin{htdremarkn}[#2]}{\begin{htdremarkn}}%
+}{\end{htdremarkn}}
+
+\makeatletter
+\newsavebox{\htd@figbox}
+\newcommand{\htdfig}[3]{%
+  \begin{figure}[htbp]
+    \centering
+    \filename@parse{html/src/#1}%
+    \in@{algs/}{#1}%
+    \ifin@
+      \begin{minipage}{\linewidth}%
+        \includestandalone{\filename@area\filename@base}%
+      \end{minipage}%
+    \else
+      \IfFileExists{\filename@area\filename@base.pdf}{%
+        \includegraphics[width=\linewidth,height=0.72\textheight,keepaspectratio]{\filename@area\filename@base.pdf}%
+      }{%
+        \begin{lrbox}{\htd@figbox}%
+          \includestandalone{\filename@area\filename@base}%
+        \end{lrbox}%
+        \ifdim\wd\htd@figbox>\linewidth
+          \resizebox{\linewidth}{!}{\usebox{\htd@figbox}}%
+        \else
+          \usebox{\htd@figbox}%
+        \fi
+      }%
+    \fi
+    \caption{#3}\label{#2}%
+  \end{figure}%
+}
+
+\patchcmd{\thebibliography}{\section*{\refname}}{}{}{}
+\makeatother
+
+\newenvironment{htdtable}[1]{%
+  \par\medskip\noindent
+  \renewcommand{\arraystretch}{1.25}%
+  \tabularx{\textwidth}{#1}%
+}{%
+  \endtabularx
+  \par\medskip
+}
+
+\DeclareRobustCommand{\htdfnmark}[1]{%
+  \hypertarget{htdfnref:#1}{}\textsuperscript{\hyperlink{htdfn:#1}{[#1]}}%
+}
+\newcommand{\htdfntext}[2]{%
+  \par\smallskip\noindent
+  \hypertarget{htdfn:#1}{\hyperlink{htdfnref:#1}{\textsuperscript{[#1]}}}~{\small #2}\par
+}

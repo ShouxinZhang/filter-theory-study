@@ -10,6 +10,8 @@ bib_order: file
 <p class="subtitle">R. E. Kalman · 高等研究院（Research Institute for Advanced Study）[^2]，马里兰州巴尔的摩</p>
 </header>
 
+<p class="h2">摘要</p>
+
 *本文运用随机过程的白噪声激励成形表示（原称 Bode-Shannon representation）以及动态系统分析的“状态转移”方法，重新审视经典的滤波与预测问题。所得新结果如下：*
 
 *(1) 问题的数学表述与求解方法无需修改即可同时适用于平稳与非平稳统计特性，以及增长记忆与无限记忆滤波器。*
@@ -21,8 +23,6 @@ bib_order: file
 *本文将所建立的新方法应用于两个熟知问题，印证并推广了已有结果。*
 
 *全文论述基本自包含并从第一性原理出发；随机过程理论的基本概念在{@sec:appendix|附录}中予以回顾。*
-
-<!--TOC-->
 
 <!--include 00_导读与符号约定.md-->
 <!--include 01_最优估计与正交投影.md-->

@@ -1,0 +1,24 @@
+\section*{译校、数值复现与符号对照说明}
+
+本中文校订版以 S. J. Julier 与 J. K. Uhlmann（1997）发表于 \emph{Proc. SPIE Vol. 3068}（第 182–193 页）的奠基论文 \cite{r08} 为蓝本，对照仓库符号与术语规范完成了以下校订与复现工作：
+
+\begin{itemize}
+\item 结构化术语去人名规范：严格按照仓库《符号习惯》，将数学与物理名词统一以其数学结构或物理含义命名（如线性最小均方递推滤波、一阶线性化滤波、无迹变换、无迹滤波、正态分布、多变量幂级数展开、一阶偏导数矩阵、对称下三角平方根分解与四阶显式数值积分等）；学者姓名仅在书目出处及文末参考文献中保留。
+\item 全套数据图确定性数值重算与矢量重绘：第~\ref{sec:sim}~节 中的 6 幅数据图（图~\ref{fig:1} 至图~\ref{fig:6}）均通过 \texttt{html-tex-doc/charts} 解耦绘图引擎基于固定随机种子独立重算并生成深浅色自适应内联 SVG 与同名矢量 PDF。
+\item 完整审核与校勘记录：关于底本核验范围、仿真参数设定与去人名术语核查清单，详见文末第~\ref{sec:audit}~节。
+\end{itemize}
+
+下表列出本文沿用的核心记号与仓库《符号习惯》对应关系：
+
+\begin{htdtable}{p{0.24\textwidth}p{0.19\textwidth}X}
+\toprule
+本文记号 & 仓库《符号习惯》对应记号 & 含义与说明 \\
+\midrule
+$\hat{\bm{x}}_k^{-}, \hat{\bm{x}}_k^{+}$ & $\bm{x}_k^{-}, \bm{x}_k^{+}$ & 时刻 $k$ 的一步先验预测均值与量测更新后验均值（统一用上标 $-, +$ 区分） \\
+$\mathcal{X}_i, W_i$ & 确定性加权采样点与权重 & $2n + 1$ 组对称采样点及其归一化权重（$\sum_{i=0}^{2n} W_i = 1$） \\
+$\kappa$ & 缩放参数 & 控制采样点距均值伸展程度；正态分布下取 $n + \kappa = 3$ 匹配四阶矩 \\
+$\bm{A}^{\mathrm{T}}, \operatorname{tr}(\cdot)$ & $\bm{A}^{\mathrm{T}}, \operatorname{tr}(\cdot)$ & 矩阵普通转置与矩阵迹算子 \\
+$\frac{\mathrm{d}\bm{g}}{\mathrm{d}\bm{x}^{\mathrm{T}}}(\bar{\bm{x}})$ & $\frac{\mathrm{d}\bm{f}}{\mathrm{d}\bm{x}^{\mathrm{T}}}(\hat{\bm{x}})$ & 向量值非线性映射在点 $\bar{\bm{x}}$ 处的一阶偏导数矩阵 \\
+$\bm{w}_k, \bm{v}_k$ & $\bm{N}_{x,k}, \bm{N}_{y,k}$ & 零均值过程白噪声向量与观测白噪声向量，协方差分别为 $\bm{Q}_k, \bm{R}_k$ \\
+\bottomrule
+\end{htdtable}

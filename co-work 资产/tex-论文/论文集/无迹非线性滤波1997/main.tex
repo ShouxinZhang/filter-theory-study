@@ -1,0 +1,34 @@
+\documentclass[UTF8,11pt,a4paper]{ctexart}
+\input{preamble}
+
+\newcommand{\htdtitle}{非线性系统递推滤波的新推广：无迹变换与确定性采样滤波\htdfnmark{1}}
+\newcommand{\htdsubtitle}{S. J. Julier · J. K. Uhlmann\htdfnmark{2} · Proc. SPIE Vol. 3068, Signal Processing, Sensor Fusion, and Target Recognition VI, pp. 182–193, April 1997}
+
+\title{\textbf{\htdtitle}}
+\author{\normalsize \htdsubtitle}
+\date{}
+
+\bibliographystyle{unsrt}
+\AtBeginDocument{%
+  \nocite{r01,r02,r03,r04,r05,r06,r07,r08}%
+}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\input{sections/01_引言与递推滤波框架}
+
+\input{sections/02_无迹变换与精度分析}
+
+\input{sections/03_无迹滤波算法与增广状态}
+
+\input{sections/04_数值仿真算例}
+
+\input{sections/05_结论与参考文献}
+
+\input{sections/06_审核与校勘附录}
+
+\end{document}

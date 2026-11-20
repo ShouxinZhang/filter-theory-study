@@ -1,0 +1,64 @@
+\section{无迹变换与精度分析}\label{sec:ut}
+
+\subsection{核心思想：近似分布而非近似函数}\label{sec:ut-philosophy}
+
+无迹变换（unscented transformation）建立在一条极为直观却影响深远的原则之上：\textbf{用有限个参数去近似一个概率分布，远比去近似任意一个复杂的非线性函数要容易得多 \cite{r04,r08}。}
+
+不同于大样本随机粒子抽样 \cite{r07} 需要数百至数千个随机样本来逼近完整后验密度，无迹变换采用\textbf{确定性、极小规模的加权采样点集（sigma 点集）}来精确编码输入随机向量 $\bm{x} \in \mathbb{R}^n$ 的先验一阶矩 $\bar{\bm{x}}$ 与二阶矩 $\bm{P}_{\bm{x}\bm{x}}$。当每个采样点直接通过真实的非线性映射 $\bm{y} = \bm{g}(\bm{x})$ 进行传播后，只需对变换后的点集做加权平均与加权外积，即可直接得到输出均值与协方差的高精度估计，全程无需计算任何偏导数。
+
+\subsection{对称采样点构造与传播公式}\label{sec:ut-def}
+
+设 $n$ 维随机向量 $\bm{x}$ 具有已知均值 $\bar{\bm{x}}$ 与对称正定协方差矩阵 $\bm{P}_{\bm{x}\bm{x}}$。引入实缩放参数 $\kappa \in \mathbb{R}$（满足 $n + \kappa \neq 0$），构造如下 $2n + 1$ 组对称加权采样点 $\{\mathcal{X}_i, W_i\}_{i=0}^{2n}$：
+\begin{equation}\label{eq:7}
+\begin{aligned}
+\mathcal{X}_0 &= \bar{\bm{x}}, & W_0 &= \frac{\kappa}{n + \kappa} \\
+\mathcal{X}_i &= \bar{\bm{x}} + \Bigl(\sqrt{(n + \kappa)\bm{P}_{\bm{x}\bm{x}}}\Bigr)_i, & W_i &= \frac{1}{2(n + \kappa)}, \quad i = 1, \dots, n \\
+\mathcal{X}_{i+n} &= \bar{\bm{x}} - \Bigl(\sqrt{(n + \kappa)\bm{P}_{\bm{x}\bm{x}}}\Bigr)_i, & W_{i+n} &= \frac{1}{2(n + \kappa)}, \quad i = 1, \dots, n
+\end{aligned}
+\end{equation}
+其中 $\bigl(\sqrt{(n + \kappa)\bm{P}_{\bm{x}\bm{x}}}\bigr)_i$ 表示矩阵平方根的第 $i$ 列（或第 $i$ 行）。在数值实现中，通常对对称正定矩阵 $(n + \kappa)\bm{P}_{\bm{x}\bm{x}}$ 做对称下三角平方根分解 $\bm{L}\bm{L}^{\mathrm{T}} = (n + \kappa)\bm{P}_{\bm{x}\bm{x}}$，取 $\bm{L}$ 的第 $i$ 列即可，单次分解的计算复杂度为 $O(n^3/3)$。
+
+容易直接验证，由式 \eqref{eq:7} 给出的权重满足归一化条件 $\sum_{i=0}^{2n} W_i = 1$，且该离散采样点集的加权均值与加权协方差与原分布严格相等：
+\begin{equation}\label{eq:8}
+\sum_{i=0}^{2n} W_i \mathcal{X}_i = \bar{\bm{x}}, \qquad \sum_{i=0}^{2n} W_i (\mathcal{X}_i - \bar{\bm{x}})(\mathcal{X}_i - \bar{\bm{x}})^{\mathrm{T}} = \bm{P}_{\bm{x}\bm{x}}
+\end{equation}
+进一步，对每个采样点直接施加非线性函数 $\bm{g}(\cdot)$ 并重组输出统计量：
+\begin{equation}\label{eq:9}
+\mathcal{Y}_i = \bm{g}(\mathcal{X}_i), \qquad i = 0, 1, \dots, 2n
+\end{equation}
+\begin{equation}\label{eq:10}
+\bar{\bm{y}} = \sum_{i=0}^{2n} W_i \mathcal{Y}_i
+\end{equation}
+\begin{equation}\label{eq:11}
+\bm{P}_{\bm{y}\bm{y}} = \sum_{i=0}^{2n} W_i (\mathcal{Y}_i - \bar{\bm{y}})(\mathcal{Y}_i - \bar{\bm{y}})^{\mathrm{T}}
+\end{equation}
+若需要输入与输出之间的互协方差矩阵，则同步由同一组传播点直接求得：
+\begin{equation}\label{eq:12}
+\bm{P}_{\bm{x}\bm{y}} = \sum_{i=0}^{2n} W_i (\mathcal{X}_i - \bar{\bm{x}})(\mathcal{Y}_i - \bar{\bm{y}})^{\mathrm{T}}
+\end{equation}
+
+\subsection{幂级数展开精度证明与参数 $\kappa$ 选取}\label{sec:ut-accuracy}
+
+为定量刻画无迹变换相对一阶线性化的精度优势，记扰动向量 $\Delta\bm{x} = \bm{x} - \bar{\bm{x}}$，将解析非线性函数 $\bm{g}(\bar{\bm{x}} + \Delta\bm{x})$ 写成多变量幂级数算子形式：
+\begin{equation}\label{eq:13}
+\bm{g}(\bar{\bm{x}} + \Delta\bm{x}) = \bm{g}(\bar{\bm{x}}) + D_{\Delta\bm{x}}\bm{g} + \frac{1}{2!} D_{\Delta\bm{x}}^2 \bm{g} + \frac{1}{3!} D_{\Delta\bm{x}}^3 \bm{g} + \frac{1}{4!} D_{\Delta\bm{x}}^4 \bm{g} + \cdots
+\end{equation}
+其中 $D_{\Delta\bm{x}}^k \bm{g}$ 表示在 $\bar{\bm{x}}$ 处沿方向 $\Delta\bm{x}$ 的 $k$ 阶全微分算子。对真实随机向量 $\bm{x}$ 取数学期望，若 $\Delta\bm{x}$ 服从关于原点对称的概率分布（例如任意正态分布），则全部奇数阶中心矩恒为零，真实均值满足：
+\begin{equation}\label{eq:14}
+\mathbb{E}[\bm{g}(\bm{x})] = \bm{g}(\bar{\bm{x}}) + \frac{1}{2!} \mathbb{E}\bigl[D_{\Delta\bm{x}}^2 \bm{g}\bigr] + \frac{1}{4!} \mathbb{E}\bigl[D_{\Delta\bm{x}}^4 \bm{g}\bigr] + \cdots
+\end{equation}
+现在将采样点偏置 $\bm{\sigma}_i = \mathcal{X}_i - \bar{\bm{x}}$ 代入式 \eqref{eq:10}。由于采样点关于 $\bar{\bm{x}}$ 严格成对对称（$\bm{\sigma}_{i+n} = -\bm{\sigma}_i$ 且 $W_{i+n} = W_i$），所有奇数阶微分项在加权求和中同样精确抵消，且二阶项严格满足 $\sum_{i=0}^{2n} W_i \bm{\sigma}_i \bm{\sigma}_i^{\mathrm{T}} = \bm{P}_{\bm{x}\bm{x}}$，因此无迹变换给出的均值满足：
+\begin{equation}\label{eq:15}
+\bar{\bm{y}} = \bm{g}(\bar{\bm{x}}) + \frac{1}{2!} \mathbb{E}\bigl[D_{\Delta\bm{x}}^2 \bm{g}\bigr] + \frac{1}{4!} \sum_{i=0}^{2n} W_i D_{\bm{\sigma}_i}^4 \bm{g} + \cdots
+\end{equation}
+
+\begin{proposition}\label{prop:ut-order}
+\textbf{无迹变换的矩匹配阶数}　对任意光滑非线性映射 $\bm{g}(\cdot)$ 与对称输入分布：一阶线性化近似仅能匹配至一阶项（均值缺失全部二阶曲率项 $\frac{1}{2}\mathbb{E}[D_{\Delta\bm{x}}^2\bm{g}]$）；无迹变换的均值与协方差估计均精确匹配多变量幂级数展开至\textbf{三阶项}（对非对称分布亦至少达到\textbf{二阶精度}），其截断误差仅从四阶及以上项开始出现。特别地，当输入服从正态分布时，四阶中心矩系数为 $3$，而式 \eqref{eq:7} 采样点沿各主轴的四阶矩系数恰好为 $n + \kappa$，因此选取
+\begin{equation}\label{eq:16}
+n + \kappa = 3
+\end{equation}
+可使四阶项误差大幅缩减，显著改善强非线性变换下的均值与协方差逼近精度 \cite{r08}。
+
+\end{proposition}
+
+需要指出，当状态维数 $n > 3$ 时，取 $\kappa = 3 - n < 0$ 会使中心权重 $W_0 < 0$，从而在极端非线性下可能导致式 \eqref{eq:11} 计算出的协方差矩阵失去半正定性。工程实践中有两种标准应对策略：一是直接取 $\kappa \ge 0$（例如 $\kappa = 0$，确保所有权重非负，协方差矩阵严格保持半正定）；二是保持 $\kappa < 0$ 仅用于均值计算，并在协方差外积中围绕零号变换点 $\mathcal{Y}_0$ 重心构造以保证半正定性 \cite{r08}。

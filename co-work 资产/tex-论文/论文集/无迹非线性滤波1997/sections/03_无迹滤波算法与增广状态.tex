@@ -1,0 +1,34 @@
+\section{无迹滤波算法与增广状态}\label{sec:ukf}
+
+\subsection{非加性噪声的增广状态构造}\label{sec:augmented}
+
+在一般的非线性状态空间模型 \eqref{eq:1}–\eqref{eq:2} 中，过程噪声 $\bm{w}_k$ 与观测噪声 $\bm{v}_k$ 未必以简单加性形式出现。无迹变换的一个重要优势在于可以毫无障碍地处理非加性噪声：只需在时刻 $k$ 构造包含状态向量与噪声向量的增广状态向量 \cite{r08}：
+\begin{equation}\label{eq:17}
+\bm{x}_k^{a} = \begin{bmatrix} \bm{x}_k \\ \bm{w}_k \\ \bm{v}_k \end{bmatrix} \in \mathbb{R}^{n_a}, \qquad n_a = n + n_w + n_v
+\end{equation}
+由于状态估计误差与零均值白噪声相互独立，增广状态的均值与分块对角协方差矩阵分别为：
+\begin{equation}\label{eq:18}
+\hat{\bm{x}}_k^{a,+} = \begin{bmatrix} \hat{\bm{x}}_k^{+} \\ \bm{0} \\ \bm{0} \end{bmatrix}, \qquad
+\bm{P}_k^{a,+} = \begin{bmatrix} \bm{P}_k^{+} & \bm{0} & \bm{0} \\ \bm{0} & \bm{Q}_k & \bm{0} \\ \bm{0} & \bm{0} & \bm{R}_k \end{bmatrix}
+\end{equation}
+对增广分布 $(\hat{\bm{x}}_k^{a,+}, \bm{P}_k^{a,+})$ 生成 $2n_a + 1$ 组采样点 $\mathcal{X}_k^{a,(i)} = \bigl[(\mathcal{X}_k^{x,(i)})^{\mathrm{T}}, (\mathcal{X}_k^{w,(i)})^{\mathrm{T}}, (\mathcal{X}_k^{v,(i)})^{\mathrm{T}}\bigr]^{\mathrm{T}}$，即可统一把噪声的非线性耦合效应纳入状态预测与观测预测之中。当过程噪声与观测噪声均为纯加性噪声时，无需增广状态维数，只需在 $n$ 维原状态空间生成 $2n + 1$ 组采样点，并在预测协方差与新息协方差末尾直接叠加 $\bm{Q}_k$ 与 $\bm{R}_k$ 即可进一步节省计算开销。
+
+\subsection{无迹递推滤波完整步骤}\label{sec:ukf-steps}
+
+将无迹变换嵌入第~\ref{sec:lmmse}~节 给出的线性最小均方递推更新框架 \eqref{eq:3}–\eqref{eq:5}，即得完整的无迹滤波单步递推流程（以加性噪声简化形式表述，增广形式完全平行）：
+
+\begin{remark}\label{rem:ukf-alg}
+\textbf{无迹递推滤波单步算法（时间步 $k - 1 \to k$）}
+
+\textbf{输入}：上一时刻后验均值 $\hat{\bm{x}}_{k-1}^{+}$ 与协方差 $\bm{P}_{k-1}^{+}$，当前观测 $\bm{z}_k$，噪声协方差 $\bm{Q}_{k-1}, \bm{R}_k$，缩放参数 $\kappa$。
+
+1. \textbf{生成采样点}：对 $(n + \kappa)\bm{P}_{k-1}^{+}$ 做对称下三角平方根分解，按式 \eqref{eq:7} 生成 $2n + 1$ 组加权采样点 $\{\mathcal{X}_{k-1}^{(i)}, W_i\}_{i=0}^{2n}$。
+2. \textbf{时间更新（状态预测）}：将每个采样点直接输入非线性状态转移模型 $\mathcal{X}_{k\mid k-1}^{(i)} = \bm{f}\bigl(\mathcal{X}_{k-1}^{(i)}, \bm{u}_{k-1}, k-1\bigr)$（连续系统经四阶显式数值积分推进），按式 \eqref{eq:10}–\eqref{eq:11} 计算一步预测均值 $\hat{\bm{x}}_k^{-}$ 与预测协方差 $\bm{P}_k^{-} = \sum_{i=0}^{2n} W_i (\mathcal{X}_{k\mid k-1}^{(i)} - \hat{\bm{x}}_k^{-})(\mathcal{X}_{k\mid k-1}^{(i)} - \hat{\bm{x}}_k^{-})^{\mathrm{T}} + \bm{Q}_{k-1}$。
+3. \textbf{观测预测}：将预测采样点经非线性观测映射 $\mathcal{Z}_{k\mid k-1}^{(i)} = \bm{h}\bigl(\mathcal{X}_{k\mid k-1}^{(i)}, \bm{u}_k, k\bigr)$ 变换，计算预测观测均值 $\hat{\bm{z}}_k^{-}$、新息协方差 $\bm{P}_{\bm{\nu}\bm{\nu}} = \sum_{i=0}^{2n} W_i (\mathcal{Z}_{k\mid k-1}^{(i)} - \hat{\bm{z}}_k^{-})(\mathcal{Z}_{k\mid k-1}^{(i)} - \hat{\bm{z}}_k^{-})^{\mathrm{T}} + \bm{R}_k$ 与状态-观测互协方差 $\bm{P}_{\bm{x}\bm{z}} = \sum_{i=0}^{2n} W_i (\mathcal{X}_{k\mid k-1}^{(i)} - \hat{\bm{x}}_k^{-})(\mathcal{Z}_{k\mid k-1}^{(i)} - \hat{\bm{z}}_k^{-})^{\mathrm{T}}$。
+4. \textbf{量测更新}：计算滤波增益 $\bm{W}_k = \bm{P}_{\bm{x}\bm{z}} \bm{P}_{\bm{\nu}\bm{\nu}}^{-1}$，并按式 \eqref{eq:3}–\eqref{eq:4} 更新后验均值 $\hat{\bm{x}}_k^{+} = \hat{\bm{x}}_k^{-} + \bm{W}_k (\bm{z}_k - \hat{\bm{z}}_k^{-})$ 与后验协方差 $\bm{P}_k^{+} = \bm{P}_k^{-} - \bm{W}_k \bm{P}_{\bm{\nu}\bm{\nu}} \bm{W}_k^{\mathrm{T}}$。
+
+\end{remark}
+
+\subsection{计算复杂度与工程优势}\label{sec:complexity}
+
+在计算量方面，无迹滤波每步需执行一次 $n \times n$ 对称矩阵平方根分解（约 $\frac{1}{3}n^3$ 次浮点运算）以及 $2n + 1$ 次黑盒函数求值，总体渐近复杂度为 $O(n^3)$，与标准一阶线性化滤波（矩阵乘法 $\bm{F}\bm{P}\bm{F}^{\mathrm{T}}$ 同样为 $O(n^3)$）处于同一量级 \cite{r08}。然而，无迹滤波彻底消除了推导和编码一阶偏导数矩阵的负担，甚至可直接作用于含饱和限幅、查表插值或分段动力学等不可微黑盒仿真模块，在精度、稳定性与实现成本三方面均显著优于一阶线性化方案。

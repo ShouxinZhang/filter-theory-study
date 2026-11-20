@@ -1,0 +1,192 @@
+<svg xmlns="http://www.w3.org/2000/svg" data-htd-inline="1" viewBox="0 0 880 480" width="880" height="480" class="ec-svg">
+  <style>
+.ec-svg {
+  font-family: var(--ec-font-prose);
+  font-feature-settings: "pnum" on, "lnum" on, "liga" on;
+}
+.ec-card-bg {
+  fill: var(--ec-card);
+  stroke: var(--ec-border);
+  stroke-width: 1;
+}
+.ec-title {
+  fill: var(--ec-fg);
+  font-size: 17px;
+  font-weight: 600;
+}
+.ec-subtitle {
+  fill: var(--ec-muted);
+  font-size: 12.8px;
+}
+.ec-grid {
+  stroke: var(--ec-rule);
+  stroke-width: 1;
+}
+.ec-grid-subtle {
+  stroke: var(--ec-rule);
+  stroke-width: 0.8;
+  stroke-dasharray: 3 4;
+  opacity: 0.7;
+}
+.ec-axis {
+  stroke: var(--ec-fg);
+  stroke-width: 1.15;
+}
+.ec-tick {
+  fill: var(--ec-muted);
+  font-family: var(--ec-font-math);
+  font-size: 12px;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.ec-axis-label {
+  fill: var(--ec-fg);
+  font-size: 13.5px;
+  font-weight: 400;
+}
+.ec-line {
+  fill: none;
+  stroke-width: 2.3;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.ec-line-thin {
+  fill: none;
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.ec-line-dashed {
+  stroke-dasharray: 7 5;
+}
+.ec-band-edge {
+  fill: none;
+  stroke-width: 1.15;
+  stroke-dasharray: 4 3.5;
+  opacity: 0.85;
+}
+.ec-ref-line {
+  stroke: var(--ec-fg);
+  stroke-width: 1.3;
+  stroke-dasharray: 5 4;
+  opacity: 0.85;
+}
+.ec-annot {
+  fill: var(--ec-fg);
+  font-size: 12.5px;
+  font-weight: 400;
+  paint-order: stroke;
+  stroke: var(--ec-card);
+  stroke-width: 4;
+  stroke-linejoin: round;
+}
+.ec-annot-muted {
+  fill: var(--ec-muted);
+  font-size: 12px;
+  paint-order: stroke;
+  stroke: var(--ec-card);
+  stroke-width: 4;
+  stroke-linejoin: round;
+}
+.ec-legend-text {
+  fill: var(--ec-fg);
+  font-size: 13px;
+  font-weight: 400;
+}
+.ec-math-fg {
+  color: var(--ec-fg);
+}
+.ec-math-muted {
+  color: var(--ec-muted);
+}
+.ec-m-var,
+.ec-m-num {
+  font-family: var(--ec-font-math);
+  font-style: normal;
+  font-weight: 400;
+}
+.ec-m-sub,
+.ec-m-sub-i {
+  font-family: var(--ec-font-math);
+  font-style: normal;
+  font-size: 74%;
+  baseline-shift: sub;
+  font-weight: 400;
+}
+.ec-s-primary { stroke: var(--ec-primary); }
+.ec-s-secondary { stroke: var(--ec-secondary); }
+.ec-s-accent { stroke: var(--ec-accent); }
+.ec-s-aux { stroke: var(--ec-aux); }
+.ec-s-fg { stroke: var(--ec-fg); }
+.ec-f-primary { fill: var(--ec-primary); }
+.ec-f-secondary { fill: var(--ec-secondary); }
+.ec-f-accent { fill: var(--ec-accent); }
+.ec-f-aux { fill: var(--ec-aux); }
+.ec-f-fg { fill: var(--ec-fg); }
+.ec-svg {
+  /* Bridge html-tex-doc page theme variables with editorial light fallbacks */
+  --ec-card: var(--card, #FAF9F5);
+  --ec-fg: var(--fg, #141413);
+  --ec-muted: var(--muted, #73726C);
+  --ec-rule: var(--rule, #D1CFC5);
+  --ec-border: var(--ui-border, #E2E0D8);
+
+  /* Semantic series palette */
+  --ec-primary: #629987;
+  --ec-secondary: #EB6834;
+  --ec-accent: #6A9BCC;
+  --ec-aux: #827DBD;
+
+  /* Typography: New Century + standard Songti + OpenType Math */
+  --ec-font-prose: "C059", "New Century Schoolbook", "TeX Gyre Schola",
+    "SimSun", "宋体", "Songti SC", "Noto Serif CJK SC", "Source Han Serif SC",
+    Georgia, serif;
+  --ec-font-math: "Latin Modern Math", "TeX Gyre Schola Math", "STIXGeneral", serif;
+}
+  </style>
+  <defs><clipPath id="ec-clip-ac35a023"><rect x="74.0" y="93.0" width="778.0" height="333.0"/></clipPath></defs>
+  <rect class="ec-card-bg" width="880" height="480" rx="8"/>
+  <text class="ec-title" x="28.0" y="30.0">再入算例位置估计均方根误差对比</text>
+  <text class="ec-subtitle" x="28.0" y="50.0">20 次独立仿真统计 · 强气动减速段无迹滤波显著压低线性化瞬态误差</text>
+  <line x1="28.0" y1="69.0" x2="46.0" y2="69.0" stroke="var(--ec-primary)" stroke-width="2.4" stroke-linecap="round"/>
+  <g class="ec-math-fg"><text class="ec-legend-text" x="52.00" y="73.00">无迹滤波 (</text><svg x="112.06" y="63.21" width="35.43" height="11.00" viewBox="0 -666 2409.6 748" overflow="visible"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D705" d="M83 -11Q70 -11 62 -4T51 8T49 17Q49 30 96 217T147 414Q160 442 193 442Q205 441 213 435T223 422T225 412Q225 401 208 337L192 270Q193 269 208 277T235 292Q252 304 306 349T396 412T467 431Q489 431 500 420T512 391Q512 366 494 347T449 327Q430 327 418 338T405 368Q405 370 407 380L397 375Q368 360 315 315L253 266L240 257H245Q262 257 300 251T366 230Q422 203 422 150Q422 140 417 114T411 67Q411 26 437 26Q484 26 513 137Q516 149 519 151T535 153Q554 153 554 144Q554 121 527 64T457 -7Q447 -10 431 -10Q386 -10 360 17T333 90Q333 108 336 122T339 146Q339 170 320 186T271 209T222 218T185 221H180L155 122Q129 22 126 16Q113 -11 83 -11Z"></path></g><g data-mml-node="mo" transform="translate(853.8,0)"><path data-c="3D" d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z"></path></g><g data-mml-node="mn" transform="translate(1909.6,0)"><path data-c="30" d="M96 585Q152 666 249 666Q297 666 345 640T423 548Q460 465 460 320Q460 165 417 83Q397 41 362 16T301 -15T250 -22Q224 -22 198 -16T137 16T82 83Q39 165 39 320Q39 494 96 585ZM321 597Q291 629 250 629Q208 629 178 597Q153 571 145 525T137 333Q137 175 145 125T181 46Q209 16 250 16Q290 16 318 46Q347 76 354 130T362 333Q362 478 354 524T321 597Z"></path></g></g></g></svg><text class="ec-legend-text" x="147.49" y="73.00">)</text></g>
+  <line class="ec-line-dashed" x1="171.9" y1="69.0" x2="189.9" y2="69.0" stroke="var(--ec-secondary)" stroke-width="2.4" stroke-linecap="round"/>
+  <text class="ec-legend-text" x="195.9" y="73.0">一阶线性化滤波</text>
+  <line class="ec-grid" x1="74.0" x2="852.0" y1="426.00" y2="426.00"/>
+  <text class="ec-tick" x="65.0" y="426.00" dy="0.35em" text-anchor="end">0</text>
+  <line class="ec-grid" x1="74.0" x2="852.0" y1="354.00" y2="354.00"/>
+  <text class="ec-tick" x="65.0" y="354.00" dy="0.35em" text-anchor="end">0.4</text>
+  <line class="ec-grid" x1="74.0" x2="852.0" y1="282.00" y2="282.00"/>
+  <text class="ec-tick" x="65.0" y="282.00" dy="0.35em" text-anchor="end">0.8</text>
+  <line class="ec-grid" x1="74.0" x2="852.0" y1="210.00" y2="210.00"/>
+  <text class="ec-tick" x="65.0" y="210.00" dy="0.35em" text-anchor="end">1.2</text>
+  <line class="ec-grid" x1="74.0" x2="852.0" y1="138.00" y2="138.00"/>
+  <text class="ec-tick" x="65.0" y="138.00" dy="0.35em" text-anchor="end">1.6</text>
+  <g clip-path="url(#ec-clip-ac35a023)">
+  <path class="ec-line ec-line-dashed" stroke="var(--ec-secondary)" d="M78.86,198.84L83.72,198.73L88.59,186.49L93.45,192.06L98.31,172.98L103.17,166.32L108.04,185.82L112.90,196.27L117.76,182.28L122.62,183.67L127.49,181.53L132.35,173.14L137.21,187.31L142.07,209.40L146.94,190.94L151.80,159.32L156.66,174.17L161.53,139.86L166.39,160.35L171.25,149.63L176.11,185.44L180.98,158.15L185.84,169.73L190.70,166.16L195.56,160.51L200.43,163.80L205.29,163.78L210.15,185.04L215.01,193.42L219.88,165.71L224.74,170.37L229.60,177.81L234.46,161.56L239.32,149.39L244.19,170.30L249.05,200.08L253.91,230.36L258.77,256.07L263.64,251.64L268.50,270.33L273.36,278.70L278.23,275.72L283.09,287.04L287.95,288.27L292.81,284.70L297.67,287.01L302.54,297.22L307.40,295.67L312.26,295.29L317.12,294.62L321.99,299.92L326.85,308.19L331.71,303.57L336.58,302.69L341.44,302.36L346.30,314.64L351.16,322.53L356.02,328.04L360.89,322.57L365.75,320.43L370.61,323.11L375.48,321.95L380.34,329.88L385.20,341.65L390.06,339.63L394.92,341.42L399.79,340.68L404.65,346.06L409.51,345.31L414.38,349.78L419.24,360.56L424.10,363.25L428.96,360.02L433.83,362.75L438.69,365.93L443.55,360.70L448.41,360.82L453.27,357.86L458.14,358.47L463.00,361.18L467.86,359.76L472.72,363.55L477.59,364.34L482.45,369.96L487.31,370.87L492.17,367.31L497.04,364.84L501.90,365.75L506.76,364.62L511.62,361.40L516.49,361.46L521.35,362.23L526.21,363.77L531.08,370.26L535.94,371.45L540.80,365.62L545.66,366.96L550.53,367.28L555.39,365.25L560.25,366.66L565.11,367.23L569.97,368.54L574.84,364.75L579.70,366.75L584.56,370.80L589.42,370.58L594.29,373.41L599.15,376.73L604.01,378.92L608.88,378.99L613.74,384.75L618.60,381.34L623.46,380.02L628.33,381.37L633.19,383.99L638.05,385.13L642.91,385.44L647.78,386.34L652.64,387.02L657.50,378.61L662.36,380.14L667.22,380.54L672.09,378.42L676.95,379.96L681.81,381.78L686.67,381.93L691.54,380.59L696.40,380.99L701.26,384.42L706.12,384.20L710.99,386.98L715.85,387.62L720.71,388.25L725.58,386.73L730.44,386.10L735.30,386.29L740.16,387.86L745.03,388.47L749.89,388.75L754.75,389.37L759.61,388.25L764.47,386.91L769.34,388.33L774.20,388.88L779.06,388.87L783.92,391.74L788.79,390.95L793.65,387.47L798.51,384.79L803.38,384.71L808.24,385.06L813.10,384.56L817.96,383.45L822.83,385.61L827.69,385.55L832.55,386.53L837.41,387.08L842.28,386.61L847.14,383.41L852.00,383.10"/>
+  <path class="ec-line" stroke="var(--ec-primary)" d="M78.86,198.86L83.72,198.88L88.59,186.71L93.45,192.61L98.31,173.75L103.17,168.45L108.04,188.06L112.90,199.64L117.76,183.87L122.62,186.87L127.49,186.61L132.35,179.39L137.21,195.06L142.07,215.19L146.94,194.71L151.80,167.84L156.66,187.28L161.53,169.43L166.39,184.87L171.25,180.34L176.11,214.31L180.98,186.11L185.84,196.84L190.70,195.35L195.56,204.03L200.43,203.27L205.29,199.70L210.15,228.76L215.01,228.36L219.88,204.23L224.74,194.14L229.60,203.05L234.46,189.11L239.32,169.18L244.19,190.23L249.05,216.01L253.91,240.77L258.77,267.66L263.64,273.30L268.50,286.46L273.36,287.81L278.23,279.96L283.09,289.58L287.95,292.73L292.81,288.77L297.67,292.77L302.54,302.89L307.40,302.45L312.26,302.95L317.12,303.55L321.99,308.03L326.85,314.78L331.71,309.11L336.58,308.35L341.44,306.97L346.30,319.37L351.16,329.37L356.02,334.12L360.89,328.91L365.75,327.33L370.61,329.34L375.48,327.77L380.34,335.45L385.20,346.49L390.06,343.88L394.92,346.23L399.79,344.70L404.65,349.45L409.51,348.67L414.38,353.05L419.24,363.72L424.10,366.08L428.96,362.70L433.83,364.96L438.69,367.41L443.55,361.77L448.41,362.04L453.27,358.61L458.14,359.15L463.00,361.37L467.86,359.40L472.72,363.58L477.59,364.83L482.45,370.27L487.31,371.06L492.17,367.38L497.04,364.69L501.90,365.50L506.76,364.16L511.62,360.98L516.49,360.77L521.35,361.63L526.21,363.30L531.08,369.60L535.94,370.81L540.80,365.09L545.66,366.30L550.53,366.76L555.39,364.86L560.25,366.44L565.11,367.09L569.97,368.56L574.84,364.90L579.70,366.87L584.56,370.89L589.42,370.73L594.29,373.43L599.15,376.74L604.01,378.96L608.88,379.08L613.74,384.74L618.60,381.39L623.46,380.07L628.33,381.43L633.19,384.03L638.05,385.19L642.91,385.46L647.78,386.39L652.64,387.10L657.50,378.82L662.36,380.34L667.22,380.70L672.09,378.61L676.95,380.17L681.81,382.01L686.67,382.16L691.54,380.86L696.40,381.25L701.26,384.58L706.12,384.37L710.99,387.06L715.85,387.71L720.71,388.40L725.58,386.88L730.44,386.28L735.30,386.42L740.16,388.04L745.03,388.75L749.89,388.94L754.75,389.55L759.61,388.42L764.47,387.09L769.34,388.45L774.20,388.99L779.06,388.94L783.92,391.78L788.79,390.95L793.65,387.42L798.51,384.73L803.38,384.62L808.24,384.98L813.10,384.46L817.96,383.41L822.83,385.59L827.69,385.51L832.55,386.50L837.41,387.04L842.28,386.57L847.14,383.44L852.00,383.12"/>
+  </g>
+  <line class="ec-axis" x1="74.0" x2="74.0" y1="93.0" y2="426.0"/>
+  <line class="ec-axis" x1="74.0" x2="852.0" y1="426.0" y2="426.0"/>
+  <line class="ec-axis" x1="74.00" x2="74.00" y1="426.0" y2="430.5"/>
+  <text class="ec-tick" x="74.00" y="445.0" text-anchor="middle">0</text>
+  <line class="ec-axis" x1="171.25" x2="171.25" y1="426.0" y2="430.5"/>
+  <text class="ec-tick" x="171.25" y="445.0" text-anchor="middle">20</text>
+  <line class="ec-axis" x1="268.50" x2="268.50" y1="426.0" y2="430.5"/>
+  <text class="ec-tick" x="268.50" y="445.0" text-anchor="middle">40</text>
+  <line class="ec-axis" x1="365.75" x2="365.75" y1="426.0" y2="430.5"/>
+  <text class="ec-tick" x="365.75" y="445.0" text-anchor="middle">60</text>
+  <line class="ec-axis" x1="463.00" x2="463.00" y1="426.0" y2="430.5"/>
+  <text class="ec-tick" x="463.00" y="445.0" text-anchor="middle">80</text>
+  <line class="ec-axis" x1="560.25" x2="560.25" y1="426.0" y2="430.5"/>
+  <text class="ec-tick" x="560.25" y="445.0" text-anchor="middle">100</text>
+  <line class="ec-axis" x1="657.50" x2="657.50" y1="426.0" y2="430.5"/>
+  <text class="ec-tick" x="657.50" y="445.0" text-anchor="middle">120</text>
+  <line class="ec-axis" x1="754.75" x2="754.75" y1="426.0" y2="430.5"/>
+  <text class="ec-tick" x="754.75" y="445.0" text-anchor="middle">140</text>
+  <line class="ec-axis" x1="852.00" x2="852.00" y1="426.0" y2="430.5"/>
+  <text class="ec-tick" x="852.00" y="445.0" text-anchor="middle">160</text>
+  <g class="ec-math-fg"><text class="ec-axis-label" x="421.13" y="467.00">追踪时间 </text><svg x="478.91" y="455.55" width="25.96" height="15.27" viewBox="0 -750 1700 1000" overflow="visible"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D461" d="M26 385Q19 392 19 395Q19 399 22 411T27 425Q29 430 36 430T87 431H140L159 511Q162 522 166 540T173 566T179 586T187 603T197 615T211 624T229 626Q247 625 254 615T261 596Q261 589 252 549T232 470L222 433Q222 431 272 431H323Q330 424 330 420Q330 398 317 385H210L174 240Q135 80 135 68Q135 26 162 26Q197 26 230 60T283 144Q285 150 288 151T303 153H307Q322 153 322 145Q322 142 319 133Q314 117 301 95T267 48T216 6T155 -11Q125 -11 98 4T59 56Q57 64 57 83V101L92 241Q127 382 128 383Q128 385 77 385H26Z"></path></g><g data-mml-node="mstyle" transform="translate(361,0)"><g data-mml-node="mspace"></g></g><g data-mml-node="mo" transform="translate(528,0)"><path data-c="28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z"></path></g><g data-mml-node="TeXAtom" data-mjx-texclass="ORD" transform="translate(917,0)"><g data-mml-node="mi"><path data-c="73" d="M295 316Q295 356 268 385T190 414Q154 414 128 401Q98 382 98 349Q97 344 98 336T114 312T157 287Q175 282 201 278T245 269T277 256Q294 248 310 236T342 195T359 133Q359 71 321 31T198 -10H190Q138 -10 94 26L86 19L77 10Q71 4 65 -1L54 -11H46H42Q39 -11 33 -5V74V132Q33 153 35 157T45 162H54Q66 162 70 158T75 146T82 119T101 77Q136 26 198 26Q295 26 295 104Q295 133 277 151Q257 175 194 187T111 210Q75 227 54 256T33 318Q33 357 50 384T93 424T143 442T187 447H198Q238 447 268 432L283 424L292 431Q302 440 314 448H322H326Q329 448 335 442V310L329 304H301Q295 310 295 316Z"></path></g></g><g data-mml-node="mo" transform="translate(1311,0)"><path data-c="29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z"></path></g></g></g></svg></g>
+  <g class="ec-math-fg" transform="translate(20, 259.5) rotate(-90)"><text class="ec-axis-label" x="-64.12" y="0.00">位置均方根误差 (</text><svg x="38.75" y="-10.60" width="20.78" height="10.60" viewBox="0 -694 1361 694" overflow="visible"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="TeXAtom" data-mjx-texclass="ORD"><g data-mml-node="mi"><path data-c="6B" d="M36 46H50Q89 46 97 60V68Q97 77 97 91T97 124T98 167T98 217T98 272T98 329Q98 366 98 407T98 482T98 542T97 586T97 603Q94 622 83 628T38 637H20V660Q20 683 22 683L32 684Q42 685 61 686T98 688Q115 689 135 690T165 693T176 694H179V463L180 233L240 287Q300 341 304 347Q310 356 310 364Q310 383 289 385H284V431H293Q308 428 412 428Q475 428 484 431H489V385H476Q407 380 360 341Q286 278 286 274Q286 273 349 181T420 79Q434 60 451 53T500 46H511V0H505Q496 3 418 3Q322 3 307 0H299V46H306Q330 48 330 65Q330 72 326 79Q323 84 276 153T228 222L176 176V120V84Q176 65 178 59T189 49Q210 46 238 46H254V0H246Q231 3 137 3T28 0H20V46H36Z"></path><path data-c="6D" d="M41 46H55Q94 46 102 60V68Q102 77 102 91T102 122T103 161T103 203Q103 234 103 269T102 328V351Q99 370 88 376T43 385H25V408Q25 431 27 431L37 432Q47 433 65 434T102 436Q119 437 138 438T167 441T178 442H181V402Q181 364 182 364T187 369T199 384T218 402T247 421T285 437Q305 442 336 442Q351 442 364 440T387 434T406 426T421 417T432 406T441 395T448 384T452 374T455 366L457 361L460 365Q463 369 466 373T475 384T488 397T503 410T523 422T546 432T572 439T603 442Q729 442 740 329Q741 322 741 190V104Q741 66 743 59T754 49Q775 46 803 46H819V0H811L788 1Q764 2 737 2T699 3Q596 3 587 0H579V46H595Q656 46 656 62Q657 64 657 200Q656 335 655 343Q649 371 635 385T611 402T585 404Q540 404 506 370Q479 343 472 315T464 232V168V108Q464 78 465 68T468 55T477 49Q498 46 526 46H542V0H534L510 1Q487 2 460 2T422 3Q319 3 310 0H302V46H318Q379 46 379 62Q380 64 380 200Q379 335 378 343Q372 371 358 385T334 402T308 404Q263 404 229 370Q202 343 195 315T187 232V168V108Q187 78 188 68T191 55T200 49Q221 46 249 46H265V0H257L234 1Q210 2 183 2T145 3Q42 3 33 0H25V46H41Z" transform="translate(528,0)"></path></g></g></g></g></svg><text class="ec-axis-label" x="59.53" y="0.00">)</text></g>
+  <line x1="210.1" y1="181.0" x2="224.1" y2="175.0" stroke="var(--ec-secondary)" stroke-width="1.2"/>
+  <g class="ec-math-fg"><text class="ec-annot" x="228.15" y="173.04">强减速段峰值差 (</text><svg x="323.40" y="163.62" width="46.04" height="10.57" viewBox="0 -666 3255.6 748" overflow="visible"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D461" d="M26 385Q19 392 19 395Q19 399 22 411T27 425Q29 430 36 430T87 431H140L159 511Q162 522 166 540T173 566T179 586T187 603T197 615T211 624T229 626Q247 625 254 615T261 596Q261 589 252 549T232 470L222 433Q222 431 272 431H323Q330 424 330 420Q330 398 317 385H210L174 240Q135 80 135 68Q135 26 162 26Q197 26 230 60T283 144Q285 150 288 151T303 153H307Q322 153 322 145Q322 142 319 133Q314 117 301 95T267 48T216 6T155 -11Q125 -11 98 4T59 56Q57 64 57 83V101L92 241Q127 382 128 383Q128 385 77 385H26Z"></path></g><g data-mml-node="mo" transform="translate(638.8,0)"><path data-c="3D" d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z"></path></g><g data-mml-node="mn" transform="translate(1694.6,0)"><path data-c="32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path><path data-c="38" d="M70 417T70 494T124 618T248 666Q319 666 374 624T429 515Q429 485 418 459T392 417T361 389T335 371T324 363L338 354Q352 344 366 334T382 323Q457 264 457 174Q457 95 399 37T249 -22Q159 -22 101 29T43 155Q43 263 172 335L154 348Q133 361 127 368Q70 417 70 494ZM286 386L292 390Q298 394 301 396T311 403T323 413T334 425T345 438T355 454T364 471T369 491T371 513Q371 556 342 586T275 624Q268 625 242 625Q201 625 165 599T128 534Q128 511 141 492T167 463T217 431Q224 426 228 424L286 386ZM250 21Q308 21 350 55T392 137Q392 154 387 169T375 194T353 216T330 234T301 253T274 270Q260 279 244 289T218 306L210 311Q204 311 181 294T133 239T107 157Q107 98 150 60T250 21Z" transform="translate(500,0)"></path></g><g data-mml-node="mstyle" transform="translate(2694.6,0)"><g data-mml-node="mspace"></g></g><g data-mml-node="TeXAtom" data-mjx-texclass="ORD" transform="translate(2861.6,0)"><g data-mml-node="mi"><path data-c="73" d="M295 316Q295 356 268 385T190 414Q154 414 128 401Q98 382 98 349Q97 344 98 336T114 312T157 287Q175 282 201 278T245 269T277 256Q294 248 310 236T342 195T359 133Q359 71 321 31T198 -10H190Q138 -10 94 26L86 19L77 10Q71 4 65 -1L54 -11H46H42Q39 -11 33 -5V74V132Q33 153 35 157T45 162H54Q66 162 70 158T75 146T82 119T101 77Q136 26 198 26Q295 26 295 104Q295 133 277 151Q257 175 194 187T111 210Q75 227 54 256T33 318Q33 357 50 384T93 424T143 442T187 447H198Q238 447 268 432L283 424L292 431Q302 440 314 448H322H326Q329 448 335 442V310L329 304H301Q295 310 295 316Z"></path></g></g></g></g></svg><text class="ec-annot" x="369.44" y="173.04">)</text></g>
+</svg>

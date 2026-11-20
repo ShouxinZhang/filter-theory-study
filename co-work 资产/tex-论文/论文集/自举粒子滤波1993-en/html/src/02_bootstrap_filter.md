@@ -1,0 +1,60 @@
+# Bayesian Bootstrap Filter {#sec:bootstrap}
+
+## Filtering Algorithm {#sec:alg}
+
+Suppose that at time $k - 1$ we have a collection of random samples $\{\bm{x}_{k-1}(i) : i = 1, \dots, N\}$ drawn from the posterior PDF $p(\bm{x}_{k-1} \mid D_{k-1})$. The bootstrap filter is a recursive procedure that propagates and updates this sample set to produce a new set $\{\bm{x}_k(i) : i = 1, \dots, N\}$ approximately distributed according to $p(\bm{x}_k \mid D_k)$. It therefore provides a direct simulation-based realization of the recursive relations in {@eq:3} and {@eq:5}.
+
+*Prediction:* Pass each sample through the system transition model to obtain predicted prior samples for time $k$:
+$$
+\bm{x}_k^*(i) = \bm{f}_{k-1}\bigl(\bm{x}_{k-1}(i), \bm{w}_{k-1}(i)\bigr)
+$$
+where each $\bm{w}_{k-1}(i)$ is an independent draw from the process noise PDF $p(\bm{w}_{k-1})$.
+
+*Update:* Upon receiving the observation $\bm{y}_k$, evaluate the likelihood of each predicted sample and assign a normalized importance weight
+$$ {#eq:8}
+q_i = \frac{p\bigl(\bm{y}_k \mid \bm{x}_k^*(i)\bigr)}{\sum_{j=1}^N p\bigl(\bm{y}_k \mid \bm{x}_k^*(j)\bigr)}.
+$$
+These weights define a discrete probability distribution over the support $\{\bm{x}_k^*(i) : i = 1, \dots, N\}$, placing probability mass $q_i$ on sample $i$. Draw $N$ samples with replacement from this discrete distribution to form $\{\bm{x}_k(i) : i = 1, \dots, N\}$, so that for every index $j$,
+$$
+\Pr\bigl\{\bm{x}_k(j) = \bm{x}_k^*(i)\bigr\} = q_i.
+$$
+
+The prediction and update stages together constitute a single recursion of the filter. To initialize the algorithm, $N$ samples $\bm{x}_1^*(i)$ are drawn directly from the known initial prior $p(\bm{x}_1)$ and fed straight into the update stage at $k = 1$. The resulting resampled particles $\bm{x}_k(i)$ are treated as approximate draws from the posterior PDF $p(\bm{x}_k \mid D_k)$.
+
+## Justification {#sec:just}
+
+*Prediction:* The validity of the prediction stage is immediate. If $\bm{x}_{k-1}(i)$ is a sample from $p(\bm{x}_{k-1} \mid D_{k-1})$ and $\bm{w}_{k-1}(i)$ is an independent draw from $p(\bm{w}_{k-1})$, then $\bm{x}_k^*(i) = \bm{f}_{k-1}(\bm{x}_{k-1}(i), \bm{w}_{k-1}(i))$ is distributed according to $p(\bm{x}_k \mid D_{k-1})$. Repeating this propagation independently across all $N$ particles yields a set $\{\bm{x}_k^*(i) : i = 1, \dots, N\}$ of independent draws from the predicted prior $p(\bm{x}_k \mid D_{k-1})$.
+
+*Update:* Justification of the update stage follows from a sampling-resampling theorem of Smith and Gelfand [@r14], who showed that Bayes' theorem can be implemented as a weighted bootstrap. Given a sample $\{\bm{x}_k^*(i) : i = 1, \dots, N\}$ from a continuous density $G(\bm{x})$, suppose we wish to sample from a target density proportional to $L(\bm{x}) G(\bm{x})$ for a known nonnegative function $L(\bm{x})$. Drawing a sample from the discrete distribution on $\{\bm{x}_k^*(i) : i = 1, \dots, N\}$ with probability masses
+$$
+\frac{L\bigl(\bm{x}_k^*(i)\bigr)}{\sum_{j=1}^N L\bigl(\bm{x}_k^*(j)\bigr)}
+$$
+produces a draw whose distribution converges to the target density as $N \to \infty$. Identifying $G(\bm{x})$ with the predicted prior $p(\bm{x}_k \mid D_{k-1})$ and $L(\bm{x})$ with the likelihood $p(\bm{y}_k \mid \bm{x}_k)$ directly justifies the update step.
+
+## Discussion {#sec:disc}
+
+A decisive advantage of this approach is that it places no structural restrictions on the transition function $\bm{f}_k$, the observation function $\bm{h}_k$, or the distributions of the system and measurement noises. The only practical requirements are:
+
+- (a) the initial prior $p(\bm{x}_1)$ can be sampled;
+- (b) the likelihood $p(\bm{y}_k \mid \bm{x}_k)$ is available in functional form for evaluation;
+- (c) the process noise density $p(\bm{w}_k)$ can be sampled.
+
+Moreover, the basic algorithm is remarkably concise and straightforward to implement. Resampling is carried out by drawing $u_i$ uniformly from $(0, 1]$ and selecting the particle $\bm{x}_k^*(M)$ whose cumulative weight satisfies
+$$
+\sum_{j=0}^{M-1} q_j < u_i \le \sum_{j=0}^{M} q_j
+$$
+with $q_0 = 0$, repeating for $i = 1, \dots, N$. Because particle propagation and likelihood evaluation are completely decoupled across samples, the algorithm maps naturally onto massively parallel architectures, enabling real-time operation with very large sample sets.
+
+Having the posterior represented directly by a sample cloud is convenient for downstream inference. The posterior probability that the state lies in any region of interest is estimated simply by the fraction of samples falling inside that region. When the posterior is believed to be unimodal, HPD intervals for individual state components (marginal HPD regions) are readily estimated. Sample estimates of the posterior mean, covariance, or the expectation of any nonlinear function of the state are likewise immediate.
+
+The theoretical justification in {@sec:just} is asymptotic; for finite sample sizes $N$, general performance guarantees are difficult to establish, and there is no simple analytical formula specifying how large $N$ must be to maintain an accurate density representation. Nevertheless, the required sample size $N$ clearly depends on at least three factors:
+
+- (a) the dimension of the state space;
+- (b) the typical overlap between the predicted prior and the measurement likelihood;
+- (c) the number of time steps over which the filter must run.
+
+Regarding factor (a), $N$ must generally grow rapidly with the state dimension, with the growth rate governed by the degree of statistical dependence among state components; in the most benign case where components are mutually independent, $N$ need not grow with dimension.
+
+The dependence on factors (b) and (c) arises directly from the resampling update. Whenever the region of state space where the likelihood $p(\bm{y}_k \mid \bm{x}_k)$ is appreciable is much narrower than the support of the predicted prior $p(\bm{x}_k \mid D_{k-1})$, most predicted samples $\bm{x}_k^*(i)$ receive negligible weights $q_i$ and are eliminated during resampling. Prior samples far from the likelihood peak are effectively wasted, while the few particles near the peak are duplicated many times. The problem is compounded if the likelihood falls in a low-density tail of the prior, where few samples reside (see also [@r14]). Over a few recursions, the number of distinct particles can collapse severely—indeed, in the absence of system noise, all $N$ samples can rapidly degenerate to a single point. Although brute-force increases in $N$ could in principle mitigate sample impoverishment, practical filters require more refined remedies. In {@sec:sim-bearings} we introduce two such modifications to the basic algorithm: a *roughening* step that adds small jitter to resampled particles, and a *prior editing* scheme that concentrates prior samples in the neighborhood of high likelihood. Developing principled enhancements of this kind remains a rich area for further research.
+
+Finally, Muller [@r12] proposed a related Monte Carlo filter that shares the same prediction step but replaces weighted resampling with an accept/reject update: each predicted particle $\bm{x}_k^*(i)$ is accepted with probability proportional to $p(\bm{y}_k \mid \bm{x}_k^*(i))$ and rejected otherwise. A drawback of accept/reject updating is that the resulting sample size is random and shrinks over time; accordingly, [@r12] focuses primarily on expanding the prior sample set by resampling from an envelope density fitted to the original predicted particles.

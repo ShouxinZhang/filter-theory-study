@@ -1,0 +1,5 @@
+# 构建中间产物与编译输出，不提交生成缓存。
+/build/
+/outputs/
+*.synctex.gz
+__pycache__/
